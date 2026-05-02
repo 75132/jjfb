@@ -3,6 +3,10 @@ import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 const { ccclass, property } = _decorator;
 
+/**
+ * 示例/调试用组件。请勿挂到选角场景根节点：`update` 在断线时每帧 `loadScene` 会导致严重问题。
+ * 若需断线回登录，请使用 WebSocketControl / WebSocketManager 的统一策略。
+ */
 @ccclass('CharacterSelectControl')
 export class CharacterSelectControl extends Component {
     private wsManager: WebSocketManager = null!;
@@ -26,7 +30,7 @@ export class CharacterSelectControl extends Component {
     update(deltaTime: number) {
         if (this.wsManager && !this.wsManager.isConnected()) {
             console.warn('WebSocket已断开，返回登录场景');
-            director.loadScene('Login');
+            director.loadScene(GameConfig.SCENE_NAMES.LOGIN);
         }
     }
 }

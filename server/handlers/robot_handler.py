@@ -23,6 +23,68 @@ def init_robot_handler(create_robot_pet_func, upgrade_locks_dict, broadcast_func
     _broadcast_to_user_async = broadcast_func
 
 
+# get_robot_pets 列表字段（与 find projection 一致，供 aggregate $project）
+_ROBOT_PET_LIST_PROJECTION = {
+    '_id': 1,
+    'RobotName': 1,
+    'RobotID': 1,
+    'Growth': 1,
+    'Comprehension': 1,
+    'Level': 1,
+    'StarLevel': 1,
+    'Form': 1,
+    'Class': 1,
+    'AniID': 1,
+    'EXP': 1,
+    'HP': 1,
+    'MaxHP': 1,
+    'CurrentHP': 1,
+    'MP': 1,
+    'MaxMP': 1,
+    'CurrentMP': 1,
+    'Melee': 1,
+    'Accuracy': 1,
+    'Armor': 1,
+    'Corrosion': 1,
+    'Initiative': 1,
+    'Block': 1,
+    'ParticleShield': 1,
+    'ArmorPenetration': 1,
+    'Shooting': 1,
+    'Evasion': 1,
+    'Lethality': 1,
+    'Resistance': 1,
+    'Counterattack': 1,
+    'robot_base_id': 1,
+    'slot_index': 1,
+}
+
+
+def _aggregate_robot_pets_page(user_id, character_id, skip: int, page_size: int):
+    """一次聚合：分页列表 + 总数，减少 Mongo 往返。"""
+    pipeline = [
+        {'$match': {'user_id': user_id, 'character_id': character_id}},
+        {
+            '$facet': {
+                'pets_page': [
+                    {'$sort': {'slot_index': 1}},
+                    {'$skip': skip},
+                    {'$limit': page_size},
+                    {'$project': _ROBOT_PET_LIST_PROJECTION},
+                ],
+                'total_ct': [{'$count': 'n'}],
+            }
+        },
+    ]
+    doc = next(utils.robotpet_col.aggregate(pipeline), None)
+    if not doc:
+        return [], 0
+    pets = list(doc.get('pets_page') or [])
+    tc = doc.get('total_ct') or []
+    total_count = int(tc[0]['n']) if tc else 0
+    return pets, total_count
+
+
 async def handle_get_battle_team(websocket, data, current_character_id):
     """获取出战队伍（服务器权威存储）"""
     token = data.get('token')
@@ -586,43 +648,27 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
     skip = page * page_size
     
     try:
-        # 单一数据源：附带 battle_team + team_version（客户端可不再强依赖 get_battle_team）
-        player = await utils.async_mongo_operation(
-            lambda: utils.players_col.find_one({'user_id': user['_id'], 'character_id': cid}, {'battle_team': 1, 'battle_team_version': 1}),
-            timeout=3.0
+        # 并行：players（出战队伍） + robotpet 聚合（一页数据 + total），由 3 次串行 Mongo 降为 2 路并行且 pets 侧仅 1 次往返
+        player, (pets, total_count) = await asyncio.gather(
+            utils.async_mongo_operation_read(
+                lambda: utils.players_col.find_one(
+                    {'user_id': user['_id'], 'character_id': cid},
+                    {'battle_team': 1, 'battle_team_version': 1},
+                ),
+                max_retries=3,
+                timeout=4.0,
+            ),
+            utils.async_mongo_operation_read(
+                lambda: _aggregate_robot_pets_page(user['_id'], cid, skip, page_size),
+                max_retries=3,
+                timeout=15.0,
+            ),
         )
         battle_team = []
         team_version = 0
         if player and isinstance(player.get('battle_team'), list):
             battle_team = [str(x) for x in player.get('battle_team', []) if x]
             team_version = int(player.get('battle_team_version', 0) or 0)
-        # 性能优化：只查询需要的字段，减少数据传输量（MMO级优化：异步查询，避免阻塞事件循环）
-        # 关键优化：按 slot_index 排序，确保出战队伍在前，顺序统一
-        # 使用skip和limit实现分批加载
-        # 修复：增加超时时间，考虑重试延迟（5次重试，每次延迟1-4秒，总共可能需要20秒）
-        pets_query = await utils.async_mongo_operation(
-            lambda: list(utils.robotpet_col.find(
-                {'user_id': user['_id'], 'character_id': cid},
-                {
-                    '_id': 1, 'RobotName': 1, 'RobotID': 1, 'Growth': 1, 'Comprehension': 1,
-                    'Level': 1, 'StarLevel': 1, 'Form': 1, 'Class': 1, 'AniID': 1,
-                    'EXP': 1, 'HP': 1, 'MaxHP': 1, 'CurrentHP': 1, 'MP': 1, 'MaxMP': 1, 'CurrentMP': 1,
-                    'Melee': 1, 'Accuracy': 1, 'Armor': 1, 'Corrosion': 1, 'Initiative': 1,
-                    'Block': 1, 'ParticleShield': 1, 'ArmorPenetration': 1, 'Shooting': 1,
-                    'Evasion': 1, 'Lethality': 1, 'Resistance': 1, 'Counterattack': 1, 'robot_base_id': 1,
-                    'slot_index': 1  # 新增：包含 slot_index 字段
-                }
-            ).sort('slot_index', 1).skip(skip).limit(page_size)),  # 关键优化：按 slot_index 排序
-            timeout=15.0  # 增加超时时间到15秒，考虑重试延迟
-        )
-        
-        pets = pets_query if pets_query else []
-        
-        # 获取总数（用于分页，MMO级优化：异步查询）
-        total_count = await utils.async_mongo_operation(
-            lambda: utils.robotpet_col.count_documents({'user_id': user['_id'], 'character_id': cid}),
-            timeout=15.0  # 增加超时时间到15秒
-        )
         has_more = (skip + len(pets)) < total_count
         pets_list = []
         upgrade_manager = get_upgrade_manager()

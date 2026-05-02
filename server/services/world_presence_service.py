@@ -89,11 +89,15 @@ class WorldPresenceService:
                     continue
                 seen.add(i)
                 targets.append(ws)
-        for ws in targets:
+
+        async def _send_one(ws):
             try:
                 await ws.send(raw)
             except Exception:
                 pass
+
+        if targets:
+            await asyncio.gather(*(_send_one(ws) for ws in targets), return_exceptions=True)
 
     async def enter(
         self,

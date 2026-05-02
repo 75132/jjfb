@@ -91,6 +91,20 @@ export class RobotList extends Component {
     /** 旧服未带 battle_team 时仅补拉一次 get_battle_team */
     private _fallbackBattleTeamRequested = false;
 
+    /** 同角色首页 get_robot_pets 单飞，避免并发多笔导致服务端排队与 request_id 错乱 */
+    private static _petsSfCid: string | null = null;
+    private static _petsSfCallbacks: Array<(resp: any) => void> = [];
+
+    /** 防抖：连续打开面板时合并为一轮网络请求 */
+    private _debouncedNetworkLoad = (): void => {
+        if (!UILockManager.instance.tryLock('robot_list', 22000)) {
+            this.isLoading = false;
+            return;
+        }
+        this._fallbackBattleTeamRequested = false;
+        this.requestPets(0);
+    };
+
     onLoad() {
         this.ws = WebSocketManager.getInstance();
     }
@@ -354,17 +368,11 @@ export class RobotList extends Component {
             // 不 return：缓存里 battle_team 可能落后于服务端（出战/下场/战斗自动上场等），必须再拉一页对齐排序与出战滤镜
         }
 
-        if (!UILockManager.instance.tryLock('robot_list', 22000)) {
-            this.isLoading = false;
-            return;
-        }
-
-        this._fallbackBattleTeamRequested = false;
-        // 单一数据源：优先依赖 get_robot_pets 响应中的 battle_team；缺失时再补拉 get_battle_team
-        this.requestPets();
+        this.unschedule(this._debouncedNetworkLoad);
+        this.scheduleOnce(this._debouncedNetworkLoad, 0.12);
     }
 
-    private requestPets() {
+    private requestPets(page: number = 0) {
         if (!this.ws) return;
         const cid = this.ws.getCharacterId();
         if (!cid) return;
@@ -372,17 +380,46 @@ export class RobotList extends Component {
         // 关键修复：即使 isLoading=true 也允许请求（show() 时已重置，但防止其他情况）
         // 使用 request 而不是 notify，确保响应匹配和超时处理
         this.isLoading = true;
-        const req: any = { character_id: cid, page: 0, page_size: this.PAGE_SIZE };
+        const req: any = { character_id: cid, page, page_size: this.PAGE_SIZE };
         const uid = this.ws.getUserId();
         if (uid) req.user_id = uid;
 
-        // 串行分页：用 request + 回调，避免 page 乱序拼接
+        const timeoutMs = 18000;
+        const deliver = (resp: any) => {
+            const cbs = RobotList._petsSfCallbacks.splice(0);
+            RobotList._petsSfCid = null;
+            for (const cb of cbs) {
+                try {
+                    cb(resp);
+                } catch (e) {
+                    console.error('[RobotList] onPetsResponse fan-out', e);
+                }
+            }
+        };
+
+        if (page === 0) {
+            if (RobotList._petsSfCid === cid && RobotList._petsSfCallbacks.length > 0) {
+                RobotList._petsSfCallbacks.push((resp: any) => this.onPetsResponse(resp));
+                return;
+            }
+            RobotList._petsSfCid = cid;
+            RobotList._petsSfCallbacks = [(resp: any) => this.onPetsResponse(resp)];
+            this.ws.request(
+                GameConfig.MESSAGE_TYPES.GET_ROBOT_PETS,
+                req,
+                (resp: any) => deliver(resp),
+                true,
+                timeoutMs
+            );
+            return;
+        }
+
         this.ws.request(
             GameConfig.MESSAGE_TYPES.GET_ROBOT_PETS,
             req,
             (resp: any) => this.onPetsResponse(resp),
             true,
-            8000
+            timeoutMs
         );
     }
 
@@ -392,7 +429,7 @@ export class RobotList extends Component {
             UILockManager.instance.unlock('robot_list');
             this.currentPets = [];
             this._petsReceived = false;
-            this.requestPets();
+            this.requestPets(0);
             return;
         }
 
@@ -506,13 +543,7 @@ export class RobotList extends Component {
                 const req: any = { character_id: cid, page: page + 1, page_size: this.PAGE_SIZE };
                 const uid = this.ws.getUserId();
                 if (uid) req.user_id = uid;
-                this.ws.request(
-                    GameConfig.MESSAGE_TYPES.GET_ROBOT_PETS,
-                    req,
-                    (resp: any) => this.onPetsResponse(resp),
-                    true,
-                    8000
-                );
+                this.requestPets(page + 1);
             }
         }
     }

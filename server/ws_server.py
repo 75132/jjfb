@@ -314,6 +314,10 @@ try:
     players_col.create_index([('user_id', 1), ('slot_index', 1), ('character_id', 1)])
 except Exception:
     pass
+try:
+    players_col.create_index([('user_id', 1), ('character_id', 1)])
+except Exception:
+    pass
 messages_col.create_index([('type', 1), ('created_at', -1)])
 try:
     robotbase_col.create_index('RobotID', unique=True, sparse=True)
@@ -1477,6 +1481,69 @@ async def main():
                             pass
                         self._send_json(500, {'success': False, 'message': str(e)})
                     return
+                if self.path.startswith('/api/minigame2'):
+                    try:
+                        length = int(self.headers.get('Content-Length', 0))
+                        raw = self.rfile.read(length).decode('utf-8')
+                        data = json.loads(raw) if raw else {}
+                    except Exception as e:
+                        self._send_json(400, {'success': False, 'message': str(e)})
+                        return
+                    action = data.get('action', '')
+                    try:
+                        from services import minigame2_service as m2
+                        if action == 'meta':
+                            meta = m2.admin_meta()
+                            self._send_json(200, {'success': True, **meta})
+                        elif action == 'list_rounds':
+                            lim = int(data.get('limit', 20))
+                            draws = m2.admin_list_rounds(lim)
+                            self._send_json(200, {'success': True, 'rounds': draws, 'count': len(draws)})
+                        elif action == 'list_bets':
+                            issue_key = str(data.get('issue_key', '') or data.get('issue', '') or '').strip()
+                            if not issue_key:
+                                self._send_json(400, {'success': False, 'message': 'issue_key required'})
+                                return
+                            lim = int(data.get('limit', 500))
+                            bets = m2.admin_list_bets(issue_key, lim)
+                            self._send_json(200, {
+                                'success': True,
+                                'issue_key': issue_key,
+                                'bets': bets,
+                                'count': len(bets),
+                            })
+                        elif action == 'force_draw':
+                            issue_key = str(data.get('issue_key', '') or data.get('issue', '') or '').strip()
+                            if not issue_key:
+                                self._send_json(400, {'success': False, 'message': 'issue_key required'})
+                                return
+                            immediate = bool(data.get('immediate', True))
+                            wk = data.get('winner_key')
+                            out = m2.admin_force_draw(
+                                issue_key,
+                                immediate=immediate,
+                                winner_key=wk,
+                            )
+                            if out.get('success'):
+                                self._send_json(200, {'success': True, **out})
+                            else:
+                                self._send_json(400, {'success': False, **out})
+                        elif action == 'clear_round_draw':
+                            issue_key = str(data.get('issue_key', '') or data.get('issue', '') or '').strip()
+                            if not issue_key:
+                                self._send_json(400, {'success': False, 'message': 'issue_key required'})
+                                return
+                            clr = m2.admin_clear_round_draw_record(issue_key)
+                            self._send_json(200, {'success': True, **clr})
+                        else:
+                            self._send_json(400, {'success': False, 'message': 'unknown action'})
+                    except Exception as e:
+                        try:
+                            get_logger().error('api/minigame2 POST failed: %s', e)
+                        except Exception:
+                            pass
+                        self._send_json(500, {'success': False, 'message': str(e)})
+                    return
                 self.send_error(404, 'Not Found')
 
             def translate_path(self, path):
@@ -1506,6 +1573,8 @@ async def main():
                     return os.path.join(static_dir, 'battle-rooms.html')
                 elif clean_path == 'daletou-test.html' or path.startswith('/daletou-test.html'):
                     return os.path.join(static_dir, 'daletou-test.html')
+                elif clean_path == 'minigame2-test.html' or path.startswith('/minigame2-test.html'):
+                    return os.path.join(static_dir, 'minigame2-test.html')
                 # 处理静态资源文件（CSS、JS等）
                 elif clean_path.startswith('css/') or clean_path.startswith('js/'):
                     # 直接返回 static 目录下的文件
@@ -1563,6 +1632,7 @@ async def main():
                 print(f'客户端模拟: http://{host}:{port}/client-simulator.html')
                 print(f'战斗房间监控: http://{host}:{port}/battle-rooms.html')
                 print(f'大乐透测试: http://{host}:{port}/daletou-test.html')
+                print(f'期货投资测试: http://{host}:{port}/minigame2-test.html')
                 return
             except Exception:
                 # 端口占用，尝试下一个
@@ -1576,6 +1646,7 @@ async def main():
             t.start()
             print(f'管理后台运行在 http://{host}:{port}/index.html')
             print(f'大乐透测试: http://{host}:{port}/daletou-test.html')
+            print(f'期货投资测试: http://{host}:{port}/minigame2-test.html')
             return
         except Exception as e:
             print(f'启动控制台失败: {e}')

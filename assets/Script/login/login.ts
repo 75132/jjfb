@@ -40,6 +40,9 @@ export class Login extends Component {
     @property(Node)
     loginPanelNode: Node = null!; // 登录面板节点，必须手动拖拽绑定
 
+    @property({ type: Node, tooltip: '进入选角加载时可选遮罩（未绑定则仅用 tipLabel）' })
+    startJumpMaskNode: Node | null = null;
+
     // 游戏面板节点
     private gamePanelNode: Node = null!;
 
@@ -363,10 +366,12 @@ export class Login extends Component {
 
         // 仅当服务端明确返回有效 character_id 时才自动进入角色选择。
         if (data?.character_id) {
+            if (this.tipLabel) this.tipLabel.string = '正在进入选角…';
+            if (this.startJumpMaskNode) this.startJumpMaskNode.active = true;
             this._autoLoginJumpCallback = () => {
                 this._autoLoginJumpCallback = null;
                 if (!this.isValid) return;
-                director.loadScene('CharacterSelect');
+                director.loadScene(GameConfig.SCENE_NAMES.CHARACTER_SELECT);
             };
             this.scheduleOnce(this._autoLoginJumpCallback, 0.2);
         }
@@ -555,14 +560,18 @@ export class Login extends Component {
     private onStartButtonClick() {
         if (!this.startButton || !this.startButton.node) return;
         this.startButton.interactable = false;
+        if (this.tipLabel) this.tipLabel.string = '正在进入选角…';
+        if (this.startJumpMaskNode) this.startJumpMaskNode.active = true;
         console.log('🔄 准备跳转到角色选择场景');
         this.prefetchCharactersIfReady();
         try {
-            director.loadScene('CharacterSelect', (error) => {
+            director.loadScene(GameConfig.SCENE_NAMES.CHARACTER_SELECT, (error) => {
                 if (error) {
                     console.error('❌ 跳转到角色选择场景失败:', error);
                     console.log('💡 请检查场景名称和构建设置');
                     if (this.isValid && this.startButton) this.startButton.interactable = true;
+                    if (this.isValid && this.tipLabel) this.tipLabel.string = '';
+                    if (this.isValid && this.startJumpMaskNode) this.startJumpMaskNode.active = false;
                 } else {
                     console.log('✅ 跳转到角色选择场景成功');
                 }
@@ -570,6 +579,8 @@ export class Login extends Component {
         } catch (error) {
             console.error('❌ 场景跳转异常:', error);
             if (this.startButton) this.startButton.interactable = true;
+            if (this.tipLabel) this.tipLabel.string = '';
+            if (this.startJumpMaskNode) this.startJumpMaskNode.active = false;
         }
     }
 }

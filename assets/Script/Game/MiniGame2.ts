@@ -18,8 +18,11 @@ const CATEGORIES: Array<{ key: CategoryKey; name: string; multiplier: number }> 
     { key: 'annihilation', name: '湮灭能量', multiplier: 7 },
 ];
 
+/** 与 sync.categories 一致；客户端默认列表用 CATEGORIES 转成此结构 */
+export type MiniGame2CategoryRow = { key: string; name: string; multiplier: number };
+
 export interface MiniGame2MyBet {
-    selected_key: CategoryKey;
+    selected_key: string;
     bet_amount: number;
 }
 
@@ -69,9 +72,11 @@ export class MiniGame2 extends Component {
     private confirmButtonComp: Button | null = null;
     private optionContent: Node | null = null;
 
-    private selectedKey: CategoryKey | null = null;
+    /** 当前用于展示/解析类目的权威行（来自最近一次 sync 或默认 CATEGORIES） */
+    private _displayRows: MiniGame2CategoryRow[] = [];
+    private selectedKey: string | null = null;
     private optionItems: Array<{
-        key: CategoryKey;
+        key: string;
         btn: Button;
         label: Label;
         node: Node;
@@ -79,7 +84,9 @@ export class MiniGame2 extends Component {
         normalSprite?: SpriteFrame | null;
         pressedSprite?: SpriteFrame | null;
     }> = [];
-    private _optionItemsLoading = false;
+    /** 类目结构签名（不含期号）：变化时重建选项按钮 */
+    private _optionCategorySig = '';
+    private _rebuildToken = 0;
 
     private backControlNode: Node | null = null;
     private _backBtnNode: Node | null = null;
@@ -93,7 +100,7 @@ export class MiniGame2 extends Component {
     private errorConfirmBtn: Button | null = null;
     private errorCancelBtn: Button | null = null;
     private _pendingBetAmount: number | null = null;
-    private _pendingBetKey: CategoryKey | null = null;
+    private _pendingBetKey: string | null = null;
 
     private viewHistoryBtn: Node | null = null;
 
@@ -127,10 +134,15 @@ export class MiniGame2 extends Component {
 
     private updateOptionVisual() {
         if (!this.optionItems.length) return;
+        const p = this._lastPayload;
+        const canBetBase = p ? !p.round_drawn && (p.seconds_until_close ?? 0) > 0 : false;
+        const winnerKey = p?.round_drawn ? String(p.winner_key ?? '').trim() : '';
         for (const item of this.optionItems) {
             if (!item.sprite || !item.normalSprite || !item.pressedSprite) continue;
-            const isSelected = this.selectedKey === item.key;
-            item.sprite.spriteFrame = isSelected ? item.pressedSprite : item.normalSprite;
+            const isWinner = !!winnerKey && item.key === winnerKey;
+            const isSelected = this.selectedKey === item.key && canBetBase;
+            const usePressed = isWinner || isSelected;
+            item.sprite.spriteFrame = usePressed ? item.pressedSprite : item.normalSprite;
         }
     }
 
@@ -151,9 +163,9 @@ export class MiniGame2 extends Component {
 
     start() {
         // 初次渲染选项：不依赖首个 sync，先把 UI 列表画出来，减少“卡很久才出现”的体感
-        // 若 prefab 已在编辑器中绑定，这里是本地即时创建，不涉及资源加载。
-        // 异步执行，避免阻塞主线程。
-        this.ensureOptionItemsReady();
+        if (this.optionContent) {
+            void this.rebuildOptionItems(this.defaultCategoryRows(), ++this._rebuildToken);
+        }
     }
 
     update(): void {
@@ -316,6 +328,33 @@ export class MiniGame2 extends Component {
         this.viewHistoryBtn.on(Node.EventType.TOUCH_END, this.openInvestmentReturnHistoryPanel, this);
     }
 
+    private defaultCategoryRows(): MiniGame2CategoryRow[] {
+        return CATEGORIES.map((c) => ({ key: c.key, name: c.name, multiplier: c.multiplier }));
+    }
+
+    private resolveCategoryRows(p: MiniGame2SyncPayload): MiniGame2CategoryRow[] {
+        if (Array.isArray(p.categories) && p.categories.length > 0) {
+            const out: MiniGame2CategoryRow[] = [];
+            for (const c of p.categories) {
+                const key = String((c as any)?.key ?? '').trim();
+                if (!key) continue;
+                const name = String((c as any)?.name ?? key).trim() || key;
+                const mult = Math.floor(Number((c as any)?.multiplier) || 0);
+                out.push({ key, name, multiplier: mult > 0 ? mult : 1 });
+            }
+            if (out.length > 0) return out;
+        }
+        return this.defaultCategoryRows();
+    }
+
+    private categoryStructureSig(rows: MiniGame2CategoryRow[]): string {
+        return rows.map((r) => `${r.key}:${r.multiplier}`).join('|');
+    }
+
+    private rowDisplayName(key: string): string {
+        return this._displayRows.find((r) => r.key === key)?.name ?? key;
+    }
+
     private fmtHMS(sec: number): string {
         const s = Math.max(0, Math.floor(sec));
         const h = Math.floor(s / 3600);
@@ -344,27 +383,32 @@ export class MiniGame2 extends Component {
     }
 
     private refreshCountdown() {
-        if (!this._roundCloseMs || !this._serverTimeBaseMs) return;
         if (!this.countdownLabel?.isValid) return;
+        if (this._lastPayload?.round_drawn) {
+            this.countdownLabel.string = '已开奖';
+            return;
+        }
+        if (!this._roundCloseMs || !this._serverTimeBaseMs) return;
         const nowMs = this._serverTimeBaseMs + (Date.now() - this._serverTimeRecvAtMs);
         const remaining = Math.floor((this._roundCloseMs - nowMs) / 1000);
         this.countdownLabel.string = this.fmtHMS(remaining);
     }
 
-    private async ensureOptionItemsReady() {
-        if (this.optionItems.length > 0) return;
-        if (this._optionItemsLoading) return;
+    /**
+     * 按服务端类目（或默认）重建选项列表；token 用于丢弃过期的异步完成回调。
+     */
+    private async rebuildOptionItems(rows: MiniGame2CategoryRow[], token: number) {
         if (!this.optionContent) return;
-        this._optionItemsLoading = true;
-
         const prefab = await this.ensureOptionItemPrefab();
+        if (token !== this._rebuildToken) return;
 
-        // 清空旧项（content 下理论上为空；但为了多次 mount 也要防御）
+        this._displayRows = rows.slice();
+
         try {
             this.optionContent.removeAllChildren();
             this.optionItems = [];
 
-            for (const cat of CATEGORIES) {
+            for (const cat of rows) {
                 if (prefab) {
                     const node = instantiate(prefab);
                     this.optionContent.addChild(node);
@@ -383,30 +427,25 @@ export class MiniGame2 extends Component {
                         label: labelComp,
                         node,
                         sprite: spriteComp,
-                        // Button 的 normalSprite / pressedSprite 在运行时可直接访问
                         normalSprite: (btnComp as any).normalSprite as SpriteFrame | null,
                         pressedSprite: (btnComp as any).pressedSprite as SpriteFrame | null,
                     };
                     this.optionItems.push(item);
 
+                    const keyRef = cat.key;
+                    const nameRef = cat.name;
                     btnComp.node.on(
                         Button.EventType.CLICK,
                         () => {
-                            // 允许同一期持续下注，只要未开奖且仍在投注时间内
                             if (this._lastPayload?.round_drawn) return;
-                            if (
-                                this._lastPayload?.seconds_until_close !== undefined &&
-                                this._lastPayload.seconds_until_close <= 0
-                            )
-                                return;
-                            this.selectedKey = cat.key;
-                            if (this.currentSelectionLabel) this.currentSelectionLabel.string = cat.name;
+                            if ((this._lastPayload?.seconds_until_close ?? 0) <= 0) return;
+                            this.selectedKey = keyRef;
+                            if (this.currentSelectionLabel) this.currentSelectionLabel.string = nameRef;
                             this.updateOptionVisual();
                         },
                         this
                     );
                 } else {
-                    // 降级渲染：Prefab 加载失败时，仍生成可点击项（保证玩法通路）
                     const node = new Node(cat.key);
                     const ui = node.addComponent(UITransform);
                     ui.setAnchorPoint(v2(0.5, 0.5));
@@ -415,8 +454,8 @@ export class MiniGame2 extends Component {
                     const label = node.addComponent(Label);
                     label.string = `${cat.name} X ${cat.multiplier}`;
                     label.fontSize = 20;
-                    label.horizontalAlign = 1; // CENTER
-                    label.verticalAlign = 1; // CENTER
+                    label.horizontalAlign = 1;
+                    label.verticalAlign = 1;
 
                     const btn = node.addComponent(Button);
                     this.optionContent.addChild(node);
@@ -424,17 +463,15 @@ export class MiniGame2 extends Component {
                     const item = { key: cat.key, btn, label, node };
                     this.optionItems.push(item);
 
+                    const keyRef = cat.key;
+                    const nameRef = cat.name;
                     btn.node.on(
                         Button.EventType.CLICK,
                         () => {
                             if (this._lastPayload?.round_drawn) return;
-                            if (
-                                this._lastPayload?.seconds_until_close !== undefined &&
-                                this._lastPayload.seconds_until_close <= 0
-                            )
-                                return;
-                            this.selectedKey = cat.key;
-                            if (this.currentSelectionLabel) this.currentSelectionLabel.string = cat.name;
+                            if ((this._lastPayload?.seconds_until_close ?? 0) <= 0) return;
+                            this.selectedKey = keyRef;
+                            if (this.currentSelectionLabel) this.currentSelectionLabel.string = nameRef;
                             this.updateOptionVisual();
                         },
                         this
@@ -442,15 +479,27 @@ export class MiniGame2 extends Component {
                 }
             }
 
-            // 默认选中第一档
-            if (!this.selectedKey && this.optionItems.length > 0) this.selectedKey = this.optionItems[0].key;
-            if (this.currentSelectionLabel && this.selectedKey) {
-                const cat = CATEGORIES.find((c) => c.key === this.selectedKey);
-                if (cat) this.currentSelectionLabel.string = cat.name;
+            const validKeys = new Set(rows.map((r) => r.key));
+            if (this.selectedKey && !validKeys.has(this.selectedKey)) {
+                this.selectedKey = rows[0]?.key ?? null;
             }
-        } finally {
-            this._optionItemsLoading = false;
+            if (!this.selectedKey && rows.length > 0) {
+                this.selectedKey = rows[0].key;
+            }
+            if (this.currentSelectionLabel && this.selectedKey && !this._lastPayload?.round_drawn) {
+                this.currentSelectionLabel.string = this.rowDisplayName(this.selectedKey);
+            }
+
+            this._optionCategorySig = this.categoryStructureSig(rows);
+        } catch (e) {
+            console.warn('[MiniGame2] rebuildOptionItems', e);
         }
+
+        if (token !== this._rebuildToken) return;
+        if (this._lastPayload) {
+            this.applyInteractableFromPayload(this._lastPayload);
+        }
+        this.updateOptionVisual();
     }
 
     private async ensureOptionItemPrefab(): Promise<Prefab | null> {
@@ -497,6 +546,13 @@ export class MiniGame2 extends Component {
             this.investmentReturnHistoryHistoryParent =
                 this.investmentReturnHistoryHistoryProtoNode?.parent ?? null;
         }
+    }
+
+    /** 历史请求失败或异常：关闭看板并恢复主界面可操作，避免 investmentReturnHistoryOpen 卡死 */
+    private resetHistoryPanelAfterError() {
+        this.investmentReturnHistoryOpen = false;
+        if (this.investmentReturnHistoryPanel) this.investmentReturnHistoryPanel.active = false;
+        if (this._lastPayload) this.applyInteractableFromPayload(this._lastPayload);
     }
 
     private closeInvestmentReturnHistoryPanel() {
@@ -558,6 +614,8 @@ export class MiniGame2 extends Component {
                     return;
                 }
                 const msg = String(resp?.message ?? '获取回报历史失败').replace(/\\n/g, '\n');
+                // 失败时必须退出「历史独占」态，否则主界面 EditBox/类目会一直禁用
+                this.resetHistoryPanelAfterError();
                 this.showError(msg);
             },
             true,
@@ -586,9 +644,7 @@ export class MiniGame2 extends Component {
         }
 
         const formatLine = (timeKeyOrHm: string, catName: string, profit: number) => {
-            // 显示“开奖时间键”YYYYMMDDHH（例如 2026040100），更直观地表达跨日 00:00 的那一档。
-            // 若服务端没返回 close_time_key，则回退到 HH:mm。
-            return `[${timeKeyOrHm}] 开       ${catName}        收益 ${profit} `;
+            return `[${timeKeyOrHm}] ${catName} | 收益 ${profit}`;
         };
 
         const lines: string[] = [];
@@ -625,8 +681,28 @@ export class MiniGame2 extends Component {
         );
     }
 
+    private applyInteractableFromPayload(p: MiniGame2SyncPayload) {
+        const canBetBase = !p.round_drawn && (p.seconds_until_close ?? 0) > 0;
+        const canBet = canBetBase && !this.investmentReturnHistoryOpen;
+
+        if (this.editBox) {
+            (this.editBox as any).enabled = canBet;
+        }
+        for (const item of this.optionItems) {
+            item.btn.interactable = canBet;
+        }
+
+        if (this.confirmButtonComp) {
+            this.confirmButtonComp.interactable = canBet && this.selectedKey != null;
+        }
+        this.updateOptionVisual();
+    }
+
     private applyPayload(p: MiniGame2SyncPayload) {
         this._lastPayload = p;
+
+        const rows = this.resolveCategoryRows(p);
+        this._displayRows = rows;
 
         // 当前期数：issue_key 是轮次开始时间（YYYYMMDDHH）
         if (this.currentIssueLabel) {
@@ -634,9 +710,10 @@ export class MiniGame2 extends Component {
             this.currentIssueLabel.string = ik ? `当前期：${ik}` : '当前期：-';
         }
 
-        // 本期已投资明细：多类目累计
+        // 本期已投资明细：多类目累计（名称以 sync 类目为准）
         if (this.myBetsLabel) {
             const bets = Array.isArray(p.my_bets) ? p.my_bets : [];
+            const total = Math.floor(Number(p.my_bet_total ?? 0));
             if (bets.length === 0) {
                 this.myBetsLabel.string = '本期已投资：无';
             } else {
@@ -645,11 +722,16 @@ export class MiniGame2 extends Component {
                     const key = String((b as any)?.selected_key ?? '').trim();
                     const amt = Math.floor(Number((b as any)?.bet_amount ?? 0));
                     if (!key || !Number.isFinite(amt) || amt <= 0) continue;
-                    const cat = CATEGORIES.find((c) => c.key === (key as any));
-                    const name = cat ? cat.name : key;
+                    const name = rows.find((r) => r.key === key)?.name ?? key;
                     lines.push(`${name} x ${amt}`);
                 }
-                this.myBetsLabel.string = lines.length ? `本期已投资：${lines.join('，')}` : '本期已投资：无';
+                if (!lines.length) {
+                    this.myBetsLabel.string = '本期已投资：无';
+                } else {
+                    const detail = lines.join('，');
+                    this.myBetsLabel.string =
+                        total > 0 ? `本期已投资：合计 ${total}（${detail}）` : `本期已投资：${detail}`;
+                }
             }
         }
 
@@ -663,34 +745,25 @@ export class MiniGame2 extends Component {
             if (parsed != null) {
                 this._serverTimeBaseMs = parsed;
                 this._serverTimeRecvAtMs = Date.now();
-                this._roundCloseMs = parsed + (p.seconds_until_close ?? 0) * 1000;
+                const sec = p.round_drawn ? 0 : p.seconds_until_close ?? 0;
+                this._roundCloseMs = parsed + sec * 1000;
             }
         }
-        if (this.countdownLabel) this.countdownLabel.string = this.fmtHMS(p.seconds_until_close ?? 0);
-
-        // 初始化选项 UI（只做一次）
-        this.ensureOptionItemsReady();
-
-        // 下注状态：支持本期持续下注，只要未开奖且仍在投注时间内
-        const canBetBase = !p.round_drawn && (p.seconds_until_close ?? 0) > 0;
-        // 面板打开时禁止下注交互
-        const canBet = canBetBase && !this.investmentReturnHistoryOpen;
-
-        // 多类目下注：不再强行用“我已下注的类目”覆盖当前选中项，避免你投了多个后 UI 跳来跳去
-        // 保持选中类目的“按下状态”高亮
-        this.updateOptionVisual();
-
-        // 启用/禁用输入与选项
-        if (this.editBox) {
-            // EditBox：直接用 enabled 来禁用编辑
-            (this.editBox as any).enabled = canBet;
+        if (this.countdownLabel) {
+            this.countdownLabel.string = p.round_drawn ? '已开奖' : this.fmtHMS(p.seconds_until_close ?? 0);
         }
-        for (const item of this.optionItems) {
-            item.btn.interactable = canBet;
+        if (p.round_drawn && this.currentSelectionLabel) {
+            const wk = String(p.winner_key ?? '').trim();
+            const wn = wk ? this.rowDisplayName(wk) : '';
+            if (wn) this.currentSelectionLabel.string = `本期开奖：${wn}`;
         }
 
-        if (this.confirmButtonComp) {
-            this.confirmButtonComp.interactable = canBet && this.selectedKey != null;
+        const sig = this.categoryStructureSig(rows);
+        const needRebuild = sig !== this._optionCategorySig || this.optionItems.length !== rows.length;
+        if (needRebuild) {
+            void this.rebuildOptionItems(rows, ++this._rebuildToken);
+        } else {
+            this.applyInteractableFromPayload(p);
         }
     }
 
@@ -721,7 +794,7 @@ export class MiniGame2 extends Component {
         }, 1400);
     }
 
-    private showConfirmInvest(text: string, amount: number, key: CategoryKey) {
+    private showConfirmInvest(text: string, amount: number, key: string) {
         if (!this.errorPanel) return;
 
         this._pendingBetAmount = amount;
@@ -782,8 +855,7 @@ export class MiniGame2 extends Component {
                     const respSelected = (resp?.data as any)?.selected_key;
                     const respAmt = (resp?.data as any)?.bet_amount;
                     if (respSelected && respAmt) {
-                        const cat = CATEGORIES.find((c) => c.key === (respSelected as any));
-                        const catName = cat ? cat.name : String(respSelected);
+                        const catName = this.rowDisplayName(String(respSelected));
                         this.showError(`已投资 ${respAmt} 到 ${catName}`);
                     } else {
                         this.showError('投资成功');
@@ -820,7 +892,7 @@ export class MiniGame2 extends Component {
 
         const payload = this._lastPayload;
         if (!payload) return;
-        if (payload.round_drawn || payload.seconds_until_close <= 0) {
+        if (payload.round_drawn || (payload.seconds_until_close ?? 0) <= 0) {
             this.showError('已到开奖时间');
             return;
         }
@@ -841,8 +913,7 @@ export class MiniGame2 extends Component {
             return;
         }
 
-        const cat = CATEGORIES.find((c) => c.key === this.selectedKey);
-        const catName = cat ? cat.name : this.selectedKey;
+        const catName = this.rowDisplayName(this.selectedKey);
         this.showConfirmInvest(`确认投资 ${amt} 到 ${catName} 吗？`, amt, this.selectedKey);
     }
 }

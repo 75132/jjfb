@@ -278,7 +278,7 @@ async def serial_middleware(context: MiddlewareContext, next_func: Callable):
 # 限流配置（按路由）
 ROUTE_RATE_LIMIT = {
     'upgrade_robot': 0.3,  # 每0.3秒一次
-    'get_robot_pets': 0.5,  # 每0.5秒一次
+    'get_robot_pets': 0.35,  # 客户端单飞后略放宽，仍防撞库
     'bag_use_item': 0.2,    # 每0.2秒一次
     'get_robot_pet_info': 0.3,  # 每0.3秒一次
     'daletou_sync': 0.5,

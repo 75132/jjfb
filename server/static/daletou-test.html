@@ -3,409 +3,425 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>大乐透 · 简易测试台</title>
+  <title>大乐透 · 运维台</title>
   <style>
-    :root{
-      --bg:#0f1419; --panel:#1a1f26; --border:#2d3640; --text:#e7e9ea; --muted:#8b98a5;
-      --accent:#1d9bf0; --ok:#00ba7c; --err:#f4212e; --radius:10px;
+    :root {
+      --bg: #0c0e12;
+      --card: #151922;
+      --line: #2a3142;
+      --txt: #eef1f6;
+      --dim: #8b93a7;
+      --accent: #3b82f6;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --glow: rgba(59, 130, 246, 0.35);
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family:'Segoe UI',system-ui,sans-serif;
-      background:var(--bg); color:var(--text); font-size:14px; line-height:1.4;
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font: 14px/1.45 "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #1a2240 0%, var(--bg) 55%), var(--bg);
+      color: var(--txt);
     }
-    a{color:var(--accent)}
-    .app{max-width:1100px;margin:0 auto;padding:16px 16px 48px}
-    h1{font-size:18px;margin:0 0 6px;font-weight:700}
-    .sub{color:var(--muted);font-size:12px;margin:0 0 14px}
-    .toolbar{
-      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;
-      padding:12px 12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
-      margin-bottom:14px;
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 20px 16px 48px; }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0 6px;
+      letter-spacing: -0.02em;
     }
-    .grp{display:flex;flex-direction:column;gap:4px}
-    .toolbar label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-    input, button{
-      font:inherit; padding:8px 10px; border-radius:8px;
-      border:1px solid var(--border); background:#252b33; color:var(--text);
+    .tagline { color: var(--dim); font-size: 12px; margin-bottom: 16px; }
+    details.hint { color: var(--dim); font-size: 12px; margin-bottom: 16px; }
+    .topbar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+      padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      margin-bottom: 18px;
     }
-    button{
-      cursor:pointer; border-color:#38444d; background:#1d9bf0; color:#fff; font-weight:600;
+    .topbar input {
+      padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line);
+      background: #0f1218; color: var(--txt); font: inherit; min-width: 0;
     }
-    button.secondary{background:#38444d}
-    button.warn{background:#78550a;border-color:#a07812}
-    button.danger{background:var(--err);border-color:#d11a22}
-    button.ghost{background:transparent;border-color:#38444d}
-    button:disabled{opacity:.5;cursor:not-allowed}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width:960px){.grid2{grid-template-columns:1fr}}
-    .card{
-      background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
-      padding:12px 12px; margin-bottom:12px;
+    .topbar input.grow { flex: 1 1 200px; }
+    button {
+      padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line);
+      background: linear-gradient(180deg, #3d6fd8, #2563eb); color: #fff;
+      font: inherit; font-weight: 600; cursor: pointer;
     }
-    .card h2{margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-    .meta{display:flex;flex-wrap:wrap;gap:8px}
-    .meta .box{background:#252b33;border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:200px}
-    .mono{font-family:ui-monospace,monospace;font-size:12px;word-break:break-all}
-    .split{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th{
-      position:sticky;top:0;background:#252b33;z-index:1;
-      text-align:left;padding:10px 10px;border-bottom:1px solid var(--border);
-      color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+    button.sec { background: #2a3142; color: #e2e8f0; }
+    button.ghost { background: transparent; color: var(--dim); }
+    button.bad { background: linear-gradient(180deg, #f87171, var(--bad)); border-color: #b91c1c; }
+    .stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+    .pill {
+      padding: 8px 14px; border-radius: 999px; background: var(--card);
+      border: 1px solid var(--line); font-size: 12px; color: var(--dim);
     }
-    td{padding:8px 10px;border-bottom:1px solid #252b33;vertical-align:middle}
-    tr:hover td{background:rgba(29,155,240,.06)}
-    tr.sel td{background:rgba(29,155,240,.12);border-color:rgba(29,155,240,.25)}
-    .scroll{max-height:360px;overflow:auto;border:1px solid var(--border);border-radius:8px}
-    .toast{
-      position:fixed; right:16px; bottom:16px; max-width:420px; padding:12px 16px;
-      border-radius:10px; z-index:100; display:none; box-shadow:0 8px 32px rgba(0,0,0,.45);
-      animation:pop .2s ease;
+    .pill strong { color: var(--txt); font-weight: 600; margin-left: 6px; }
+    .section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
     }
-    @keyframes pop{from{transform:translateY(8px);opacity:.7}to{transform:translateY(0);opacity:1}}
-    .toast.show{display:block}
-    .toast.ok{background:#064e3b;border:1px solid #059669;color:#d1fae5}
-    .toast.err{background:#450a0a;border:1px solid #991b1b;color:#fecaca}
-    #raw{background:#0b0e11;border:1px solid var(--border);border-radius:8px;padding:10px 10px;max-height:180px;overflow:auto;white-space:pre-wrap;color:var(--muted);font-size:11px}
+    .section h2 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      margin: 0 0 14px;
+    }
+    .viz-title { font-size: 13px; color: var(--txt); margin-bottom: 10px; font-weight: 600; }
+    .hbar-wrap { height: 10px; border-radius: 6px; background: #0f1218; overflow: hidden; margin-top: 6px; }
+    .hbar-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--accent), #60a5fa);
+      box-shadow: 0 0 12px var(--glow);
+      transition: width 0.35s ease;
+    }
+    .pool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .pcard {
+      display: block;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #0f1218;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .pcard:has(input:checked) {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(0,0,0,.35);
+    }
+    .pcard input { display: none; }
+    .pcard-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .ava {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, #4f46e5, var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; color: #fff;
+    }
+    .pname { font-weight: 600; font-size: 14px; }
+    .pcid { font-size: 11px; color: var(--dim); font-family: ui-monospace, monospace; }
+    .pool-meta { font-size: 11px; color: var(--dim); margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: var(--dim); font-size: 11px; font-weight: 500; }
+    tr.sel td { background: rgba(59, 130, 246, 0.12); }
+    tr { cursor: pointer; }
+    .draw-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+    .chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--dim); }
+    pre#raw {
+      margin: 0; padding: 12px; border-radius: 10px; background: #0a0c10;
+      border: 1px solid var(--line); font: 11px/1.45 ui-monospace, monospace;
+      max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-all; color: #9ca3af;
+    }
+    .toast {
+      position: fixed; right: 14px; bottom: 14px; padding: 12px 16px; border-radius: 10px;
+      font-size: 13px; display: none; z-index: 50; max-width: min(420px, 92vw);
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .toast.show { display: block; }
+    .toast.ok { background: #14532d; color: #bbf7d0; }
+    .toast.err { background: #7f1d1d; color: #fecaca; }
   </style>
 </head>
 <body>
-<div class="app">
-  <h1>大乐透 · 简易测试台</h1>
-  <p class="sub">只保留常用接口：`meta / list / list_players / set_online / set_claimed / draw / reset_draw`。期号用 `day=YYYY-MM-DD`。</p>
+<div class="wrap">
+  <h1>大乐透 · 可视化运维</h1>
+  <p class="tagline">奖池参与可视化 · 点选玩家指定头奖 · 支持<strong>立即开奖</strong> / 自然开奖 / 删记录</p>
+  <details class="hint"><summary>安全提示</summary><code>/api/daletou</code> 无鉴权，仅本机；勿暴露公网。</details>
 
-  <div class="toolbar">
-    <div class="grp" style="flex:1;min-width:260px">
-      <label>HTTP 根地址</label>
-      <input id="baseUrl" type="text" style="width:100%" placeholder="http://127.0.0.1:8080" />
-    </div>
+  <div class="topbar">
+    <input id="baseUrl" class="grow" type="text" placeholder="http://127.0.0.1:8080" />
+    <input id="day" type="text" class="mono" placeholder="YYYY-MM-DD" style="width:132px" />
+    <button type="button" class="sec" id="dToday">今天</button>
+    <button type="button" id="btnRefresh">同步数据</button>
+    <input id="listLimit" type="number" min="50" max="2000" value="400" title="全角色条数" style="width:72px" />
+    <button type="button" class="sec" id="btnListDraws">最近开奖 JSON</button>
+  </div>
 
-    <div class="grp">
-      <label>自然日 day</label>
-      <input id="day" type="text" class="mono" placeholder="2026-03-29" style="width:190px" />
-    </div>
+  <div class="stat-row" id="statPills">
+    <span class="pill">日期 <strong id="pillDay">—</strong></span>
+    <span class="pill">期号 <strong id="pillIssue">—</strong></span>
+    <span class="pill">奖池人数 <strong id="pillPool">—</strong></span>
+    <span class="pill">截止 <strong id="pillDl">—</strong></span>
+    <span class="pill">状态 <strong id="pillSt">—</strong></span>
+  </div>
 
-    <div class="grp">
-      <label>&nbsp;</label>
-      <div class="split">
-        <button type="button" class="secondary" id="dToday">今天</button>
-        <button type="button" class="secondary" id="btnRefresh">刷新</button>
-      </div>
+  <div class="section" style="border-color:#7f1d1d">
+    <h2>一键重置当日开奖</h2>
+    <p class="tagline">删除当前「日期」下 <code>daletou_draws</code> 开奖记录 → 客户端恢复为未开奖，可再次测开奖。<strong>不会</strong>从玩家账号扣回已发放的能量块。</p>
+    <button type="button" class="bad" id="btnOneClickReset">一键删除当日开奖记录（不扣能量）</button>
+  </div>
+
+  <div class="section">
+    <h2>奖池 · 在线时长分布（已领资格）</h2>
+    <p class="viz-title">柱长 = 相对当日在线秒数；点卡片 = 指定为头奖候选人</p>
+    <div class="pool-grid" id="poolGrid"></div>
+  </div>
+
+  <div class="section">
+    <h2>全角色 · 可指定任意 cid 为头奖（含未进奖池）</h2>
+    <p class="tagline" style="margin-top:-8px">用于联调；线上真实开奖仍应只在奖池内。</p>
+    <div style="max-height:240px;overflow:auto;border:1px solid var(--line);border-radius:10px">
+      <table><thead><tr><th>角色</th><th>cid</th><th>在线秒</th><th>已领</th></tr></thead><tbody id="tbodyAll"></tbody></table>
     </div>
   </div>
 
-  <div class="card">
-    <h2>服务端状态</h2>
-    <div class="meta">
-      <div class="box"><div class="mono" id="metaLine1">—</div></div>
-      <div class="box"><div class="mono" id="metaLine2">—</div></div>
-      <div class="box"><div class="mono" id="metaLine3">—</div></div>
-    </div>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <h2>奖池（已领取资格）</h2>
-      <div class="split" style="margin-bottom:8px">
-        <button type="button" class="secondary" id="btnReloadPool">刷新奖池</button>
-      </div>
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>角色</th>
-              <th>character_id</th>
-              <th>在线(秒)</th>
-              <th>已领</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyPool"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>全部角色（含非本期）</h2>
-      <div class="split" style="margin-bottom:8px">
-        <label style="color:var(--muted);font-size:12px">上限</label>
-        <input id="listLimit" type="number" min="50" max="2000" value="300" style="width:110px" />
-        <button type="button" class="secondary" id="btnReloadPlayers">刷新角色</button>
-      </div>
-      <div class="scroll">
-        <table>
-          <thead>
-            <tr>
-              <th>角色</th>
-              <th>character_id</th>
-              <th>在线(秒)</th>
-              <th>已领</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyPlayers"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>选人操作</h2>
-    <div class="split" style="margin-bottom:10px">
-      <div class="mono">选中Cid：<span id="selCid">（无）</span></div>
-      <div class="mono">角色名：<span id="selName">—</span></div>
-    </div>
-
-    <div class="split" style="margin-bottom:10px">
-      <label style="color:var(--muted);font-size:12px">在线秒数</label>
-      <input id="onlineSec" type="number" min="0" value="10800" style="width:120px" />
-      <button type="button" class="secondary" data-sec="0">0</button>
-      <button type="button" class="secondary" data-sec="3600">1h</button>
-      <button type="button" class="secondary" data-sec="10800">3h</button>
-      <button type="button" class="secondary" data-sec="18000">5h</button>
-    </div>
-
-    <div class="split" style="margin-bottom:10px">
-      <label style="color:var(--muted);font-size:12px">指定中奖 character_id（可空）</label>
-      <input id="winnerCid" type="text" class="mono" placeholder="不填则随机" style="flex:1;min-width:220px" />
-    </div>
-
-    <div class="split">
+  <div class="section">
+    <h2>快捷写库（需先选中 cid）</h2>
+    <div class="draw-actions" style="margin:0">
+      <input id="onlineSec" type="number" min="0" value="10800" style="width:100px;padding:8px;border-radius:8px;border:1px solid var(--line);background:#0f1218;color:inherit" />
+      <button type="button" class="sec" data-sec="0">0</button>
+      <button type="button" class="sec" data-sec="3600">1h</button>
+      <button type="button" class="sec" data-sec="10800">3h</button>
       <button type="button" id="btnSetOnline">写入在线</button>
-      <button type="button" class="secondary" id="btnClaimOn">标记已领取</button>
-      <button type="button" class="warn" id="btnClaimOff">取消已领取</button>
-      <button type="button" class="secondary" id="btnDrawNatural">自然开奖（指定）</button>
-      <button type="button" class="danger" id="btnDrawNow">立刻开奖（指定）</button>
-      <button type="button" class="ghost" id="btnResetDraw">删除开奖记录</button>
+      <button type="button" class="sec" id="btnClaimOn">已领+</button>
+      <button type="button" class="sec" id="btnClaimOff">已领−</button>
     </div>
-    <p class="sub" style="margin:8px 0 0">删除不会回退已发能量，只删 `daletou_draws` 记录。</p>
   </div>
 
-  <div class="card">
-    <h2>最近一次 JSON</h2>
+  <div class="section">
+    <h2>开奖</h2>
+    <p class="tagline">当前指定头奖：<strong id="selWinnerLabel" style="color:var(--accent)">（未选）</strong></p>
+    <input type="hidden" id="winnerCid" />
+    <div class="draw-actions">
+      <label class="chk"><input type="checkbox" id="chkImmediate" checked /> 立即开奖（无视 24 点）</label>
+    </div>
+    <div class="draw-actions">
+      <button type="button" id="btnDrawNow">立即开奖（使用上方指定）</button>
+      <button type="button" class="sec" id="btnDrawRandom">立即开奖（随机头奖）</button>
+      <button type="button" class="sec" id="btnDrawNatural">自然开奖（仅过点）</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>原始响应</h2>
     <pre id="raw">{}</pre>
   </div>
 </div>
-
 <div id="toast" class="toast"></div>
 
 <script>
 (function () {
   const $ = (id) => document.getElementById(id);
   const LS = 'daletou_test_base_url';
-
-  function pad(n){return n<10?'0'+n:''+n}
-  function todayStr(){
+  const pad = (n) => (n < 10 ? '0' + n : '' + n);
+  const todayStr = () => {
     const t = new Date();
-    return t.getFullYear() + '-' + pad(t.getMonth()+1) + '-' + pad(t.getDate());
-  }
+    return t.getFullYear() + '-' + pad(t.getMonth() + 1) + '-' + pad(t.getDate());
+  };
+  const base = () => ($('baseUrl').value || '').replace(/\/$/, '');
+  const dayVal = () => ($('day').value || '').trim() || todayStr();
 
-  function base(){ return ($('baseUrl').value || '').replace(/\/$/, ''); }
-
+  let poolRows = [];
   let toastTimer = null;
-  function toast(msg, ok){
+  function toast(msg, ok) {
     const el = $('toast');
     el.textContent = msg;
     el.className = 'toast show ' + (ok ? 'ok' : 'err');
     if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=>{ el.className='toast'; }, 3000);
+    toastTimer = setTimeout(() => { el.className = 'toast'; }, 3200);
   }
 
-  function dayVal(){
-    const d = ($('day').value || '').trim();
-    return d || todayStr();
-  }
-
-  let selectedCid = '';
-  let selectedName = '';
-  function setSelected(cid, name){
-    selectedCid = cid || '';
-    selectedName = name || '';
-    $('selCid').textContent = selectedCid || '（无）';
-    $('selName').textContent = selectedName || '—';
-  }
-
-  async function api(action, body){
-    const t0 = performance.now();
+  async function api(action, body) {
     let data;
-    try{
+    try {
       const r = await fetch(base() + '/api/daletou', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(Object.assign({ action }, body || {})),
       });
       const text = await r.text();
-      try{ data = JSON.parse(text); }catch(e){ data = { raw: text }; }
+      try { data = JSON.parse(text); } catch (e) { data = { raw: text }; }
       $('raw').textContent = JSON.stringify(data, null, 2);
       const ok = r.ok && data.success !== false;
-      if (!ok){
-        toast((data.message || data.error || 'HTTP '+r.status), false);
-      }else{
-        // 只有少量动作才 toast，避免刷屏：仅保留成功的刷新提示
-      }
-      return { data, ok: r.ok && data.success !== false, ms: Math.round(performance.now()-t0) };
-    }catch(e){
+      if (!ok) toast(data.message || data.error || 'HTTP ' + r.status, false);
+      return { data, ok };
+    } catch (e) {
       $('raw').textContent = String(e);
-      toast('网络错误: ' + e, false);
-      return { data: { success:false, message:String(e) }, ok:false, ms:0 };
+      toast('网络: ' + e, false);
+      return { data: {}, ok: false };
     }
   }
 
-  function esc(s){
+  function esc(s) {
     return String(s ?? '')
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
   }
 
-  function rowClick(tr, p){
-    tr.addEventListener('click', (e) => {
-      if (e.target && e.target.tagName === 'INPUT') return;
-      setSelected(String(p.character_id || ''), String(p.role_name || ''));
-      document.querySelectorAll('#tbodyPlayers tr').forEach(x=>x.classList.remove('sel'));
-      document.querySelectorAll('#tbodyPool tr').forEach(x=>x.classList.remove('sel'));
-      tr.classList.add('sel');
-      // 同步在线秒数
-      const sec = p.online_seconds ?? 0;
-      $('onlineSec').value = sec;
+  function setWinner(cid, name) {
+    $('winnerCid').value = cid || '';
+    $('selWinnerLabel').textContent = cid ? (name + ' · ' + cid) : '（未选）';
+    document.querySelectorAll('input[name="winCid"]').forEach((inp) => {
+      inp.checked = inp.value === cid;
+    });
+    document.querySelectorAll('#tbodyAll tr').forEach((tr) => {
+      tr.classList.toggle('sel', tr.dataset.cid === cid);
     });
   }
 
-  async function loadMeta(){
+  function renderPool() {
+    const grid = $('poolGrid');
+    grid.innerHTML = '';
+    const rows = poolRows || [];
+    if (!rows.length) {
+      grid.innerHTML = '<p class="tagline">暂无奖池数据（或当日无人领资格）</p>';
+      return;
+    }
+    const maxSec = Math.max(1, ...rows.map((p) => Number(p.online_seconds) || 0));
+    const cur = ($('winnerCid').value || '').trim();
+    rows.forEach((p) => {
+      const cid = String(p.character_id || '');
+      const name = String(p.role_name || cid || '—');
+      const sec = Number(p.online_seconds) || 0;
+      const pct = Math.round((sec / maxSec) * 100);
+      const initial = (name.trim().slice(0, 1) || '?').toUpperCase();
+      const lab = document.createElement('label');
+      lab.className = 'pcard';
+      lab.innerHTML =
+        '<input type="radio" name="winCid" value="' + esc(cid) + '"' + (cid === cur ? ' checked' : '') + ' />' +
+        '<div class="pcard-head">' +
+        '<span class="ava">' + esc(initial) + '</span>' +
+        '<div><div class="pname">' + esc(name) + '</div><div class="pcid">' + esc(cid) + '</div></div></div>' +
+        '<div class="hbar-wrap"><div class="hbar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="pool-meta">在线 ' + sec + ' 秒 · 已达 3h ' + (sec >= 10800 ? '✓' : '…') + '</div>';
+      lab.querySelector('input').addEventListener('change', () => {
+        if (lab.querySelector('input').checked) setWinner(cid, name);
+      });
+      grid.appendChild(lab);
+    });
+  }
+
+  async function loadMeta() {
     const { data } = await api('meta', { day: dayVal() });
-    if (!data || !data.server_now){
-      $('metaLine1').textContent = '无法连接';
-      $('metaLine2').textContent = '';
-      $('metaLine3').textContent = '';
+    if (!data || !data.server_now) {
+      $('pillDay').textContent = '—';
       return;
     }
     const dr = data.draw_record || {};
-    const winner = dr.drawn ? (dr.winner_role_name || dr.winner_character_id || '—') : '未开奖';
-    $('metaLine1').textContent = 'server_now=' + data.server_now + ' | tz=' + data.tz;
-    $('metaLine2').textContent = 'query_day=' + data.query_day + ' | deadline=' + data.draw_deadline + ' | deadline_passed=' + (data.deadline_passed ? 'true' : 'false');
-    $('metaLine3').textContent = 'issue=' + (data.issue || '') + ' | winner=' + winner + ' | participants=' + (dr.participant_count ?? '—');
+    $('pillDay').textContent = data.query_day || '';
+    $('pillIssue').textContent = data.issue || '';
+    $('pillDl').textContent = (data.draw_deadline || '').slice(5, 16) + '…';
+    $('pillPool').textContent = dr.participant_count != null ? dr.participant_count : '—';
+    $('pillSt').textContent = dr.drawn ? ('已开 · ' + (dr.winner_role_name || dr.winner_character_id || '')) : (data.deadline_passed ? '过截止' : '未开奖');
   }
 
-  async function loadPool(){
+  async function loadPool() {
     const { data } = await api('list', { day: dayVal() });
-    const tbody = $('tbodyPool');
-    tbody.innerHTML = '';
-    const rows = data.participants || [];
-    if (!rows.length){
-      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">暂无奖池</td></tr>';
-      return;
-    }
-    rows.forEach((p)=>{
-      const tr = document.createElement('tr');
-      tr.dataset.cid = p.character_id;
-      tr.innerHTML =
-        '<td>' + esc(p.role_name) + '</td>' +
-        '<td class="mono">' + esc(p.character_id) + '</td>' +
-        '<td>' + esc(String(p.online_seconds ?? '')) + '</td>' +
-        '<td>' + (p.claimed ? '是' : '否') + '</td>';
-      if (p.character_id === selectedCid) tr.classList.add('sel');
-      rowClick(tr, p);
-      tbody.appendChild(tr);
-    });
+    poolRows = data.participants || [];
+    renderPool();
   }
 
-  async function loadPlayers(){
-    const lim = parseInt($('listLimit').value, 10) || 300;
-    // 不筛「本期」，否则某角色还没写入 daletou.day 时，你就选不到它，从而“改玩家时间”看起来像失效
+  async function loadAll() {
+    const lim = parseInt($('listLimit').value, 10) || 400;
     const { data } = await api('list_players', { limit: lim });
-    const tbody = $('tbodyPlayers');
+    const tbody = $('tbodyAll');
     tbody.innerHTML = '';
     const rows = data.players || [];
-    if (!rows.length){
-      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">暂无角色</td></tr>';
-      return;
-    }
-    rows.forEach((p)=>{
+    rows.forEach((p) => {
       const tr = document.createElement('tr');
-      tr.dataset.cid = p.character_id;
+      const cid = String(p.character_id || '');
+      tr.dataset.cid = cid;
       tr.innerHTML =
         '<td>' + esc(p.role_name) + '</td>' +
-        '<td class="mono">' + esc(p.character_id) + '</td>' +
+        '<td class="mono">' + esc(cid) + '</td>' +
         '<td>' + esc(String(p.online_seconds ?? '')) + '</td>' +
         '<td>' + (p.claimed ? '是' : '否') + '</td>';
-      if (p.character_id === selectedCid) tr.classList.add('sel');
-      rowClick(tr, p);
+      tr.addEventListener('click', () => setWinner(cid, String(p.role_name || '')));
       tbody.appendChild(tr);
     });
   }
 
-  async function refreshAll(){
+  async function refresh() {
     await loadMeta();
     await loadPool();
-    await loadPlayers();
+    await loadAll();
   }
 
-  function needSelected(){
-    if (!selectedCid){ toast('请先选中角色', false); return false; }
-    return true;
-  }
+  $('dToday').onclick = () => { $('day').value = todayStr(); refresh(); };
+  $('btnRefresh').onclick = () => refresh();
+  $('btnListDraws').onclick = async () => {
+    await api('list_draws', { limit: 20 });
+    toast('已拉取 list_draws', true);
+  };
 
-  $('dToday').onclick = ()=>{ $('day').value = todayStr(); refreshAll(); };
-  $('btnRefresh').onclick = ()=>{ refreshAll(); };
-  $('btnReloadPool').onclick = ()=>{ loadPool(); };
-  $('btnReloadPlayers').onclick = ()=>{ loadPlayers(); };
-
-  document.querySelectorAll('[data-sec]').forEach((b)=>{
-    b.addEventListener('click', ()=>{ $('onlineSec').value = b.getAttribute('data-sec'); });
+  document.querySelectorAll('[data-sec]').forEach((b) => {
+    b.addEventListener('click', () => { $('onlineSec').value = b.getAttribute('data-sec'); });
   });
-
-  $('btnSetOnline').onclick = async ()=>{
-    if (!needSelected()) return;
-    const day = dayVal();
-    const online_seconds = parseInt($('onlineSec').value, 10) || 0;
-    await api('set_online', { character_id: selectedCid, day, online_seconds });
-    await refreshAll();
-    toast('写入在线完成', true);
+  $('btnSetOnline').onclick = async () => {
+    const w = ($('winnerCid').value || '').trim();
+    if (!w) { toast('先选中 cid', false); return; }
+    await api('set_online', { character_id: w, day: dayVal(), online_seconds: parseInt($('onlineSec').value, 10) || 0 });
+    await refresh();
+    toast('在线已写入', true);
+  };
+  $('btnClaimOn').onclick = async () => {
+    const w = ($('winnerCid').value || '').trim();
+    if (!w) { toast('先选中 cid', false); return; }
+    await api('set_claimed', { character_id: w, day: dayVal(), claimed: true });
+    await refresh();
+    toast('已标记已领', true);
+  };
+  $('btnClaimOff').onclick = async () => {
+    const w = ($('winnerCid').value || '').trim();
+    if (!w) { toast('先选中 cid', false); return; }
+    await api('set_claimed', { character_id: w, day: dayVal(), claimed: false });
+    await refresh();
+    toast('已取消已领', true);
   };
 
-  $('btnClaimOn').onclick = async ()=>{
-    if (!needSelected()) return;
-    const day = dayVal();
-    await api('set_claimed', { character_id: selectedCid, day, claimed: true });
-    await refreshAll();
-    toast('已标记已领取', true);
+  $('btnDrawNow').onclick = async () => {
+    const immediate = $('chkImmediate').checked;
+    const w = ($('winnerCid').value || '').trim();
+    if (!w) {
+      toast('请先点选奖池卡片或全角色表，指定头奖 cid', false);
+      return;
+    }
+    const msg = immediate
+      ? '确认立即开奖？将写入头奖为：' + w
+      : '自然开奖模式：若未到 D+1 零点可能不写库。仍使用指定 cid？';
+    if (!confirm(msg)) return;
+    await api('draw', { day: dayVal(), immediate, winner_character_id: w });
+    await refresh();
+    toast('开奖请求已执行', true);
   };
 
-  $('btnClaimOff').onclick = async ()=>{
-    if (!needSelected()) return;
-    const day = dayVal();
-    await api('set_claimed', { character_id: selectedCid, day, claimed: false });
-    await refreshAll();
-    toast('已取消已领取', true);
+  $('btnDrawRandom').onclick = async () => {
+    if (!confirm('立即开奖且头奖随机？')) return;
+    await api('draw', { day: dayVal(), immediate: true, winner_character_id: null });
+    await refresh();
+    toast('已请求随机头奖', true);
   };
 
-  $('btnDrawNow').onclick = async ()=>{
-    const day = dayVal();
-    const winner_character_id = ($('winnerCid')?.value || '').trim() || null;
-    await api('draw', { day, immediate: true, winner_character_id });
-    await refreshAll();
-    toast('立刻开奖完成', true);
+  $('btnDrawNatural').onclick = async () => {
+    const w = ($('winnerCid').value || '').trim() || null;
+    await api('draw', { day: dayVal(), immediate: false, winner_character_id: w });
+    await refresh();
+    toast('已请求自然开奖', true);
   };
 
-  $('btnDrawNatural').onclick = async ()=>{
-    const day = dayVal();
-    const winner_character_id = ($('winnerCid')?.value || '').trim() || null;
-    await api('draw', { day, immediate: false, winner_character_id });
-    await refreshAll();
-    toast('自然开奖已触发（若未到点可能未写入）', true);
-  };
+  async function doResetDraw() {
+    const d = dayVal();
+    if (!confirm('确认一键删除「' + d + '」的大乐透开奖记录？\n\n· 不扣玩家已发能量\n· 可再次做开奖测试')) return;
+    await api('reset_draw', { day: d });
+    await refresh();
+    toast('当日开奖记录已清除', true);
+  }
+  $('btnOneClickReset').onclick = () => doResetDraw();
 
-  $('btnResetDraw').onclick = async ()=>{
-    const day = dayVal();
-    if (!confirm('确认删除「' + day + '」的开奖记录？')) return;
-    await api('reset_draw', { day });
-    await refreshAll();
-    toast('已删除开奖记录', true);
-  };
-
-  // init
+  $('baseUrl').addEventListener('change', () => { try { localStorage.setItem(LS, $('baseUrl').value); } catch (e) {} });
   $('day').value = todayStr();
   $('baseUrl').value = localStorage.getItem(LS) || 'http://127.0.0.1:8080';
-  refreshAll().catch((e)=>{ $('raw').textContent = String(e); toast('首次加载失败', false); });
+  refresh().catch((e) => toast(String(e), false));
 })();
 </script>
 </body>
 </html>
-

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>期货 MiniGame2 · 运维台</title>
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --card: #151922;
+      --line: #2a3142;
+      --txt: #eef1f6;
+      --dim: #8b93a7;
+      --accent: #8b5cf6;
+      --mint: #2dd4bf;
+      --glow: rgba(139, 92, 246, 0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font: 14px/1.45 system-ui, sans-serif;
+      background: radial-gradient(900px 500px at 100% 0%, #221a38 0%, var(--bg) 50%), var(--bg);
+      color: var(--txt);
+    }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 20px 16px 48px; }
+    h1 { font-size: 1.35rem; font-weight: 700; margin: 0 0 6px; }
+    .tagline { color: var(--dim); font-size: 12px; margin-bottom: 14px; }
+    details.hint { color: var(--dim); font-size: 12px; margin-bottom: 14px; }
+    .topbar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+      padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 16px;
+    }
+    .topbar input {
+      padding: 9px 11px; border-radius: 10px; border: 1px solid var(--line);
+      background: #0f1218; color: var(--txt); font: inherit;
+    }
+    button {
+      padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line);
+      background: linear-gradient(180deg, #7c3aed, #6d28d9); color: #fff;
+      font: inherit; font-weight: 600; cursor: pointer;
+    }
+    button.sec { background: #2a3142; color: #e5e7eb; }
+    button.ghost { background: transparent; color: var(--dim); }
+    button.bad { background: linear-gradient(180deg, #f87171, #dc2626); border-color: #991b1b; color: #fff; }
+    .stat-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .pill {
+      padding: 8px 14px; border-radius: 999px; background: var(--card);
+      border: 1px solid var(--line); font-size: 12px; color: var(--dim);
+    }
+    .pill strong { color: var(--txt); margin-left: 6px; }
+    .section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      margin: 0 0 12px;
+    }
+    .cat-viz { display: flex; flex-direction: column; gap: 8px; }
+    .cat-row { display: grid; grid-template-columns: 120px 1fr 48px; gap: 10px; align-items: center; font-size: 12px; }
+    .cat-row .name { color: var(--dim); }
+    .cat-bar { height: 12px; border-radius: 6px; background: #0f1218; overflow: hidden; }
+    .cat-bar i {
+      display: block; height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--accent), #c4b5fd);
+      box-shadow: 0 0 10px var(--glow);
+      transition: width 0.35s ease;
+    }
+    .cat-row .amt { text-align: right; font-family: ui-monospace, monospace; color: var(--mint); }
+    .pgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .pcard {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #0f1218;
+    }
+    .pcard .t { font-weight: 700; font-size: 13px; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .pcard .sub { font-size: 11px; color: var(--dim); line-height: 1.35; }
+    .strat { display: flex; flex-wrap: wrap; gap: 14px; margin: 12px 0; font-size: 13px; color: var(--dim); }
+    .strat label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    select#selWinnerKey {
+      padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+      background: #0f1218; color: var(--txt); font: inherit; min-width: 200px;
+    }
+    .row-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }
+    .rounds { max-height: 200px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: var(--dim); }
+    tr { cursor: pointer; }
+    tr:hover td { background: rgba(139, 92, 246, 0.08); }
+    pre#raw {
+      margin: 0; padding: 12px; border-radius: 10px; background: #0a0c10;
+      border: 1px solid var(--line); font: 11px/1.45 ui-monospace, monospace;
+      max-height: 260px; overflow: auto; white-space: pre-wrap; word-break: break-all; color: #9ca3af;
+    }
+    .toast {
+      position: fixed; right: 14px; bottom: 14px; padding: 12px 16px; border-radius: 10px;
+      display: none; z-index: 50; max-width: min(440px, 94vw); font-size: 13px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .toast.show { display: block; }
+    .toast.ok { background: #134e4a; color: #99f6e4; }
+    .toast.err { background: #7f1d1d; color: #fecaca; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>期货 · 可视化运维</h1>
+  <p class="tagline">类目筹码分布 · 已下注玩家仅作<strong>可视化</strong> · 支持<strong>立即开奖</strong>（指定类目或随机）</p>
+  <details class="hint"><summary>安全</summary><code>/api/minigame2</code> 含 <code>force_draw</code>，无鉴权，仅本机。</details>
+
+  <div class="topbar">
+    <input id="baseUrl" type="text" placeholder="http://127.0.0.1:8080" style="flex:2;min-width:200px" />
+    <input id="issueKey" class="mono" type="text" placeholder="issue YYYYMMDDHH" style="width:150px" />
+    <button type="button" class="sec" id="btnFromMeta">当前期</button>
+    <button type="button" id="btnLoad">加载本期的注单</button>
+    <input id="roundLimit" type="number" value="35" min="5" max="200" style="width:64px" title="list_rounds" />
+    <button type="button" class="sec" id="btnRounds">轮次表</button>
+  </div>
+
+  <div class="stat-row" id="pills">
+    <span class="pill">期 <strong id="pIssue">—</strong></span>
+    <span class="pill">封盘 <strong id="pClose">—</strong></span>
+    <span class="pill">剩余秒 <strong id="pSec">—</strong></span>
+    <span class="pill">状态 <strong id="pDrawn">—</strong></span>
+  </div>
+
+  <div class="section" style="border-color:#7f1d1d">
+    <h2>清除本期开奖状态（重置当期）</h2>
+    <p class="tagline">删除 <code>minigame2_rounds</code> 里当前 <strong>issue_key</strong> 对应记录 → 游戏端视为未开奖，可继续下注/再测开奖。<strong>不</strong>改玩家能量、<strong>不</strong>删注单；若之后再 force_draw，同一笔下注可能<strong>重复派奖</strong>，仅本机复测使用。</p>
+    <div class="row-actions" style="margin:0">
+      <button type="button" class="bad" id="btnClearRound">一键清除本期开奖记录（不扣奖励）</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>类目筹码（本期已下注合计）</h2>
+    <div class="cat-viz" id="catViz"></div>
+  </div>
+
+  <div class="section">
+    <h2>已下注玩家（只读）</h2>
+    <p class="tagline">不参与开奖指定；开奖用下方「指定类目」或「随机」。</p>
+    <div class="pgrid" id="pgrid"></div>
+  </div>
+
+  <div class="section">
+    <h2>开奖策略</h2>
+    <div class="strat">
+      <label><input type="radio" name="st" value="explicit" /> 指定类目</label>
+      <label><input type="radio" name="st" value="random" checked /> 随机（优先有筹码类目）</label>
+    </div>
+    <div class="row-actions">
+      <span class="tagline">指定类目：</span>
+      <select id="selWinnerKey"><option value="">— 先点「加载」—</option></select>
+    </div>
+    <div class="row-actions">
+      <label class="tagline" style="display:flex;align-items:center;gap:8px;margin:0">
+        <input type="checkbox" id="chkImmediate" checked /> 立即开奖（未到封盘也可）
+      </label>
+    </div>
+    <div class="row-actions">
+      <button type="button" id="btnForce">执行 force_draw</button>
+      <button type="button" class="ghost" id="btnMeta">仅刷新 meta</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>最近轮次（点击行填 issue）</h2>
+    <div class="rounds">
+      <table><thead><tr><th>issue</th><th>开奖</th><th>winner</th></tr></thead><tbody id="tbR"></tbody></table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>原始响应</h2>
+    <pre id="raw">{}</pre>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const LS = 'minigame2_test_base_url';
+  const base = () => ($('baseUrl').value || '').replace(/\/$/, '');
+  let lastBets = [];
+  let categories = [];
+  let toastTimer = null;
+
+  function toast(msg, ok) {
+    const el = $('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + (ok ? 'ok' : 'err');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = 'toast'; }, 3200);
+  }
+
+  async function api(action, body) {
+    let data;
+    try {
+      const r = await fetch(base() + '/api/minigame2', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({ action }, body || {})),
+      });
+      const text = await r.text();
+      try { data = JSON.parse(text); } catch (e) { data = { raw: text }; }
+      $('raw').textContent = JSON.stringify(data, null, 2);
+      const ok = r.ok && data.success !== false;
+      if (!ok) toast(data.message || data.error || 'HTTP ' + r.status, false);
+      return { data, ok };
+    } catch (e) {
+      $('raw').textContent = String(e);
+      toast('网络: ' + e, false);
+      return { data: {}, ok: false };
+    }
+  }
+
+  function esc(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  }
+
+  function agg(bets) {
+    const byC = {};
+    const byCat = {};
+    for (const b of bets) {
+      const cid = String(b.character_id || '');
+      const k = String(b.selected_key || '');
+      const amt = Number(b.bet_amount) || 0;
+      if (!cid) continue;
+      if (!byC[cid]) byC[cid] = { total: 0, keys: {} };
+      byC[cid].total += amt;
+      byC[cid].keys[k] = (byC[cid].keys[k] || 0) + amt;
+      byCat[k] = (byCat[k] || 0) + amt;
+    }
+    return { byC, byCat };
+  }
+
+  function fillCategorySelect() {
+    const sel = $('selWinnerKey');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">（选择类目）</option>';
+    categories.forEach((c) => {
+      const k = String(c.key || '');
+      const op = document.createElement('option');
+      op.value = k;
+      op.textContent = (c.name || k) + ' x' + (c.multiplier || '');
+      sel.appendChild(op);
+    });
+    if (cur && [...sel.options].some((o) => o.value === cur)) sel.value = cur;
+  }
+
+  function renderViz(byCat) {
+    const el = $('catViz');
+    el.innerHTML = '';
+    const keys = categories.length
+      ? categories.map((c) => String(c.key))
+      : Object.keys(byCat);
+    const max = Math.max(1, ...keys.map((k) => byCat[k] || 0));
+    keys.forEach((k) => {
+      const amt = byCat[k] || 0;
+      const meta = categories.find((c) => String(c.key) === k);
+      const label = meta ? meta.name : k;
+      const pct = Math.round((amt / max) * 100);
+      const row = document.createElement('div');
+      row.className = 'cat-row';
+      row.innerHTML =
+        '<span class="name">' + esc(label) + '</span>' +
+        '<div class="cat-bar"><i style="width:' + (amt ? pct : 0) + '%"></i></div>' +
+        '<span class="amt">' + amt + '</span>';
+      el.appendChild(row);
+    });
+  }
+
+  function renderPlayers(byC) {
+    const g = $('pgrid');
+    g.innerHTML = '';
+    const ids = Object.keys(byC).sort((a, b) => byC[b].total - byC[a].total);
+    if (!ids.length) {
+      g.innerHTML = '<p class="tagline">暂无下注</p>';
+      return;
+    }
+    ids.forEach((cid) => {
+      const o = byC[cid];
+      const chips = Object.entries(o.keys)
+        .map(([k, v]) => k + ':' + v)
+        .join(' · ');
+      const card = document.createElement('div');
+      card.className = 'pcard';
+      card.innerHTML = '<div class="t">' + esc(cid) + '</div><div class="sub">合计 ' + o.total + '<br/>' + esc(chips) + '</div>';
+      g.appendChild(card);
+    });
+  }
+
+  async function loadMeta() {
+    const { data } = await api('meta', {});
+    if (!data || !data.server_now) return;
+    categories = Array.isArray(data.categories) ? data.categories : [];
+    fillCategorySelect();
+    $('pIssue').textContent = data.issue_key || '—';
+    $('pClose').textContent = (data.close_time || '').slice(5, 16) + '…';
+    $('pSec').textContent = data.seconds_until_close ?? '—';
+    const rd = data.round_doc;
+    $('pDrawn').textContent = rd && rd.drawn ? ('已开 ' + (rd.winner_key || '')) : '未开';
+    if (data.issue_key && !($('issueKey').value || '').trim()) $('issueKey').value = data.issue_key;
+  }
+
+  async function loadBets() {
+    const ik = ($('issueKey').value || '').trim();
+    if (!ik) {
+      toast('填写 issue_key', false);
+      return;
+    }
+    const { data, ok } = await api('list_bets', { issue_key: ik, limit: 800 });
+    if (!ok) return;
+    lastBets = data.bets || [];
+    const { byC, byCat } = agg(lastBets);
+    renderViz(byCat);
+    renderPlayers(byC);
+  }
+
+  async function loadRounds() {
+    const lim = parseInt($('roundLimit').value, 10) || 35;
+    const { data } = await api('list_rounds', { limit: lim });
+    const tb = $('tbR');
+    tb.innerHTML = '';
+    (data.rounds || []).forEach((r) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="mono">' + esc(r.issue_key) + '</td>' +
+        '<td>' + (r.drawn ? '是' : '否') + '</td>' +
+        '<td>' + esc(String(r.winner_key ?? '—')) + '</td>';
+      tr.addEventListener('click', () => {
+        $('issueKey').value = String(r.issue_key || '');
+        loadBets();
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  async function doForce() {
+    const ik = ($('issueKey').value || '').trim();
+    if (!ik) {
+      toast('issue_key 必填', false);
+      return;
+    }
+    const immediate = $('chkImmediate').checked;
+    const st = [...document.querySelectorAll('input[name="st"]')].find((x) => x.checked)?.value || 'random';
+    const body = { issue_key: ik, immediate };
+    if (st === 'explicit') {
+      const wk = ($('selWinnerKey').value || '').trim();
+      if (!wk) {
+        toast('指定类目时请在下拉框选择 winner_key', false);
+        return;
+      }
+      body.winner_key = wk;
+    }
+    const msg = immediate
+      ? '确认立即 force_draw？将写入开奖并结算能量。'
+      : '未到封盘时 immediate=false 可能被拒绝。仍执行？';
+    if (!confirm(msg)) return;
+    const { data, ok } = await api('force_draw', body);
+    if (ok) toast(data.already_drawn ? '已开过奖' : '开奖完成 · ' + (data.winner_key || ''), true);
+    await loadMeta();
+    await loadBets();
+    await loadRounds();
+  }
+
+  $('btnFromMeta').onclick = () => loadMeta();
+  $('btnLoad').onclick = () => loadBets();
+  $('btnRounds').onclick = () => loadRounds();
+  $('btnMeta').onclick = () => loadMeta();
+  $('btnForce').onclick = () => doForce();
+
+  $('btnClearRound').onclick = async () => {
+    const ik = ($('issueKey').value || '').trim();
+    if (!ik) {
+      toast('先填写上方 issue_key（可点「当前期」）', false);
+      return;
+    }
+    if (!confirm('清除 issue「' + ik + '」的开奖记录？\n\n· 不扣玩家已发能量\n· 不删注单\n· 再次开奖可能重复派奖')) return;
+    const { data, ok } = await api('clear_round_draw', { issue_key: ik });
+    if (ok) toast('已清除，deleted_count=' + (data.deleted_count ?? 0), true);
+    await loadMeta();
+    await loadRounds();
+  };
+
+  $('baseUrl').addEventListener('change', () => { try { localStorage.setItem(LS, $('baseUrl').value); } catch (e) {} });
+  $('baseUrl').value = localStorage.getItem(LS) || 'http://127.0.0.1:8080';
+  loadMeta().then(loadRounds).catch((e) => toast(String(e), false));
+})();
+</script>
+</body>
+</html>

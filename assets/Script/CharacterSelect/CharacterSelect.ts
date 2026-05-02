@@ -4,6 +4,7 @@ import { GameConfig } from '../global/GameConfig';
 import { DataCacheManager } from '../global/DataCacheManager';
 import { RobotShow } from '../Game/RobotShow';
 import { getEnergyBlocksFromPayload } from '../global/MessageTypes';
+import { CharacterCreatePanel } from './CharacterPanel';
 const { ccclass, property } = _decorator;
 
 @ccclass('CharacterSelect')
@@ -36,6 +37,9 @@ export class CharacterSelect extends Component {
     // 新增：Loading节点（在场景中绑定到`Loading`节点）
     @property({ type: Node, tooltip: '切换到Game场景前的加载遮罩' })
     loadingNode: Node | null = null;
+
+    @property({ type: Label, tooltip: '首次进入选角的操作提示（可选绑定，约5秒后自动隐藏）' })
+    slotHintLabel: Label | null = null;
 
     private wsManager: WebSocketManager = null!;
     private selectedIndex: number = 0;
@@ -72,6 +76,45 @@ export class CharacterSelect extends Component {
             } catch (_) {}
         }
         this.initOneShotTimers.length = 0;
+    }
+
+    /** 坐标分量显示为整数（四舍五入），避免浮点误差拉出长小数 */
+    private roundCoordForDisplay(v: any): number | null {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return null;
+        return Math.round(n);
+    }
+
+    /** 详情里职位/坐标一行：只显示 x, y（整数），避免整段 JSON（含 updated_at 等）撑爆界面 */
+    private formatPositionForLabel(position: any): string {
+        if (position == null) return '';
+        let p: any = position;
+        if (typeof p === 'string') {
+            const s = p.trim();
+            if (!s) return '';
+            try {
+                p = JSON.parse(s);
+            } catch {
+                return '';
+            }
+        }
+        if (Array.isArray(p) && p.length >= 2) {
+            const xr = this.roundCoordForDisplay(p[0]);
+            const yr = this.roundCoordForDisplay(p[1]);
+            if (xr === null || yr === null) return '';
+            return `${xr}, ${yr}`;
+        }
+        if (typeof p === 'object') {
+            const x = p.x ?? p.X;
+            const y = p.y ?? p.Y;
+            if (x !== undefined && x !== null && y !== undefined && y !== null) {
+                const xr = this.roundCoordForDisplay(x);
+                const yr = this.roundCoordForDisplay(y);
+                if (xr === null || yr === null) return '';
+                return `${xr}, ${yr}`;
+            }
+        }
+        return '';
     }
 
     onLoad() {
@@ -113,7 +156,7 @@ export class CharacterSelect extends Component {
     private preloadGameScene(): void {
         const startTime = Date.now();
         
-        director.preloadScene('Game', () => {}, (error) => {
+        director.preloadScene(GameConfig.SCENE_NAMES.GAME, () => {}, (error) => {
             if (error) {
                 this.gameScenePreloaded = false;
             } else {
@@ -268,6 +311,19 @@ export class CharacterSelect extends Component {
         
             // 首次选中第 0 槽（背景与详情面板）；列表数据由 refreshAllSlots / 批量响应刷新
         try { this.applySlotSelection(0, false); this.refreshAllSlots(); } catch {}
+        this.scheduleSlotHintOnce();
+    }
+
+    /** 首次进入时提示：单击槽位即可显示创建/进入游戏等按钮；快速双击同一槽可收起 */
+    private scheduleSlotHintOnce(): void {
+        if (!this.slotHintLabel || !this.slotHintLabel.node) return;
+        this.slotHintLabel.node.active = true;
+        this.slotHintLabel.string = '单击角色槽位可选中并显示操作；同一槽位快速双击可收起按钮';
+        this.scheduleOnce(() => {
+            if (this.slotHintLabel && this.slotHintLabel.isValid) {
+                this.slotHintLabel.node.active = false;
+            }
+        }, 5);
     }
 
     /**
@@ -306,7 +362,7 @@ export class CharacterSelect extends Component {
         if (this.allianceLabel) this.allianceLabel.string = data.alliance || '';
         if (this.recordLabel) this.recordLabel.string = data.record || '';
         if (this.robotcountLabel) this.robotcountLabel.string = data.robotcount != null ? String(data.robotcount) : '';
-        if (this.positionLabel) this.positionLabel.string = data.position ? JSON.stringify(data.position) : '';
+        if (this.positionLabel) this.positionLabel.string = this.formatPositionForLabel(data.position);
         if (this.rankLabel) this.rankLabel.string = data.rank || '';
         this.setLabelsActive(true);
     }
@@ -492,14 +548,15 @@ export class CharacterSelect extends Component {
         });
         
         const now = Date.now();
-        if (this.lastClickSlot === idx && now - this.lastClickTime < 400) { // 400ms内双击
+        const doubleTapSame = this.lastClickSlot === idx && now - this.lastClickTime < 400;
+        if (doubleTapSame) {
             if (this.showBtnSlot === idx) {
-                this.hideAllSlotButtons(); // 再次双击同一槽位则隐藏
+                this.hideAllSlotButtons();
             } else {
-                this.showSlotButtons(idx); // 双击显示
+                this.showSlotButtons(idx);
             }
         } else {
-            this.hideAllSlotButtons(); // 切换槽位时隐藏
+            this.showSlotButtons(idx);
         }
         this.lastClickSlot = idx;
         this.lastClickTime = now;
@@ -535,7 +592,7 @@ export class CharacterSelect extends Component {
                 if (this.allianceLabel) this.allianceLabel.string = data.alliance || '';
                 if (this.recordLabel) this.recordLabel.string = data.record || '';
                 if (this.robotcountLabel) this.robotcountLabel.string = data.robotcount != null ? String(data.robotcount) : '';
-                if (this.positionLabel) this.positionLabel.string = data.position ? JSON.stringify(data.position) : '';
+                if (this.positionLabel) this.positionLabel.string = this.formatPositionForLabel(data.position);
                 if (this.rankLabel) this.rankLabel.string = data.rank || '';
                 this.setLabelsActive(true);
             } else {
@@ -572,8 +629,8 @@ export class CharacterSelect extends Component {
                 request_id: requestId
             },
             undefined,  // 不使用 request 回调，改为依赖全局事件 character_info_response
-            true,  // 需要认证
-            5000  // 提升到25秒，减少偶发408超时
+            true,
+            10000
         );
     }
 
@@ -785,7 +842,7 @@ export class CharacterSelect extends Component {
                 if (this.allianceLabel) this.allianceLabel.string = mergedData.alliance || '';
                 if (this.recordLabel) this.recordLabel.string = mergedData.record || '';
                 if (this.robotcountLabel) this.robotcountLabel.string = mergedData.robotcount != null ? String(mergedData.robotcount) : '';
-                if (this.positionLabel) this.positionLabel.string = mergedData.position ? JSON.stringify(mergedData.position) : '';
+                if (this.positionLabel) this.positionLabel.string = this.formatPositionForLabel(mergedData.position);
                 if (this.rankLabel) this.rankLabel.string = mergedData.rank || '';
                 this.setLabelsActive(true);
             }
@@ -937,7 +994,7 @@ export class CharacterSelect extends Component {
         if (this.createPanel) {
             this.createPanel.active = true;
             // 使用正确的组件类名，而不是字符串
-            const characterPanel = this.createPanel.getComponent('CharacterCreatePanel') as any;
+            const characterPanel = this.createPanel.getComponent(CharacterCreatePanel);
             if (characterPanel && typeof characterPanel.setSlotIndex === 'function') {
                 characterPanel.setSlotIndex(idx);
             }
@@ -998,7 +1055,7 @@ export class CharacterSelect extends Component {
         this.waitJumpAfterPreload = true;
         if (!this.preloadingForJump) {
             this.preloadingForJump = true;
-            director.preloadScene('Game', () => {}, (error) => {
+            director.preloadScene(GameConfig.SCENE_NAMES.GAME, () => {}, (error) => {
                 this.preloadingForJump = false;
                 if (!error) {
                     this.gameScenePreloaded = true;
@@ -1113,9 +1170,9 @@ export class CharacterSelect extends Component {
             10000
         );
         
-        // 设置超时（5秒后如果还没收到响应，取消操作）
+        // 与上方 request(..., 10000) 对齐：客户端略长 2s，避免网络抖动误杀
         this.selectCharacterTimeout = setTimeout(() => {
-            console.error('❌ 选择角色超时（5秒）');
+            console.error('❌ 选择角色超时（12秒）');
             this.hideLoading();
             this.pendingStartGameSlot = -1;
             this.selectCharacterTimeout = null;
@@ -1124,7 +1181,7 @@ export class CharacterSelect extends Component {
             if (this.startgameButtons[idx]) {
                 this.startgameButtons[idx].interactable = true;
             }
-        }, 5000);
+        }, 12000);
     }
 
     /**
@@ -1186,7 +1243,7 @@ export class CharacterSelect extends Component {
      */
     private jumpToGameScene(): void {
         console.log('🔄 开始跳转到Game场景...');
-        director.loadScene('Game', (error) => {
+        director.loadScene(GameConfig.SCENE_NAMES.GAME, (error) => {
             // 场景加载完成后隐藏Loading（如果还在CharacterSelect场景）
             if (this.loadingNode) {
                 this.loadingNode.active = false;
@@ -1208,7 +1265,7 @@ export class CharacterSelect extends Component {
         
         // 减少延迟时间
         setTimeout(() => {
-            director.loadScene('CharacterSelect', (error) => {
+            director.loadScene(GameConfig.SCENE_NAMES.CHARACTER_SELECT, (error) => {
                 if (error) {
                     console.error('❌ 跳转回角色选择场景失败:', error);
                 } else {

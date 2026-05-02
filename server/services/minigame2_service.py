@@ -8,7 +8,7 @@
 - 下注使用能量块（energy_blocks）
 - 失败不返还：下注时立刻扣除本金；若未中奖，本金归零
 - 中奖发放：只给中奖者 bet_amount * winner_multiplier（扣除本金后直接乘倍率）
-- 每个角色在同一轮只能下注一次（不可更改）
+- 同一角色同一期可对多个类目分别下注；同一类目多次下注会累加金额（DB 唯一键：issue_key+character_id+selected_key）
 - 幂等保护：依赖 server/handlers/minigame2_handler.py 的 request_id 缓存
 """
 
@@ -27,7 +27,7 @@ except ImportError:  # pragma: no cover
     ZoneInfo = None  # type: ignore
 
 from pymongo.errors import DuplicateKeyError
-from pymongo import UpdateOne
+from pymongo import ReturnDocument, UpdateOne
 
 TZ_NAME = "Asia/Shanghai"
 ROUND_HOURS = 3
@@ -389,6 +389,10 @@ async def build_sync_payload(user_id: str, character_id: str, now_dt: Optional[d
 
     round_drawn = bool(doc and doc.get("drawn"))
 
+    # 已开奖后不再展示“距封盘剩余秒数”，避免与「禁止继续下注」冲突（运维立即开奖时常见）
+    if round_drawn:
+        seconds_until_close = 0
+
     # 即使已经开奖，也保留玩家本期下注信息，方便客户端展示“我投了什么”（以及后续回报面板复用）
     my_bets = _get_player_my_bets(issue_key, character_id)
     balance = _get_player_balance(character_id)
@@ -617,6 +621,243 @@ async def _catchup_past_rounds(now_dt: datetime):
             await ensure_round_finalized(issue_key, now_dt)
 
 
+def admin_meta(now_dt: Optional[datetime] = None) -> Dict[str, Any]:
+    """
+    HTTP 运维：当前轮次元信息（只读，不改变状态）。
+    """
+    now_dt = resolve_now(now_dt)
+    issue_key, _round_start, close_dt = issue_key_for_dt(now_dt)
+    doc = _round_doc(issue_key)
+    seconds_until_close = max(0, int((close_dt - now_dt).total_seconds()))
+    return {
+        "server_now": now_local().strftime("%Y-%m-%d %H:%M:%S"),
+        "tz": TZ_NAME,
+        "issue_key": issue_key,
+        "close_time": close_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "seconds_until_close": seconds_until_close,
+        "round_doc": doc or None,
+        "categories": categories_payload(),
+    }
+
+
+def admin_list_rounds(limit: int = 20) -> list[Dict[str, Any]]:
+    """最近若干期开奖记录（issue_key 降序）。"""
+    if _rounds_col is None:
+        return []
+    lim = max(1, min(int(limit), 200))
+    cur = _rounds_col.find({}).sort("issue_key", -1).limit(lim)
+    out: list[Dict[str, Any]] = []
+    for doc in cur:
+        row = dict(doc)
+        if row.get("_id") is not None:
+            row["_id"] = str(row["_id"])
+        out.append(row)
+    return out
+
+
+def admin_list_bets(issue_key: str, limit: int = 500) -> list[Dict[str, Any]]:
+    """指定期号下的下注明细（只读）。"""
+    if _bets_col is None:
+        return []
+    ik = str(issue_key or "").strip()
+    if not ik:
+        return []
+    lim = max(1, min(int(limit), 2000))
+    cur = _bets_col.find({"issue_key": ik}).sort("bet_amount", -1).limit(lim)
+    out: list[Dict[str, Any]] = []
+    for doc in cur:
+        row = dict(doc)
+        if row.get("_id") is not None:
+            row["_id"] = str(row["_id"])
+        out.append(row)
+    return out
+
+
+def _serialize_round_doc(doc: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not doc:
+        return None
+    row = dict(doc)
+    if row.get("_id") is not None:
+        row["_id"] = str(row["_id"])
+    return row
+
+
+def _payout_winners_for_issue(issue_key: str, winner_key: str, winner_multiplier: int) -> int:
+    """对已标记开奖的期号，按中奖类目发放能量（与 ensure_round_finalized 逻辑一致）。返回发放笔数。"""
+    if _bets_col is None or _players_col is None:
+        return 0
+    bets_cursor = _bets_col.find(
+        {"issue_key": issue_key, "selected_key": winner_key},
+        {"character_id": 1, "bet_amount": 1},
+    )
+    ops: list[UpdateOne] = []
+    for b in bets_cursor:
+        cid = str(b.get("character_id", "")).strip()
+        bet_amount = _safe_int(b.get("bet_amount"), 0)
+        if not cid or bet_amount <= 0:
+            continue
+        prize = bet_amount * int(winner_multiplier)
+        ops.append(UpdateOne({"character_id": cid}, {"$inc": {"energy_blocks": prize}}))
+    if ops:
+        _players_col.bulk_write(ops, ordered=False)
+    return len(ops)
+
+
+def _resolve_admin_winner_key(issue_key: str, winner_key: Optional[str]) -> Tuple[Optional[str], str]:
+    """
+    决定运维强制开奖的类目：显式 winner_key > 随机有筹码类目 > 全表随机。
+    返回 (key 或 None, reason_code)
+    """
+    if winner_key:
+        wk = str(winner_key).strip()
+        if wk not in CAT_BY_KEY:
+            return None, "invalid_winner_key"
+        return wk, "explicit_winner_key"
+
+    sums: Dict[str, int] = {}
+    if _bets_col:
+        for doc in _bets_col.find({"issue_key": issue_key}, {"selected_key": 1, "bet_amount": 1}):
+            sk = str(doc.get("selected_key", "")).strip()
+            if not sk:
+                continue
+            sums[sk] = sums.get(sk, 0) + _safe_int(doc.get("bet_amount"), 0)
+    staked = [(k, v) for k, v in sums.items() if v > 0 and k in CAT_BY_KEY]
+    if staked:
+        staked.sort(key=lambda kv: kv[1], reverse=True)
+        top = [kv for kv in staked if kv[1] == staked[0][1]]
+        return random.choice(top)[0], "random_among_staked_categories"
+    return winner_pick_key(), "random_global"
+
+
+def admin_force_draw(
+    issue_key: str,
+    immediate: bool = True,
+    winner_key: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    运维强制开奖（HTTP 测试用）。immediate=False 时须已到本期 close_time。
+    与线上下注结算规则一致：仅中奖类目下的注单按倍率发放。
+    """
+    if _rounds_col is None or _bets_col is None or _players_col is None:
+        return {"success": False, "message": "service_not_ready"}
+
+    ik = str(issue_key or "").strip()
+    if not ik:
+        return {"success": False, "message": "issue_key_required"}
+
+    close_dt = get_close_time_for_issue_key(ik)
+    if close_dt is None:
+        return {"success": False, "message": "invalid_issue_key"}
+
+    close_time_str = close_dt.strftime("%Y-%m-%d %H:%M:%S")
+    now_dt = now_local()
+    if not immediate and now_dt < close_dt:
+        return {
+            "success": False,
+            "message": "betting_not_closed",
+            "seconds_until_close": max(0, int((close_dt - now_dt).total_seconds())),
+        }
+
+    doc = _round_doc(ik)
+    if doc and doc.get("drawn"):
+        return {
+            "success": True,
+            "already_drawn": True,
+            "draw": _serialize_round_doc(doc),
+            "message": "already_drawn",
+        }
+
+    wk, reason = _resolve_admin_winner_key(ik, winner_key)
+    if not wk:
+        return {"success": False, "message": reason}
+
+    cat = CAT_BY_KEY[wk]
+    mult = int(cat.multiplier)
+    drawn_at = time.time()
+    patch: Dict[str, Any] = {
+        "issue_key": ik,
+        "drawn": True,
+        "winner_key": wk,
+        "winner_multiplier": mult,
+        "drawn_at": drawn_at,
+        "close_time": close_time_str,
+        "admin_forced": True,
+        "admin_force_reason": reason,
+    }
+
+    # 原子写入：避免仅依赖 modified_count 在部分驱动/数据形态下误判为 0 导致「开奖无效」
+    did_write = False
+    after = _rounds_col.find_one_and_update(
+        {"issue_key": ik, "drawn": {"$ne": True}},
+        {"$set": patch},
+        return_document=ReturnDocument.AFTER,
+    )
+    if after is not None and after.get("drawn"):
+        did_write = True
+    else:
+        d2 = _round_doc(ik)
+        if d2 and d2.get("drawn"):
+            return {
+                "success": True,
+                "already_drawn": True,
+                "draw": _serialize_round_doc(d2),
+                "message": "race_already_drawn",
+            }
+        try:
+            _rounds_col.insert_one(patch)
+            did_write = True
+        except DuplicateKeyError:
+            d3 = _round_doc(ik)
+            if d3 and d3.get("drawn"):
+                return {
+                    "success": True,
+                    "already_drawn": True,
+                    "draw": _serialize_round_doc(d3),
+                    "message": "race_already_drawn",
+                }
+            after2 = _rounds_col.find_one_and_update(
+                {"issue_key": ik, "drawn": {"$ne": True}},
+                {"$set": patch},
+                return_document=ReturnDocument.AFTER,
+            )
+            if after2 is not None and after2.get("drawn"):
+                did_write = True
+            else:
+                return {
+                    "success": False,
+                    "message": "round_write_contended",
+                    "draw": _serialize_round_doc(_round_doc(ik)),
+                }
+
+    payout_rows = _payout_winners_for_issue(ik, wk, mult) if did_write else 0
+    final = _round_doc(ik)
+    return {
+        "success": True,
+        "already_drawn": False,
+        "winner_key": wk,
+        "winner_multiplier": mult,
+        "winner_pick_reason": reason,
+        "payout_rows": payout_rows,
+        "draw": _serialize_round_doc(final),
+    }
+
+
+def admin_clear_round_draw_record(issue_key: str) -> Dict[str, Any]:
+    """
+    运维：删除 minigame2_rounds 中该期的开奖记录（视为「未开奖」）。
+
+    不修改 players.energy_blocks、不删 minigame2_bets。
+    注意：若之后再次 force_draw，可能对同一笔下注重复派奖，仅用于本机复测。
+    """
+    if _rounds_col is None:
+        return {"success": False, "message": "service_not_ready"}
+    ik = str(issue_key or "").strip()
+    if not ik:
+        return {"success": False, "message": "issue_key_required"}
+    r = _rounds_col.delete_one({"issue_key": ik})
+    return {"success": True, "deleted_count": int(r.deleted_count)}
+
+
 def init_minigame2_service(rounds_col, bets_col, players_col):
     """
     初始化服务并启动后台开奖循环
@@ -643,5 +884,10 @@ __all__ = [
     "ensure_round_finalized",
     "categories_payload",
     "get_today_return_history",
+    "admin_meta",
+    "admin_list_rounds",
+    "admin_list_bets",
+    "admin_force_draw",
+    "admin_clear_round_draw_record",
 ]
 

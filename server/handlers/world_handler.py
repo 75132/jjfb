@@ -29,9 +29,10 @@ async def handle_world_enter(websocket, data, current_user_id, current_character
     if map_id <= 0:
         map_id = 1
 
-    player = await utils.async_mongo_operation(
+    player = await utils.async_mongo_operation_read(
         lambda: utils.players_col.find_one({'character_id': cid}),
-        timeout=2.0,
+        max_retries=3,
+        timeout=3.0,
     )
     if not player or str(player.get('user_id')) != str(user.get('_id')):
         await utils.send_error_response(websocket, 'world_enter', '角色不存在', code=404, request_data=data)

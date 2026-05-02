@@ -631,6 +631,26 @@ async def handle_route(route: str, websocket, data: dict,
         # 记录成功调用
         duration = time.time() - start_time
         route_stats_service.record_call(route, duration, is_error=False)
+        # 关键路由慢请求可观测（与 ws_server 慢请求日志互补，便于对齐客户端超时）
+        _SLOW_ROUTES_MS = {
+            'get_robot_pets': 2500.0,
+            'world_enter': 2000.0,
+            'bag_write_random': 3000.0,
+            'minigame2_sync': 2000.0,
+            'bag_use_item': 3000.0,
+        }
+        thr = _SLOW_ROUTES_MS.get(route)
+        if thr is not None and duration * 1000.0 >= thr:
+            try:
+                from services.logger_service import get_logger
+                get_logger().warning(
+                    '路由耗时偏高',
+                    route=route,
+                    duration_ms=round(duration * 1000.0, 2),
+                    threshold_ms=thr,
+                )
+            except Exception:
+                pass
         
         # 处理返回值
         if route_handler.returns_user_ids:

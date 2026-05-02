@@ -71,6 +71,11 @@ def init_utils(users, account_limits, players, characters, messages,
     query_cache = qcache if qcache is not None else {}
     LEVEL_TOTAL_EXP = level_exp
 
+def mongo_op_once(operation):
+    """单次执行 Mongo 操作，不重试（供线程池 + async 层退避使用）。"""
+    return operation()
+
+
 # MongoDB操作包装函数（自动处理连接错误）
 def safe_mongo_operation(operation, max_retries=5):
     """
@@ -105,6 +110,55 @@ def safe_mongo_operation(operation, max_retries=5):
         except Exception as e:
             # 其他错误直接抛出（不重试）
             raise
+
+
+async def async_mongo_operation_read(operation, max_retries=3, timeout=12.0):
+    """
+    只读路径：线程池内只做单次 operation()，连接类错误在 **async 层** 短退避重试，
+    避免 safe_mongo_operation 在线程里 time.sleep 长时间占用 db_executor。
+    """
+    import asyncio
+    import time as time_module
+    from ws_server import db_executor
+
+    if db_executor is None:
+        return safe_mongo_operation(operation, max_retries=min(max_retries, 2))
+
+    loop = asyncio.get_event_loop()
+    deadline = time_module.monotonic() + timeout
+    last_err = None
+
+    for attempt in range(max_retries):
+        remaining = deadline - time_module.monotonic()
+        if remaining <= 0:
+            break
+        try:
+            return await asyncio.wait_for(
+                loop.run_in_executor(db_executor, mongo_op_once, operation),
+                timeout=max(remaining, 0.02),
+            )
+        except asyncio.TimeoutError as e:
+            last_err = e
+            if attempt < max_retries - 1:
+                await asyncio.sleep(min(0.05 * (2 ** attempt), 0.25))
+            continue
+        except (AutoReconnect, ConnectionFailure, ServerSelectionTimeoutError, NetworkTimeout) as e:
+            last_err = e
+            if attempt < max_retries - 1:
+                await asyncio.sleep(min(0.05 * (2 ** attempt), 0.25))
+            continue
+        except ConnectionResetError as e:
+            last_err = e
+            if attempt < max_retries - 1:
+                await asyncio.sleep(min(0.05 * (2 ** attempt), 0.25))
+            continue
+        except Exception:
+            raise
+
+    if last_err:
+        raise last_err
+    raise TimeoutError(f'MongoDB 只读操作超时（{timeout}秒）')
+
 
 # 异步版本的MongoDB操作（使用线程池执行，避免阻塞事件循环）
 async def async_mongo_operation(operation, max_retries=5, timeout=10.0):

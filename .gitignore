@@ -10,6 +10,7 @@ temp/
 local/
 build/
 profiles/
+logs/
 native
 #//////////////////////////
 # NPM

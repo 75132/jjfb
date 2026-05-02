@@ -30,6 +30,12 @@ export interface DaletouSyncPayload {
     server_time?: string;
     /** 今日头奖角色名（开奖后由服务器给出） */
     winner_display_name?: string;
+    /** 服务端字段：自然日是否已过开奖展示时刻 */
+    after_draw_time?: boolean;
+    /** 服务端字段：是否已有开奖落库 */
+    draw_finished?: boolean;
+    /** 服务端字段：当前角色是否中头奖 */
+    is_winner?: boolean;
 }
 
 @ccclass('MiniGame1')
@@ -484,6 +490,16 @@ export class MiniGame1 extends Component {
         this.node.active = false;
     };
 
+    /** 多行/长文案自动延长展示时间，避免读不完就关闭 */
+    private errorPopupDurationMs(text: string): number {
+        const lines = text.split('\n').length;
+        const len = text.length;
+        const base = 2500;
+        const extraLines = Math.max(0, lines - 1) * 550;
+        const extraChars = Math.max(0, len - 48) * 22;
+        return Math.min(5600, base + extraLines + extraChars);
+    }
+
     /**
      * Error 弹窗：建议两行——第一行结论，第二行说明（与场景里 Label 换行一致）。
      */
@@ -494,11 +510,12 @@ export class MiniGame1 extends Component {
         this.errorPanel.active = true;
         this._popupState = 'error';
         if (this._errorCloseTimer >= 0) clearTimeout(this._errorCloseTimer);
+        const ms = this.errorPopupDurationMs(text);
         this._errorCloseTimer = window.setTimeout(() => {
             if (this.errorPanel?.isValid) this.errorPanel.active = false;
             this._errorCloseTimer = -1;
             if (this._popupState === 'error') this._popupState = 'none';
-        }, 1000) as unknown as number;
+        }, ms) as unknown as number;
     }
 
     /**
@@ -581,7 +598,9 @@ export class MiniGame1 extends Component {
     private applyPayload(d: DaletouSyncPayload): void {
         this._lastPayload = d;
         if (this.energyLabel) {
-            this.energyLabel.string = String(d.energy_blocks ?? 0);
+            const eb = d.energy_blocks;
+            this.energyLabel.string =
+                eb !== undefined && eb !== null && Number.isFinite(Number(eb)) ? String(eb) : '—';
         }
         if (this.onlineTimeLabel) {
             this.onlineTimeLabel.string = this.fmtDuration(d.online_seconds ?? 0);
@@ -591,7 +610,9 @@ export class MiniGame1 extends Component {
             this.timeUntilEligibleLabel.string = need > 0 ? this.fmtDuration(need) : '已达要求';
         }
         if (this.participateEligibleLabel) {
-            this.participateEligibleLabel.string = d.claimed ? '已领取' : '未领取';
+            const base = d.claimed ? '已领取' : '未领取';
+            const rn = (d.role_name || '').trim();
+            this.participateEligibleLabel.string = rn ? `${base}（${rn}）` : base;
         }
         if (this.nowTimeLabel) {
             if (d.server_time) {
@@ -645,7 +666,16 @@ export class MiniGame1 extends Component {
         }
 
         if (this.resultTipLabel) {
-            this.resultTipLabel.string = RESULT_TIP[code] ?? RESULT_TIP[5];
+            let tip = RESULT_TIP[code] ?? RESULT_TIP[5];
+            const winName = (d?.winner_display_name || '').trim();
+            // 已开奖且 tip 未强调「谁中了」时，补一行头奖公示（避免与中奖名单区信息脱节）
+            if (winName && (d?.draw_finished || d?.after_draw_time) && code !== 4 && code !== 1) {
+                tip += `\n\n本期头奖：${winName}`;
+            }
+            if (code === 4 && d?.is_winner) {
+                tip += '\n\n奖励已发放至当前角色。';
+            }
+            this.resultTipLabel.string = tip;
         }
 
         const issueKey = this.getIssueKey(d ?? null);
