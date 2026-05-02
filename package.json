@@ -1,0 +1,10 @@
+{
+  "name": "jjfb",
+  "uuid": "74daef8d-50ec-45da-85af-b25dca76c6d1",
+  "creator": {
+    "version": "3.8.7"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  }
+}

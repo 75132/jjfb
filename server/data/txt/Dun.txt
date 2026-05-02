@@ -1,0 +1,11 @@
+Equipment ID	Name	Type	Icon	Img	Required Level	Price	HP	MP	Melee	Shoot	Armor	Evasion	Accuracy	Lethality	Corrosion	Resistance	Initiative	Counterattack	Block	Armor Penetration	Particle Shield	Energy Recovery	Life Recovery	Attack Times
+1401	碳钢盾	3	IconSet2-1	40	15	400	0	0	0	0	195	0	0	0	0	34	0	67	37	0	0	0	0	0
+1402	超合金盾	3	IconSet2-1	41	20	700	0	0	0	0	245	0	0	0	0	43	0	90	50	0	0	0	0	0
+1403	电磁盾	3	IconSet2-1	42	25	1100	0	0	0	0	295	0	0	0	0	52	0	112	62	0	0	0	0	0
+1404	脉冲离子盾	3	IconSet2-1	43	30	1600	0	0	0	0	345	0	0	0	0	62	0	135	75	0	0	0	0	0
+1405	涡轮脉冲盾	3	IconSet2-1	44	35	2200	0	0	0	0	395	0	0	0	0	71	0	157	87	0	0	0	0	0
+1406	黄昏凯歌	3	IconSet2-1	45	40	2900	0	0	0	0	445	0	0	0	0	81	0	180	100	0	0	0	0	0
+1407	无双	3	IconSet2-1	46	45	2900	0	0	0	0	544	0	0	0	0	99	0	222	123	0	0	0	0	0
+1408	稀有骸骨盾	3	IconSet2-1	47	0	2900	0	0	0	0	195	0	0	0	0	34	0	67	37	0	0	0	0	0
+1409	记忆金属盾	3	IconSet2-1	48	45	2900	0	0	0	0	599	0	0	0	0	110	0	137	247	0	0	0	0	0
+1410	埃癸斯之盾	3	IconSet2-1	49	50	2900	0	0	0	0	709	0	0	0	0	130	0	137	247	0	0	0	0	0

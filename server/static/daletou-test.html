@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>大乐透 · 简易测试台</title>
+  <style>
+    :root{
+      --bg:#0f1419; --panel:#1a1f26; --border:#2d3640; --text:#e7e9ea; --muted:#8b98a5;
+      --accent:#1d9bf0; --ok:#00ba7c; --err:#f4212e; --radius:10px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:'Segoe UI',system-ui,sans-serif;
+      background:var(--bg); color:var(--text); font-size:14px; line-height:1.4;
+    }
+    a{color:var(--accent)}
+    .app{max-width:1100px;margin:0 auto;padding:16px 16px 48px}
+    h1{font-size:18px;margin:0 0 6px;font-weight:700}
+    .sub{color:var(--muted);font-size:12px;margin:0 0 14px}
+    .toolbar{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;
+      padding:12px 12px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+      margin-bottom:14px;
+    }
+    .grp{display:flex;flex-direction:column;gap:4px}
+    .toolbar label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+    input, button{
+      font:inherit; padding:8px 10px; border-radius:8px;
+      border:1px solid var(--border); background:#252b33; color:var(--text);
+    }
+    button{
+      cursor:pointer; border-color:#38444d; background:#1d9bf0; color:#fff; font-weight:600;
+    }
+    button.secondary{background:#38444d}
+    button.warn{background:#78550a;border-color:#a07812}
+    button.danger{background:var(--err);border-color:#d11a22}
+    button.ghost{background:transparent;border-color:#38444d}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:960px){.grid2{grid-template-columns:1fr}}
+    .card{
+      background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+      padding:12px 12px; margin-bottom:12px;
+    }
+    .card h2{margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .meta{display:flex;flex-wrap:wrap;gap:8px}
+    .meta .box{background:#252b33;border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:200px}
+    .mono{font-family:ui-monospace,monospace;font-size:12px;word-break:break-all}
+    .split{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{
+      position:sticky;top:0;background:#252b33;z-index:1;
+      text-align:left;padding:10px 10px;border-bottom:1px solid var(--border);
+      color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;
+    }
+    td{padding:8px 10px;border-bottom:1px solid #252b33;vertical-align:middle}
+    tr:hover td{background:rgba(29,155,240,.06)}
+    tr.sel td{background:rgba(29,155,240,.12);border-color:rgba(29,155,240,.25)}
+    .scroll{max-height:360px;overflow:auto;border:1px solid var(--border);border-radius:8px}
+    .toast{
+      position:fixed; right:16px; bottom:16px; max-width:420px; padding:12px 16px;
+      border-radius:10px; z-index:100; display:none; box-shadow:0 8px 32px rgba(0,0,0,.45);
+      animation:pop .2s ease;
+    }
+    @keyframes pop{from{transform:translateY(8px);opacity:.7}to{transform:translateY(0);opacity:1}}
+    .toast.show{display:block}
+    .toast.ok{background:#064e3b;border:1px solid #059669;color:#d1fae5}
+    .toast.err{background:#450a0a;border:1px solid #991b1b;color:#fecaca}
+    #raw{background:#0b0e11;border:1px solid var(--border);border-radius:8px;padding:10px 10px;max-height:180px;overflow:auto;white-space:pre-wrap;color:var(--muted);font-size:11px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>大乐透 · 简易测试台</h1>
+  <p class="sub">只保留常用接口：`meta / list / list_players / set_online / set_claimed / draw / reset_draw`。期号用 `day=YYYY-MM-DD`。</p>
+
+  <div class="toolbar">
+    <div class="grp" style="flex:1;min-width:260px">
+      <label>HTTP 根地址</label>
+      <input id="baseUrl" type="text" style="width:100%" placeholder="http://127.0.0.1:8080" />
+    </div>
+
+    <div class="grp">
+      <label>自然日 day</label>
+      <input id="day" type="text" class="mono" placeholder="2026-03-29" style="width:190px" />
+    </div>
+
+    <div class="grp">
+      <label>&nbsp;</label>
+      <div class="split">
+        <button type="button" class="secondary" id="dToday">今天</button>
+        <button type="button" class="secondary" id="btnRefresh">刷新</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>服务端状态</h2>
+    <div class="meta">
+      <div class="box"><div class="mono" id="metaLine1">—</div></div>
+      <div class="box"><div class="mono" id="metaLine2">—</div></div>
+      <div class="box"><div class="mono" id="metaLine3">—</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h2>奖池（已领取资格）</h2>
+      <div class="split" style="margin-bottom:8px">
+        <button type="button" class="secondary" id="btnReloadPool">刷新奖池</button>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>角色</th>
+              <th>character_id</th>
+              <th>在线(秒)</th>
+              <th>已领</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyPool"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>全部角色（含非本期）</h2>
+      <div class="split" style="margin-bottom:8px">
+        <label style="color:var(--muted);font-size:12px">上限</label>
+        <input id="listLimit" type="number" min="50" max="2000" value="300" style="width:110px" />
+        <button type="button" class="secondary" id="btnReloadPlayers">刷新角色</button>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>角色</th>
+              <th>character_id</th>
+              <th>在线(秒)</th>
+              <th>已领</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyPlayers"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>选人操作</h2>
+    <div class="split" style="margin-bottom:10px">
+      <div class="mono">选中Cid：<span id="selCid">（无）</span></div>
+      <div class="mono">角色名：<span id="selName">—</span></div>
+    </div>
+
+    <div class="split" style="margin-bottom:10px">
+      <label style="color:var(--muted);font-size:12px">在线秒数</label>
+      <input id="onlineSec" type="number" min="0" value="10800" style="width:120px" />
+      <button type="button" class="secondary" data-sec="0">0</button>
+      <button type="button" class="secondary" data-sec="3600">1h</button>
+      <button type="button" class="secondary" data-sec="10800">3h</button>
+      <button type="button" class="secondary" data-sec="18000">5h</button>
+    </div>
+
+    <div class="split" style="margin-bottom:10px">
+      <label style="color:var(--muted);font-size:12px">指定中奖 character_id（可空）</label>
+      <input id="winnerCid" type="text" class="mono" placeholder="不填则随机" style="flex:1;min-width:220px" />
+    </div>
+
+    <div class="split">
+      <button type="button" id="btnSetOnline">写入在线</button>
+      <button type="button" class="secondary" id="btnClaimOn">标记已领取</button>
+      <button type="button" class="warn" id="btnClaimOff">取消已领取</button>
+      <button type="button" class="secondary" id="btnDrawNatural">自然开奖（指定）</button>
+      <button type="button" class="danger" id="btnDrawNow">立刻开奖（指定）</button>
+      <button type="button" class="ghost" id="btnResetDraw">删除开奖记录</button>
+    </div>
+    <p class="sub" style="margin:8px 0 0">删除不会回退已发能量，只删 `daletou_draws` 记录。</p>
+  </div>
+
+  <div class="card">
+    <h2>最近一次 JSON</h2>
+    <pre id="raw">{}</pre>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const LS = 'daletou_test_base_url';
+
+  function pad(n){return n<10?'0'+n:''+n}
+  function todayStr(){
+    const t = new Date();
+    return t.getFullYear() + '-' + pad(t.getMonth()+1) + '-' + pad(t.getDate());
+  }
+
+  function base(){ return ($('baseUrl').value || '').replace(/\/$/, ''); }
+
+  let toastTimer = null;
+  function toast(msg, ok){
+    const el = $('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + (ok ? 'ok' : 'err');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>{ el.className='toast'; }, 3000);
+  }
+
+  function dayVal(){
+    const d = ($('day').value || '').trim();
+    return d || todayStr();
+  }
+
+  let selectedCid = '';
+  let selectedName = '';
+  function setSelected(cid, name){
+    selectedCid = cid || '';
+    selectedName = name || '';
+    $('selCid').textContent = selectedCid || '（无）';
+    $('selName').textContent = selectedName || '—';
+  }
+
+  async function api(action, body){
+    const t0 = performance.now();
+    let data;
+    try{
+      const r = await fetch(base() + '/api/daletou', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({ action }, body || {})),
+      });
+      const text = await r.text();
+      try{ data = JSON.parse(text); }catch(e){ data = { raw: text }; }
+      $('raw').textContent = JSON.stringify(data, null, 2);
+      const ok = r.ok && data.success !== false;
+      if (!ok){
+        toast((data.message || data.error || 'HTTP '+r.status), false);
+      }else{
+        // 只有少量动作才 toast，避免刷屏：仅保留成功的刷新提示
+      }
+      return { data, ok: r.ok && data.success !== false, ms: Math.round(performance.now()-t0) };
+    }catch(e){
+      $('raw').textContent = String(e);
+      toast('网络错误: ' + e, false);
+      return { data: { success:false, message:String(e) }, ok:false, ms:0 };
+    }
+  }
+
+  function esc(s){
+    return String(s ?? '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  }
+
+  function rowClick(tr, p){
+    tr.addEventListener('click', (e) => {
+      if (e.target && e.target.tagName === 'INPUT') return;
+      setSelected(String(p.character_id || ''), String(p.role_name || ''));
+      document.querySelectorAll('#tbodyPlayers tr').forEach(x=>x.classList.remove('sel'));
+      document.querySelectorAll('#tbodyPool tr').forEach(x=>x.classList.remove('sel'));
+      tr.classList.add('sel');
+      // 同步在线秒数
+      const sec = p.online_seconds ?? 0;
+      $('onlineSec').value = sec;
+    });
+  }
+
+  async function loadMeta(){
+    const { data } = await api('meta', { day: dayVal() });
+    if (!data || !data.server_now){
+      $('metaLine1').textContent = '无法连接';
+      $('metaLine2').textContent = '';
+      $('metaLine3').textContent = '';
+      return;
+    }
+    const dr = data.draw_record || {};
+    const winner = dr.drawn ? (dr.winner_role_name || dr.winner_character_id || '—') : '未开奖';
+    $('metaLine1').textContent = 'server_now=' + data.server_now + ' | tz=' + data.tz;
+    $('metaLine2').textContent = 'query_day=' + data.query_day + ' | deadline=' + data.draw_deadline + ' | deadline_passed=' + (data.deadline_passed ? 'true' : 'false');
+    $('metaLine3').textContent = 'issue=' + (data.issue || '') + ' | winner=' + winner + ' | participants=' + (dr.participant_count ?? '—');
+  }
+
+  async function loadPool(){
+    const { data } = await api('list', { day: dayVal() });
+    const tbody = $('tbodyPool');
+    tbody.innerHTML = '';
+    const rows = data.participants || [];
+    if (!rows.length){
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">暂无奖池</td></tr>';
+      return;
+    }
+    rows.forEach((p)=>{
+      const tr = document.createElement('tr');
+      tr.dataset.cid = p.character_id;
+      tr.innerHTML =
+        '<td>' + esc(p.role_name) + '</td>' +
+        '<td class="mono">' + esc(p.character_id) + '</td>' +
+        '<td>' + esc(String(p.online_seconds ?? '')) + '</td>' +
+        '<td>' + (p.claimed ? '是' : '否') + '</td>';
+      if (p.character_id === selectedCid) tr.classList.add('sel');
+      rowClick(tr, p);
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function loadPlayers(){
+    const lim = parseInt($('listLimit').value, 10) || 300;
+    // 不筛「本期」，否则某角色还没写入 daletou.day 时，你就选不到它，从而“改玩家时间”看起来像失效
+    const { data } = await api('list_players', { limit: lim });
+    const tbody = $('tbodyPlayers');
+    tbody.innerHTML = '';
+    const rows = data.players || [];
+    if (!rows.length){
+      tbody.innerHTML = '<tr><td colspan="4" style="color:var(--muted)">暂无角色</td></tr>';
+      return;
+    }
+    rows.forEach((p)=>{
+      const tr = document.createElement('tr');
+      tr.dataset.cid = p.character_id;
+      tr.innerHTML =
+        '<td>' + esc(p.role_name) + '</td>' +
+        '<td class="mono">' + esc(p.character_id) + '</td>' +
+        '<td>' + esc(String(p.online_seconds ?? '')) + '</td>' +
+        '<td>' + (p.claimed ? '是' : '否') + '</td>';
+      if (p.character_id === selectedCid) tr.classList.add('sel');
+      rowClick(tr, p);
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function refreshAll(){
+    await loadMeta();
+    await loadPool();
+    await loadPlayers();
+  }
+
+  function needSelected(){
+    if (!selectedCid){ toast('请先选中角色', false); return false; }
+    return true;
+  }
+
+  $('dToday').onclick = ()=>{ $('day').value = todayStr(); refreshAll(); };
+  $('btnRefresh').onclick = ()=>{ refreshAll(); };
+  $('btnReloadPool').onclick = ()=>{ loadPool(); };
+  $('btnReloadPlayers').onclick = ()=>{ loadPlayers(); };
+
+  document.querySelectorAll('[data-sec]').forEach((b)=>{
+    b.addEventListener('click', ()=>{ $('onlineSec').value = b.getAttribute('data-sec'); });
+  });
+
+  $('btnSetOnline').onclick = async ()=>{
+    if (!needSelected()) return;
+    const day = dayVal();
+    const online_seconds = parseInt($('onlineSec').value, 10) || 0;
+    await api('set_online', { character_id: selectedCid, day, online_seconds });
+    await refreshAll();
+    toast('写入在线完成', true);
+  };
+
+  $('btnClaimOn').onclick = async ()=>{
+    if (!needSelected()) return;
+    const day = dayVal();
+    await api('set_claimed', { character_id: selectedCid, day, claimed: true });
+    await refreshAll();
+    toast('已标记已领取', true);
+  };
+
+  $('btnClaimOff').onclick = async ()=>{
+    if (!needSelected()) return;
+    const day = dayVal();
+    await api('set_claimed', { character_id: selectedCid, day, claimed: false });
+    await refreshAll();
+    toast('已取消已领取', true);
+  };
+
+  $('btnDrawNow').onclick = async ()=>{
+    const day = dayVal();
+    const winner_character_id = ($('winnerCid')?.value || '').trim() || null;
+    await api('draw', { day, immediate: true, winner_character_id });
+    await refreshAll();
+    toast('立刻开奖完成', true);
+  };
+
+  $('btnDrawNatural').onclick = async ()=>{
+    const day = dayVal();
+    const winner_character_id = ($('winnerCid')?.value || '').trim() || null;
+    await api('draw', { day, immediate: false, winner_character_id });
+    await refreshAll();
+    toast('自然开奖已触发（若未到点可能未写入）', true);
+  };
+
+  $('btnResetDraw').onclick = async ()=>{
+    const day = dayVal();
+    if (!confirm('确认删除「' + day + '」的开奖记录？')) return;
+    await api('reset_draw', { day });
+    await refreshAll();
+    toast('已删除开奖记录', true);
+  };
+
+  // init
+  $('day').value = todayStr();
+  $('baseUrl').value = localStorage.getItem(LS) || 'http://127.0.0.1:8080';
+  refreshAll().catch((e)=>{ $('raw').textContent = String(e); toast('首次加载失败', false); });
+})();
+</script>
+</body>
+</html>
+

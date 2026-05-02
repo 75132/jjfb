@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>客户端模拟 - 游戏服务器管理后台</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #4CAF50;
+      box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #45a049;
+    }
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .info-item {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+    .info-label {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    .items-list, .robots-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .item-card, .robot-card {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .item-name, .robot-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .item-id, .robot-id {
+      font-size: 11px;
+      color: #999;
+      font-family: monospace;
+      margin-bottom: 4px;
+    }
+    .item-count {
+      font-size: 16px;
+      color: #4CAF50;
+      font-weight: 600;
+    }
+    .robot-stats {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+    .robot-stats div {
+      margin-bottom: 2px;
+    }
+    .hidden {
+      display: none;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+    .status-connected {
+      background: #4CAF50;
+      color: white;
+    }
+    .status-disconnected {
+      background: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html" style="color: white; text-decoration: none; font-size: 18px;">← 返回主面板</a>
+      <h1>💻 客户端模拟 <span class="status-badge" id="connectionStatus">未连接</span></h1>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 登录区域 -->
+    <div class="card" id="loginCard">
+      <div class="card-title">🔐 登录</div>
+      <div class="form-group">
+        <label>选择账号</label>
+        <select id="loginAccountSelect" style="width: 100%;">
+          <option value="">正在加载账号列表...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>账号</label>
+        <input type="text" id="loginAccount" placeholder="将自动填充" readonly style="background: #f5f5f5;">
+      </div>
+      <div class="form-group">
+        <label>密码 <span id="passwordToggle" style="cursor: pointer; color: #4CAF50; font-size: 12px; margin-left: 8px;">👁️ 显示</span></label>
+        <input type="password" id="loginPassword" placeholder="将自动填充" readonly style="background: #f5f5f5;">
+      </div>
+      <div class="btn-group" style="margin-bottom: 12px;">
+        <button class="btn-secondary" id="btnRefreshAccounts" style="flex: 1;">刷新账号列表</button>
+        <button class="btn-primary" id="btnLogin" style="flex: 1;">登录</button>
+      </div>
+    </div>
+
+    <!-- 游戏内容区域（登录后显示） -->
+    <div id="gameContent" class="hidden">
+      <!-- 账号和角色切换 -->
+      <div class="card" style="margin-bottom: 24px;">
+        <div class="card-title">🔄 切换账号/角色</div>
+        <div class="form-group">
+          <label>当前账号</label>
+          <input type="text" id="currentAccount" readonly style="background: #f5f5f5;">
+        </div>
+        <div class="form-group">
+          <label>当前角色</label>
+          <input type="text" id="currentCharacter" readonly style="background: #f5f5f5;">
+        </div>
+        <div class="form-group">
+          <label>切换账号 <span id="switchAccountStatus" style="font-size: 11px; color: #999; margin-left: 8px;"></span></label>
+          <select id="switchAccountSelect" style="width: 100%;">
+            <option value="">请选择账号...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>切换角色 <span id="switchCharacterStatus" style="font-size: 11px; color: #999; margin-left: 8px;"></span></label>
+          <select id="switchCharacterSelect" style="width: 100%;">
+            <option value="">请先选择账号...</option>
+          </select>
+        </div>
+        <div class="btn-group">
+          <button class="btn-primary" id="btnSwitch" style="flex: 1;">切换</button>
+          <button class="btn-secondary" id="btnRefreshCharacters" style="flex: 1;">刷新角色列表</button>
+        </div>
+        <div style="margin-top: 8px; font-size: 12px; color: #666;">
+          💡 提示：先选择账号（会自动加载角色列表），再选择角色，最后点击"切换"按钮
+        </div>
+      </div>
+
+      <!-- 角色信息 -->
+      <div class="card">
+        <div class="card-title">👤 角色信息</div>
+        <div id="characterInfo">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">角色名</div>
+              <div class="info-value" id="charName">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">等级</div>
+              <div class="info-value" id="charLevel">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">经验</div>
+              <div class="info-value" id="charExp">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">金币</div>
+              <div class="info-value" id="charGold">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">角色ID</div>
+              <div class="info-value" id="charId" style="font-size: 11px; font-family: monospace;">-</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">机甲数量</div>
+              <div class="info-value" id="charRobotCount">-</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 背包物品 -->
+      <div class="card">
+        <div class="card-title">🎒 背包物品</div>
+        <div class="btn-group" style="margin-bottom: 12px;">
+          <button class="btn-secondary" id="btnRefreshBag">刷新背包</button>
+          <button class="btn-primary" id="btnAddItem">添加物品</button>
+        </div>
+        <div id="bagItems" class="items-list">
+          <div style="text-align: center; padding: 40px; color: #999;">暂无物品</div>
+        </div>
+      </div>
+
+      <!-- 机甲列表 -->
+      <div class="card">
+        <div class="card-title">🤖 机甲列表</div>
+        <div class="btn-group" style="margin-bottom: 12px;">
+          <button class="btn-secondary" id="btnRefreshRobots">刷新机甲</button>
+        </div>
+        <div id="robotList" class="robots-list">
+          <div style="text-align: center; padding: 40px; color: #999;">暂无机甲</div>
+        </div>
+      </div>
+
+      <!-- 好友功能 -->
+      <div class="card">
+        <div class="card-title">👥 好友功能</div>
+        <div class="form-group">
+          <label>当前角色好友ID</label>
+          <input type="text" id="currentFriendId" readonly style="background: #f5f5f5; font-family: monospace;">
+        </div>
+        <div class="btn-group" style="margin-bottom: 12px;">
+          <button class="btn-secondary" id="btnGetFriendList">获取好友列表</button>
+          <button class="btn-secondary" id="btnGetFriendRequests">获取申请列表</button>
+        </div>
+        <div class="form-group">
+          <label>搜索好友（6位ID）</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="searchFriendId" placeholder="输入6位好友ID" maxlength="6" style="flex: 1;">
+            <button class="btn-primary" id="btnSearchFriend">搜索</button>
+          </div>
+        </div>
+        <div id="friendSearchResult" style="margin-top: 12px; padding: 12px; background: #f8f9fa; border-radius: 6px; display: none;">
+          <div style="font-weight: 600; margin-bottom: 8px;">搜索结果：</div>
+          <div id="friendSearchResultContent"></div>
+        </div>
+        <div id="friendListContainer" style="margin-top: 12px;">
+          <div style="font-weight: 600; margin-bottom: 8px;">好友列表：</div>
+          <div id="friendListContent" style="max-height: 300px; overflow-y: auto;">
+            <div style="text-align: center; padding: 20px; color: #999;">暂无数据</div>
+          </div>
+        </div>
+        <div id="friendRequestContainer" style="margin-top: 12px; display: none;">
+          <div style="font-weight: 600; margin-bottom: 8px;">好友申请列表：</div>
+          <div id="friendRequestContent" style="max-height: 300px; overflow-y: auto;">
+            <div style="text-align: center; padding: 20px; color: #999;">暂无数据</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 操作面板 -->
+      <div class="card">
+        <div class="card-title">⚙️ 快速操作</div>
+        <div class="form-group">
+          <label>操作类型</label>
+          <select id="operationType">
+            <option value="add_exp">添加经验</option>
+            <option value="add_item">添加物品</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="operationValueLabel">数值</label>
+          <input type="text" id="operationValue" placeholder="输入数值">
+        </div>
+        <div class="form-group" id="itemIdGroup" style="display: none;">
+          <label>选择物品</label>
+          <select id="operationItemSelect" style="width: 100%;">
+            <option value="">正在加载物品列表...</option>
+          </select>
+        </div>
+        <div class="form-group" id="itemQuantityGroup" style="display: none;">
+          <label>数量</label>
+          <input type="number" id="operationItemQuantity" value="1" min="1">
+        </div>
+        <button class="btn-primary" id="btnExecuteOperation" style="width: 100%;">执行操作</button>
+        <button class="btn-secondary" id="btnLogout" style="width: 100%; margin-top: 12px;">退出登录</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ws = null;
+    let currentToken = null;
+    let currentUserId = null;
+    let currentAccount = null;
+    let currentCharacterId = null;
+    let itemsData = {}; // 物品数据缓存（从服务器加载）- ID到名称的映射
+    let itemsList = []; // 完整的物品列表（用于下拉列表）
+    let robotData = {}; // 机甲数据缓存
+    let adminAccountsList = []; // 管理员账号列表
+    let charactersList = {}; // 当前账号的角色列表
+    let allCharactersCache = {}; // 缓存所有角色信息（用于查找slot_index）
+
+    // 连接WebSocket
+    let reconnectTimer = null;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
+    const RECONNECT_DELAY = 3000; // 3秒
+    
+    function connect() {
+      const host = location.hostname || 'localhost';
+      const port = 8001;
+      
+      // 如果已有连接，先关闭
+      if (ws && ws.readyState !== WebSocket.CLOSED) {
+        try {
+          ws.close();
+        } catch (e) {
+          // 忽略关闭错误
+        }
+      }
+      
+      try {
+        ws = new WebSocket(`ws://${host}:${port}`);
+        
+        ws.onopen = () => {
+          updateConnectionStatus(true);
+          console.log('WebSocket连接成功');
+          reconnectAttempts = 0; // 重置重连次数
+          
+          // 清除重连定时器
+          if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+          }
+          
+          // 连接成功后立即加载账号列表
+          sendMessage({ type: 'admin_get_admin_accounts' });
+        };
+        
+        ws.onclose = (event) => {
+          updateConnectionStatus(false);
+          console.log('WebSocket连接断开', event.code, event.reason);
+          
+          // 如果不是主动关闭，尝试重连
+          if (event.code !== 1000 && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            reconnectAttempts++;
+            const delay = RECONNECT_DELAY * reconnectAttempts; // 递增延迟
+            console.log(`将在 ${delay/1000} 秒后尝试重连 (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+            
+            reconnectTimer = setTimeout(() => {
+              console.log('尝试重新连接...');
+              connect();
+            }, delay);
+          } else if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+            console.error('重连次数已达上限，请刷新页面');
+            alert('连接已断开，重连失败。请刷新页面。');
+          }
+        };
+        
+        ws.onerror = (e) => {
+          console.error('WebSocket错误:', e);
+          updateConnectionStatus(false);
+        };
+        
+        ws.onmessage = (evt) => {
+          try {
+            const data = JSON.parse(evt.data);
+            handleServerMessage(data);
+          } catch (err) {
+            console.error('解析消息错误:', err, evt.data);
+          }
+        };
+      } catch (err) {
+        console.error('连接失败:', err);
+        updateConnectionStatus(false);
+        
+        // 尝试重连
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          reconnectAttempts++;
+          const delay = RECONNECT_DELAY * reconnectAttempts;
+          reconnectTimer = setTimeout(() => {
+            console.log('尝试重新连接...');
+            connect();
+          }, delay);
+        }
+      }
+    }
+
+    function updateConnectionStatus(connected) {
+      const status = document.getElementById('connectionStatus');
+      if (connected) {
+        status.textContent = '已连接';
+        status.className = 'status-badge status-connected';
+      } else {
+        status.textContent = '未连接';
+        status.className = 'status-badge status-disconnected';
+      }
+    }
+
+    function sendMessage(msg) {
+      if (!ws || ws.readyState !== 1) {
+        alert('未连接到服务器');
+        return false;
+      }
+      try {
+        ws.send(JSON.stringify(msg));
+        return true;
+      } catch (err) {
+        console.error('发送消息失败:', err);
+        return false;
+      }
+    }
+
+    function handleServerMessage(data) {
+      console.log('收到服务器消息:', data);
+      
+      // 处理心跳ping消息
+      if (data.type === 'ping') {
+        sendMessage({ type: 'pong' });
+        return;
+      }
+      
+      if (data.type === 'login_response') {
+        if (data.success) {
+          currentToken = data.token;
+          currentUserId = data.user_id;
+          
+          // 从下拉框获取当前账号（更可靠）
+          const selectElement = document.getElementById('loginAccountSelect');
+          if (selectElement && selectElement.value) {
+            currentAccount = selectElement.value;
+          } else {
+            // 备用方案：从输入框获取
+            const accountInput = document.getElementById('loginAccount');
+            currentAccount = accountInput ? accountInput.value.trim() : '';
+          }
+          
+          // 如果还没有账号，尝试从切换账号下拉框获取
+          if (!currentAccount) {
+            const switchSelect = document.getElementById('switchAccountSelect');
+            if (switchSelect && switchSelect.value) {
+              currentAccount = switchSelect.value;
+            }
+          }
+          
+          console.log('登录成功，当前账号:', currentAccount);
+          
+          document.getElementById('loginCard').classList.add('hidden');
+          document.getElementById('gameContent').classList.remove('hidden');
+          
+          // 更新当前账号显示
+          const currentAccountInput = document.getElementById('currentAccount');
+          if (currentAccountInput) {
+            currentAccountInput.value = currentAccount || '';
+          }
+          
+          // 更新切换账号下拉框的选中状态
+          const switchSelect = document.getElementById('switchAccountSelect');
+          if (switchSelect && currentAccount) {
+            switchSelect.value = currentAccount;
+          }
+          
+          // 清除加载状态
+          const statusEl = document.getElementById('switchAccountStatus');
+          if (statusEl) statusEl.textContent = '';
+          
+          // 清空角色缓存和当前角色显示
+          allCharactersCache = {};
+          currentCharacterId = null;
+          document.getElementById('currentCharacter').value = '';
+          
+          // 检查是否有待切换的角色
+          const pendingCharacterId = window.pendingCharacterSwitch;
+          if (pendingCharacterId) {
+            // 清除待切换标记
+            delete window.pendingCharacterSwitch;
+            
+            // 获取角色列表后自动切换
+            if (currentToken) {
+              sendMessage({ type: 'get_all_characters', token: currentToken });
+              // 保存待切换的角色ID，在获取角色列表后切换
+              window.pendingCharacterAfterLoad = pendingCharacterId;
+            }
+          } else {
+            // 没有待切换的角色，正常流程：获取角色列表并选择第一个
+            if (currentToken) {
+              sendMessage({ type: 'get_all_characters', token: currentToken });
+            }
+          }
+          
+          // 获取该账号的角色列表（用于切换角色下拉框）
+          if (currentAccount) {
+            const statusEl2 = document.getElementById('switchAccountStatus');
+            if (statusEl2) statusEl2.textContent = '加载角色列表中...';
+            document.getElementById('switchCharacterSelect').innerHTML = '<option value="">加载中...</option>';
+            sendMessage({ type: 'admin_search_account', account: currentAccount });
+          }
+        } else {
+          alert('登录失败: ' + (data.message || '未知错误'));
+          // 清除待切换标记
+          delete window.pendingCharacterSwitch;
+          delete window.pendingCharacterAfterLoad;
+        }
+      } else if (data.type === 'get_all_characters_response' || data.type === 'all_characters_response') {
+        // 兼容两种响应类型
+        const characters = data.characters || {};
+        if (data.success && characters) {
+          // 缓存所有角色信息（用于查找slot_index）
+          allCharactersCache = characters;
+          
+          // 检查是否有待切换的角色
+          const pendingCharacterId = window.pendingCharacterAfterLoad;
+          if (pendingCharacterId) {
+            // 清除待切换标记
+            delete window.pendingCharacterAfterLoad;
+            
+            // 切换指定的角色
+            const char = Object.values(characters).find(c => c && c.character_id === pendingCharacterId);
+            if (char) {
+              currentCharacterId = pendingCharacterId;
+              sendMessage({ type: 'select_character', token: currentToken, character_id: currentCharacterId });
+            } else {
+              console.warn('待切换的角色不存在:', pendingCharacterId);
+              // 如果角色不存在，选择第一个角色
+              const firstChar = Object.values(characters).find(c => c !== null);
+              if (firstChar && firstChar.character_id) {
+                currentCharacterId = firstChar.character_id;
+                sendMessage({ type: 'select_character', token: currentToken, character_id: currentCharacterId });
+              }
+            }
+          } else {
+            // 没有待切换的角色，选择第一个角色
+            const firstChar = Object.values(characters).find(c => c !== null);
+            if (firstChar && firstChar.character_id) {
+              currentCharacterId = firstChar.character_id;
+              sendMessage({ type: 'select_character', token: currentToken, character_id: currentCharacterId });
+            } else {
+              console.warn('没有找到可用角色');
+            }
+          }
+        }
+      } else if (data.type === 'select_character_response') {
+        // 清除加载状态
+        const statusEl = document.getElementById('switchCharacterStatus');
+        if (statusEl) statusEl.textContent = '';
+        
+        if (data.success && data.character_id) {
+          currentCharacterId = data.character_id;
+          
+          // 更新切换角色下拉框的选中状态
+          const switchCharSelect = document.getElementById('switchCharacterSelect');
+          if (switchCharSelect) {
+            switchCharSelect.value = data.character_id;
+          }
+          
+          // 更新当前角色显示
+          const currentCharInput = document.getElementById('currentCharacter');
+          if (currentCharInput && allCharactersCache) {
+            for (const char of Object.values(allCharactersCache)) {
+              if (char && char.character_id === data.character_id) {
+                currentCharInput.value = `${char.role_name || '未命名'} (Lv.${char.level || 1})`;
+                break;
+              }
+            }
+          }
+          
+          // 加载角色信息和数据
+          refreshCharacterData();
+        } else {
+          console.error('选择角色失败:', data.message || '未知错误');
+          if (data.message) {
+            alert('选择角色失败: ' + data.message);
+          }
+          // 恢复下拉框状态
+          if (currentCharacterId) {
+            const switchCharSelect = document.getElementById('switchCharacterSelect');
+            if (switchCharSelect) {
+              switchCharSelect.value = currentCharacterId;
+            }
+          }
+        }
+      } else if (data.type === 'character_info_response') {
+        // 服务器返回的是扁平结构，不是嵌套在character字段中
+        if (data.success) {
+          // 直接使用data作为角色信息
+          updateCharacterInfo(data);
+          // 同时获取player_info以获取friend_id（如果角色信息中没有）
+          if (currentToken && currentCharacterId && !data.friend_id) {
+            sendMessage({ type: 'get_player', token: currentToken, character_id: currentCharacterId });
+          }
+        } else {
+          console.error('获取角色信息失败:', data.message || '未知错误');
+        }
+      } else if (data.type === 'player_info_response' || data.type === 'player_info' || data.type === 'get_player_response') {
+        // 处理player_info响应，更新好友ID
+        // 服务器返回格式：{ type: 'player_info_response', success: true, data: { friend_id: '...', ... } }
+        console.log('收到player_info响应:', data);
+        const friendId = (data.data && data.data.friend_id) || data.friend_id || (data.character && data.character.friend_id);
+        if (data.success && friendId) {
+          const friendIdInput = document.getElementById('currentFriendId');
+          if (friendIdInput) {
+            friendIdInput.value = friendId;
+            console.log('已更新好友ID:', friendId);
+          }
+        } else if (data.success) {
+          // 即使成功但没有friend_id，也显示提示
+          const friendIdInput = document.getElementById('currentFriendId');
+          if (friendIdInput) {
+            friendIdInput.value = '-';
+            console.log('未找到好友ID');
+          }
+        } else {
+          // 请求失败
+          const friendIdInput = document.getElementById('currentFriendId');
+          if (friendIdInput) {
+            friendIdInput.value = '-';
+            console.error('获取好友ID失败:', data.message || '未知错误');
+          }
+        }
+      } else if (data.type === 'robot_pets_response') {
+        if (data.success && data.pets) {
+          updateRobotList(data.pets);
+        } else {
+          // 即使失败也更新为空列表
+          updateRobotList([]);
+        }
+      } else if (data.type === 'bag_items') {
+        if (data.success && data.items) {
+          updateBagItems(data.items);
+        } else {
+          // 即使失败也更新为空列表
+          updateBagItems([]);
+        }
+      } else if (data.type === 'add_exp_response') {
+        if (data.success) {
+          alert(`操作成功！等级: ${data.level || '未知'}, 经验: ${data.total_exp || 0}, 升级次数: ${data.level_up_count || 0}`);
+          // 刷新数据
+          if (currentToken && currentCharacterId) {
+            // 通过character_id查找slot_index
+            let slotIndex = 0;
+            if (allCharactersCache) {
+              for (const [slot, char] of Object.entries(allCharactersCache)) {
+                if (char && char.character_id === currentCharacterId) {
+                  slotIndex = parseInt(slot) || 0;
+                  break;
+                }
+              }
+            }
+            sendMessage({ type: 'get_character_info', token: currentToken, slot_index: slotIndex });
+            sendMessage({ type: 'bag_get', token: currentToken, character_id: currentCharacterId });
+          }
+        } else {
+          alert('操作失败: ' + (data.message || '未知错误'));
+        }
+      } else if (data.type === 'add_response' || data.type === 'add_item_response') {
+        // 服务器返回的是add_response，兼容add_item_response
+        if (data.success) {
+          alert('添加物品成功！');
+          // 刷新数据
+          if (currentToken && currentCharacterId) {
+            // 通过character_id查找slot_index
+            let slotIndex = 0;
+            if (allCharactersCache) {
+              for (const [slot, char] of Object.entries(allCharactersCache)) {
+                if (char && char.character_id === currentCharacterId) {
+                  slotIndex = parseInt(slot) || 0;
+                  break;
+                }
+              }
+            }
+            sendMessage({ type: 'get_character_info', token: currentToken, slot_index: slotIndex });
+            sendMessage({ type: 'bag_get', token: currentToken, character_id: currentCharacterId });
+          }
+        } else {
+          alert('操作失败: ' + (data.message || '未知错误'));
+        }
+      } else if (data.type === 'admin_get_admin_accounts_response') {
+        if (data.success && data.accounts) {
+          adminAccountsList = data.accounts;
+          console.log('收到账号列表:', data.accounts.length, '个账号');
+          // 调试：检查第一个账号是否有密码
+          if (data.accounts.length > 0) {
+            console.log('第一个账号信息:', {
+              account: data.accounts[0].account,
+              hasPassword: !!data.accounts[0].password
+            });
+          }
+          updateAccountSelects(data.accounts);
+        }
+      } else if (data.type === 'admin_search_response') {
+        // 用于获取账号的角色列表
+        const statusEl = document.getElementById('switchAccountStatus');
+        if (statusEl) statusEl.textContent = '';
+        
+        if (data.success && data.characters) {
+          const account = data.query || data.account || currentAccount;
+          if (account) {
+            charactersList[account] = data.characters;
+            
+            // 更新角色下拉框（显示该账号的角色）
+            updateCharacterSelect(account, data.characters);
+            
+            // 如果这是当前登录账号，且当前有选中的角色，保持选中状态
+            if (account === currentAccount && data.characters.length > 0 && currentToken && currentCharacterId) {
+              const currentChar = data.characters.find(c => c.character_id === currentCharacterId);
+              if (currentChar) {
+                // 保持当前角色的选中状态
+                const switchCharSelect = document.getElementById('switchCharacterSelect');
+                if (switchCharSelect) {
+                  switchCharSelect.value = currentCharacterId;
+                }
+              }
+            }
+          }
+        } else {
+          // 没有找到角色
+          const switchCharSelect = document.getElementById('switchCharacterSelect');
+          if (switchCharSelect) {
+            switchCharSelect.innerHTML = '<option value="">该账号暂无角色</option>';
+          }
+        }
+      } else if (data.type === 'get_friend_list_response') {
+        if (data.success && data.data && data.data.list) {
+          updateFriendList(data.data.list);
+        } else {
+          updateFriendList([]);
+          console.warn('获取好友列表失败:', data.message);
+        }
+      } else if (data.type === 'get_friend_requests_response') {
+        if (data.success && data.data && data.data.list) {
+          updateFriendRequestList(data.data.list);
+        } else {
+          updateFriendRequestList([]);
+          console.warn('获取好友申请列表失败:', data.message);
+        }
+      } else if (data.type === 'search_friend_response') {
+        if (data.success && data.data && data.data.friend) {
+          showFriendSearchResult(data.data.friend);
+        } else {
+          showFriendSearchError(data.message || '未找到该好友');
+        }
+      } else if (data.type === 'add_friend_response') {
+        if (data.success) {
+          alert('好友申请已发送！');
+          // 清空搜索结果
+          document.getElementById('friendSearchResult').style.display = 'none';
+          document.getElementById('searchFriendId').value = '';
+          // 可选：刷新申请列表（如果对方在线可能会收到申请通知）
+          // 注意：这里不刷新，因为申请是发给对方的，不是自己的申请列表
+        } else {
+          alert('发送好友申请失败: ' + (data.message || '未知错误'));
+        }
+      } else if (data.type === 'approve_friend_response') {
+        if (data.success) {
+          alert('已同意好友申请！');
+          if (currentToken && currentCharacterId) {
+            sendMessage({ type: 'get_friend_list', token: currentToken, character_id: currentCharacterId });
+            sendMessage({ type: 'get_friend_requests', token: currentToken, character_id: currentCharacterId });
+          }
+        } else {
+          alert('同意好友申请失败: ' + (data.message || '未知错误'));
+        }
+      } else if (data.type === 'reject_friend_response') {
+        if (data.success) {
+          alert('已拒绝好友申请！');
+          if (currentToken && currentCharacterId) {
+            sendMessage({ type: 'get_friend_requests', token: currentToken, character_id: currentCharacterId });
+          }
+        } else {
+          alert('拒绝好友申请失败: ' + (data.message || '未知错误'));
+        }
+      } else if (data.type === 'delete_friend_response') {
+        if (data.success) {
+          alert('已删除好友！');
+          if (currentToken && currentCharacterId) {
+            sendMessage({ type: 'get_friend_list', token: currentToken, character_id: currentCharacterId });
+          }
+        } else {
+          alert('删除好友失败: ' + (data.message || '未知错误'));
+        }
+      } else {
+        // 未知消息类型，记录但不处理
+        console.log('未处理的消息类型:', data.type);
+      }
+    }
+    
+    // 更新账号选择下拉框
+    function updateAccountSelects(accounts) {
+      const loginSelect = document.getElementById('loginAccountSelect');
+      const switchSelect = document.getElementById('switchAccountSelect');
+      
+      // 清空并填充登录选择框
+      loginSelect.innerHTML = '<option value="">请选择账号...</option>';
+      accounts.forEach(acc => {
+        const option = document.createElement('option');
+        const password = acc.password || '';
+        // 显示格式：账号 (角色数) - 密码：xxx
+        option.value = acc.account;
+        option.textContent = `${acc.account} (${acc.character_count || 0}个角色) - 密码：${password || '(无)'}`;
+        option.dataset.password = password;
+        // 调试：检查密码是否正确
+        if (!password) {
+          console.warn(`账号 ${acc.account} 的密码为空`);
+        }
+        loginSelect.appendChild(option);
+      });
+      
+      // 清空并填充切换账号选择框（如果已登录）
+      if (switchSelect) {
+        switchSelect.innerHTML = '<option value="">请选择账号...</option>';
+        accounts.forEach(acc => {
+          const option = document.createElement('option');
+          const password = acc.password || '';
+          // 显示格式：账号 (角色数) - 密码：xxx
+          option.value = acc.account;
+          option.textContent = `${acc.account} (${acc.character_count || 0}个角色) - 密码：${password || '(无)'}`;
+          option.dataset.password = password;
+          if (acc.account === currentAccount) {
+            option.selected = true;
+          }
+          switchSelect.appendChild(option);
+        });
+      }
+    }
+    
+    // 更新角色选择下拉框
+    function updateCharacterSelect(account, characters) {
+      const select = document.getElementById('switchCharacterSelect');
+      if (!select) return;
+      
+      select.innerHTML = '<option value="">请选择角色...</option>';
+      if (!characters || characters.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = '该账号暂无角色';
+        option.disabled = true;
+        select.appendChild(option);
+        return;
+      }
+      
+      characters.forEach(char => {
+        const option = document.createElement('option');
+        option.value = char.character_id;
+        option.textContent = `${char.role_name || '未命名'} (Lv.${char.level || 1})`;
+        option.dataset.characterId = char.character_id;
+        if (char.character_id === currentCharacterId) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+    }
+
+    function updateCharacterInfo(char) {
+      // 服务器返回的是扁平结构，直接使用字段
+      document.getElementById('charName').textContent = char.role_name || '-';
+      document.getElementById('charLevel').textContent = char.level || 1;
+      document.getElementById('charExp').textContent = char.exp || char.total_exp || 0;
+      document.getElementById('charGold').textContent = char.gold || 0;
+      document.getElementById('charId').textContent = char.character_id || '-';
+      document.getElementById('charRobotCount').textContent = char.robotcount || 0;
+      
+      // 更新当前角色显示
+      const currentCharInput = document.getElementById('currentCharacter');
+      if (currentCharInput) {
+        currentCharInput.value = `${char.role_name || '未命名'} (Lv.${char.level || 1})`;
+      }
+      
+      // 更新好友ID（如果有，否则等待player_info响应）
+      const friendIdInput = document.getElementById('currentFriendId');
+      if (friendIdInput) {
+        // 如果角色信息中已经有friend_id，直接使用；否则等待get_player响应
+        if (char.friend_id) {
+          friendIdInput.value = char.friend_id;
+        } else {
+          // 不立即设置为"-"，等待get_player响应
+          friendIdInput.value = '加载中...';
+        }
+      }
+    }
+
+    function updateBagItems(items) {
+      const container = document.getElementById('bagItems');
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">暂无物品</div>';
+        return;
+      }
+      
+      let html = '';
+      items.forEach(item => {
+        const itemId = item.item_id || item.id;
+        const quantity = item.quantity || 1;
+        const itemName = itemsData[itemId] || `物品${itemId}`;
+        html += `
+          <div class="item-card">
+            <div class="item-name">${itemName}</div>
+            <div class="item-id">ID: ${itemId}</div>
+            <div class="item-count">x${quantity}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+    
+    // 加载物品数据（从Items.json）
+    async function loadItemsData() {
+      try {
+        // 尝试从多个可能的路径加载Items.json
+        const paths = [
+          '/Items.json',  // 通过服务器提供的路径
+          '../data/Items.json',
+          '../handlers/json/Items.json',
+          'Items.json'
+        ];
+        
+        for (const path of paths) {
+          try {
+            const response = await fetch(path);
+            if (response.ok) {
+              const data = await response.json();
+              // 保存完整的物品列表
+              itemsList = data.filter(item => item.id && item.name);
+              
+              // 构建物品ID到名称的映射（用于显示）
+              itemsList.forEach(item => {
+                itemsData[item.id] = item.name;
+              });
+              
+              console.log(`✅ 成功加载 ${itemsList.length} 个物品数据`);
+              
+              // 填充物品下拉列表
+              populateItemSelect();
+              
+              return;
+            }
+          } catch (e) {
+            // 继续尝试下一个路径
+            console.log(`尝试路径 ${path} 失败:`, e);
+          }
+        }
+        console.warn('⚠️ 未能加载Items.json，将使用默认物品名称');
+        // 即使加载失败，也尝试填充下拉列表（显示错误提示）
+        populateItemSelect();
+      } catch (error) {
+        console.error('加载物品数据失败:', error);
+        populateItemSelect();
+      }
+    }
+    
+    // 填充物品下拉列表
+    function populateItemSelect() {
+      const select = document.getElementById('operationItemSelect');
+      if (!select) return;
+      
+      // 清空现有选项
+      select.innerHTML = '';
+      
+      if (itemsList.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = '未能加载物品列表，请刷新页面';
+        option.disabled = true;
+        select.appendChild(option);
+        return;
+      }
+      
+      // 添加"请选择物品"选项
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '请选择物品...';
+      select.appendChild(defaultOption);
+      
+      // 按ID排序后添加所有物品
+      const sortedItems = [...itemsList].sort((a, b) => a.id - b.id);
+      sortedItems.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = `${item.name} (ID: ${item.id})`;
+        option.dataset.itemId = item.id;
+        select.appendChild(option);
+      });
+      
+      console.log(`✅ 已填充 ${sortedItems.length} 个物品到下拉列表`);
+    }
+
+    function updateRobotList(pets) {
+      const container = document.getElementById('robotList');
+      if (!pets || pets.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">暂无机甲</div>';
+        return;
+      }
+      
+      let html = '';
+      pets.forEach(pet => {
+        html += `
+          <div class="robot-card">
+            <div class="robot-name">${pet.RobotName || '未知'}</div>
+            <div class="robot-id">ID: ${pet.pet_id || '-'}</div>
+            <div class="robot-stats">
+              <div>等级: ${pet.Level || 1}</div>
+              <div>成长: ${pet.Growth || 50}</div>
+              <div>悟性: ${pet.Comprehension || 50}</div>
+              <div>星级: ${pet.StarLevel || 1}</div>
+              <div>经验: ${pet.EXP || 0}</div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // 密码显示/隐藏切换
+    let passwordVisible = false;
+    const passwordToggle = document.getElementById('passwordToggle');
+    if (passwordToggle) {
+      passwordToggle.addEventListener('click', () => {
+        const passwordInput = document.getElementById('loginPassword');
+        
+        passwordVisible = !passwordVisible;
+        if (passwordVisible) {
+          passwordInput.type = 'text';
+          passwordToggle.textContent = '🙈 隐藏';
+        } else {
+          passwordInput.type = 'password';
+          passwordToggle.textContent = '👁️ 显示';
+        }
+      });
+    }
+    
+    // 账号选择改变时自动填充账号和密码
+    document.getElementById('loginAccountSelect').addEventListener('change', (e) => {
+      const account = e.target.value;
+      if (account) {
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const password = selectedOption.dataset.password || '';
+        document.getElementById('loginAccount').value = account;
+        document.getElementById('loginPassword').value = password;
+      } else {
+        document.getElementById('loginAccount').value = '';
+        document.getElementById('loginPassword').value = '';
+      }
+    });
+    
+    // 刷新账号列表
+    document.getElementById('btnRefreshAccounts').addEventListener('click', () => {
+      sendMessage({ type: 'admin_get_admin_accounts' });
+    });
+    
+    // 登录按钮
+    document.getElementById('btnLogin').addEventListener('click', () => {
+      // 直接使用下拉框的值，更可靠
+      const selectElement = document.getElementById('loginAccountSelect');
+      if (!selectElement) {
+        alert('无法找到账号选择下拉框');
+        return;
+      }
+      
+      const account = selectElement.value;
+      console.log('登录按钮点击，当前选择:', account);
+      
+      if (!account || account === '') {
+        alert('请在下拉框中选择一个账号');
+        return;
+      }
+      
+      // 从选中的option获取密码
+      const selectedIndex = selectElement.selectedIndex;
+      if (selectedIndex < 0 || selectedIndex >= selectElement.options.length) {
+        alert('无法获取选中的账号信息');
+        return;
+      }
+      
+      const selectedOption = selectElement.options[selectedIndex];
+      const password = selectedOption.dataset.password || '';
+      
+      console.log('登录信息:', { 
+        account, 
+        passwordLength: password.length,
+        password: password ? '***已填充***' : '(空)' 
+      });
+      
+      if (!password || password.trim() === '') {
+        console.error('密码为空，选中的option:', selectedOption);
+        alert('账号密码获取失败。请点击"刷新账号列表"按钮后重试');
+        return;
+      }
+      
+      // 先保存账号，以便登录成功后使用
+      currentAccount = account;
+      
+      sendMessage({ type: 'login', account, password });
+    });
+    
+    // 切换按钮（切换账号和角色）
+    document.getElementById('btnSwitch').addEventListener('click', () => {
+      const switchAccountSelect = document.getElementById('switchAccountSelect');
+      const switchCharacterSelect = document.getElementById('switchCharacterSelect');
+      
+      if (!switchAccountSelect || !switchCharacterSelect) {
+        alert('无法找到下拉框');
+        return;
+      }
+      
+      const account = switchAccountSelect.value;
+      const characterId = switchCharacterSelect.value;
+      
+      // 验证必选项
+      if (!account) {
+        alert('请先选择账号');
+        return;
+      }
+      
+      if (!characterId) {
+        alert('请先选择角色');
+        return;
+      }
+      
+      // 获取账号密码
+      const selectedIndex = switchAccountSelect.selectedIndex;
+      if (selectedIndex < 0 || selectedIndex >= switchAccountSelect.options.length) {
+        alert('无法获取选中的账号信息');
+        return;
+      }
+      
+      const selectedOption = switchAccountSelect.options[selectedIndex];
+      const password = selectedOption.dataset.password || '';
+      
+      if (!password || password.trim() === '') {
+        alert('账号密码获取失败，请刷新账号列表后重试');
+        return;
+      }
+      
+      // 检查是否需要切换账号
+      const needSwitchAccount = account !== currentAccount;
+      
+      // 检查角色是否属于选中的账号
+      const accountChars = charactersList[account];
+      if (!accountChars || !accountChars.find(c => c.character_id === characterId)) {
+        alert('所选角色不属于所选账号，请重新选择');
+        return;
+      }
+      
+      // 显示加载状态
+      const statusEl = document.getElementById('switchAccountStatus');
+      if (statusEl) statusEl.textContent = '正在切换...';
+      const charStatusEl = document.getElementById('switchCharacterStatus');
+      if (charStatusEl) charStatusEl.textContent = '正在切换...';
+      
+      // 如果需要切换账号，先登录
+      if (needSwitchAccount) {
+        // 保存待切换的角色ID
+        window.pendingCharacterSwitch = characterId;
+        
+        // 清空角色缓存和当前角色
+        allCharactersCache = {};
+        currentCharacterId = null;
+        document.getElementById('currentCharacter').value = '';
+        
+        // 使用新账号登录
+        console.log('切换账号和角色:', account, characterId);
+        sendMessage({ type: 'login', account, password });
+      } else {
+        // 只需要切换角色
+        if (!currentToken) {
+          alert('请先登录');
+          return;
+        }
+        
+        // 如果已经是当前角色，直接刷新数据
+        if (currentCharacterId === characterId) {
+          refreshCharacterData();
+          if (charStatusEl) charStatusEl.textContent = '';
+          return;
+        }
+        
+        // 切换角色
+        console.log('切换角色:', characterId);
+        sendMessage({ type: 'select_character', token: currentToken, character_id: characterId });
+      }
+    });
+    
+    // 切换角色函数（已废弃，现在通过切换按钮统一处理）
+    // 保留此函数以防其他地方调用
+    function switchToCharacter(characterId) {
+      if (!characterId || !currentToken) {
+        return;
+      }
+      
+      // 如果已经是当前角色，直接刷新数据
+      if (currentCharacterId === characterId) {
+        refreshCharacterData();
+        return;
+      }
+      
+      // 显示加载状态
+      const statusEl = document.getElementById('switchCharacterStatus');
+      if (statusEl) statusEl.textContent = '正在切换...';
+      
+      // 切换角色
+      sendMessage({ type: 'select_character', token: currentToken, character_id: characterId });
+    }
+    
+    // 刷新角色数据
+    function refreshCharacterData() {
+      if (!currentToken || !currentCharacterId) return;
+      
+      // 通过character_id查找slot_index
+      let slotIndex = 0;
+      if (allCharactersCache) {
+        for (const [slot, char] of Object.entries(allCharactersCache)) {
+          if (char && char.character_id === currentCharacterId) {
+            slotIndex = parseInt(slot) || 0;
+            break;
+          }
+        }
+      }
+      
+      sendMessage({ type: 'get_character_info', token: currentToken, slot_index: slotIndex });
+      sendMessage({ type: 'get_robot_pets', token: currentToken, character_id: currentCharacterId, page: 0, page_size: 50 });
+      sendMessage({ type: 'bag_get', token: currentToken, character_id: currentCharacterId });
+      // 获取玩家信息以获取friend_id
+      sendMessage({ type: 'get_player', token: currentToken, character_id: currentCharacterId });
+    }
+    
+    // 刷新角色列表
+    document.getElementById('btnRefreshCharacters').addEventListener('click', () => {
+      // 优先使用保存的currentAccount，如果没有则尝试从界面获取
+      let account = currentAccount;
+      if (!account) {
+        const currentAccountInput = document.getElementById('currentAccount');
+        account = currentAccountInput ? currentAccountInput.value.trim() : '';
+      }
+      if (!account) {
+        const switchSelect = document.getElementById('switchAccountSelect');
+        account = switchSelect ? switchSelect.value : '';
+      }
+      
+      if (!account) {
+        alert('无法获取当前账号，请先登录或选择账号');
+        return;
+      }
+      
+      console.log('刷新角色列表，账号:', account);
+      sendMessage({ type: 'admin_search_account', account: account });
+    });
+
+    // 刷新背包
+    document.getElementById('btnRefreshBag').addEventListener('click', () => {
+      if (currentToken && currentCharacterId) {
+        sendMessage({ type: 'bag_get', token: currentToken, character_id: currentCharacterId });
+        // 同时刷新角色信息
+        let slotIndex = 0;
+        if (allCharactersCache) {
+          for (const [slot, char] of Object.entries(allCharactersCache)) {
+            if (char && char.character_id === currentCharacterId) {
+              slotIndex = parseInt(slot) || 0;
+              break;
+            }
+          }
+        }
+        sendMessage({ type: 'get_character_info', token: currentToken, slot_index: slotIndex });
+        // 同时获取玩家信息以获取friend_id
+        sendMessage({ type: 'get_player', token: currentToken, character_id: currentCharacterId });
+      }
+    });
+
+    // 刷新机甲
+    document.getElementById('btnRefreshRobots').addEventListener('click', () => {
+      if (currentToken && currentCharacterId) {
+        sendMessage({ type: 'get_robot_pets', token: currentToken, character_id: currentCharacterId, page: 0, page_size: 50 });
+      } else {
+        alert('请先登录并选择角色');
+      }
+    });
+
+    // 操作类型改变
+    document.getElementById('operationType').addEventListener('change', (e) => {
+      const type = e.target.value;
+      const valueGroup = document.getElementById('operationValue').parentElement;
+      const label = document.getElementById('operationValueLabel');
+      const itemIdGroup = document.getElementById('itemIdGroup');
+      const itemQuantityGroup = document.getElementById('itemQuantityGroup');
+      
+      if (type === 'add_item') {
+        // 添加物品：隐藏数值输入框，显示物品选择下拉列表和数量输入框
+        if (valueGroup) valueGroup.style.display = 'none';
+        itemIdGroup.style.display = 'block';
+        itemQuantityGroup.style.display = 'block';
+      } else {
+        // 添加经验：显示数值输入框，隐藏物品相关输入框
+        if (valueGroup) valueGroup.style.display = 'block';
+        label.textContent = '数值';
+        itemIdGroup.style.display = 'none';
+        itemQuantityGroup.style.display = 'none';
+      }
+    });
+
+    // 执行操作
+    document.getElementById('btnExecuteOperation').addEventListener('click', () => {
+      const type = document.getElementById('operationType').value;
+      const value = document.getElementById('operationValue').value.trim();
+      
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录');
+        return;
+      }
+      
+      if (type === 'add_exp') {
+        const exp = parseInt(value) || 0;
+        if (exp <= 0) {
+          alert('经验值必须大于0');
+          return;
+        }
+        sendMessage({ type: 'add_exp', token: currentToken, character_id: currentCharacterId, exp });
+      } else if (type === 'add_item') {
+        const itemSelect = document.getElementById('operationItemSelect');
+        const selectedItemId = itemSelect ? itemSelect.value : '';
+        const quantity = parseInt(document.getElementById('operationItemQuantity').value) || 1;
+        
+        if (!selectedItemId) {
+          alert('请选择要添加的物品');
+          return;
+        }
+        
+        if (quantity <= 0) {
+          alert('数量必须大于0');
+          return;
+        }
+        
+        const itemId = parseInt(selectedItemId);
+        if (isNaN(itemId)) {
+          alert('物品ID无效，请重新选择');
+          return;
+        }
+        
+        // 获取物品名称用于确认
+        const itemName = itemsData[itemId] || `物品${itemId}`;
+        
+        // 确认操作
+        if (!confirm(`确认添加 ${quantity} 个 "${itemName}" (ID: ${itemId}) 吗？`)) {
+          return;
+        }
+        
+        // 服务器期望的字段名是itemId，不是item_id
+        sendMessage({ type: 'add', token: currentToken, character_id: currentCharacterId, itemId: itemId, quantity });
+      }
+    });
+
+    // 退出登录
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      // 发送登出消息（如果已连接）
+      if (ws && ws.readyState === WebSocket.OPEN && currentToken) {
+        sendMessage({ type: 'logout', token: currentToken });
+      }
+      
+      currentToken = null;
+      currentUserId = null;
+      currentAccount = null;
+      currentCharacterId = null;
+      document.getElementById('loginCard').classList.remove('hidden');
+      document.getElementById('gameContent').classList.add('hidden');
+      document.getElementById('loginAccount').value = '';
+      document.getElementById('loginPassword').value = '';
+      
+      // 清除重连定时器
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+    });
+    
+    // 切换账号下拉框改变时，自动加载该账号的角色列表
+    document.getElementById('switchAccountSelect').addEventListener('change', (e) => {
+      const account = e.target.value;
+      if (account) {
+        // 显示加载状态
+        const statusEl = document.getElementById('switchAccountStatus');
+        if (statusEl) statusEl.textContent = '加载角色列表中...';
+        document.getElementById('switchCharacterSelect').innerHTML = '<option value="">加载中...</option>';
+        
+        // 加载该账号的角色列表
+        sendMessage({ type: 'admin_search_account', account: account });
+      } else {
+        document.getElementById('switchCharacterSelect').innerHTML = '<option value="">请先选择账号...</option>';
+        const statusEl = document.getElementById('switchAccountStatus');
+        if (statusEl) statusEl.textContent = '';
+      }
+    });
+    
+    // 角色下拉框改变时，只更新状态，不自动切换（需要点击切换按钮）
+    document.getElementById('switchCharacterSelect').addEventListener('change', (e) => {
+      // 清除状态提示
+      const statusEl = document.getElementById('switchCharacterStatus');
+      if (statusEl) statusEl.textContent = '';
+    });
+
+    // ====== 好友功能函数 ======
+    function updateFriendList(friends) {
+      const container = document.getElementById('friendListContent');
+      if (!friends || friends.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">暂无好友</div>';
+        return;
+      }
+      
+      let html = '';
+      friends.forEach(friend => {
+        const onlineStatus = friend.online ? '<span style="color: #4CAF50;">● 在线</span>' : '<span style="color: #999;">○ 离线</span>';
+        html += `
+          <div style="background: white; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 600; font-size: 14px;">${friend.role_name || '未知'}</div>
+                <div style="font-size: 11px; color: #999; font-family: monospace; margin-top: 4px;">
+                  ID: ${friend.friend_id || '-'} | ${onlineStatus}
+                </div>
+              </div>
+              <button class="btn-danger" onclick="deleteFriend('${friend.friend_id}', '${friend.character_id}')" style="padding: 6px 12px; font-size: 12px;">删除</button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function updateFriendRequestList(requests) {
+      const container = document.getElementById('friendRequestContent');
+      const requestContainer = document.getElementById('friendRequestContainer');
+      if (!requests || requests.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;">暂无申请</div>';
+        requestContainer.style.display = 'none';
+        return;
+      }
+      
+      requestContainer.style.display = 'block';
+      let html = '';
+      requests.forEach(req => {
+        const onlineStatus = req.online ? '<span style="color: #4CAF50;">● 在线</span>' : '<span style="color: #999;">○ 离线</span>';
+        html += `
+          <div style="background: white; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px; margin-bottom: 8px;">
+            <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">${req.role_name || '未知'}</div>
+            <div style="font-size: 11px; color: #999; font-family: monospace; margin-bottom: 8px;">
+              ID: ${req.friend_id || '-'} | ${onlineStatus}
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-primary" onclick="approveFriend('${req.friend_id}', '${req.character_id}')" style="flex: 1; padding: 6px 12px; font-size: 12px;">同意</button>
+              <button class="btn-secondary" onclick="rejectFriend('${req.friend_id}', '${req.character_id}')" style="flex: 1; padding: 6px 12px; font-size: 12px;">拒绝</button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function showFriendSearchResult(friend) {
+      const resultDiv = document.getElementById('friendSearchResult');
+      const contentDiv = document.getElementById('friendSearchResultContent');
+      const onlineStatus = friend.online ? '<span style="color: #4CAF50;">● 在线</span>' : '<span style="color: #999;">○ 离线</span>';
+      
+      contentDiv.innerHTML = `
+        <div style="background: white; border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px;">
+          <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">${friend.role_name || '未知'}</div>
+          <div style="font-size: 11px; color: #999; font-family: monospace; margin-bottom: 12px;">
+            ID: ${friend.friend_id || '-'} | ${onlineStatus}
+          </div>
+          <button class="btn-primary" onclick="addFriend('${friend.friend_id}', '${friend.character_id}')" style="width: 100%; padding: 8px;">添加好友</button>
+        </div>
+      `;
+      resultDiv.style.display = 'block';
+    }
+
+    function showFriendSearchError(message) {
+      const resultDiv = document.getElementById('friendSearchResult');
+      const contentDiv = document.getElementById('friendSearchResultContent');
+      contentDiv.innerHTML = `
+        <div style="background: #ffebee; border: 1px solid #f44336; border-radius: 6px; padding: 12px; color: #c62828;">
+          ${message || '未找到该好友'}
+        </div>
+      `;
+      resultDiv.style.display = 'block';
+    }
+
+    function deleteFriend(friendId, characterId) {
+      if (!confirm(`确认删除好友 ${friendId} 吗？`)) return;
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录');
+        return;
+      }
+      sendMessage({ type: 'delete_friend', token: currentToken, character_id: currentCharacterId, friend_id: friendId });
+    }
+
+    function approveFriend(friendId, characterId) {
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录');
+        return;
+      }
+      sendMessage({ type: 'approve_friend', token: currentToken, character_id: currentCharacterId, friend_id: friendId });
+    }
+
+    function rejectFriend(friendId, characterId) {
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录');
+        return;
+      }
+      sendMessage({ type: 'reject_friend', token: currentToken, character_id: currentCharacterId, friend_id: friendId });
+    }
+
+    function addFriend(friendId, characterId) {
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录');
+        return;
+      }
+      // 确认添加好友
+      if (!confirm(`确认向 ${friendId} 发送好友申请吗？`)) {
+        return;
+      }
+      sendMessage({ type: 'add_friend', token: currentToken, character_id: currentCharacterId, target_friend_id: friendId, target_character_id: characterId });
+    }
+
+    // 获取好友列表按钮
+    document.getElementById('btnGetFriendList').addEventListener('click', () => {
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录并选择角色');
+        return;
+      }
+      sendMessage({ type: 'get_friend_list', token: currentToken, character_id: currentCharacterId });
+    });
+
+    // 获取好友申请列表按钮
+    document.getElementById('btnGetFriendRequests').addEventListener('click', () => {
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录并选择角色');
+        return;
+      }
+      sendMessage({ type: 'get_friend_requests', token: currentToken, character_id: currentCharacterId });
+    });
+
+    // 搜索好友按钮
+    document.getElementById('btnSearchFriend').addEventListener('click', () => {
+      const friendId = document.getElementById('searchFriendId').value.trim();
+      if (!friendId) {
+        alert('请输入好友ID');
+        return;
+      }
+      if (!/^\d{6}$/.test(friendId)) {
+        alert('好友ID必须是6位数字');
+        return;
+      }
+      if (!currentToken || !currentCharacterId) {
+        alert('请先登录并选择角色');
+        return;
+      }
+      sendMessage({ type: 'search_friend', token: currentToken, character_id: currentCharacterId, friend_id: friendId });
+    });
+
+    // 页面加载时连接
+    window.addEventListener('load', () => {
+      connect();
+      loadItemsData();
+      // 连接成功后加载账号列表
+      setTimeout(() => {
+        if (ws && ws.readyState === 1) {
+          sendMessage({ type: 'admin_get_admin_accounts' });
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
+

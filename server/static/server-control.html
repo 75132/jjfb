@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>服务器控制 - 游戏服务器管理后台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* Page Specific Styles */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-top: 20px;
+    }
+    
+    .route-name {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+    
+    .log-container {
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #e0e0e0;
+    }
+    
+    .log-entry { margin-bottom: 4px; padding: 4px 0; }
+    .log-entry.info { color: #4caf50; }
+    .log-entry.warning { color: #ff9800; }
+    .log-entry.error { color: #f44336; }
+    .log-entry.debug { color: #2196f3; }
+    
+    .auto-refresh {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html" class="btn btn-outline" style="color: white; border-color: rgba(255,255,255,0.3);">← 返回主面板</a>
+      <h1>⚙️ 服务器控制中心</h1>
+    </div>
+    <div class="header-status">
+      <div class="status-badge">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">连接中...</span>
+      </div>
+      <div class="status-badge">
+        <span>在线: <strong id="onlineCount">0</strong></span>
+      </div>
+      <div class="status-badge">
+        <span>QPS: <strong id="currentQPS">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 核心指标卡片 -->
+    <div class="stats-grid" id="coreStatsGrid">
+      <div class="stat-card" style="border-left-color: var(--info-color);">
+        <div class="stat-card-title">运行时间</div>
+        <div class="stat-card-value" id="uptimeVal">00:00:00</div>
+      </div>
+      <div class="stat-card" style="border-left-color: var(--success-color);">
+        <div class="stat-card-title">总请求数</div>
+        <div class="stat-card-value" id="totalRequestsVal">0</div>
+      </div>
+      <div class="stat-card" style="border-left-color: var(--warning-color);">
+        <div class="stat-card-title">平均响应</div>
+        <div class="stat-card-value" id="avgResponseVal">0ms</div>
+      </div>
+       <div class="stat-card" style="border-left-color: var(--danger-color);">
+        <div class="stat-card-title">错误率</div>
+        <div class="stat-card-value" id="errorRateVal">0%</div>
+      </div>
+    </div>
+
+    <!-- 性能监控图表 -->
+    <div class="card">
+      <div class="card-header" style="display: flex; justify-content: space-between;">
+        <div class="card-title">📈 实时性能监控</div>
+        <div class="card-actions" style="display: flex; gap: 10px;">
+          <div class="auto-refresh">
+            <label class="switch">
+              <input type="checkbox" id="autoRefreshToggle" checked>
+              <span class="slider"></span>
+            </label>
+            <span>自动刷新</span>
+          </div>
+          <button class="btn btn-outline" id="btnRefreshCharts" title="刷新图表">🔄</button>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tabs-nav">
+          <button class="tab-button active" data-tab="qps">QPS趋势</button>
+          <button class="tab-button" data-tab="connections">连接数</button>
+          <button class="tab-button" data-tab="response">响应时间</button>
+          <button class="tab-button" data-tab="errors">错误率</button>
+        </div>
+      </div>
+      <div class="tab-content active" id="tab-qps">
+        <div class="chart-container"><canvas id="qpsChart"></canvas></div>
+      </div>
+      <div class="tab-content" id="tab-connections">
+        <div class="chart-container"><canvas id="connectionsChart"></canvas></div>
+      </div>
+      <div class="tab-content" id="tab-response">
+        <div class="chart-container"><canvas id="responseChart"></canvas></div>
+      </div>
+      <div class="tab-content" id="tab-errors">
+        <div class="chart-container"><canvas id="errorsChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- 路由统计 -->
+    <div class="card">
+      <div class="card-header" style="display: flex; justify-content: space-between;">
+        <div class="card-title">🛣️ 路由统计</div>
+        <div class="card-actions">
+          <button class="btn btn-outline" id="btnRefreshRoutes">刷新</button>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tabs-nav">
+          <button class="tab-button active" data-tab="all-routes">全部路由</button>
+          <button class="tab-button" data-tab="top-routes">热门路由</button>
+          <button class="tab-button" data-tab="slow-routes">慢路由</button>
+          <button class="tab-button" data-tab="error-routes">错误路由</button>
+        </div>
+      </div>
+      <div class="tab-content active" id="tab-all-routes">
+        <div id="allRoutesContainer">
+          <div class="empty-state">暂无路由统计数据</div>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-top-routes">
+        <div id="topRoutesContainer">
+          <div class="empty-state">暂无热门路由数据</div>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-slow-routes">
+        <div id="slowRoutesContainer">
+          <div class="empty-state">暂无慢路由数据</div>
+        </div>
+      </div>
+      <div class="tab-content" id="tab-error-routes">
+        <div id="errorRoutesContainer">
+          <div class="empty-state">暂无错误路由数据</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 在线玩家 -->
+    <div class="card">
+      <div class="card-header" style="display: flex; justify-content: space-between;">
+        <div class="card-title">👥 在线玩家</div>
+        <div class="card-actions">
+          <button class="btn btn-outline" id="btnRefreshPlayers">刷新</button>
+        </div>
+      </div>
+      <div id="onlinePlayersContainer">
+        <div class="empty-state">暂无在线玩家</div>
+      </div>
+    </div>
+
+    <!-- 系统日志 -->
+    <div class="card">
+      <div class="card-header" style="display: flex; justify-content: space-between;">
+        <div class="card-title">📋 系统日志</div>
+        <div class="card-actions" style="display: flex; gap: 8px;">
+          <button class="btn btn-outline" id="btnClearLogs">清空</button>
+          <button class="btn btn-outline" id="btnPauseLogs" title="暂停/继续">⏸️</button>
+        </div>
+      </div>
+      <div class="log-container" id="logContainer">
+        <div class="log-entry info">
+          <span class="log-time">[系统]</span>
+          服务器控制面板已启动
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/common.js"></script>
+  <script>
+    let autoRefresh = true;
+    let refreshInterval = null;
+    let logsPaused = false;
+    
+    // 图表数据初始化
+    const chartData = {
+      qps: { labels: [], data: [], maxLength: 30 },
+      connections: { labels: [], data: [], maxLength: 30 },
+      response: { labels: [], data: [], maxLength: 30 },
+      errors: { labels: [], data: [], maxLength: 30 }
+    };
+    
+    // Chart Config
+    const chartConfig = {
+      type: 'line',
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+          x: { grid: { display: false } }
+        },
+        animation: { duration: 0 }
+      }
+    };
+    
+    // Create Charts
+    const qpsChart = new Chart(document.getElementById('qpsChart'), {
+      ...chartConfig,
+      data: {
+        labels: chartData.qps.labels,
+        datasets: [{ label: 'QPS', data: chartData.qps.data, borderColor: '#667eea', backgroundColor: 'rgba(102, 126, 234, 0.1)', tension: 0.4, fill: true }]
+      }
+    });
+    
+    const connectionsChart = new Chart(document.getElementById('connectionsChart'), {
+      ...chartConfig,
+      data: {
+        labels: chartData.connections.labels,
+        datasets: [{ label: '连接数', data: chartData.connections.data, borderColor: '#4caf50', backgroundColor: 'rgba(76, 175, 80, 0.1)', tension: 0.4, fill: true }]
+      }
+    });
+    
+    const responseChart = new Chart(document.getElementById('responseChart'), {
+      ...chartConfig,
+      data: {
+        labels: chartData.response.labels,
+        datasets: [{ label: '响应时间(ms)', data: chartData.response.data, borderColor: '#ff9800', backgroundColor: 'rgba(255, 152, 0, 0.1)', tension: 0.4, fill: true }]
+      }
+    });
+    
+    const errorsChart = new Chart(document.getElementById('errorsChart'), {
+      ...chartConfig,
+      data: {
+        labels: chartData.errors.labels,
+        datasets: [{ label: '错误率(%)', data: chartData.errors.data, borderColor: '#f44336', backgroundColor: 'rgba(244, 67, 54, 0.1)', tension: 0.4, fill: true }]
+      }
+    });
+    
+    function addChartData(chart, label, value, maxLength = 30) {
+      chart.data.labels.push(label);
+      chart.data.datasets[0].data.push(value);
+      if (chart.data.labels.length > maxLength) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+      }
+      chart.update('none');
+    }
+
+    // WS Manager Setup
+    wsManager.onOpen = () => {
+      addLog('info', 'WebSocket连接成功');
+      setTimeout(() => {
+        refreshServerStats();
+        refreshRouteStats();
+        refreshOnlinePlayers();
+      }, 500);
+      
+      // Start auto refresh loop
+      if (autoRefresh && !refreshInterval) {
+        refreshInterval = setInterval(refreshServerStats, 2000);
+      }
+    };
+
+    wsManager.onClose = () => {
+      addLog('warning', 'WebSocket连接断开');
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+      }
+    };
+
+    wsManager.on('admin_server_stats', (data) => {
+      if (data.success && data.stats) {
+        updateServerStats(data.stats);
+      }
+    });
+
+    wsManager.on('admin_route_stats', (data) => {
+      if (data.success && data.stats) {
+        renderRouteStats(data.stats);
+      }
+    });
+
+    wsManager.on('admin_online_players', (data) => {
+      if (data.success) {
+        document.getElementById('onlineCount').textContent = data.count || 0;
+        if (data.players) {
+          updateOnlinePlayersList(data.players);
+        }
+      }
+    });
+
+    // Helper Functions
+    function refreshServerStats() {
+      wsManager.send({ type: 'admin_get_server_stats' });
+    }
+
+    function refreshRouteStats() {
+      wsManager.send({ type: 'admin_get_route_stats' });
+    }
+
+    function refreshOnlinePlayers() {
+      wsManager.send({ type: 'admin_get_online_players' });
+    }
+
+    function addLog(type, message) {
+      if (logsPaused) return;
+      const container = document.getElementById('logContainer');
+      const div = document.createElement('div');
+      div.className = `log-entry ${type}`;
+      div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> ${message}`;
+      container.appendChild(div);
+      if (container.children.length > 100) container.removeChild(container.firstChild);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function updateServerStats(stats) {
+      const now = new Date().toLocaleTimeString();
+      const qps = stats.qps || 0;
+      const connections = stats.current_connections || 0;
+      // 注意：服务器返回的 total_error_rate 已经是百分比（0-100），不需要再乘以100
+      const errorRate = stats.route_stats?.total_error_rate || 0;
+      const avgResponse = stats.route_stats?.avg_time_per_call_ms || 0;
+      
+      // Update Charts
+      addChartData(qpsChart, now, qps);
+      addChartData(connectionsChart, now, connections);
+      addChartData(responseChart, now, avgResponse);
+      addChartData(errorsChart, now, errorRate); // 已经是百分比，不需要乘以100
+      
+      // Update Badges
+      document.getElementById('currentQPS').textContent = qps;
+      
+      // Update Core Stats Grid
+      document.getElementById('uptimeVal').textContent = formatUptime(stats.uptime || 0);
+      document.getElementById('totalRequestsVal').textContent = formatNumber(stats.total_requests || 0);
+      document.getElementById('avgResponseVal').textContent = avgResponse.toFixed(2) + 'ms';
+      document.getElementById('errorRateVal').textContent = errorRate.toFixed(2) + '%'; // 已经是百分比，不需要乘以100
+    }
+    
+    function renderRouteStats(routeStats) {
+        if (!routeStats || Object.keys(routeStats).length === 0) {
+            document.getElementById('allRoutesContainer').innerHTML = '<div class="empty-state">暂无数据</div>';
+            document.getElementById('topRoutesContainer').innerHTML = '<div class="empty-state">暂无数据</div>';
+            document.getElementById('slowRoutesContainer').innerHTML = '<div class="empty-state">暂无数据</div>';
+            document.getElementById('errorRoutesContainer').innerHTML = '<div class="empty-state">暂无数据</div>';
+            return;
+        }
+
+        // 转换为数组并排序
+        const routes = Object.entries(routeStats).map(([name, stats]) => ({
+            name,
+            total_calls: stats.total_calls || stats.call_count || 0,
+            avg_time: stats.avg_time || 0,
+            max_time: stats.max_time || 0,
+            error_count: stats.error_count || 0,
+            error_rate: stats.error_rate || 0,
+            qps: 0  // QPS需要根据时间计算，暂时设为0
+        }));
+
+        // 渲染全部路由
+        renderRouteTable('allRoutesContainer', routes.sort((a, b) => b.total_calls - a.total_calls));
+        
+        // 渲染热门路由（调用次数最多的前10个）
+        renderRouteTable('topRoutesContainer', routes.sort((a, b) => b.total_calls - a.total_calls).slice(0, 10));
+        
+        // 渲染慢路由（平均耗时最长的前10个）
+        renderRouteTable('slowRoutesContainer', routes.filter(r => r.avg_time > 100).sort((a, b) => b.avg_time - a.avg_time).slice(0, 10));
+        
+        // 渲染错误路由（有错误的路由）
+        renderRouteTable('errorRoutesContainer', routes.filter(r => r.error_count > 0).sort((a, b) => b.error_rate - a.error_rate));
+    }
+
+    function renderRouteTable(containerId, routes) {
+        const container = document.getElementById(containerId);
+        if (!routes || routes.length === 0) {
+            container.innerHTML = '<div class="empty-state">暂无数据</div>';
+            return;
+        }
+
+        let html = `
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>路由</th>
+                    <th>调用次数</th>
+                    <th>平均耗时</th>
+                    <th>最大耗时</th>
+                    <th>错误数</th>
+                    <th>错误率</th>
+                </tr>
+            </thead>
+            <tbody>
+        `;
+
+        routes.forEach(r => {
+            // 注意：error_rate 已经是百分比（0-100），不需要再乘以100
+            const errorRate = r.error_rate || 0;
+            html += `
+                <tr>
+                    <td class="route-name">${r.name}</td>
+                    <td>${r.total_calls}</td>
+                    <td>${(r.avg_time || 0).toFixed(2)}ms</td>
+                    <td>${(r.max_time || 0).toFixed(2)}ms</td>
+                    <td>${r.error_count || 0}</td>
+                    <td>
+                        <span style="color: ${errorRate > 5 ? '#f44336' : (errorRate > 0 ? '#ff9800' : '#4caf50')}">
+                            ${errorRate.toFixed(2)}%
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function updateOnlinePlayersList(players) {
+        const container = document.getElementById('onlinePlayersContainer');
+        if (!players || players.length === 0) {
+            container.innerHTML = '<div class="empty-state">暂无在线玩家</div>';
+            return;
+        }
+        
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px;">';
+        players.forEach(p => {
+            html += `
+                <div style="background: white; padding: 16px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <strong style="font-size: 14px;">${p.role_name || '未知'}</strong>
+                        <span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">在线</span>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 4px;">账号: ${p.account || '未知'}</div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 4px;">角色ID: ${p.character_id || '未知'}</div>
+                    <div style="font-size: 12px; color: #666;">等级: ${p.level || 1}</div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      if (days > 0) return `${days}天 ${hours}时 ${mins}分`;
+      if (hours > 0) return `${hours}时 ${mins}分 ${secs}秒`;
+      return `${mins}分 ${secs}秒`;
+    }
+
+    function formatNumber(num) {
+      if (num >= 1000000) return (num / 1000000).toFixed(2) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(2) + 'K';
+      return num.toString();
+    }
+
+    // UI Event Listeners
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const parent = button.closest('.card');
+            parent.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            parent.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            button.classList.add('active');
+            parent.querySelector(`#tab-${button.dataset.tab}`).classList.add('active');
+        });
+    });
+
+    document.getElementById('autoRefreshToggle').addEventListener('change', (e) => {
+        autoRefresh = e.target.checked;
+        if (autoRefresh) {
+            if (!refreshInterval) refreshInterval = setInterval(refreshServerStats, 2000);
+        } else {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+    });
+
+    document.getElementById('btnRefreshCharts').addEventListener('click', refreshServerStats);
+    document.getElementById('btnRefreshRoutes').addEventListener('click', refreshRouteStats);
+    document.getElementById('btnRefreshPlayers').addEventListener('click', refreshOnlinePlayers);
+    document.getElementById('btnClearLogs').addEventListener('click', () => {
+        document.getElementById('logContainer').innerHTML = '';
+    });
+    document.getElementById('btnPauseLogs').addEventListener('click', function() {
+        logsPaused = !logsPaused;
+        this.classList.toggle('active');
+        this.innerHTML = logsPaused ? '▶️' : '⏸️';
+    });
+
+    // Start
+    window.addEventListener('load', () => {
+        wsManager.connect();
+    });
+  </script>
+</body>
+</html>

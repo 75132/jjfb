@@ -1,0 +1,2050 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>游戏控制 - 游戏服务器管理后台</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4caf50;
+    }
+    .status-dot.disconnected {
+      background: #f44336;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stat-card-title {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .stat-card-value {
+      font-size: 28px;
+      font-weight: 600;
+      color: #333;
+    }
+    .stat-card-value.success { color: #4caf50; }
+    .stat-card-value.error { color: #f44336; }
+    .stat-card-value.info { color: #2196F3; }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 1200px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+    .btn-success {
+      background: #4caf50;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #45a049;
+    }
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .player-card {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .player-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .player-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+    .player-id {
+      font-size: 12px;
+      color: #999;
+      font-family: monospace;
+    }
+    .player-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .info-item {
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+    .info-label {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .item-badge {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+    }
+    .item-id {
+      font-size: 11px;
+      color: #666;
+      font-family: monospace;
+    }
+    .item-count {
+      font-size: 16px;
+      font-weight: 600;
+      color: #667eea;
+      margin-top: 4px;
+    }
+    
+    .log-panel {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 6px;
+      padding: 16px;
+      max-height: 400px;
+      overflow: auto;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .log-entry {
+      padding: 4px 0;
+      border-left: 3px solid transparent;
+      padding-left: 8px;
+      margin-bottom: 4px;
+    }
+    .log-entry.error {
+      border-left-color: #f44336;
+      background: rgba(244, 67, 54, 0.1);
+    }
+    .log-entry.success {
+      border-left-color: #4caf50;
+      background: rgba(76, 175, 80, 0.1);
+    }
+    .log-entry.info {
+      border-left-color: #2196F3;
+      background: rgba(33, 150, 243, 0.1);
+    }
+    .log-entry.warning {
+      border-left-color: #ff9800;
+      background: rgba(255, 152, 0, 0.1);
+    }
+    .timestamp {
+      color: #888;
+      margin-right: 8px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .search-box {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .search-box input {
+      padding-left: 40px;
+    }
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .alert-info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #2196F3;
+    }
+    .alert-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+    .alert-error {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .action-buttons button {
+      flex: 1;
+    }
+    
+    /* 标签页样式 */
+    .tabs {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .tabs-nav {
+      display: flex;
+      background: #f5f5f5;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .tab-button {
+      flex: 1;
+      padding: 16px 24px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 15px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .tab-button:hover {
+      background: rgba(102, 126, 234, 0.05);
+      color: #667eea;
+    }
+    .tab-button.active {
+      color: #667eea;
+      background: white;
+      border-bottom-color: #667eea;
+    }
+    .tab-content {
+      display: none;
+      padding: 24px;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* 统计表格样式 */
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    .stats-table th,
+    .stats-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .stats-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      font-size: 13px;
+      color: #666;
+    }
+    .stats-table td {
+      font-size: 14px;
+    }
+    .stats-table tr:hover {
+      background: #f8f9fa;
+    }
+    .route-name {
+      font-family: monospace;
+      font-size: 13px;
+      color: #667eea;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .badge-warning {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    .badge-error {
+      background: #ffebee;
+      color: #c62828;
+    }
+    .badge-info {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+  </style>
+  </head>
+<body>
+  <div class="header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html" style="color: white; text-decoration: none; font-size: 18px;">← 返回主面板</a>
+      <h1>🎮 游戏控制</h1>
+    </div>
+    <div class="header-status">
+      <div class="status-badge">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">连接中...</span>
+      </div>
+      <div class="status-badge">
+        <span>在线: <strong id="onlineCount">0</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 仪表盘 -->
+    <div class="dashboard">
+      <div class="stat-card">
+        <div class="stat-card-title">服务器状态</div>
+        <div class="stat-card-value info" id="statStatus">连接中...</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">在线玩家</div>
+        <div class="stat-card-value success" id="statOnline">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">总请求数</div>
+        <div class="stat-card-value" id="statRequests">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">运行时间</div>
+        <div class="stat-card-value" id="statUptime">00:00:00</div>
+      </div>
+    </div>
+
+    <!-- 游戏控制内容 -->
+    <div>
+        <div class="main-content">
+          <!-- 左侧：搜索和修改 -->
+          <div>
+        <!-- 账号选择 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">👤 选择账号/角色</div>
+          <div class="form-group">
+            <label>账号列表 <span id="accountStatus" style="font-size: 11px; color: #999; margin-left: 8px;"></span></label>
+            <select id="accountSelect" style="width: 100%;">
+              <option value="">请选择账号...</option>
+            </select>
+          </div>
+          <div class="form-group" id="characterSelectGroup" style="display: none;">
+            <label>角色列表 <span id="characterStatus" style="font-size: 11px; color: #999; margin-left: 8px;"></span></label>
+            <select id="characterSelect" style="width: 100%;">
+              <option value="">请选择角色...</option>
+            </select>
+          </div>
+          <div class="btn-group">
+            <button class="btn-primary" id="btnLoadAccounts">刷新账号列表</button>
+            <button class="btn-secondary" id="btnLoadCharacters" style="display: none;">刷新角色列表</button>
+          </div>
+          <div style="margin-top: 8px; font-size: 12px; color: #666;">
+            💡 提示：选择账号后会自动加载角色列表，选择角色后会自动加载详细信息
+          </div>
+        </div>
+
+        <!-- 搜索玩家 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">🔍 搜索玩家（备用）</div>
+          <div class="search-box">
+            <input type="text" id="searchPlayer" placeholder="输入账号、角色名或角色ID">
+          </div>
+          <div class="btn-group">
+            <button class="btn-primary" id="btnSearchByAccount">按账号</button>
+            <button class="btn-primary" id="btnSearchByCharacter">按角色名</button>
+            <button class="btn-primary" id="btnSearchById">按ID</button>
+          </div>
+        </div>
+
+        <!-- 玩家信息展示 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">📊 玩家信息</div>
+          <div id="playerInfoContainer">
+            <div class="empty-state">
+              <div class="empty-state-icon">👤</div>
+              <div>请搜索玩家查看信息</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 修改玩家数据 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">✏️ 修改玩家数据</div>
+          <div class="form-group">
+            <label>角色ID（自动填充或手动输入）</label>
+            <input type="text" id="modifyCharacterId" placeholder="从上方选择角色或手动输入角色ID">
+          </div>
+          <div class="form-group">
+            <label>操作类型</label>
+            <select id="modifyType">
+              <option value="exp">添加经验</option>
+              <option value="gold">修改金币</option>
+              <option value="level">修改等级</option>
+              <option value="item">添加物品</option>
+            </select>
+          </div>
+          <div class="form-group" id="modifyValueGroup">
+            <label id="modifyValueLabel">经验值</label>
+            <input type="text" id="modifyValue" placeholder="输入数值">
+          </div>
+          <div class="form-group" id="modifyItemSelectGroup" style="display: none;">
+            <label>选择物品</label>
+            <select id="modifyItemSelect" style="width: 100%;">
+              <option value="">正在加载物品列表...</option>
+            </select>
+          </div>
+          <div class="form-group" id="quantityGroup" style="display: none;">
+            <label>数量</label>
+            <input type="number" id="modifyQuantity" value="1" min="1">
+          </div>
+          <button class="btn-success" id="btnModifyPlayer" style="width: 100%;">执行修改</button>
+        </div>
+
+        <!-- 宠物机甲管理 -->
+        <div class="card">
+          <div class="card-title">🤖 宠物机甲管理</div>
+          <div class="form-group">
+            <label>选择宠物机甲</label>
+            <select id="robotPetSelect" style="width: 100%;">
+              <option value="">请先选择角色...</option>
+            </select>
+          </div>
+          <div id="robotPetInfo" style="display: none;">
+            <div class="player-info-grid" style="margin-top: 12px; margin-bottom: 12px;">
+              <div class="info-item">
+                <div class="info-label">名称</div>
+                <div class="info-value" id="robotPetName">-</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">等级</div>
+                <div class="info-value" id="robotPetLevel">-</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">经验</div>
+                <div class="info-value" id="robotPetExp">-</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">成长值</div>
+                <div class="info-value" id="robotPetGrowth">-</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">悟性值</div>
+                <div class="info-value" id="robotPetComprehension">-</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">星级</div>
+                <div class="info-value" id="robotPetStarLevel">-</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>操作类型</label>
+              <select id="robotPetModifyType">
+                <option value="exp">添加经验</option>
+                <option value="level">修改等级</option>
+                <option value="growth">修改成长值</option>
+                <option value="comprehension">修改悟性值</option>
+                <option value="star_level">修改星级</option>
+                <option value="direct_attr">直接修改属性</option>
+              </select>
+            </div>
+            <div class="form-group" id="robotPetAttrGroup" style="display: none;">
+              <label>属性名称</label>
+              <select id="robotPetAttrName">
+                <option value="HP">HP</option>
+                <option value="MaxHP">MaxHP</option>
+                <option value="MP">MaxMP</option>
+                <option value="MaxMP">MaxMP</option>
+                <option value="Melee">格斗</option>
+                <option value="Shooting">射击</option>
+                <option value="Armor">护甲</option>
+                <option value="Evasion">闪避</option>
+                <option value="Accuracy">命中</option>
+                <option value="Lethality">致命</option>
+                <option value="Corrosion">侵蚀</option>
+                <option value="Resistance">抗性</option>
+                <option value="Initiative">出手</option>
+                <option value="Counterattack">反击</option>
+                <option value="Block">格挡</option>
+                <option value="ArmorPenetration">护甲穿透</option>
+                <option value="ParticleShield">粒子护盾</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label id="robotPetValueLabel">经验值</label>
+              <input type="text" id="robotPetValue" placeholder="输入数值">
+            </div>
+            <div class="btn-group" style="margin-top: 12px;">
+              <button class="btn-success" id="btnModifyRobotPet" style="flex: 1;">执行修改</button>
+              <button class="btn-primary" id="btnResetRobotPet" style="flex: 1;">还原为1级</button>
+              <button class="btn-danger" id="btnDeleteRobotPet" style="flex: 1;">删除机甲</button>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 16px;">
+            <label>批量操作</label>
+            <div class="btn-group">
+              <button class="btn-danger" id="btnClearAllRobots" style="flex: 1;">清空该角色所有机甲</button>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 16px; border-top: 1px solid #e0e0e0; padding-top: 16px;">
+            <label>添加随机机甲</label>
+            <div class="form-group" style="margin-bottom: 8px;">
+              <input type="number" id="addRobotCount" placeholder="数量" value="1" min="1" max="100" style="width: 100%;">
+            </div>
+            <button class="btn-primary" id="btnAddRandomRobots" style="width: 100%;">添加随机机甲</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：公告和日志 -->
+      <div>
+        <!-- 公告管理 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">📢 公告管理</div>
+          <div class="form-group">
+            <label>公告内容</label>
+            <textarea id="announcementText" rows="3" placeholder="输入公告内容..."></textarea>
+          </div>
+          <div class="btn-group">
+            <button class="btn-primary" id="btnPostAnnouncement">发布公告</button>
+            <button class="btn-secondary" id="btnLoadAnnouncements">查看历史</button>
+          </div>
+          <div id="announcementList" style="margin-top: 16px; max-height: 200px; overflow: auto;">
+            <div class="empty-state" style="padding: 20px;">
+              <div>暂无公告</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 管理员账号管理 -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">👑 管理员账号管理</div>
+          <div class="alert alert-info" style="margin-bottom: 16px; font-size: 12px;">
+            💡 提示：注册的账号可以在客户端模拟页面登录查看数据
+            <a href="client-simulator.html" target="_blank" style="color: #2196F3; text-decoration: underline; margin-left: 8px;">打开客户端模拟</a>
+          </div>
+          <div class="form-group">
+            <button class="btn-success" id="btnRegisterAdminAccount" style="width: 100%;">一键注册管理员账号</button>
+          </div>
+          <div class="form-group">
+            <button class="btn-secondary" id="btnLoadAdminAccounts" style="width: 100%;">刷新管理员账号列表</button>
+          </div>
+          <div id="adminAccountsList" style="margin-top: 16px; max-height: 300px; overflow: auto;">
+            <div class="empty-state" style="padding: 20px;">
+              <div>暂无管理员账号，点击"一键注册"创建</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 系统日志 -->
+        <div class="card">
+          <div class="card-title">📝 系统日志</div>
+          <div class="btn-group" style="margin-bottom: 12px;">
+            <button class="btn-secondary" id="btnClearLogs" style="padding: 6px 12px; font-size: 12px;">清空</button>
+            <button class="btn-secondary" id="btnExportLogs" style="padding: 6px 12px; font-size: 12px;">导出</button>
+            <select id="logLevelFilter" style="padding: 6px 12px; font-size: 12px; flex: 1;">
+              <option value="all">全部</option>
+              <option value="info">信息</option>
+              <option value="success">成功</option>
+              <option value="warning">警告</option>
+              <option value="error">错误</option>
+            </select>
+          </div>
+          <div class="log-panel" id="logPanel"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let ws = null;
+    let startTime = Date.now();
+    let logEntries = [];
+    let reconnectTimer = null;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 10;
+    const RECONNECT_DELAY = 3000; // 3秒
+    let accountsList = [];
+    let charactersList = [];
+    let itemsData = {}; // 物品数据缓存（从服务器加载）- ID到名称的映射
+    let itemsList = []; // 完整的物品列表（用于下拉列表）
+    
+    // 状态保存（用于重连后恢复）
+    let savedState = {
+      selectedAccount: '',
+      selectedCharacter: '',
+      modifyCharacterId: ''
+    };
+
+    // 移除标签页切换功能（此页面只包含游戏控制）
+
+    // 自动连接
+    function autoConnect() {
+      if (ws && ws.readyState === 1) {
+        return; // 已经连接
+      }
+      connect();
+    }
+
+    // 连接函数
+    function connect() {
+      if (ws && ws.readyState === 1) {
+        addLog('已经连接', 'info');
+        return;
+      }
+      
+      const host = location.hostname || 'localhost';
+      const port = 8001;
+      addLog(`正在连接到 ws://${host}:${port}...`, 'info');
+      
+      try {
+        ws = new WebSocket(`ws://${host}:${port}`);
+        
+        ws.onopen = () => {
+          updateStatus(true);
+          addLog('✅ WebSocket连接成功', 'success');
+          startTime = Date.now();
+          reconnectAttempts = 0;
+          
+          // 连接成功后自动获取统计信息和账号列表
+          setTimeout(() => {
+            sendMessage({ type: 'admin_get_server_stats' });
+            sendMessage({ type: 'admin_get_online_players' });
+            sendMessage({ type: 'admin_get_all_accounts' });
+            
+            // 恢复之前的选择状态
+            restoreState();
+          }, 500);
+        };
+        
+        ws.onclose = () => {
+          updateStatus(false);
+          addLog('❌ WebSocket连接断开', 'error');
+          
+          // 自动重连
+          if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            reconnectAttempts++;
+            addLog(`正在尝试重连 (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`, 'warning');
+            reconnectTimer = setTimeout(() => {
+              connect();
+            }, RECONNECT_DELAY);
+          } else {
+            addLog('重连次数已达上限，请检查服务器状态', 'error');
+          }
+        };
+        
+        ws.onerror = (e) => {
+          addLog('WebSocket连接错误', 'error');
+          updateStatus(false);
+        };
+        
+      ws.onmessage = (evt) => {
+        try {
+          const data = JSON.parse(evt.data);
+            handleServerMessage(data);
+          } catch (err) {
+            addLog(`解析消息错误: ${err.message}`, 'error');
+          }
+        };
+      } catch (err) {
+        addLog(`连接失败: ${err.message}`, 'error');
+        updateStatus(false);
+      }
+    }
+
+    // 更新运行时间
+    function updateUptime() {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const hours = Math.floor(elapsed / 3600).toString().padStart(2, '0');
+      const minutes = Math.floor((elapsed % 3600) / 60).toString().padStart(2, '0');
+      const seconds = (elapsed % 60).toString().padStart(2, '0');
+      document.getElementById('statUptime').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    setInterval(updateUptime, 1000);
+
+    function updateStatus(connected) {
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      const statStatus = document.getElementById('statStatus');
+      
+      if (connected) {
+        dot.classList.remove('disconnected');
+        text.textContent = '已连接';
+        statStatus.textContent = '运行中';
+        statStatus.className = 'stat-card-value success';
+      } else {
+        dot.classList.add('disconnected');
+        text.textContent = '未连接';
+        statStatus.textContent = '离线';
+        statStatus.className = 'stat-card-value error';
+      }
+    }
+
+    function addLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString('zh-CN');
+      const entry = { timestamp, message, type };
+      logEntries.push(entry);
+      
+      const logPanel = document.getElementById('logPanel');
+      const div = document.createElement('div');
+      div.className = `log-entry ${type}`;
+      div.innerHTML = `<span class="timestamp">[${timestamp}]</span>${message}`;
+      logPanel.appendChild(div);
+      logPanel.scrollTop = logPanel.scrollHeight;
+      
+      // 限制日志数量
+      if (logEntries.length > 500) {
+        logEntries.shift();
+        if (logPanel.firstChild) {
+          logPanel.removeChild(logPanel.firstChild);
+        }
+      }
+      
+      // 应用日志过滤
+      applyLogFilter();
+    }
+
+    function applyLogFilter() {
+      const level = document.getElementById('logLevelFilter').value;
+      const entries = document.querySelectorAll('.log-entry');
+      entries.forEach(entry => {
+        if (level === 'all' || entry.classList.contains(level)) {
+          entry.style.display = '';
+        } else {
+          entry.style.display = 'none';
+        }
+      });
+    }
+
+    function handleServerMessage(data) {
+      if (data.type === 'announcement') {
+        addLog(`收到公告: ${data.text}`, 'info');
+        updateAnnouncementList([data]);
+      } else if (data.type === 'announcement_list') {
+        addLog(`加载了 ${data.list?.length || 0} 条公告`, 'success');
+        updateAnnouncementList(data.list || []);
+      } else if (data.type === 'post_announcement_response') {
+        if (data.success) {
+          addLog('✅ 公告发布成功', 'success');
+          sendMessage({ type: 'get_announcements_history', limit: 10 });
+        } else {
+          addLog(`❌ 公告发布失败: ${data.message || '未知错误'}`, 'error');
+        }
+      } else if (data.type === 'admin_search_response') {
+        const statusEl = document.getElementById('accountStatus');
+        if (statusEl) statusEl.textContent = '';
+        
+        if (data.success && data.characters && data.characters.length > 0) {
+          // 如果是从账号选择触发的，更新角色下拉框
+          const account = document.getElementById('accountSelect').value;
+          if (account && data.search_type === 'account') {
+            charactersList = data.characters;
+            updateCharacterSelect(data.characters);
+            
+            // 自动选择第一个角色
+            if (data.characters.length > 0) {
+              setTimeout(() => {
+                const characterSelect = document.getElementById('characterSelect');
+                if (characterSelect && data.characters[0].character_id) {
+                  characterSelect.value = data.characters[0].character_id;
+                  characterSelect.dispatchEvent(new Event('change'));
+                }
+              }, 100);
+            }
+          }
+          displayPlayerList(data.characters);
+          addLog(`✅ 搜索成功，找到 ${data.characters.length} 个角色`, 'success');
+        } else {
+          addLog(`❌ 未找到匹配的角色`, 'warning');
+          // 如果是从账号选择触发的，也要更新下拉框
+          const account = document.getElementById('accountSelect').value;
+          if (account && data.search_type === 'account') {
+            updateCharacterSelect([]);
+            const characterGroup = document.getElementById('characterSelectGroup');
+            if (characterGroup) characterGroup.style.display = 'block';
+          }
+          document.getElementById('playerInfoContainer').innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">🔍</div>
+              <div>未找到匹配的角色</div>
+            </div>
+          `;
+        }
+      } else if (data.type === 'admin_player_info') {
+        const statusEl = document.getElementById('characterStatus');
+        if (statusEl) statusEl.textContent = '';
+        
+        if (data.success) {
+          displayPlayerInfo(data);
+          addLog('✅ 查询玩家信息成功', 'success');
+        } else {
+          addLog(`❌ 查询失败: ${data.message || '未知错误'}`, 'error');
+        }
+      } else if (data.type === 'admin_modify_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '操作成功'}`, 'success');
+          // 自动刷新玩家信息
+          if (data.character_id) {
+            setTimeout(() => {
+              sendMessage({ type: 'admin_get_player_by_id', character_id: data.character_id });
+            }, 500);
+          }
+        } else {
+          addLog(`❌ ${data.message || '操作失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_server_stats') {
+        if (data.success && data.stats) {
+          updateServerStats(data.stats);
+        }
+      } else if (data.type === 'admin_online_players') {
+        if (data.success) {
+          document.getElementById('statOnline').textContent = data.count || 0;
+          document.getElementById('onlineCount').textContent = data.count || 0;
+        }
+      } else if (data.type === 'admin_all_accounts_response') {
+        if (data.success && data.accounts) {
+          accountsList = data.accounts;
+          updateAccountSelect(data.accounts);
+          addLog(`✅ 加载了 ${data.accounts.length} 个账号`, 'success');
+        } else {
+          const errorMsg = data.message || '未知错误';
+          addLog(`❌ 加载账号列表失败: ${errorMsg}`, 'error');
+          console.error('加载账号列表失败:', data);
+        }
+      } else if (data.type === 'admin_robot_pets_response') {
+        const statusEl = document.getElementById('characterStatus');
+        if (statusEl && statusEl.textContent === '加载中...') {
+          statusEl.textContent = '';
+        }
+        
+        if (data.success && data.pets) {
+          updateRobotPetSelect(data.pets);
+          addLog(`✅ 加载了 ${data.pets.length} 个宠物机甲`, 'success');
+        } else {
+          addLog(`❌ 加载宠物机甲列表失败: ${data.message || '未知错误'}`, 'error');
+          updateRobotPetSelect([]);
+        }
+      } else if (data.type === 'admin_modify_robot_pet_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '操作成功'}`, 'success');
+          // 自动刷新宠物机甲列表和选中宠物信息，保持选中状态
+          const characterId = document.getElementById('modifyCharacterId').value.trim();
+          const selectedPetId = document.getElementById('robotPetSelect').value; // 保存当前选中
+          if (characterId) {
+            setTimeout(() => {
+              sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+              // 刷新后恢复选中状态
+              setTimeout(() => {
+                if (selectedPetId) {
+                  document.getElementById('robotPetSelect').value = selectedPetId;
+                  const pet = robotPetsList.find(p => p.pet_id === selectedPetId);
+                  if (pet) {
+                    displayRobotPetInfo(pet);
+                  }
+                }
+              }, 100);
+            }, 500);
+          }
+        } else {
+          addLog(`❌ ${data.message || '操作失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_reset_robot_pet_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '还原成功'}`, 'success');
+          const characterId = document.getElementById('modifyCharacterId').value.trim();
+          const selectedPetId = document.getElementById('robotPetSelect').value;
+          if (characterId) {
+            setTimeout(() => {
+              sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+              setTimeout(() => {
+                if (selectedPetId) {
+                  document.getElementById('robotPetSelect').value = selectedPetId;
+                  const pet = robotPetsList.find(p => p.pet_id === selectedPetId);
+                  if (pet) {
+                    displayRobotPetInfo(pet);
+                  }
+                }
+              }, 100);
+            }, 500);
+          }
+        } else {
+          addLog(`❌ ${data.message || '还原失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_delete_robot_pet_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '删除成功'}`, 'success');
+          const characterId = document.getElementById('modifyCharacterId').value.trim();
+          if (characterId) {
+            setTimeout(() => {
+              sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+            }, 500);
+          }
+        } else {
+          addLog(`❌ ${data.message || '删除失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_clear_all_robots_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '清空成功'}`, 'success');
+          const characterId = document.getElementById('modifyCharacterId').value.trim();
+          if (characterId) {
+            setTimeout(() => {
+              sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+            }, 500);
+          }
+        } else {
+          addLog(`❌ ${data.message || '清空失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_add_random_robots_response') {
+        if (data.success) {
+          const createdCount = data.created_count || 0;
+          const failedCount = data.failed_count || 0;
+          const requestedCount = data.requested_count || 0;
+          if (failedCount > 0) {
+            addLog(`⚠️ 成功创建 ${createdCount}/${requestedCount} 个机甲，失败 ${failedCount} 个`, 'warning');
+          } else {
+            addLog(`✅ ${data.message || `成功创建 ${createdCount} 个随机机甲`}`, 'success');
+          }
+          const characterId = document.getElementById('modifyCharacterId').value.trim();
+          if (characterId) {
+            setTimeout(() => {
+              sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+            }, 500);
+          }
+        } else {
+          addLog(`❌ ${data.message || '添加失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_register_admin_account_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '注册成功'}`, 'success');
+          addLog(`📝 账号: ${data.account}，密码: ${data.password}，角色: ${data.role_name}`, 'info');
+          // 自动刷新管理员账号列表
+          setTimeout(() => {
+            sendMessage({ type: 'admin_get_admin_accounts' });
+          }, 500);
+        } else {
+          addLog(`❌ ${data.message || '注册失败'}`, 'error');
+        }
+      } else if (data.type === 'admin_get_admin_accounts_response') {
+        if (data.success && data.accounts) {
+          updateAdminAccountsList(data.accounts);
+          addLog(`✅ 加载了 ${data.accounts.length} 个管理员账号`, 'success');
+        } else {
+          addLog(`❌ ${data.message || '加载失败'}`, 'error');
+          updateAdminAccountsList([]);
+        }
+      } else if (data.type === 'admin_delete_admin_account_response') {
+        if (data.success) {
+          addLog(`✅ ${data.message || '删除成功'}`, 'success');
+          // 自动刷新管理员账号列表
+          setTimeout(() => {
+            sendMessage({ type: 'admin_get_admin_accounts' });
+          }, 500);
+        } else {
+          addLog(`❌ ${data.message || '删除失败'}`, 'error');
+        }
+      }
+    }
+
+    function updateServerStats(stats) {
+      document.getElementById('statRequests').textContent = stats.total_requests || 0;
+      document.getElementById('statOnline').textContent = stats.online_players || 0;
+      document.getElementById('onlineCount').textContent = stats.online_players || 0;
+      
+      // 移除服务器统计容器更新（此页面只包含游戏控制）
+    }
+    
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      if (days > 0) return `${days}天 ${hours}时 ${mins}分`;
+      if (hours > 0) return `${hours}时 ${mins}分 ${secs}秒`;
+      return `${mins}分 ${secs}秒`;
+    }
+    
+    // 移除服务器控制相关函数（此页面只包含游戏控制）
+
+    function sendMessage(msg) {
+      if (!ws || ws.readyState !== 1) {
+        addLog('❌ 未连接到服务器', 'error');
+        return false;
+      }
+      try {
+        ws.send(JSON.stringify(msg));
+        return true;
+      } catch (err) {
+        addLog(`❌ 发送消息失败: ${err.message}`, 'error');
+        return false;
+      }
+    }
+
+    function displayPlayerList(characters) {
+      const container = document.getElementById('playerInfoContainer');
+      if (!characters || characters.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔍</div>
+            <div>未找到匹配的角色</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      characters.forEach(char => {
+        html += `
+          <div class="player-card">
+            <div class="player-card-header">
+              <div>
+                <div class="player-name">${char.role_name || '未命名'}</div>
+                <div class="player-id">ID: ${char.character_id || 'N/A'}</div>
+              </div>
+            </div>
+            <div class="player-info-grid">
+              <div class="info-item">
+                <div class="info-label">账号</div>
+                <div class="info-value">${char.account || 'N/A'}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">等级</div>
+                <div class="info-value">${char.level || 1}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">经验</div>
+                <div class="info-value">${char.exp || 0}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">金币</div>
+                <div class="info-value">${char.gold || 0}</div>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn-primary" onclick="selectCharacter('${char.character_id}')" style="font-size: 12px; padding: 6px 12px;">选择此角色</button>
+              <button class="btn-secondary" onclick="viewFullInfo('${char.character_id}')" style="font-size: 12px; padding: 6px 12px;">查看详情</button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function displayPlayerInfo(data) {
+      const container = document.getElementById('playerInfoContainer');
+      
+      // 显示物品
+      let itemsHtml = '';
+      if (data.items && Object.keys(data.items).length > 0) {
+        itemsHtml = '<div style="margin-top: 16px;"><strong>背包物品:</strong><div class="items-grid">';
+        Object.entries(data.items).forEach(([itemId, count]) => {
+          itemsHtml += `
+            <div class="item-badge">
+              <div class="item-id">${itemId}</div>
+              <div class="item-count">x${count}</div>
+            </div>
+          `;
+        });
+        itemsHtml += '</div></div>';
+      }
+
+      const html = `
+        <div class="player-card">
+          <div class="player-card-header">
+            <div>
+              <div class="player-name">${data.role_name || '未命名'}</div>
+              <div class="player-id">ID: ${data.character_id || 'N/A'}</div>
+            </div>
+          </div>
+          <div class="player-info-grid">
+            <div class="info-item">
+              <div class="info-label">账号</div>
+              <div class="info-value">${data.account || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">等级</div>
+              <div class="info-value">${data.level || 1}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">经验</div>
+              <div class="info-value">${data.exp || 0}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">金币</div>
+              <div class="info-value">${data.gold || 0}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">机甲数量</div>
+              <div class="info-value">${data.robotcount || 0}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">职业</div>
+              <div class="info-value">${data.class || 1}</div>
+            </div>
+          </div>
+          ${itemsHtml}
+          <div class="action-buttons">
+            <button class="btn-primary" onclick="selectCharacter('${data.character_id}')" style="font-size: 12px; padding: 6px 12px;">选择此角色</button>
+          </div>
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    function selectCharacter(characterId) {
+      document.getElementById('modifyCharacterId').value = characterId;
+      savedState.modifyCharacterId = characterId;
+      saveState();
+      
+      // 如果角色在下拉框中，也选中它
+      const characterSelect = document.getElementById('characterSelect');
+      if (characterSelect) {
+        characterSelect.value = characterId;
+        savedState.selectedCharacter = characterId;
+        // 触发change事件以加载宠物机甲列表
+        characterSelect.dispatchEvent(new Event('change'));
+      } else {
+        // 如果下拉框不存在，直接加载宠物机甲列表
+        sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+      }
+      addLog(`已选择角色ID: ${characterId}`, 'info');
+    }
+
+    function viewFullInfo(characterId) {
+      sendMessage({ type: 'admin_get_player_by_id', character_id: characterId });
+      addLog(`正在查询角色详情...`, 'info');
+    }
+
+    function updateAnnouncementList(list) {
+      const container = document.getElementById('announcementList');
+      if (!list || list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 20px;">
+            <div>暂无公告</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      list.forEach((item, index) => {
+        const text = item.text || item;
+        const date = item.created_at ? new Date(item.created_at).toLocaleString('zh-CN') : '';
+        html += `
+          <div style="padding: 8px; border-bottom: 1px solid #e0e0e0; font-size: 13px;">
+            <strong>${index + 1}.</strong> ${text}
+            ${date ? `<div style="color: #999; font-size: 11px; margin-top: 4px;">${date}</div>` : ''}
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    // 操作类型改变时更新标签
+    document.getElementById('modifyType').addEventListener('change', (e) => {
+      const type = e.target.value;
+      const label = document.getElementById('modifyValueLabel');
+      const valueGroup = document.getElementById('modifyValueGroup');
+      const itemSelectGroup = document.getElementById('modifyItemSelectGroup');
+      const quantityGroup = document.getElementById('quantityGroup');
+      
+      if (type === 'exp') {
+        valueGroup.style.display = 'block';
+        itemSelectGroup.style.display = 'none';
+        label.textContent = '经验值';
+        quantityGroup.style.display = 'none';
+      } else if (type === 'gold') {
+        valueGroup.style.display = 'block';
+        itemSelectGroup.style.display = 'none';
+        label.textContent = '金币数量';
+        quantityGroup.style.display = 'none';
+      } else if (type === 'level') {
+        valueGroup.style.display = 'block';
+        itemSelectGroup.style.display = 'none';
+        label.textContent = '等级 (1-60)';
+        quantityGroup.style.display = 'none';
+      } else if (type === 'item') {
+        valueGroup.style.display = 'none';
+        itemSelectGroup.style.display = 'block';
+        quantityGroup.style.display = 'block';
+      }
+    });
+
+    // 玩家搜索
+    document.getElementById('btnSearchByAccount').addEventListener('click', () => {
+      const query = document.getElementById('searchPlayer').value.trim();
+      if (!query) {
+        addLog('⚠️ 请输入搜索关键词', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_search_account', account: query })) return;
+      addLog(`🔍 搜索账号: ${query}`, 'info');
+    });
+
+    document.getElementById('btnSearchByCharacter').addEventListener('click', () => {
+      const query = document.getElementById('searchPlayer').value.trim();
+      if (!query) {
+        addLog('⚠️ 请输入搜索关键词', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_search_character', role_name: query })) return;
+      addLog(`🔍 搜索角色名: ${query}`, 'info');
+    });
+
+    document.getElementById('btnSearchById').addEventListener('click', () => {
+      const query = document.getElementById('searchPlayer').value.trim();
+      if (!query) {
+        addLog('⚠️ 请输入角色ID', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_get_player_by_id', character_id: query })) return;
+      addLog(`🔍 搜索角色ID: ${query}`, 'info');
+    });
+
+    // 修改玩家数据
+    document.getElementById('btnModifyPlayer').addEventListener('click', () => {
+      const characterId = document.getElementById('modifyCharacterId').value.trim();
+      const type = document.getElementById('modifyType').value;
+      const quantity = parseInt(document.getElementById('modifyQuantity').value) || 1;
+      
+      if (!characterId) {
+        addLog('⚠️ 请填写角色ID', 'warning');
+        return;
+      }
+      
+      if (type === 'exp') {
+        const value = document.getElementById('modifyValue').value.trim();
+        if (!value) {
+          addLog('⚠️ 请填写经验值', 'warning');
+          return;
+        }
+        if (!sendMessage({ type: 'admin_add_exp', character_id: characterId, exp: parseInt(value) })) return;
+        addLog(`➕ 添加经验: ${value}`, 'info');
+      } else if (type === 'gold') {
+        const value = document.getElementById('modifyValue').value.trim();
+        if (!value) {
+          addLog('⚠️ 请填写金币数量', 'warning');
+          return;
+        }
+        if (!sendMessage({ type: 'admin_modify_gold', character_id: characterId, gold: parseInt(value) })) return;
+        addLog(`💰 修改金币: ${value}`, 'info');
+      } else if (type === 'level') {
+        const value = document.getElementById('modifyValue').value.trim();
+        if (!value) {
+          addLog('⚠️ 请填写等级', 'warning');
+          return;
+        }
+        if (!sendMessage({ type: 'admin_modify_level', character_id: characterId, level: parseInt(value) })) return;
+        addLog(`📈 修改等级: ${value}`, 'info');
+      } else if (type === 'item') {
+        const itemSelect = document.getElementById('modifyItemSelect');
+        const selectedItemId = itemSelect ? itemSelect.value : '';
+        if (!selectedItemId) {
+          addLog('⚠️ 请选择要添加的物品', 'warning');
+          return;
+        }
+        const itemId = parseInt(selectedItemId);
+        if (isNaN(itemId)) {
+          addLog('⚠️ 物品ID无效，请重新选择', 'warning');
+          return;
+        }
+        const itemName = itemsData[itemId] || `物品${itemId}`;
+        if (!confirm(`确认添加 ${quantity} 个 "${itemName}" (ID: ${itemId}) 吗？`)) {
+          return;
+        }
+        if (!sendMessage({ type: 'admin_add_item', character_id: characterId, itemId: itemId, quantity })) return;
+        addLog(`🎁 添加物品: ${itemName} (ID: ${itemId}) x${quantity}`, 'info');
+      }
+    });
+
+    // 公告管理
+    document.getElementById('btnPostAnnouncement').addEventListener('click', () => {
+      const text = document.getElementById('announcementText').value.trim();
+      if (!text) {
+        addLog('⚠️ 公告内容不能为空', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'post_announcement', text })) return;
+      addLog(`📢 发布公告: ${text}`, 'info');
+      document.getElementById('announcementText').value = '';
+    });
+
+    document.getElementById('btnLoadAnnouncements').addEventListener('click', () => {
+      if (!sendMessage({ type: 'get_announcements_history', limit: 10 })) return;
+      addLog('📋 加载历史公告...', 'info');
+    });
+
+    // 日志管理
+    document.getElementById('btnClearLogs').addEventListener('click', () => {
+      if (confirm('确定要清空日志吗？')) {
+        logEntries = [];
+        document.getElementById('logPanel').innerHTML = '';
+        addLog('🗑️ 日志已清空', 'info');
+      }
+    });
+
+    document.getElementById('btnExportLogs').addEventListener('click', () => {
+      const content = logEntries.map(e => `[${e.timestamp}] [${e.type.toUpperCase()}] ${e.message}`).join('\n');
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `logs_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addLog('💾 日志已导出', 'success');
+    });
+
+    document.getElementById('logLevelFilter').addEventListener('change', applyLogFilter);
+
+    // 账号选择相关功能
+    function updateAccountSelect(accounts) {
+      const select = document.getElementById('accountSelect');
+      const savedAccount = savedState.selectedAccount;
+      select.innerHTML = '<option value="">请选择账号...</option>';
+      
+      if (!accounts || accounts.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = '暂无账号';
+        option.disabled = true;
+        select.appendChild(option);
+        return;
+      }
+      
+      accounts.forEach(account => {
+        const option = document.createElement('option');
+        option.value = account.account;
+        option.textContent = `${account.account} (${account.character_count || 0}个角色)`;
+        option.dataset.userId = account.user_id;
+        // 恢复之前的选择
+        if (account.account === savedAccount) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+      
+      // 如果有保存的账号，触发change事件以加载角色列表
+      if (savedAccount && select.value === savedAccount) {
+        setTimeout(() => {
+          select.dispatchEvent(new Event('change'));
+        }, 100);
+      }
+    }
+
+    function updateCharacterSelect(characters) {
+      const select = document.getElementById('characterSelect');
+      const group = document.getElementById('characterSelectGroup');
+      const statusEl = document.getElementById('accountStatus');
+      const savedCharacter = savedState.selectedCharacter;
+      
+      if (statusEl) statusEl.textContent = '';
+      
+      if (!characters || characters.length === 0) {
+        select.innerHTML = '<option value="">该账号下暂无角色</option>';
+        group.style.display = 'block';
+        document.getElementById('btnLoadCharacters').style.display = 'inline-block';
+        return;
+      }
+      
+      select.innerHTML = '<option value="">请选择角色...</option>';
+      characters.forEach(char => {
+        const option = document.createElement('option');
+        option.value = char.character_id;
+        option.textContent = `${char.role_name || '未命名'} (ID: ${char.character_id}, Lv.${char.level || 1})`;
+        option.dataset.characterId = char.character_id;
+        // 恢复之前的选择
+        if (char.character_id === savedCharacter) {
+          option.selected = true;
+        }
+        select.appendChild(option);
+      });
+      group.style.display = 'block';
+      document.getElementById('btnLoadCharacters').style.display = 'inline-block';
+      
+      // 如果有保存的角色，触发change事件以加载详细信息
+      if (savedCharacter && select.value === savedCharacter) {
+        setTimeout(() => {
+          select.dispatchEvent(new Event('change'));
+        }, 100);
+      }
+    }
+
+    // 账号选择变化时加载角色列表
+    document.getElementById('accountSelect').addEventListener('change', (e) => {
+      const account = e.target.value;
+      const statusEl = document.getElementById('accountStatus');
+      const characterSelect = document.getElementById('characterSelect');
+      const characterGroup = document.getElementById('characterSelectGroup');
+      
+      // 保存状态
+      saveState();
+      
+      if (!account) {
+        characterGroup.style.display = 'none';
+        document.getElementById('btnLoadCharacters').style.display = 'none';
+        document.getElementById('modifyCharacterId').value = '';
+        charactersList = [];
+        if (statusEl) statusEl.textContent = '';
+        savedState.selectedAccount = '';
+        savedState.selectedCharacter = '';
+        return;
+      }
+      
+      // 显示加载状态
+      if (statusEl) statusEl.textContent = '加载中...';
+      characterGroup.style.display = 'block';
+      characterSelect.innerHTML = '<option value="">加载中...</option>';
+      document.getElementById('modifyCharacterId').value = '';
+      charactersList = [];
+      savedState.selectedAccount = account;
+      savedState.selectedCharacter = '';
+      
+      // 加载该账号的角色列表
+      sendMessage({ type: 'admin_search_account', account: account, search_type: 'account' });
+      addLog(`🔍 正在加载账号 ${account} 的角色列表...`, 'info');
+    });
+
+    // 角色选择变化时自动填充角色ID并加载宠物机甲列表
+    document.getElementById('characterSelect').addEventListener('change', (e) => {
+      const characterId = e.target.value;
+      const statusEl = document.getElementById('characterStatus');
+      
+      // 保存状态
+      saveState();
+      
+      if (characterId) {
+        // 显示加载状态
+        if (statusEl) statusEl.textContent = '加载中...';
+        document.getElementById('modifyCharacterId').value = characterId;
+        savedState.selectedCharacter = characterId;
+        savedState.modifyCharacterId = characterId;
+        
+        // 自动加载角色详细信息
+        sendMessage({ type: 'admin_get_player_by_id', character_id: characterId });
+        // 自动加载宠物机甲列表
+        sendMessage({ type: 'admin_get_robot_pets', character_id: characterId });
+        addLog(`✅ 已选择角色ID: ${characterId}，正在加载详细信息...`, 'info');
+      } else {
+        document.getElementById('modifyCharacterId').value = '';
+        updateRobotPetSelect([]);
+        if (statusEl) statusEl.textContent = '';
+        savedState.selectedCharacter = '';
+        savedState.modifyCharacterId = '';
+      }
+    });
+
+    // 刷新账号列表
+    document.getElementById('btnLoadAccounts').addEventListener('click', () => {
+      sendMessage({ type: 'admin_get_all_accounts' });
+      addLog('🔄 正在刷新账号列表...', 'info');
+    });
+
+    // 刷新角色列表
+    document.getElementById('btnLoadCharacters').addEventListener('click', () => {
+      const account = document.getElementById('accountSelect').value;
+      if (account) {
+        sendMessage({ type: 'admin_search_account', account: account });
+        addLog(`🔄 正在刷新账号 ${account} 的角色列表...`, 'info');
+      } else {
+        addLog('⚠️ 请先选择账号', 'warning');
+      }
+    });
+
+    // 宠物机甲相关功能
+    let robotPetsList = [];
+    
+    function updateRobotPetSelect(pets) {
+      const select = document.getElementById('robotPetSelect');
+      const currentSelectedId = select.value; // 保存当前选中
+      robotPetsList = pets || [];
+      
+      select.innerHTML = '<option value="">请选择宠物机甲...</option>';
+      
+      if (!pets || pets.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = '该角色暂无宠物机甲';
+        option.disabled = true;
+        select.appendChild(option);
+        document.getElementById('robotPetInfo').style.display = 'none';
+        return;
+      }
+      
+      pets.forEach(pet => {
+        const option = document.createElement('option');
+        option.value = pet.pet_id;
+        option.textContent = `${pet.RobotName || '未知'} (Lv.${pet.Level || 1}, ${pet.Growth || 50}成长, ${pet.Comprehension || 50}悟性, ${pet.StarLevel || 1}星)`;
+        option.dataset.petId = pet.pet_id;
+        select.appendChild(option);
+      });
+      
+      // 恢复选中状态
+      if (currentSelectedId) {
+        const stillExists = pets.some(p => p.pet_id === currentSelectedId);
+        if (stillExists) {
+          select.value = currentSelectedId;
+          const pet = robotPetsList.find(p => p.pet_id === currentSelectedId);
+          if (pet) {
+            displayRobotPetInfo(pet);
+          }
+        }
+      }
+    }
+    
+    function displayRobotPetInfo(pet) {
+      if (!pet) return;
+      
+      document.getElementById('robotPetName').textContent = pet.RobotName || '-';
+      document.getElementById('robotPetLevel').textContent = pet.Level || 1;
+      document.getElementById('robotPetExp').textContent = pet.EXP || 0;
+      document.getElementById('robotPetGrowth').textContent = pet.Growth || 50;
+      document.getElementById('robotPetComprehension').textContent = pet.Comprehension || 50;
+      document.getElementById('robotPetStarLevel').textContent = pet.StarLevel || 1;
+      
+      document.getElementById('robotPetInfo').style.display = 'block';
+    }
+    
+    // 宠物机甲选择变化时显示信息
+    document.getElementById('robotPetSelect').addEventListener('change', (e) => {
+      const petId = e.target.value;
+      if (petId) {
+        const pet = robotPetsList.find(p => p.pet_id === petId);
+        if (pet) {
+          displayRobotPetInfo(pet);
+        }
+      } else {
+        document.getElementById('robotPetInfo').style.display = 'none';
+      }
+    });
+    
+    // 宠物机甲操作类型改变时更新标签
+    document.getElementById('robotPetModifyType').addEventListener('change', (e) => {
+      const type = e.target.value;
+      const label = document.getElementById('robotPetValueLabel');
+      const attrGroup = document.getElementById('robotPetAttrGroup');
+      
+      if (type === 'exp') {
+        label.textContent = '经验值';
+        attrGroup.style.display = 'none';
+      } else if (type === 'level') {
+        label.textContent = '等级 (1-60)';
+        attrGroup.style.display = 'none';
+      } else if (type === 'growth') {
+        label.textContent = '成长值 (0-100)';
+        attrGroup.style.display = 'none';
+      } else if (type === 'comprehension') {
+        label.textContent = '悟性值 (0-100)';
+        attrGroup.style.display = 'none';
+      } else if (type === 'star_level') {
+        label.textContent = '星级 (1-10)';
+        attrGroup.style.display = 'none';
+      } else if (type === 'direct_attr') {
+        label.textContent = '属性值';
+        attrGroup.style.display = 'block';
+      }
+    });
+    
+    // 修改宠物机甲
+    document.getElementById('btnModifyRobotPet').addEventListener('click', () => {
+      const petId = document.getElementById('robotPetSelect').value.trim();
+      const modifyType = document.getElementById('robotPetModifyType').value;
+      const value = document.getElementById('robotPetValue').value.trim();
+      
+      if (!petId) {
+        addLog('⚠️ 请先选择宠物机甲', 'warning');
+        return;
+      }
+      
+      if (!value) {
+        addLog('⚠️ 请输入数值', 'warning');
+        return;
+      }
+      
+      const message = {
+        type: 'admin_modify_robot_pet',
+        pet_id: petId,
+        modify_type: modifyType
+      };
+      
+      if (modifyType === 'exp') {
+        message.exp = parseInt(value);
+        if (!sendMessage(message)) return;
+        addLog(`➕ 添加经验: ${value}`, 'info');
+      } else if (modifyType === 'level') {
+        message.level = parseInt(value);
+        if (!sendMessage(message)) return;
+        addLog(`📈 修改等级: ${value}`, 'info');
+      } else if (modifyType === 'growth') {
+        message.growth = parseInt(value);
+        if (!sendMessage(message)) return;
+        addLog(`🌟 修改成长值: ${value}`, 'info');
+      } else if (modifyType === 'comprehension') {
+        message.comprehension = parseInt(value);
+        if (!sendMessage(message)) return;
+        addLog(`🧠 修改悟性值: ${value}`, 'info');
+      } else if (modifyType === 'star_level') {
+        message.star_level = parseInt(value);
+        if (!sendMessage(message)) return;
+        addLog(`⭐ 修改星级: ${value}`, 'info');
+      } else if (modifyType === 'direct_attr') {
+        const attrName = document.getElementById('robotPetAttrName').value;
+        message.attr_name = attrName;
+        message.attr_value = parseInt(value);
+        if (!sendMessage(message)) return;
+        addLog(`🔧 修改属性 ${attrName}: ${value}`, 'info');
+      }
+    });
+    
+    // 还原为1级
+    document.getElementById('btnResetRobotPet').addEventListener('click', () => {
+      const petId = document.getElementById('robotPetSelect').value.trim();
+      if (!petId) {
+        addLog('⚠️ 请先选择宠物机甲', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_reset_robot_pet', pet_id: petId })) return;
+      addLog(`🔄 正在还原机甲为1级...`, 'info');
+    });
+    
+    // 删除单个机甲
+    document.getElementById('btnDeleteRobotPet').addEventListener('click', () => {
+      const petId = document.getElementById('robotPetSelect').value.trim();
+      if (!petId) {
+        addLog('⚠️ 请先选择宠物机甲', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_delete_robot_pet', pet_id: petId })) return;
+      addLog(`🗑️ 正在删除机甲...`, 'info');
+    });
+    
+    // 清空该角色所有机甲
+    document.getElementById('btnClearAllRobots').addEventListener('click', () => {
+      const characterId = document.getElementById('modifyCharacterId').value.trim();
+      if (!characterId) {
+        addLog('⚠️ 请先选择角色', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_clear_all_robots', character_id: characterId })) return;
+      addLog(`🗑️ 正在清空该角色的所有机甲...`, 'info');
+    });
+    
+    // 添加随机机甲
+    document.getElementById('btnAddRandomRobots').addEventListener('click', () => {
+      const characterId = document.getElementById('modifyCharacterId').value.trim();
+      const count = parseInt(document.getElementById('addRobotCount').value) || 1;
+      if (!characterId) {
+        addLog('⚠️ 请先选择角色', 'warning');
+        return;
+      }
+      if (count < 1 || count > 100) {
+        addLog('⚠️ 数量必须在1-100之间', 'warning');
+        return;
+      }
+      if (!sendMessage({ type: 'admin_add_random_robots', character_id: characterId, count: count })) return;
+      addLog(`➕ 正在添加 ${count} 个随机机甲...`, 'info');
+    });
+
+
+    // 管理员账号管理相关功能
+    function updateAdminAccountsList(accounts) {
+      const container = document.getElementById('adminAccountsList');
+      if (!accounts || accounts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 20px;">
+            <div>暂无管理员账号，点击"一键注册"创建</div>
+          </div>
+        `;
+        return;
+      }
+      
+      let html = '';
+      accounts.forEach(account => {
+        const createdTime = account.created_at ? new Date(account.created_at).toLocaleString('zh-CN') : '-';
+        const lastLogin = account.last_login ? new Date(account.last_login).toLocaleString('zh-CN') : '从未登录';
+        const firstChar = account.first_character || {};
+        
+        html += `
+          <div class="player-card" style="margin-bottom: 12px;">
+            <div class="player-card-header">
+              <div>
+                <div class="player-name">${account.account}</div>
+                <div class="player-id">用户ID: ${account.user_id}</div>
+              </div>
+            </div>
+            <div class="player-info-grid">
+              <div class="info-item">
+                <div class="info-label">角色数量</div>
+                <div class="info-value">${account.character_count || 0}</div>
+              </div>
+              ${firstChar.character_id ? `
+              <div class="info-item">
+                <div class="info-label">主角色</div>
+                <div class="info-value">${firstChar.role_name || '-'} (Lv.${firstChar.level || 1})</div>
+              </div>
+              ` : ''}
+              <div class="info-item">
+                <div class="info-label">创建时间</div>
+                <div class="info-value" style="font-size: 12px;">${createdTime}</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">最后登录</div>
+                <div class="info-value" style="font-size: 12px;">${lastLogin}</div>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn-primary" onclick="selectAdminAccount('${account.account}')" style="font-size: 12px; padding: 6px 12px;">选择此账号</button>
+              <button class="btn-danger" onclick="deleteAdminAccount('${account.account}')" style="font-size: 12px; padding: 6px 12px;">删除账号</button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+    
+    function selectAdminAccount(account) {
+      document.getElementById('accountSelect').value = account;
+      savedState.selectedAccount = account;
+      saveState();
+      document.getElementById('accountSelect').dispatchEvent(new Event('change'));
+      addLog(`✅ 已选择管理员账号: ${account}`, 'success');
+    }
+    
+    function deleteAdminAccount(account) {
+      if (!confirm(`确定要删除管理员账号 ${account} 吗？\n这将删除该账号的所有角色和机甲数据！`)) {
+        return;
+      }
+      if (!sendMessage({ type: 'admin_delete_admin_account', account: account })) return;
+      addLog(`🗑️ 正在删除管理员账号: ${account}...`, 'info');
+    }
+    
+    // 一键注册管理员账号
+    document.getElementById('btnRegisterAdminAccount').addEventListener('click', () => {
+      if (!sendMessage({ type: 'admin_register_admin_account' })) return;
+      addLog('🔄 正在注册管理员账号...', 'info');
+    });
+    
+    // 刷新管理员账号列表
+    document.getElementById('btnLoadAdminAccounts').addEventListener('click', () => {
+      sendMessage({ type: 'admin_get_admin_accounts' });
+      addLog('🔄 正在刷新管理员账号列表...', 'info');
+    });
+    
+    // 加载物品数据（从Items.json）
+    async function loadItemsData() {
+      try {
+        // 尝试从多个可能的路径加载Items.json
+        const paths = [
+          '/Items.json',  // 通过服务器提供的路径
+          '../data/Items.json',
+          '../handlers/json/Items.json',
+          'Items.json'
+        ];
+        
+        for (const path of paths) {
+          try {
+            const response = await fetch(path);
+            if (response.ok) {
+              const data = await response.json();
+              // 保存完整的物品列表
+              itemsList = data.filter(item => item.id && item.name);
+              
+              // 构建物品ID到名称的映射（用于显示）
+              itemsList.forEach(item => {
+                itemsData[item.id] = item.name;
+              });
+              
+              console.log(`✅ 成功加载 ${itemsList.length} 个物品数据`);
+              
+              // 填充物品下拉列表
+              populateItemSelect();
+              
+              return;
+            }
+          } catch (e) {
+            // 继续尝试下一个路径
+            console.log(`尝试路径 ${path} 失败:`, e);
+          }
+        }
+        console.warn('⚠️ 未能加载Items.json，将使用默认物品名称');
+        // 即使加载失败，也尝试填充下拉列表（显示错误提示）
+        populateItemSelect();
+      } catch (error) {
+        console.error('加载物品数据失败:', error);
+        populateItemSelect();
+      }
+    }
+    
+    // 填充物品下拉列表
+    function populateItemSelect() {
+      const select = document.getElementById('modifyItemSelect');
+      if (!select) return;
+      
+      // 清空现有选项
+      select.innerHTML = '';
+      
+      if (itemsList.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = '未能加载物品列表，请刷新页面';
+        option.disabled = true;
+        select.appendChild(option);
+        return;
+      }
+      
+      // 添加"请选择物品"选项
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '请选择物品...';
+      select.appendChild(defaultOption);
+      
+      // 按ID排序后添加所有物品
+      const sortedItems = [...itemsList].sort((a, b) => a.id - b.id);
+      sortedItems.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = `${item.name} (ID: ${item.id})`;
+        option.dataset.itemId = item.id;
+        select.appendChild(option);
+      });
+      
+      console.log(`✅ 已填充 ${sortedItems.length} 个物品到下拉列表`);
+    }
+    
+    // 保存当前状态
+    function saveState() {
+      savedState.selectedAccount = document.getElementById('accountSelect').value || '';
+      savedState.selectedCharacter = document.getElementById('characterSelect').value || '';
+      savedState.modifyCharacterId = document.getElementById('modifyCharacterId').value.trim() || '';
+      
+      // 保存到localStorage（可选，用于页面刷新后恢复）
+      try {
+        localStorage.setItem('console_saved_state', JSON.stringify(savedState));
+      } catch (e) {
+        console.warn('无法保存状态到localStorage:', e);
+      }
+    }
+    
+    // 恢复之前的状态
+    function restoreState() {
+      // 先从localStorage恢复（如果有）
+      try {
+        const saved = localStorage.getItem('console_saved_state');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed) {
+            savedState = { ...savedState, ...parsed };
+          }
+        }
+      } catch (e) {
+        console.warn('无法从localStorage恢复状态:', e);
+      }
+      
+      // 恢复账号选择
+      if (savedState.selectedAccount) {
+        const accountSelect = document.getElementById('accountSelect');
+        if (accountSelect && accountSelect.value !== savedState.selectedAccount) {
+          accountSelect.value = savedState.selectedAccount;
+          // 延迟触发，确保账号列表已加载
+          setTimeout(() => {
+            if (accountSelect.value === savedState.selectedAccount) {
+              accountSelect.dispatchEvent(new Event('change'));
+            }
+          }, 500);
+        }
+      }
+      
+      // 恢复角色ID输入框
+      if (savedState.modifyCharacterId) {
+        const modifyCharacterIdInput = document.getElementById('modifyCharacterId');
+        if (modifyCharacterIdInput) {
+          modifyCharacterIdInput.value = savedState.modifyCharacterId;
+        }
+      }
+      
+      addLog('✅ 已恢复之前的选择状态', 'success');
+    }
+    
+    // 页面加载时自动连接
+    window.addEventListener('load', () => {
+      autoConnect();
+      loadItemsData(); // 加载物品数据
+      // 自动加载管理员账号列表
+      setTimeout(() => {
+        sendMessage({ type: 'admin_get_admin_accounts' });
+      }, 1000);
+    });
+
+    // 初始化
+    addLog('🚀 管理后台已就绪，正在自动连接...', 'info');
+    updateStatus(false);
+  </script>
+</body>
+</html>

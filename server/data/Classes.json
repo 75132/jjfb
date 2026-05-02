@@ -1,0 +1,408 @@
+[
+  null,
+  {
+    "id": 1,
+    "name": "铁臂|初",
+    "note": "a = level * (506/2) + 300 ,b = level * 174 + 150 ,c = level * 40 + 315 ,d = level * 40 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 2,
+    "name": "铁臂|中",
+    "note": "a = level * (506/2) + 300 ,b = level * 174 + 150 ,c = level * 40 + 315 ,d = level * 40 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 3,
+    "name": "铁臂|终",
+    "note": "a = level * (506/2) + 300 ,b = level * 174 + 150 ,c = level * 40 + 315 ,d = level * 40 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 4,
+    "name": "鹰眼|初",
+    "note": "a = level * (380/2) + 300 ,b = level * 96 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 5,
+    "name": "鹰眼|中",
+    "note": "a = level * (380/2) + 300 ,b = level * 96 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 6,
+    "name": "鹰眼|终",
+    "note": "a = level * (380/2) + 300 ,b = level * 96 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 7,
+    "name": "钢板|初",
+    "note": "a = level * (352/2) + 300 ,b = level * 118 + 150 ,c = level * 33 + 315 ,d = level * 33 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 8,
+    "name": "钢板|中",
+    "note": "a = level * (352/2) + 300 ,b = level * 118 + 150 ,c = level * 33 + 315 ,d = level * 33 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 9,
+    "name": "钢板|终",
+    "note": "a = level * (352/2) + 300 ,b = level * 118 + 150 ,c = level * 33 + 315 ,d = level * 33 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 10,
+    "name": "迅猛|初",
+    "note": "a = level * (342/2) + 300 ,b = level * 117 + 150 ,c = level * 37 + 315 ,d = level * 37 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 11,
+    "name": "迅猛|中",
+    "note": "a = level * (342/2) + 300 ,b = level * 117 + 150 ,c = level * 37 + 315 ,d = level * 37 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 12,
+    "name": "迅猛|终",
+    "note": "a = level * (342/2) + 300 ,b = level * 117 + 150 ,c = level * 37 + 315 ,d = level * 37 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 13,
+    "name": "铁闸|初",
+    "note": "a = level * (375/2) + 300 ,b = level * 130 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 14,
+    "name": "铁闸|中",
+    "note": "a = level * (375/2) + 300 ,b = level * 130 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 15,
+    "name": "铁闸|终",
+    "note": "a = level * (375/2) + 300 ,b = level * 130 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 16,
+    "name": "壁垒|初",
+    "note": "a = level * (423/2) + 300 ,b = level * 153 + 150 ,c = level * 40 + 315 ,d = level * 40 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 17,
+    "name": "壁垒|中",
+    "note": "a = level * (423/2) + 300 ,b = level * 153 + 150 ,c = level * 40 + 315 ,d = level * 40 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 18,
+    "name": "壁垒|终",
+    "note": "a = level * (423/2) + 300 ,b = level * 153 + 150 ,c = level * 40 + 315 ,d = level * 40 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 19,
+    "name": "飞轮|初",
+    "note": "a = level * (520/2) + 300 ,b = level * 190 + 150 ,c = level * 43 + 315 ,d = level * 43 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 20,
+    "name": "飞轮|中",
+    "note": "a = level * (520/2) + 300 ,b = level * 190 + 150 ,c = level * 43 + 315 ,d = level * 43 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 21,
+    "name": "飞轮|终",
+    "note": "a = level * (520/2) + 300 ,b = level * 190 + 150 ,c = level * 43 + 315 ,d = level * 43 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 22,
+    "name": "猩红|初",
+    "note": "a = level * (489/2) + 300 ,b = level * 156 + 150 ,c = level * 45 + 315 ,d = level * 45 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 23,
+    "name": "猩红|中",
+    "note": "a = level * (489/2) + 300 ,b = level * 156 + 150 ,c = level * 45 + 315 ,d = level * 45 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 24,
+    "name": "猩红|终",
+    "note": "a = level * (489/2) + 300 ,b = level * 156 + 150 ,c = level * 45 + 315 ,d = level * 45 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 25,
+    "name": "鱼雷|初",
+    "note": "a = level * (321/2) + 300 ,b = level * 112 + 150 ,c = level * 37 + 315 ,d = level * 37 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 26,
+    "name": "鱼雷|中",
+    "note": "a = level * (321/2) + 300 ,b = level * 112 + 150 ,c = level * 37 + 315 ,d = level * 37 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 27,
+    "name": "鱼雷|终",
+    "note": "a = level * (321/2) + 300 ,b = level * 112 + 150 ,c = level * 37 + 315 ,d = level * 37 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 28,
+    "name": "力士|初",
+    "note": "a = level * (479/2) + 300 ,b = level * 157 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 29,
+    "name": "力士|中",
+    "note": "a = level * (479/2) + 300 ,b = level * 157 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 30,
+    "name": "力士|终",
+    "note": "a = level * (479/2) + 300 ,b = level * 157 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 29 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 31,
+    "name": "镭射|初",
+    "note": "a = level * (316/2) + 300 ,b = level * 112 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 32,
+    "name": "镭射|中",
+    "note": "a = level * (316/2) + 300 ,b = level * 112 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 33,
+    "name": "镭射|终",
+    "note": "a = level * (316/2) + 300 ,b = level * 112 + 150 ,c = level * 36 + 315 ,d = level * 36 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 34,
+    "name": "咒术|初",
+    "note": "a = level * (399/2) + 300 ,b = level * 133 + 150 ,c = level * 35 + 315 ,d = level * 35 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 35,
+    "name": "咒术|中",
+    "note": "a = level * (399/2) + 300 ,b = level * 133 + 150 ,c = level * 35 + 315 ,d = level * 35 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 36,
+    "name": "咒术|终",
+    "note": "a = level * (399/2) + 300 ,b = level * 133 + 150 ,c = level * 35 + 315 ,d = level * 35 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 37,
+    "name": "猛龙|初",
+    "note": "a = level * (650/2) + 300 ,b = level * 229 + 150 ,c = level * 47 + 315 ,d = level * 47 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 38,
+    "name": "猛龙|中",
+    "note": "a = level * (650/2) + 300 ,b = level * 229 + 150 ,c = level * 47 + 315 ,d = level * 47 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 39,
+    "name": "猛龙|终",
+    "note": "a = level * (650/2) + 300 ,b = level * 229 + 150 ,c = level * 47 + 315 ,d = level * 47 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 40,
+    "name": "闪影|初",
+    "note": "a = level * (560/2) + 300 ,b = level * 192 + 150 ,c = level * 38 + 315 ,d = level * 38 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 41,
+    "name": "闪影|中",
+    "note": "a = level * (560/2) + 300 ,b = level * 192 + 150 ,c = level * 38 + 315 ,d = level * 38 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 42,
+    "name": "闪影|终",
+    "note": "a = level * (560/2) + 300 ,b = level * 192 + 150 ,c = level * 38 + 315 ,d = level * 38 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 43,
+    "name": "诺谢|初",
+    "note": "a = level * (601/2) + 300 ,b = level * 216 + 150 ,c = level * 35 + 315 ,d = level * 35 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 44,
+    "name": "诺谢|中",
+    "note": "a = level * (601/2) + 300 ,b = level * 216 + 150 ,c = level * 35 + 315 ,d = level * 35 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 45,
+    "name": "诺谢|终",
+    "note": "a = level * (601/2) + 300 ,b = level * 216 + 150 ,c = level * 35 + 315 ,d = level * 35 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 46,
+    "name": "临时机甲",
+    "note": "a = level * (322/2) + 300 ,b = level * 115 + 150 ,c = level * 30 + 315 ,d = level * 30 + 315 ,e = level * 10 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 28 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 47,
+    "name": "卡鲁|初",
+    "note": "a = level * (523/2) + 300 ,b = level * 190 + 150 ,c = level * 51 + 315 ,d = level * 51 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 48,
+    "name": "卡鲁|中",
+    "note": "a = level * (523/2) + 300 ,b = level * 190 + 150 ,c = level * 51 + 315 ,d = level * 51 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 49,
+    "name": "卡鲁|终",
+    "note": "a = level * (523/2) + 300 ,b = level * 190 + 150 ,c = level * 51 + 315 ,d = level * 51 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 50,
+    "name": "吉尼奥|初",
+    "note": "a = level * (488/2) + 300 ,b = level * 162 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 32 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 51,
+    "name": "吉尼奥|中",
+    "note": "a = level * (488/2) + 300 ,b = level * 162 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 32 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 52,
+    "name": "吉尼奥|终",
+    "note": "a = level * (488/2) + 300 ,b = level * 162 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 32 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 53,
+    "name": "克努|初",
+    "note": "a = level * (507/2) + 300 ,b = level * 183 + 150 ,c = level * 48 + 315 ,d = level * 48 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 54,
+    "name": "克努|中",
+    "note": "a = level * (507/2) + 300 ,b = level * 183 + 150 ,c = level * 48 + 315 ,d = level * 48 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 55,
+    "name": "克努|终",
+    "note": "a = level * (507/2) + 300 ,b = level * 183 + 150 ,c = level * 48 + 315 ,d = level * 48 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 56,
+    "name": "阿迈刹",
+    "note": "a = level * (423/2) + 300 ,b = level * 154 + 150 ,c = level * 47 + 315 ,d = level * 47 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 32 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 57,
+    "name": "盖亚",
+    "note": "a = level * (499/2) + 300 ,b = level * 181 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 58,
+    "name": "拉诺斯",
+    "note": "a = level * (451/2) + 300 ,b = level * 154 + 150 ,c = level * 45 + 315 ,d = level * 45 + 315 ,e = level * 18 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 59,
+    "name": "迪斯-KZ",
+    "note": "a = level * (422/2) + 300 ,b = level * 150 + 150 ,c = level * 50 + 315 ,d = level * 50 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 60,
+    "name": "钢铁巨侠",
+    "note": "a = level * (579/2) + 300 ,b = level * 190 + 150 ,c = level * 54 + 315 ,d = level * 54 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 61,
+    "name": "刀锋|初",
+    "note": "a = level * (491/2) + 300 ,b = level * 172 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 18 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 62,
+    "name": "刀锋|中",
+    "note": "a = level * (491/2) + 300 ,b = level * 172 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 18 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 63,
+    "name": "刀锋|终",
+    "note": "a = level * (491/2) + 300 ,b = level * 172 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 18 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 64,
+    "name": "玫瑰|初",
+    "note": "a = level * (469/2) + 300 ,b = level * 157 + 150 ,c = level * 49 + 315,d = level * 49 + 315,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 65,
+    "name": "玫瑰|中",
+    "note": "a = level * (469/2) + 300 ,b = level * 157 + 150 ,c = level * 49 + 315 ,d = level * 49 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 66,
+    "name": "玫瑰|终",
+    "note": "a = level * (469/2) + 300 ,b = level * 157 + 150 ,c = level * 49 + 315 ,d = level * 49 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 67,
+    "name": "福萨|初",
+    "note": "a = level * (533/2) + 300 ,b = level * 192 + 150 ,c = level * 39 + 315 ,d = level * 39 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 68,
+    "name": "福萨|中",
+    "note": "a = level * (533/2) + 300 ,b = level * 192 + 150 ,c = level * 39 + 315 ,d = level * 39 + 315,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 69,
+    "name": "福萨|终",
+    "note": "a = level * (533/2) + 300 ,b = level * 192 + 150 ,c = level * 39 + 315 ,d = level * 39 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 70,
+    "name": "黄金卡鲁|初",
+    "note": "a = level * (564/2) + 300 ,b = level * 199 + 150 ,c = level * 52 + 315 ,d = level * 52 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 71,
+    "name": "黄金卡鲁|中",
+    "note": "a = level * (564/2) + 300 ,b = level * 199 + 150 ,c = level * 52 + 315 ,d = level * 52 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 72,
+    "name": "黄金卡鲁|终",
+    "note": "a = level * (564/2) + 300 ,b = level * 199 + 150 ,c = level * 52 + 315 ,d = level * 52 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 73,
+    "name": "弗雷萨",
+    "note": "a = level * (541/2) + 300 ,b = level * 192 + 150 ,c = level * 49 + 315 ,d = level * 49 + 315 ,e = level * 13 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 74,
+    "name": "黄金吉尼|初",
+    "note": "a = level * (645/2) + 300 ,b = level * 232 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 75,
+    "name": "黄金吉尼|中",
+    "note": "a = level * (645/2) + 300 ,b = level * 232 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 76,
+    "name": "黄金吉尼|终",
+    "note": "a = level * (645/2) + 300 ,b = level * 232 + 150 ,c = level * 46 + 315 ,d = level * 46 + 315 ,e = level * 12 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 77,
+    "name": "黄金克努|初",
+    "note": "a = level * (874/2) + 300 ,b = level * 282 + 150 ,c = level * 42 + 315 ,d = level * 42 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 78,
+    "name": "黄金克努|中",
+    "note": "a = level * (874/2) + 300 ,b = level * 282 + 150 ,c = level * 42 + 315 ,d = level * 42 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 79,
+    "name": "黄金克努|终",
+    "note": "a = level * (874/2) + 300 ,b = level * 282 + 150 ,c = level * 42 + 315 ,d = level * 42 + 315 ,e = level * 14 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 30 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 80,
+    "name": "伊修塔尔",
+    "note": "a = level * (468/2) + 300 ,b = level * 153 + 150 ,c = level * 53 + 315 ,d = level * 53 + 315 ,e = level * 11 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 33 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  },
+  {
+    "id": 81,
+    "name": "钢索",
+    "note": "a = level * (602/2) + 300 ,b = level * 201 + 150 ,c = level * 51 + 315 ,d = level * 51 + 315 ,e = level * 15 + 16 ,f = level * 13 + 12 ,g = level * 0 + 0 ,h = level * 0 + 0 ,i = level * 0 + 0 ,j = level * 0 + 0 ,k = level * 31 + 15 ,l = level * 0 + 0 ,m = level * 0 + 0 ,n = level * 0 + 0 ,o = level * 0 + 0"
+  }
+]

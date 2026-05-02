@@ -1,0 +1,3 @@
+# pack_cocos_project.py 仅使用标准库 tkinter，无需安装本文件。
+# 若你其它工具需要 dearpygui，可取消下行注释：
+# dearpygui>=1.11.0,<2.0.0
