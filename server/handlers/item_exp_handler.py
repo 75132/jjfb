@@ -271,3 +271,34 @@ async def handle_add_exp(websocket, data, current_character_id, add_exp_to_playe
             'success': False,
             'message': f'增加经验失败: {str(e)}'
         }))
+
+
+async def add_exp_to_character(user_id, character_id: str, exp_amount: int) -> dict:
+    """公开接口：给角色增加经验（剧情/邮件等系统调用）"""
+    player = await utils.async_mongo_operation(
+        lambda: utils.players_col.find_one({'user_id': user_id, 'character_id': character_id}),
+        timeout=2.0,
+    )
+    if not player:
+        return {'success': False, 'error': '角色不存在'}
+    current_exp = int(player.get('exp', 0) or 0)
+    current_level = int(player.get('level', 1) or 1)
+    max_level = int(utils.MAX_LEVEL or 60)
+    if current_level >= max_level:
+        return {'success': True, 'level': current_level, 'exp': current_exp, 'level_up_count': 0}
+    new_exp = current_exp + int(exp_amount)
+    new_level = utils.calculate_level_from_exp(new_exp)
+    level_up_count = new_level - current_level
+    await utils.async_mongo_operation(
+        lambda: utils.players_col.update_one(
+            {'_id': player['_id']},
+            {'$set': {'level': new_level, 'exp': new_exp}},
+        ),
+        timeout=2.0,
+    )
+    return {
+        'success': True,
+        'level': new_level,
+        'exp': new_exp,
+        'level_up_count': level_up_count,
+    }

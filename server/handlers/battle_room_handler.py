@@ -379,9 +379,38 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
         return
 
     player_snapshot = _build_attrs_from_pet(player_pet)
-    enemy_snapshot = await _generate_enemy_snapshot(
-        user, player_snapshot.get("pet_id")
-    )
+
+    story_event_id = data.get("story_event_id")
+    map_code = data.get("map_code") or "test_base"
+    if story_event_id:
+        from services.story_service import get_or_create_progress
+        from handlers import story_handler
+
+        progress = await get_or_create_progress(user["_id"], str(cid), map_code)
+        pending = progress.get("pending_battle") or {}
+        if pending.get("event_id") != story_event_id:
+            await utils.send_error_response(
+                websocket,
+                "battle_room_create",
+                "剧情战斗未授权",
+                code=400,
+                request_data=data,
+            )
+            return
+        battle_ref = pending.get("battle_ref")
+        enemy_obj, err = await story_handler._generate_story_enemy(
+            user["_id"], str(cid), battle_ref, data.get("player_pet_id")
+        )
+        if err:
+            await utils.send_error_response(
+                websocket, "battle_room_create", err, code=500, request_data=data
+            )
+            return
+        enemy_snapshot = _build_attrs_from_pet(enemy_obj)
+    else:
+        enemy_snapshot = await _generate_enemy_snapshot(
+            user, player_snapshot.get("pet_id")
+        )
 
     # 这里的 user_id 只用于标识归属，统一转成字符串，避免 ObjectId 不能 JSON 序列化的问题
     room = battle_room_service.create_pve_room(

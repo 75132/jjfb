@@ -7,6 +7,7 @@ import datetime
 import math
 from . import utils
 from .decorators import handle_exceptions
+from .password_util import hash_password, verify_password, needs_rehash
 from services.session_service import session_service
 from services.world_presence_service import world_presence_service
 from services.logger_service import get_logger
@@ -114,7 +115,11 @@ async def handle_login(websocket, data, current_user_id):
         return current_user_id
 
     user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'account': account}))
-    if user and user['password'] == password:  # 明文比较密码（TODO: 使用 bcrypt）
+    if user and verify_password(password, user.get('password', '')):
+        if needs_rehash(user.get('password', '')):
+            utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+                {'_id': user['_id']}, {'$set': {'password': hash_password(password)}}
+            ))
         # 登录成功，清空该账号+IP的登录失败计数
         utils.clear_account_action_failures(account, client_ip, 'login')
 
@@ -313,7 +318,7 @@ async def handle_register(websocket, data, current_user_id):
             {'account': account},  # 查询条件
             {'$setOnInsert': {
                 'account': account,
-                'password': password,  # 明文存储密码
+                'password': hash_password(password),
                 'token': initial_token,
                 'created_at': datetime.datetime.utcnow(),
                 'last_login': None
@@ -466,7 +471,7 @@ async def handle_change_password(websocket, data, current_user_id):
     if (not user) and current_user_id:
         user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'_id': current_user_id}))
 
-    if not user or user.get('password') != old_password:
+    if not user or not verify_password(old_password, user.get('password', '')):
         _, lock_until = utils.record_account_action_failure(account, client_ip, 'pwd', max_fail=5, lock_minutes=5)
         if lock_until:
             await utils.send_error_response(websocket, 'change_password', _lock_msg(lock_until), code=429, request_data=data)
@@ -495,7 +500,7 @@ async def handle_change_password(websocket, data, current_user_id):
         utils.safe_mongo_operation(lambda: utils.users_col.update_one(
             {'_id': user_id},
             {'$set': {
-                'password': new_password,
+                'password': hash_password(new_password),
                 'token': access_token,
                 'refresh_token': refresh_token,
                 'token_expires_at': access_expires_at,
@@ -612,3 +617,23 @@ async def handle_delete_account(websocket, data, current_user_id):
     utils.unregister_client(websocket)
     
     return current_user_id
+
+
+@handle_exceptions('refresh_token')
+async def handle_refresh_token(websocket, data, current_user_id):
+    """专用 refresh_token 路由（等价于 login 带 refresh_token）"""
+    payload = dict(data or {})
+    payload['type'] = 'login'
+    if 'refresh_token' not in payload and payload.get('token'):
+        payload['refresh_token'] = payload.get('token')
+    return await handle_login(websocket, payload, current_user_id)
+
+
+@handle_exceptions('refresh_token')
+async def handle_refresh_token(websocket, data, current_user_id):
+    """专用 refresh_token 路由（等价于 login 带 refresh_token）"""
+    payload = dict(data or {})
+    payload['type'] = 'login'
+    if 'refresh_token' not in payload and payload.get('token'):
+        payload['refresh_token'] = payload.get('token')
+    return await handle_login(websocket, payload, current_user_id)

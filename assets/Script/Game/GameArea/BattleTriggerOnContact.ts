@@ -92,6 +92,8 @@ export class BattleTriggerOnContact extends Component {
     }
 
     update() {
+        if (!this.enabled) return;
+
         this._touchBeganThisFrame = false;
 
         if (this.pollingEnabled) {
@@ -120,6 +122,7 @@ export class BattleTriggerOnContact extends Component {
     }
 
     private _onKeyDown = (e: EventKeyboard) => {
+        if (!this.enabled) return;
         if (e.keyCode !== KeyCode.KEY_ENTER) return;
         if (!this._pendingEnter) return;
         if (!this._playerTouching) return;
@@ -141,6 +144,7 @@ export class BattleTriggerOnContact extends Component {
     }
 
     private _onBeginContact = (_self: Collider2D, other: Collider2D) => {
+        if (!this.enabled) return;
         const otherNode = other?.node;
         if (!otherNode) return;
         const playerMove = this._findPlayerGridMoveComponent(otherNode);
@@ -165,6 +169,7 @@ export class BattleTriggerOnContact extends Component {
     };
 
     private _onEndContact = (_self: Collider2D, other: Collider2D) => {
+        if (!this.enabled) return;
         const otherNode = other?.node;
         if (!otherNode) return;
         const playerMove = this._findPlayerGridMoveComponent(otherNode);

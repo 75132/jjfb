@@ -243,8 +243,9 @@ export class MechEquipment extends Component {
             if (equippedItem && equippedItem.item_id) {
                 // 有装备，显示装备名和Remove按钮
                 const itemName = equippedItem.name || `物品${equippedItem.item_id}`;
+                const enh = Number(equippedItem.enhance_level || 0);
                 if (label) {
-                    label.string = itemName;
+                    label.string = enh > 0 ? `${itemName} +${enh}` : itemName;
                     label.node.active = true;  // 显示Label节点
                 }
                 // 显示Remove按钮
@@ -417,6 +418,24 @@ export class MechEquipment extends Component {
             // 清空所有槽位显示
             this.updateEquipmentDisplay({});
         }
+    }
+
+    /** 强化当前选中槽位（默认 Weapon） */
+    public enhanceSlot(slotName: string = 'Weapon'): void {
+        if (!this.currentPetId || !this.ws) return;
+        const characterId = this.ws.getCharacterId();
+        if (!characterId) return;
+        this.ws.request(
+            GameConfig.MESSAGE_TYPES.EQUIP_ENHANCE,
+            { character_id: characterId, pet_id: this.currentPetId, slot_name: slotName },
+            (resp: any) => {
+                if (resp?.success) {
+                    this.requestRobotPetInfo(this.currentPetId);
+                }
+            },
+            true,
+            10000,
+        );
     }
 }
 

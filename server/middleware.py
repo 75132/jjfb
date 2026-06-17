@@ -63,6 +63,34 @@ middleware_manager = MiddlewareManager()
 
 # ========== 内置中间件 ==========
 
+async def admin_auth_middleware(context: MiddlewareContext, next_func: Callable):
+    """管理后台路由鉴权：admin_token 或 is_admin 用户 token"""
+    import os
+    if not context.route or not context.route.startswith('admin_'):
+        return await next_func()
+
+    admin_token = context.data.get('admin_token') or context.data.get('admin_secret')
+    expected = os.environ.get('ADMIN_TOKEN', 'dev_admin_token')
+    if admin_token and admin_token == expected:
+        return await next_func()
+
+    token = context.data.get('token')
+    if token:
+        user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'token': token}))
+        if user and user.get('is_admin'):
+            context.current_user_id = user['_id']
+            return await next_func()
+
+    await utils.send_error_response(
+        context.websocket,
+        context.route,
+        '需要管理员鉴权（admin_token 或管理员账号 token）',
+        code=403,
+        request_data=context.data,
+    )
+    return None
+
+
 async def auth_middleware(context: MiddlewareContext, next_func: Callable):
     """认证中间件 - 检查用户是否已登录（支持测试模式：通过user_id自动认证）
     增强：检查Token过期和撤销状态
@@ -478,6 +506,7 @@ middleware_manager.use(validate_middleware)
 middleware_manager.use(log_middleware)
 middleware_manager.use(toobusy_middleware)  # 过载保护（新增）
 middleware_manager.use(performance_middleware)
+middleware_manager.use(admin_auth_middleware)
 middleware_manager.use(auth_middleware)
 middleware_manager.use(serial_middleware)
 

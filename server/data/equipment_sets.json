@@ -1,0 +1,22 @@
+{
+  "sets": [
+    {
+      "set_id": "starter_melee",
+      "name": "格斗入门套装",
+      "pieces": [1, 2, 3],
+      "bonuses": {
+        "2": { "Melee": 5, "Armor": 3 },
+        "4": { "Melee": 12, "Armor": 8, "MaxHP": 50 }
+      }
+    },
+    {
+      "set_id": "starter_shoot",
+      "name": "射击入门套装",
+      "pieces": [6, 7, 4],
+      "bonuses": {
+        "2": { "Shooting": 5, "Accuracy": 3 },
+        "3": { "Shooting": 10, "Accuracy": 6, "Initiative": 4 }
+      }
+    }
+  ]
+}

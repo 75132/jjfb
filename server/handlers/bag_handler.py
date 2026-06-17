@@ -1792,3 +1792,51 @@ async def handle_unequip_item(websocket, data, current_character_id):
         import traceback
         traceback.print_exc()
         await utils.send_error_response(websocket, 'unequip_item', f'卸下装备失败: {str(e)}', code=500, request_data=data)
+
+
+async def add_item_to_bag(user_id, character_id, item_id: int, quantity: int = 1) -> dict:
+    """公开接口：向背包添加物品（剧情/邮件等系统调用）"""
+    return await _add_item_to_inventory(user_id, character_id, item_id, quantity)
+
+
+async def consume_item_from_bag(user_id, character_id, item_id: int, quantity: int = 1) -> dict:
+    """从背包扣除物品（数量不足则失败）"""
+    doc = await utils.async_mongo_operation(
+        lambda: utils.inventory_col.find_one({'user_id': user_id, 'character_id': character_id}),
+        timeout=2.0,
+    )
+    if not doc:
+        return {'success': False, 'error': '背包不存在'}
+    items = merge_inventory_items(doc)
+    total = sum(int(it.get('quantity', 0) or 0) for it in items if int(it.get('item_id', 0)) == item_id)
+    if total < quantity:
+        return {'success': False, 'error': '数量不足'}
+    remaining = quantity
+    for it in items:
+        if remaining <= 0:
+            break
+        if int(it.get('item_id', 0)) != item_id:
+            continue
+        q = int(it.get('quantity', 0) or 0)
+        take = min(q, remaining)
+        it['quantity'] = q - take
+        remaining -= take
+    # 写回分类数组（简化：重建 Weapon/Armor/items）
+    new_items = [it for it in items if int(it.get('quantity', 0) or 0) > 0]
+    weapon, armor, misc = [], [], []
+    for it in new_items:
+        cat = int(it.get('category', 1))
+        if cat == 2:
+            weapon.append(it)
+        elif cat == 3:
+            armor.append(it)
+        else:
+            misc.append(it)
+    await utils.async_mongo_operation(
+        lambda: utils.inventory_col.update_one(
+            {'user_id': user_id, 'character_id': character_id},
+            {'$set': {'items': misc, 'Weapon': weapon, 'Armor': armor}, '$inc': {'bag_version': 1}},
+        ),
+        timeout=2.0,
+    )
+    return {'success': True, 'consumed': quantity}

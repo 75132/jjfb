@@ -29,6 +29,13 @@ THROTTLE_CONFIG = {
     'approve_friend': 0.5,
     'reject_friend': 0.5,
     'delete_friend': 0.5,
+    'equip_socket': 1.0,
+    'story_get_state': 0.5,
+    'story_interact': 0.5,
+    'story_event_complete': 0.5,
+    'story_battle_start': 1.0,
+    'mail_list': 0.5,
+    'mail_claim': 0.5,
 }
 users_col = None
 account_limits_col = None

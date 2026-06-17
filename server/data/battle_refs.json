@@ -1,0 +1,26 @@
+{
+  "battle_300001": {
+    "name": "博士遇袭战",
+    "level_offset": 0,
+    "fixed_level": 3,
+    "elite": false
+  },
+  "battle_300002": {
+    "name": "前哨掘地虫",
+    "level_offset": 1,
+    "fixed_level": null,
+    "elite": false
+  },
+  "battle_300003": {
+    "name": "机甲校准战",
+    "level_offset": 0,
+    "fixed_level": 5,
+    "elite": false
+  },
+  "battle_300004": {
+    "name": "结业Boss战",
+    "level_offset": 2,
+    "fixed_level": null,
+    "elite": true
+  }
+}

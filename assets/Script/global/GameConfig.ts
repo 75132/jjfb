@@ -101,7 +101,18 @@ export class GameConfig {
         BATTLE_ROOM_RESUME_RESPONSE: 'battle_room_resume_response',
         // PVP 匹配（平匹配）
         PVP_FLAT_MATCH: 'pvp_flat_match',
-        ROBOTCOUNT_UPDATE: 'robotcount_update'
+        ROBOTCOUNT_UPDATE: 'robotcount_update',
+        REFRESH_TOKEN: 'refresh_token',
+        STORY_GET_STATE: 'story_get_state',
+        STORY_INTERACT: 'story_interact',
+        STORY_EVENT_COMPLETE: 'story_event_complete',
+        STORY_BATTLE_START: 'story_battle_start',
+        MAIL_LIST: 'mail_list',
+        MAIL_READ: 'mail_read',
+        MAIL_CLAIM: 'mail_claim',
+        MAIL_DELETE: 'mail_delete',
+        EQUIP_ENHANCE: 'equip_enhance',
+        EQUIP_SOCKET: 'equip_socket',
     } as const;
     
     // 事件名称

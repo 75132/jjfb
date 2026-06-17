@@ -52,6 +52,7 @@ class BattleRoomService:
         self.rooms: Dict[str, Dict[str, Any]] = {}
         # character_id(str) -> room_id，方便通过角色快速找到房间
         self.char_room_index: Dict[str, str] = {}
+        self._persist_col = None
 
         # PvP：并发等待（存放在 room dict 外，避免序列化到客户端）
         self._pvp_room_locks: Dict[str, asyncio.Lock] = {}
@@ -119,6 +120,7 @@ class BattleRoomService:
 
         self.rooms[room_id] = room
         self.char_room_index[str(character_id)] = room_id
+        self._persist_room(room)
         return room
 
     def create_pvp_room(
@@ -176,6 +178,7 @@ class BattleRoomService:
         self.rooms[room_id] = room
         self.char_room_index[player_character_id] = room_id
         self.char_room_index[enemy_character_id] = room_id
+        self._persist_room(room)
         return room
 
     def build_pvp_room_view_for_character(self, room: Dict[str, Any], character_id: str) -> Dict[str, Any]:
@@ -237,8 +240,55 @@ class BattleRoomService:
             "raw": cleaned_raw,  # 原始数据快照（已清理 ObjectId），方便客户端展示
         }
 
+    def init_persistence(self, col) -> None:
+        self._persist_col = col
+
+    def _persist_room(self, room: Dict[str, Any]) -> None:
+        if self._persist_col is None or not room:
+            return
+        try:
+            from handlers import utils as handler_utils
+
+            doc = _clean_objectid_for_json(dict(room))
+            doc['room_id'] = room.get('room_id')
+            cid = room.get('character_id') or room.get('player_character_id')
+            if cid:
+                doc['character_id'] = str(cid)
+            handler_utils.safe_mongo_operation(
+                lambda: self._persist_col.update_one(
+                    {'room_id': doc['room_id']},
+                    {'$set': doc},
+                    upsert=True,
+                )
+            )
+        except Exception as e:
+            print(f'⚠️ [BattleRoom] persist failed: {e}')
+
+    def _load_room_from_db(self, room_id: str) -> Optional[Dict[str, Any]]:
+        if self._persist_col is None:
+            return None
+        try:
+            from handlers import utils as handler_utils
+
+            doc = handler_utils.safe_mongo_operation(
+                lambda: self._persist_col.find_one({'room_id': room_id})
+            )
+            if doc:
+                doc.pop('_id', None)
+                return doc
+        except Exception:
+            pass
+        return None
+
     def get_room_by_id(self, room_id: str) -> Optional[Dict[str, Any]]:
         room = self.rooms.get(room_id)
+        if not room:
+            room = self._load_room_from_db(room_id)
+            if room:
+                self.rooms[room_id] = room
+                cid = str(room.get('character_id') or room.get('player_character_id') or '')
+                if cid and room.get('status') == 'in_progress':
+                    self.char_room_index[cid] = room_id
         if not room:
             return None
         # 检查超时
@@ -344,6 +394,7 @@ class BattleRoomService:
         # 若仍在进行中，进入下一回合指令阶段，设置服务器权威的截止时间（客户端倒计时与重连用）
         if room.get("status") == "in_progress":
             self._set_command_phase_deadline(room)
+        self._persist_room(room)
         return room
 
     def _compute_pvp_round_and_advance(self, room: Dict[str, Any]) -> None:
@@ -392,6 +443,7 @@ class BattleRoomService:
             # 重置下一回合指令
             room["round_actions"] = {"player": None, "enemy": None}
             self._set_command_phase_deadline(room)
+        self._persist_room(room)
 
     async def submit_pvp_action(
         self,

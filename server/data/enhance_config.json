@@ -1,0 +1,12 @@
+{
+  "max_level": 15,
+  "gold_per_level_base": 100,
+  "gold_per_level_step": 50,
+  "stat_bonus_per_level_pct": 0.03,
+  "socket_max": 2,
+  "gem_stat_bonus": {
+    "gem_attack": { "Melee": 3, "Shooting": 3 },
+    "gem_defense": { "Armor": 4, "Block": 2 },
+    "gem_hp": { "MaxHP": 20 }
+  }
+}

@@ -15,6 +15,9 @@ from handlers import pvp_match_handler
 from handlers import connection_handler
 from handlers import daletou_handler
 from handlers import minigame2_handler
+from handlers import story_handler
+from handlers import mail_handler
+from handlers import equipment_advanced_handler
 
 
 class RouteHandler:
@@ -411,6 +414,80 @@ ROUTES: Dict[str, RouteHandler] = {
         returns_user_ids=False,
         description='增加经验'
     ),
+
+    # ========== 剧情/任务 ==========
+    'story_get_state': RouteHandler(
+        story_handler.handle_story_get_state,
+        require_auth=True,
+        returns_user_ids=True,
+        description='获取剧情进度'
+    ),
+    'story_interact': RouteHandler(
+        story_handler.handle_story_interact,
+        require_auth=True,
+        returns_user_ids=True,
+        description='剧情交互预检'
+    ),
+    'story_event_complete': RouteHandler(
+        story_handler.handle_story_event_complete,
+        require_auth=True,
+        returns_user_ids=True,
+        description='剧情事件完成上报'
+    ),
+    'story_battle_start': RouteHandler(
+        story_handler.handle_story_battle_start,
+        require_auth=True,
+        returns_user_ids=True,
+        description='剧情战斗生成敌人'
+    ),
+
+    # ========== 邮件 ==========
+    'mail_list': RouteHandler(
+        mail_handler.handle_mail_list,
+        require_auth=True,
+        returns_user_ids=True,
+        description='邮件列表'
+    ),
+    'mail_read': RouteHandler(
+        mail_handler.handle_mail_read,
+        require_auth=True,
+        returns_user_ids=True,
+        description='标记邮件已读'
+    ),
+    'mail_claim': RouteHandler(
+        mail_handler.handle_mail_claim,
+        require_auth=True,
+        returns_user_ids=True,
+        description='领取邮件附件'
+    ),
+    'mail_delete': RouteHandler(
+        mail_handler.handle_mail_delete,
+        require_auth=True,
+        returns_user_ids=True,
+        description='删除邮件'
+    ),
+
+    # ========== 装备进阶 ==========
+    'equip_enhance': RouteHandler(
+        equipment_advanced_handler.handle_equip_enhance,
+        require_auth=True,
+        returns_user_ids=False,
+        description='装备强化'
+    ),
+    'equip_socket': RouteHandler(
+        equipment_advanced_handler.handle_equip_socket,
+        require_auth=True,
+        returns_user_ids=False,
+        description='装备镶嵌'
+    ),
+
+    # ========== Token 刷新 ==========
+    'refresh_token': RouteHandler(
+        login_handler.handle_refresh_token,
+        require_auth=False,
+        returns_user_ids=True,
+        description='刷新访问令牌'
+    ),
     
     # ========== 管理后台接口 ==========
     # 注意：管理后台接口不需要认证，允许直接访问（生产环境建议添加IP白名单或密码保护）
@@ -533,6 +610,24 @@ ROUTES: Dict[str, RouteHandler] = {
         require_auth=False,
         returns_user_ids=False,
         description='管理员获取路由统计信息'
+    ),
+    'admin_reset_story': RouteHandler(
+        story_handler.handle_admin_reset_story,
+        require_auth=False,
+        returns_user_ids=False,
+        description='管理员重置剧情进度'
+    ),
+    'admin_complete_story_task': RouteHandler(
+        story_handler.handle_admin_complete_story_task,
+        require_auth=False,
+        returns_user_ids=False,
+        description='管理员强制完成任务'
+    ),
+    'admin_send_mail': RouteHandler(
+        mail_handler.handle_admin_send_mail,
+        require_auth=False,
+        returns_user_ids=False,
+        description='管理员发送邮件'
     ),
 }
 

@@ -599,6 +599,65 @@ export class WebSocketManager extends Component {
             localStorage.setItem(WebSocketManager.LS_LAST_TOKEN_EXPIRES_AT, String(expiresAt));
         } catch (_) {}
     }
+
+    public saveRefreshToken(refreshToken: string, refreshExpiresAt?: string | number | null): void {
+        try {
+            if (typeof localStorage === 'undefined') return;
+            localStorage.setItem(WebSocketManager.LS_LAST_REFRESH_TOKEN, refreshToken);
+            if (refreshExpiresAt !== undefined && refreshExpiresAt !== null && refreshExpiresAt !== '') {
+                localStorage.setItem(WebSocketManager.LS_LAST_REFRESH_TOKEN_EXPIRES_AT, String(refreshExpiresAt));
+            }
+        } catch (_) {}
+    }
+
+    public getRefreshToken(): string | null {
+        try {
+            if (typeof localStorage === 'undefined') return null;
+            return localStorage.getItem(WebSocketManager.LS_LAST_REFRESH_TOKEN);
+        } catch (_) {
+            return null;
+        }
+    }
+
+    /** access token 将过期时尝试用 refresh_token 换新 */
+    public tryRefreshTokenIfNeeded(onDone?: (ok: boolean) => void): void {
+        try {
+            const expiresRaw = localStorage.getItem(WebSocketManager.LS_LAST_TOKEN_EXPIRES_AT);
+            const refresh = this.getRefreshToken();
+            if (!refresh || !expiresRaw) {
+                onDone?.(false);
+                return;
+            }
+            const expiresAt = this.parseExpiresAtMs(expiresRaw);
+            if (expiresAt === null || Date.now() < expiresAt - 60_000) {
+                onDone?.(true);
+                return;
+            }
+            this.request(
+                GameConfig.MESSAGE_TYPES.REFRESH_TOKEN,
+                { refresh_token: refresh },
+                (resp: any) => {
+                    if (!resp?.success) {
+                        onDone?.(false);
+                        return;
+                    }
+                    const d = resp.data || resp;
+                    const token = d.token || resp.token;
+                    if (token) this.saveToken(token);
+                    const te = d.token_expires_at || resp.token_expires_at;
+                    if (te) this.saveTokenExpiresAt(te);
+                    const rt = d.refresh_token || resp.refresh_token;
+                    const rte = d.refresh_token_expires_at || resp.refresh_token_expires_at;
+                    if (rt) this.saveRefreshToken(rt, rte);
+                    onDone?.(true);
+                },
+                false,
+                10000,
+            );
+        } catch {
+            onDone?.(false);
+        }
+    }
     public clearUserId(): void { 
         const hadUserId = this.currentUserId !== null;
         this.currentUserId = null;

@@ -273,12 +273,9 @@ export class Login extends Component {
             }
             // 保存refresh_token和过期时间（如果存在）
             if (responseData.refresh_token || data.refresh_token) {
-                // 可以保存到localStorage或其他存储
                 const refreshToken = responseData.refresh_token || data.refresh_token;
-                const tokenExpiresAt = responseData.token_expires_at || data.token_expires_at;
                 const refreshTokenExpiresAt = responseData.refresh_token_expires_at || data.refresh_token_expires_at;
-                // TODO: 保存refresh_token和过期时间到localStorage
-                console.log('保存Token信息:', { tokenExpiresAt, refreshTokenExpiresAt });
+                this.webSocketManager.saveRefreshToken(refreshToken, refreshTokenExpiresAt);
             }
             
             // 登录成功后保存userId（角色选择场景需要验证userId）

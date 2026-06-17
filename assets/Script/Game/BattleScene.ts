@@ -189,8 +189,9 @@ export class BattleScene extends Component {
     private _sessionId: number = 0;
     /** 修复点：重连恢复中置位，避免 onEnable 再次请求 resume 覆盖已拉取的状态 */
     private _restoringFromReconnect: boolean = false;
-    /** 修复点：由 Test 等外部在打开面板前注入的已拉取 state，打开后直接应用，不再发 resume/创建新房间 */
-    private _pendingRestoreState: any = null;
+    /** 剧情战斗结束回调 */
+    private _storyBattleCallback: ((won: boolean) => void) | null = null;
+    private _storyBattleMeta: { eventId: string; battleRef: string; mapCode: string } | null = null;
 
     /**
      * 进入服务器战斗房间兜底：
@@ -433,6 +434,58 @@ export class BattleScene extends Component {
     // =========================
     // 房间制战斗入口与状态同步
     // =========================
+
+    /**
+     * 剧情战斗入口：先 story_interact 授权后，带 story_event_id 创建 PVE 房间
+     */
+    public startStoryBattle(opts: {
+        mapCode: string;
+        eventId: string;
+        battleRef: string;
+        onFinished: (won: boolean) => void;
+    }): void {
+        this._storyBattleCallback = opts.onFinished;
+        this._storyBattleMeta = {
+            eventId: opts.eventId,
+            battleRef: opts.battleRef,
+            mapCode: opts.mapCode,
+        };
+        this.currentBattleMode = 'pve';
+        this._sessionId += 1;
+        this.node.active = true;
+        this._roomStateApplied = false;
+        this.unschedule(this._onBattleEnterTimeout);
+        this.scheduleOnce(this._onBattleEnterTimeout, this.BATTLE_ENTER_TIMEOUT_SEC);
+
+        const characterId = this.ws.getCharacterId?.();
+        if (!characterId) {
+            console.error('[BattleScene] 剧情战：未获取 characterId');
+            opts.onFinished(false);
+            return;
+        }
+        const sessionId = this._sessionId;
+        this.ws.request(
+            GameConfig.MESSAGE_TYPES.BATTLE_ROOM_CREATE,
+            {
+                character_id: characterId,
+                story_event_id: opts.eventId,
+                map_code: opts.mapCode,
+            },
+            (createResp: any) => {
+                if (!this.node?.isValid || this._sessionId !== sessionId) return;
+                if (!createResp?.success || !createResp.data?.state) {
+                    console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
+                    this._storyBattleCallback?.(false);
+                    this._storyBattleCallback = null;
+                    this.node.active = false;
+                    return;
+                }
+                this.applyServerRoomState(createResp.data.state, true);
+            },
+            true,
+            12000,
+        );
+    }
 
     /**
      * 进入房间制战斗：
@@ -2003,6 +2056,14 @@ export class BattleScene extends Component {
         }
 
         this.log(`战斗结束：${result.type === 'win' ? '玩家胜利' : '玩家失败'}（原因：${reason === 'ko' ? '击倒' : '逃跑'}）`);
+
+        const storyCb = this._storyBattleCallback;
+        const won = winner === 'player';
+        if (storyCb) {
+            this._storyBattleCallback = null;
+            this._storyBattleMeta = null;
+            storyCb(won);
+        }
 
         // 关闭 BattleScene 面板（上层可选择重新激活）
         this.scheduleOnce(() => {

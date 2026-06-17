@@ -1172,70 +1172,85 @@ async def strip_invalid_equipment_for_pet(user_id, character_id: str, pet_id: st
 # ========== 装备系统扩展接口（预留）==========
 class EquipmentExtension:
     """装备系统扩展接口（套装、强化、镶嵌等）"""
+
+    _sets_cache = None
+    _enhance_cfg_cache = None
+
+    @classmethod
+    def _load_sets(cls) -> list:
+        if cls._sets_cache is not None:
+            return cls._sets_cache
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "equipment_sets.json")
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                cls._sets_cache = json.load(f).get("sets", [])
+        else:
+            cls._sets_cache = []
+        return cls._sets_cache
+
+    @classmethod
+    def _load_enhance_cfg(cls) -> dict:
+        if cls._enhance_cfg_cache is not None:
+            return cls._enhance_cfg_cache
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "enhance_config.json")
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                cls._enhance_cfg_cache = json.load(f)
+        else:
+            cls._enhance_cfg_cache = {}
+        return cls._enhance_cfg_cache
     
     @staticmethod
     def calculate_set_bonus(equipment_slots: dict) -> dict:
-        """
-        计算套装效果（预留接口）
-        
-        Args:
-            equipment_slots: 装备槽位数据
-        
-        Returns:
-            {
-                'set_name': str,  # 套装名称
-                'set_count': int,  # 套装件数
-                'bonus_attributes': dict  # 套装加成属性
-            }
-        """
-        # TODO: 实现套装效果计算
-        return {
-            'set_name': None,
-            'set_count': 0,
-            'bonus_attributes': {}
-        }
+        """计算套装效果"""
+        if not equipment_slots:
+            return {'set_name': None, 'set_count': 0, 'bonus_attributes': {}}
+        equipped_ids = set()
+        for eq in equipment_slots.values():
+            if isinstance(eq, dict) and eq.get('item_id'):
+                equipped_ids.add(int(eq['item_id']))
+        best = {'set_name': None, 'set_count': 0, 'bonus_attributes': {}}
+        for sdef in EquipmentExtension._load_sets():
+            pieces = set(int(x) for x in (sdef.get('pieces') or []))
+            count = len(equipped_ids & pieces)
+            if count > best['set_count']:
+                bonuses = sdef.get('bonuses') or {}
+                tier_key = str(max(int(k) for k in bonuses.keys() if int(k) <= count) if bonuses else 0)
+                bonus_attrs = bonuses.get(tier_key, {}) if tier_key != '0' else {}
+                best = {
+                    'set_name': sdef.get('name'),
+                    'set_count': count,
+                    'bonus_attributes': dict(bonus_attrs),
+                }
+        return best
     
     @staticmethod
     def calculate_enhancement_bonus(item_id: int, enhancement_level: int) -> dict:
-        """
-        计算强化加成（预留接口）
-        
-        Args:
-            item_id: 装备ID
-            enhancement_level: 强化等级
-        
-        Returns:
-            {
-                'enhancement_level': int,
-                'bonus_attributes': dict  # 强化加成属性
-            }
-        """
-        # TODO: 实现强化加成计算
-        return {
-            'enhancement_level': enhancement_level,
-            'bonus_attributes': {}
-        }
+        """计算强化加成"""
+        cfg = EquipmentExtension._load_enhance_cfg()
+        pct = float(cfg.get('stat_bonus_per_level_pct', 0.03))
+        item = equipment_handler.get_equipment_config(item_id) or {}
+        bonus = {}
+        for key in ('melee', 'shoot', 'armor', 'accuracy', 'hp'):
+            base = int(item.get(key, 0) or 0)
+            if base > 0 and enhancement_level > 0:
+                bonus[key] = int(base * pct * enhancement_level)
+        return {'enhancement_level': enhancement_level, 'bonus_attributes': bonus}
     
     @staticmethod
     def calculate_socket_bonus(item_id: int, socket_items: list) -> dict:
-        """
-        计算镶嵌加成（预留接口）
-        
-        Args:
-            item_id: 装备ID
-            socket_items: 镶嵌物品列表
-        
-        Returns:
-            {
-                'socket_count': int,
-                'bonus_attributes': dict  # 镶嵌加成属性
-            }
-        """
-        # TODO: 实现镶嵌加成计算
-        return {
-            'socket_count': len(socket_items) if socket_items else 0,
-            'bonus_attributes': {}
-        }
+        """计算镶嵌加成"""
+        cfg = EquipmentExtension._load_enhance_cfg()
+        gem_map = cfg.get('gem_stat_bonus') or {}
+        bonus = {}
+        for sock in socket_items or []:
+            if not isinstance(sock, dict):
+                continue
+            gkey = sock.get('gem_key', '')
+            attrs = gem_map.get(gkey, {})
+            for k, v in attrs.items():
+                bonus[k] = bonus.get(k, 0) + int(v)
+        return {'socket_count': len(socket_items) if socket_items else 0, 'bonus_attributes': bonus}
 
 # ========== 性能统计 ==========
 def get_equipment_stats() -> dict:

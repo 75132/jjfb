@@ -3,7 +3,8 @@ import { _decorator, Component, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 /**
- * 剧情 UI 节点引用（对白、选项、Toast），与 StoryUIAutoBuilder 生成的层级名称对齐后可在此拖引用或运行时解析。
+ * 剧情 UI 节点引用（对白、选项、Toast）。
+ * 在编辑器将 DialoguePanel / ChoiceModal 等子节点拖到对应槽位，由 StoryDialoguePlayer 运行时驱动。
  */
 @ccclass('StoryUIViewRefs')
 export class StoryUIViewRefs extends Component {

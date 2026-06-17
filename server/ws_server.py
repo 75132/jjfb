@@ -126,6 +126,9 @@ inventory_col = db['inventory']
 daletou_draws_col = db['daletou_draws']
 minigame2_rounds_col = db['minigame2_rounds']
 minigame2_bets_col = db['minigame2_bets']
+story_progress_col = db['story_progress']
+mails_col = db['mails']
+battle_rooms_col = db['battle_rooms']
 user_clients = {}
 
 try:
@@ -157,6 +160,23 @@ try:
     minigame2_bets_col.create_index([('character_id', 1), ('issue_key', 1)], unique=False)
 except Exception as _e:
     print(f'[minigame2_bets] create_index(character_id, issue_key): {_e}')
+
+try:
+    story_progress_col.create_index([('character_id', 1), ('map_code', 1)], unique=True)
+except Exception as _e:
+    print(f'[story_progress] create_index: {_e}')
+
+try:
+    mails_col.create_index([('character_id', 1), ('created_at', -1)])
+    mails_col.create_index('mail_id', unique=True)
+except Exception as _e:
+    print(f'[mails] create_index: {_e}')
+
+try:
+    battle_rooms_col.create_index('room_id', unique=True)
+    battle_rooms_col.create_index([('character_id', 1), ('status', 1)])
+except Exception as _e:
+    print(f'[battle_rooms] create_index: {_e}')
 
 # MongoDB操作包装函数（自动处理连接错误）
 def safe_mongo_operation(operation, max_retries=3):
@@ -1156,6 +1176,75 @@ def set_cached_query(cache_key, result):
         'timestamp': time.time()
     }
 
+
+def ensure_admin_ui_built():
+    """构建 Vue 管理台（admin-ui/dist），供 HTTP 控制台托管。"""
+    if os.getenv('ADMIN_UI_SKIP_BUILD', '').strip() in ('1', 'true', 'yes'):
+        print('[admin-ui] 已跳过构建 (ADMIN_UI_SKIP_BUILD=1)')
+        return
+
+    base_dir = os.path.dirname(__file__)
+    admin_ui_dir = os.path.join(base_dir, 'admin-ui')
+    dist_dir = os.path.join(admin_ui_dir, 'dist')
+    dist_index = os.path.join(dist_dir, 'index.html')
+    package_json = os.path.join(admin_ui_dir, 'package.json')
+
+    if not os.path.isdir(admin_ui_dir) or not os.path.isfile(package_json):
+        print('[admin-ui] 未找到 server/admin-ui，跳过 Vue 管理台构建')
+        return
+
+    def _needs_rebuild():
+        if not os.path.isfile(dist_index):
+            return True
+        dist_mtime = os.path.getmtime(dist_index)
+        if os.path.getmtime(package_json) > dist_mtime:
+            return True
+        src_dir = os.path.join(admin_ui_dir, 'src')
+        if os.path.isdir(src_dir):
+            for root, _dirs, files in os.walk(src_dir):
+                for name in files:
+                    fp = os.path.join(root, name)
+                    try:
+                        if os.path.getmtime(fp) > dist_mtime:
+                            return True
+                    except OSError:
+                        pass
+        return False
+
+    if not _needs_rebuild():
+        print(f'[admin-ui] 使用已有构建: {dist_index}')
+        return
+
+    npm_cmd = 'npm.cmd' if sys.platform == 'win32' else 'npm'
+    try:
+        subprocess.run([npm_cmd, '--version'], capture_output=True, check=True, cwd=admin_ui_dir)
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        print('[admin-ui] 错误: 未检测到 Node.js/npm。请安装 Node.js 18+ 后重试，')
+        print('           或在 server/admin-ui 目录手动执行 npm ci && npm run build')
+        print('           也可设置 ADMIN_UI_SKIP_BUILD=1 跳过自动构建')
+        return
+
+    node_modules = os.path.join(admin_ui_dir, 'node_modules')
+    if not os.path.isdir(node_modules):
+        print('[admin-ui] 正在 npm ci ...')
+        r = subprocess.run([npm_cmd, 'ci'], cwd=admin_ui_dir)
+        if r.returncode != 0:
+            print('[admin-ui] npm ci 失败，尝试 npm install ...')
+            r = subprocess.run([npm_cmd, 'install'], cwd=admin_ui_dir)
+            if r.returncode != 0:
+                print('[admin-ui] 依赖安装失败，无法构建 Vue 管理台')
+                return
+
+    print('[admin-ui] 正在 npm run build ...')
+    r = subprocess.run([npm_cmd, 'run', 'build'], cwd=admin_ui_dir)
+    if r.returncode != 0:
+        print('[admin-ui] 构建失败，HTTP 控制台可能无法加载 Vue 页面')
+    elif os.path.isfile(dist_index):
+        print(f'[admin-ui] 构建完成: {dist_index}')
+    else:
+        print('[admin-ui] 构建结束但未找到 dist/index.html')
+
+
 async def main():
     # 初始化日志服务
     init_logger(log_dir='logs', level=logging.INFO)
@@ -1279,6 +1368,12 @@ async def main():
     init_daletou_service(daletou_draws_col)
     from services.minigame2_service import init_minigame2_service
     init_minigame2_service(minigame2_rounds_col, minigame2_bets_col, players_col)
+    from services.story_service import init_story_service
+    from services.mail_service import init_mail_service
+    from services.battle_room_service import battle_room_service
+    init_story_service(story_progress_col)
+    init_mail_service(mails_col)
+    battle_room_service.init_persistence(battle_rooms_col)
     character_handler.init_character_handler(create_robot_pet, broadcast_to_user_async)
     admin_handler.init_admin_handler(
         add_exp_to_player, broadcast_to_user_async,
@@ -1331,15 +1426,47 @@ async def main():
     logger.info('💡 提示: 服务器已优化支持100+人同时在线')
     logger.info('=' * 60)
     
+    ensure_admin_ui_built()
+
     def start_console_server():
         base_dir = os.path.dirname(__file__)
-        static_dir = os.path.join(base_dir, 'static')  # server/static
+        static_dir = os.path.join(base_dir, 'admin-ui', 'dist')  # Vue SPA 构建产物
+        legacy_static_dir = os.path.join(base_dir, 'static')
         data_dir = os.path.join(base_dir, 'data')  # server/data
+
+        if not os.path.isdir(static_dir):
+            static_dir = legacy_static_dir
+            print('[admin-ui] dist 不存在，回退到 server/static')
         
-        # 自定义处理器，支持从 static 目录提供 HTML 文件，从 data 目录提供 JSON 文件
+        # 自定义处理器：Vue SPA + REST API + Items.json
         class ConsoleHandler(http.server.SimpleHTTPRequestHandler):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, directory=base_dir, **kwargs)
+
+            def _is_api_path(self):
+                p = self.path.split('?')[0]
+                return p.startswith('/api/')
+
+            def _spa_index(self):
+                index_path = os.path.join(static_dir, 'index.html')
+                if os.path.isfile(index_path):
+                    return index_path
+                legacy = os.path.join(legacy_static_dir, 'index.html')
+                return legacy if os.path.isfile(legacy) else index_path
+
+            def _serve_file(self, file_path: str):
+                try:
+                    with open(file_path, 'rb') as f:
+                        content = f.read()
+                except OSError:
+                    self.send_error(404, 'File not found')
+                    return
+                ctype = self.guess_type(file_path)
+                self.send_response(200)
+                self.send_header('Content-Type', ctype)
+                self.send_header('Content-Length', str(len(content)))
+                self.end_headers()
+                self.wfile.write(content)
 
             def do_GET(self):
                 # 战斗房间监控 API：返回当前所有战斗房间的实时数据（供 battle-rooms.html 轮询）
@@ -1366,7 +1493,27 @@ async def main():
                     self.end_headers()
                     self.wfile.write(body)
                     return
-                super().do_GET()
+                if self._is_api_path():
+                    self.send_error(404, 'Not Found')
+                    return
+                clean_path = self.path.split('?')[0].split('#')[0].lstrip('/')
+                if clean_path == 'favicon.ico':
+                    fav = os.path.join(static_dir, 'favicon.ico')
+                    if os.path.isfile(fav):
+                        self._serve_file(fav)
+                    else:
+                        self.send_error(404, 'Not Found')
+                    return
+                file_path = self.translate_path(self.path)
+                # SPA / 静态文件：直接读取，避免 SimpleHTTPRequestHandler 目录列表等副作用
+                if os.path.isfile(file_path):
+                    self._serve_file(file_path)
+                    return
+                index_path = self._spa_index()
+                if os.path.isfile(index_path):
+                    self._serve_file(index_path)
+                    return
+                self.send_error(404, 'File not found')
 
             def do_OPTIONS(self):
                 self.send_response(204)
@@ -1547,50 +1694,11 @@ async def main():
                 self.send_error(404, 'Not Found')
 
             def translate_path(self, path):
-                # 规范化路径：移除开头的斜杠和查询参数
                 clean_path = path.split('?')[0].split('#')[0]
                 clean_path = clean_path.lstrip('/')
                 
-                # 处理静态文件请求
-                # 根路径重定向到 index.html
-                if path == '/' or path == '' or clean_path == '':
-                    return os.path.join(static_dir, 'index.html')
-                elif clean_path == 'index.html' or path.startswith('/index.html'):
-                    return os.path.join(static_dir, 'index.html')
-                elif clean_path == 'console.html' or path.startswith('/console.html'):
-                    # 兼容旧链接，重定向到 index.html
-                    return os.path.join(static_dir, 'index.html')
-                elif clean_path == 'admin-client.html' or path.startswith('/admin-client.html'):
-                    # 兼容旧链接，重定向到 client-simulator.html
-                    return os.path.join(static_dir, 'client-simulator.html')
-                elif clean_path == 'client-simulator.html' or path.startswith('/client-simulator.html'):
-                    return os.path.join(static_dir, 'client-simulator.html')
-                elif clean_path == 'game-control.html' or path.startswith('/game-control.html'):
-                    return os.path.join(static_dir, 'game-control.html')
-                elif clean_path == 'server-control.html' or path.startswith('/server-control.html'):
-                    return os.path.join(static_dir, 'server-control.html')
-                elif clean_path == 'battle-rooms.html' or path.startswith('/battle-rooms.html'):
-                    return os.path.join(static_dir, 'battle-rooms.html')
-                elif clean_path == 'daletou-test.html' or path.startswith('/daletou-test.html'):
-                    return os.path.join(static_dir, 'daletou-test.html')
-                elif clean_path == 'minigame2-test.html' or path.startswith('/minigame2-test.html'):
-                    return os.path.join(static_dir, 'minigame2-test.html')
-                # 处理静态资源文件（CSS、JS等）
-                elif clean_path.startswith('css/') or clean_path.startswith('js/'):
-                    # 直接返回 static 目录下的文件
-                    file_path = os.path.join(static_dir, clean_path)
-                    # 规范化路径（处理 .. 等）
-                    file_path = os.path.normpath(file_path)
-                    # 确保路径在 static_dir 内（安全检查）
-                    if not file_path.startswith(os.path.abspath(static_dir)):
-                        return super().translate_path(path)
-                    if os.path.exists(file_path):
-                        return file_path
-                    # 如果文件不存在，返回路径让浏览器显示404
-                    return file_path
-                # 处理 Items.json 请求
-                elif clean_path == 'Items.json' or path.startswith('/Items.json') or path.endswith('/Items.json'):
-                    # 尝试多个可能的路径
+                # Items.json
+                if clean_path == 'Items.json' or path.startswith('/Items.json') or path.endswith('/Items.json'):
                     possible_paths = [
                         os.path.join(data_dir, 'Items.json'),
                         os.path.join(base_dir, 'handlers', 'json', 'Items.json'),
@@ -1598,18 +1706,27 @@ async def main():
                     for json_path in possible_paths:
                         if os.path.exists(json_path):
                             return json_path
-                    # 如果都不存在，返回data目录下的路径（可能文件不存在，但至少路径正确）
                     return os.path.join(data_dir, 'Items.json')
-                # 其他路径，尝试从 static 目录查找
-                else:
-                    # 尝试从 static 目录查找文件
-                    static_file_path = os.path.join(static_dir, clean_path)
-                    static_file_path = os.path.normpath(static_file_path)
-                    # 确保路径在 static_dir 内（安全检查）
-                    if static_file_path.startswith(os.path.abspath(static_dir)) and os.path.exists(static_file_path):
-                        return static_file_path
-                    # 如果不存在，使用默认处理
-                return super().translate_path(path)
+
+                # Vue dist 静态资源
+                if clean_path == '' or clean_path == 'index.html':
+                    return self._spa_index()
+
+                dist_file = os.path.join(static_dir, clean_path)
+                dist_file = os.path.normpath(dist_file)
+                abs_static = os.path.abspath(static_dir)
+                if dist_file.startswith(abs_static) and os.path.isfile(dist_file):
+                    return dist_file
+
+                # legacy static 资源（css/js 等回退）
+                legacy_file = os.path.join(legacy_static_dir, clean_path)
+                legacy_file = os.path.normpath(legacy_file)
+                abs_legacy = os.path.abspath(legacy_static_dir)
+                if legacy_file.startswith(abs_legacy) and os.path.isfile(legacy_file):
+                    return legacy_file
+
+                # SPA 路由回退
+                return self._spa_index()
             
             def end_headers(self):
                 # 允许跨域访问（用于开发环境）
@@ -1626,13 +1743,13 @@ async def main():
                 httpd = http.server.ThreadingHTTPServer((host, port), handler)
                 t = threading.Thread(target=httpd.serve_forever, daemon=True)
                 t.start()
-                print(f'管理后台运行在 http://{host}:{port}/index.html')
-                print(f'游戏控制: http://{host}:{port}/game-control.html')
-                print(f'服务器控制: http://{host}:{port}/server-control.html')
-                print(f'客户端模拟: http://{host}:{port}/client-simulator.html')
-                print(f'战斗房间监控: http://{host}:{port}/battle-rooms.html')
-                print(f'大乐透测试: http://{host}:{port}/daletou-test.html')
-                print(f'期货投资测试: http://{host}:{port}/minigame2-test.html')
+                print(f'管理后台 (Vue): http://{host}:{port}/')
+                print(f'  游戏控制:     http://{host}:{port}/game-control')
+                print(f'  服务器监控:   http://{host}:{port}/server-monitor')
+                print(f'  客户端模拟:   http://{host}:{port}/client-simulator')
+                print(f'  战斗房间监控: http://{host}:{port}/battle-rooms')
+                print(f'  大乐透运维:   http://{host}:{port}/daletou')
+                print(f'  期货运维:     http://{host}:{port}/minigame2')
                 return
             except Exception:
                 # 端口占用，尝试下一个
@@ -1644,9 +1761,7 @@ async def main():
             host, port = httpd.socket.getsockname()
             t = threading.Thread(target=httpd.serve_forever, daemon=True)
             t.start()
-            print(f'管理后台运行在 http://{host}:{port}/index.html')
-            print(f'大乐透测试: http://{host}:{port}/daletou-test.html')
-            print(f'期货投资测试: http://{host}:{port}/minigame2-test.html')
+            print(f'管理后台 (Vue): http://{host}:{port}/')
             return
         except Exception as e:
             print(f'启动控制台失败: {e}')
