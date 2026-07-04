@@ -37,14 +37,14 @@ export class TaskTracker extends Component {
     }
 
     private refresh = () => {
-        if (!this._story) return;
+        if (!this._story?.isValid) return;
         const snap = this._story.getStoryTaskSnapshot();
         if (this.mainlineLabel) {
             this.mainlineLabel.string = `主线步骤：${snap.mainlineStep}`;
         }
         if (this.taskListLabel) {
             const lines = (snap.tasks || []).map(
-                (t) => `· 任务${t.taskId} [${t.status}]`,
+                (t) => `· ${t.taskName || `任务${t.taskId}`} [${t.status}]`,
             );
             this.taskListLabel.string = lines.length ? lines.join('\n') : '暂无进行中任务';
         }

@@ -1,0 +1,1103 @@
+{
+  "configVersion": "1.0.1",
+  "mapId": 1,
+  "mapCode": "world_1782661910893",
+  "mapName": "新大地图",
+  "tileSize": 48,
+  "mapWidth": 1584,
+  "mapHeight": 1728,
+  "mapLayout": "vertical_stitch",
+  "imageSlices": [
+    "/Map/1-1.png",
+    "/Map/1-2.png",
+    "/Map/1-3.png"
+  ],
+  "tasks": [
+    {
+      "taskId": 100001,
+      "taskName": "新大地图",
+      "mainlineStep": 1
+    }
+  ],
+  "client": {
+    "dialogueScripts": {
+      "dlg_node_9a6a6023_d6d9_417f_ba85_bad78cd332ad": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "啊，你来了。我是凯尔博士，负责这座前哨研究站的运作。",
+          "坦白说，目前的状况不太乐观——虫族活动频繁，补给线时断时续，我的研究设备也缺乏维护。",
+          "我需要一个能打的帮手。有兴趣协助防线研究站吗？"
+        ]
+      },
+      "dlg_node_75af8ce5_f618_4321_93d4_3ed4e5c589c7": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "目前暂时没有更多需要你帮忙的事。先去熟悉环境，有紧急情况我会联系你。"
+        ]
+      },
+      "dlg_node_b7079d77_0122_4d60_bf28_55163d7514b2": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "很好。先让你了解一下情况：主补给线在峡谷一带被虫族切断了，研究站的防御炮台只剩两座还能运转。",
+          "补给短缺意味着我的能源核心随时可能过载——不过现在先不说这个，你刚来，熟悉一下环境。"
+        ]
+      },
+      "dlg_node_684eb693_dd19_488e_bff8_e5aa1b3635f0": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "研究站的传感器网络还能用，你可以四处看看。有什么发现回来找我。",
+          "注意别走太远——虫族的巡逻范围最近扩大了不少。"
+        ]
+      },
+      "dlg_node_6ad5c3fd_0363_4913_aed6_8dd4a225ed61": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "警报响了——传感器显示虫族信号正从东南方向逼近研究站。数量至少在三十只以上。",
+          "果然不出所料，它们盯上这里的能源核心了。我的防御炮台撑不了多久，需要你出战。"
+        ]
+      },
+      "dlg_node_40c805f0_85dc_4ec9_beee_8aeae987ca34": {
+        "speaker": "系统",
+        "lines": [
+          "准备进入战斗——协助凯尔博士抵御虫族突袭研究站。"
+        ]
+      },
+      "dlg_node_1203fc6c_9182_4f94_afef_16b241dcf3d9": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "干得漂亮。虫群暂时退却了，炮台损伤不大。",
+          "这一波只是试探——它们在测试研究站的防御强度。可惜，撞到铁板了。"
+        ]
+      },
+      "dlg_node_ba4290d9_7d74_4334_a1eb_737aaebbf9c7": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "有意思——战斗数据表明，这批虫族的进攻模式是有规律的。我得花点时间分析，也许能找出它们的弱点。",
+          "你先去休整，有进展我会通知你。"
+        ]
+      },
+      "dlg_node_3f49f15a_d659_4faf_8698_f1b2fb604e67": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "你来得正好。分析数据的时候我发现了一件麻烦事——研究站的能源核心衰减速度比我预估的快了至少40%。",
+          "虫族袭击打乱了补给节奏，现在备用能源核心已经告罄。我需要在研究站附近的旧前哨废墟里搜寻一个可用的替代品。"
+        ]
+      },
+      "dlg_node_eddce9e0_4baa_495d_b6a6_1179ff7f40ce": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "旧前哨废墟在西北方向，地图上有标记。小心——虽然那边虫族密度不高，但废墟本身结构不稳。",
+          "找到能源核心后立刻回来，别恋战。"
+        ]
+      },
+      "dlg_node_2271d995_58ee_4a55_9af8_e7b85959a51f": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "能源稳定的情况下，我对虫族生物信号的解析取得了初步进展。简单说——它们的巢穴结构里有某种信号中继点。",
+          "如果能拿到巢穴外围的活体样本，我也许能逆向破解它们的通讯方式。不过这个先不急，等我分析完这些数据。"
+        ]
+      },
+      "dlg_node_9f30b87b_0a21_4c30_9d07_b1a6ad918965": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "就是它！虽然型号比我预期的旧了一点，但状态出奇地好。",
+          "安装完成……能源输出稳定，研究设备全部恢复运转。你帮了大忙。"
+        ]
+      },
+      "dlg_node_fc3531ff_6341_49ee_b87a_367bf5a2278b": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "数据分析完成了——和我预想的一样，虫族依靠某种生物电信号进行巢穴级联通讯。",
+          "如果我能拿到巢穴外围的活体组织样本，就有机会合成干扰信号，大幅削弱它们的协同作战能力。",
+          "但这意味着我们需要深入虫族巢穴外围。风险很高，你愿意护送我吗？"
+        ]
+      },
+      "dlg_node_3cdf8a40_6db7_44bd_8a01_b467059ef550": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "拿到了！组织活性良好，足够做三轮分析。快撤——它们的警戒反应比预期快。",
+          "安全返回研究站。这些样本……非常有意思。"
+        ]
+      },
+      "dlg_node_c3bef4f9_d573_4dc9_a71d_eb65c7aa9ce2": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "根据传感器数据，巢穴外围在东南方向的峡谷深处。我会携带便携式采集设备，你负责开路。",
+          "记住——我们只需要外围样本，不要深入巢穴核心。那不是我们今天的目标。"
+        ]
+      },
+      "dlg_node_ee3871b1_7cd2_403b_928d_b7ac40e7789b": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "样本的生物电信号模式非常清晰。给我一点时间，我能合成一个干扰频段。",
+          "一旦成功，虫族的协同作战效率会大打折扣。这可能会改变整个防线的局势。"
+        ]
+      },
+      "dlg_node_50fa5c51_f780_484d_b9d8_48172b811d96": {
+        "speaker": "系统",
+        "lines": [
+          "准备进入战斗——护送凯尔博士深入虫族巢穴外围采集样本。"
+        ]
+      },
+      "dlg_node_3f188cb9_526e_4d4a_a39c_4815f38f7378": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "——警报！这次不一样，传感器显示虫族精英单位正高速逼近研究站。",
+          "它们的进攻时机太精准了，刚好在我的干扰频段合成到97%的时候。它们感应到了我在做的事。",
+          "这是最后一步。我需要你在外面拖住它们，我来完成合成。一旦成功，也许能一举扭转整个防线的战局。"
+        ]
+      },
+      "dlg_node_202cb7d8_d936_4a2e_b1d0_18029bfbe692": {
+        "speaker": "系统",
+        "lines": [
+          "准备进入战斗——保护凯尔博士完成关键研究，抵御虫族精英。"
+        ]
+      },
+      "dlg_node_fbc302fa_5719_4b25_a5f6_a11d45bcb867": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "完成了！干扰频段已经广播——你看，虫族精英的行动明显变得混乱无序。",
+          "它们一直以来依赖的协同作战网络，现在反过来成了它们的拖累。这就是科学的力量。"
+        ]
+      },
+      "dlg_node_26658a49_9cba_4a5b_ada4_4dad36eae2cb": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "谢谢你。没有你的协助，我不可能完成这项研究——甚至研究站都保不住。",
+          "虫族的通讯网络已经被我们瘫痪了核心频段。接下来的反攻，指挥部的压力会小很多。",
+          "如果要我说实话……你是我见过最靠谱的搭档。虽然样本量只有一，但统计学上这就是100%。"
+        ]
+      },
+      "dlg_node_258514d5_7b75_425a_ae2d_9e43b09d06dc": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "研究站接下来的修复工作我自己可以处理。你该去指挥部了——他们一定更需要你的力量。",
+          "后会有期。"
+        ]
+      }
+    },
+    "choiceScripts": {
+      "choice_node_f9f8e036_055e_44a3_8f71_f0d8ca9d8b4e": {
+        "title": "接受协助",
+        "options": [
+          {
+            "id": "opt_bed58824-ab9f-49ee-a431-8808a105407c",
+            "text": "交给我吧，博士。",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_0b5685b2-fb56-4983-b1fc-a09c2399a1a2",
+            "text": "现在不是时候。",
+            "systemTip": "你暂时婉拒了博士的请求，任务不会推进。",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_db616ebb_522c_43c7_a07d_8515a2fd58b6": {
+        "title": "接受补给任务",
+        "options": [
+          {
+            "id": "opt_dce5ad20-b238-40a2-8270-5dbea07e7b07",
+            "text": "我去找替代能源核心。",
+            "systemTip": "",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_d14f8e5b-a8bd-47bf-b04a-6b51a96744e7",
+            "text": "先等等。",
+            "systemTip": "补给任务不会推进。",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_8bdc0a23_915b_44e4_a16d_9ea0ececf236": {
+        "title": "接受侦察任务",
+        "options": [
+          {
+            "id": "opt_e95162e1-9088-4d94-9967-897ffe92f06b",
+            "text": "走吧，我护送你。",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_b8c87b35-b377-4d3a-a2ed-89eed4f3c89c",
+            "text": "还需要准备。",
+            "systemTip": "暂缓不会推进任务，但虫族不会等我们。",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_c656286c_e38b_4fab_aac0_f13b01f6d52e": {
+        "title": "战前选择",
+        "options": [
+          {
+            "id": "opt_9d478473-f4bc-44bb-8e02-06bb1f558954",
+            "text": "进入战斗",
+            "completesEvent": true,
+            "forcedResult": "start_battle"
+          },
+          {
+            "id": "opt_cbd090b0-09e1-4c27-be2f-d760ec52cb72",
+            "text": "稍后再来",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_3d1852c4_1f70_4b05_b611_21fb2ff0a3bc": {
+        "title": "战斗",
+        "options": [
+          {
+            "id": "opt_c36f6e48-7db9-43a8-aaf2-4e21db99fb5e",
+            "text": "胜利",
+            "forcedResult": "start_battle"
+          },
+          {
+            "id": "opt_7faad4fb-5744-49c7-a256-f075a496513f",
+            "text": "失败",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_344e23b1_6dd0_441d_b12d_df4597ad3aeb": {
+        "title": "战前选择",
+        "options": [
+          {
+            "id": "opt_d078f88a-8414-45f0-b9cb-1f95f1429dfb",
+            "text": "进入战斗",
+            "completesEvent": true,
+            "forcedResult": "start_battle"
+          },
+          {
+            "id": "opt_10af2d12-a5ea-42f2-8014-fe4c31b55484",
+            "text": "稍后再来",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_5eaca144_24d1_4152_9d80_0667a6d8f3f6": {
+        "title": "战斗",
+        "options": [
+          {
+            "id": "opt_530e7348-93b0-4fd4-95e6-6673adf0f592",
+            "text": "胜利",
+            "forcedResult": "start_battle"
+          },
+          {
+            "id": "opt_42212339-1c3e-4880-bfc1-078fedd9ee06",
+            "text": "失败",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npcUid": "task_1",
+      "npcName": "初次接触",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_05",
+      "x": 168,
+      "y": -72,
+      "events": [
+        {
+          "eventId": "task_1_e1",
+          "eventType": "dialog",
+          "eventTypeDesc": "防线研究站",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_9a6a6023_d6d9_417f_ba85_bad78cd332ad"
+          }
+        },
+        {
+          "eventId": "task_1_e2",
+          "eventType": "choice",
+          "eventTypeDesc": "接受协助",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_bed58824-ab9f-49ee-a431-8808a105407c"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_bed58824-ab9f-49ee-a431-8808a105407c"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_f9f8e036_055e_44a3_8f71_f0d8ca9d8b4e"
+          }
+        },
+        {
+          "eventId": "task_1_e3",
+          "eventType": "task",
+          "eventTypeDesc": "完成：初次接触",
+          "order": 3,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "task_1_enemy_e2"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_1_e4",
+          "eventType": "dialog",
+          "eventTypeDesc": "等待下次需求",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_75af8ce5_f618_4321_93d4_3ed4e5c589c7"
+          }
+        },
+        {
+          "eventId": "task_1_e5",
+          "eventType": "dialog",
+          "eventTypeDesc": "补给线现状",
+          "order": 5,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_b7079d77_0122_4d60_bf28_55163d7514b2"
+          }
+        },
+        {
+          "eventId": "task_1_e6",
+          "eventType": "task",
+          "eventTypeDesc": "接取：初次接触",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "接取任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_1_e7",
+          "eventType": "dialog",
+          "eventTypeDesc": "熟悉环境",
+          "order": 7,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_684eb693_dd19_488e_bff8_e5aa1b3635f0",
+            "endsSession": true
+          }
+        }
+      ],
+      "appear": {
+        "mode": "always",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "task_active",
+            "taskId": 100001
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "task_2",
+      "npcName": "紧急出击",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_15",
+      "x": 216,
+      "y": -312,
+      "events": [
+        {
+          "eventId": "task_2_e1",
+          "eventType": "task",
+          "eventTypeDesc": "接取任务",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "接取任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_2_e2",
+          "eventType": "dialog",
+          "eventTypeDesc": "虫族突袭警报",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_6ad5c3fd_0363_4913_aed6_8dd4a225ed61"
+          }
+        },
+        {
+          "eventId": "task_2_e3",
+          "eventType": "task",
+          "eventTypeDesc": "完成：紧急出击",
+          "order": 3,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "task_2_e6"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_2_e4",
+          "eventType": "dialog",
+          "eventTypeDesc": "准备进入战斗",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_40c805f0_85dc_4ec9_beee_8aeae987ca34"
+          }
+        },
+        {
+          "eventId": "task_2_e5",
+          "eventType": "dialog",
+          "eventTypeDesc": "击退虫族",
+          "order": 5,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_1203fc6c_9182_4f94_afef_16b241dcf3d9"
+          }
+        },
+        {
+          "eventId": "task_2_e6",
+          "eventType": "dialog",
+          "eventTypeDesc": "战斗总结",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_ba4290d9_7d74_4334_a1eb_737aaebbf9c7",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "task_1_e7"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "task_3",
+      "npcName": "补给危机",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_12",
+      "x": 72,
+      "y": -456,
+      "events": [
+        {
+          "eventId": "task_3_e1",
+          "eventType": "dialog",
+          "eventTypeDesc": "能源短缺",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_3f49f15a_d659_4faf_8698_f1b2fb604e67"
+          }
+        },
+        {
+          "eventId": "task_3_e2",
+          "eventType": "choice",
+          "eventTypeDesc": "接受补给任务",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_dce5ad20-b238-40a2-8270-5dbea07e7b07"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_dce5ad20-b238-40a2-8270-5dbea07e7b07"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_db616ebb_522c_43c7_a07d_8515a2fd58b6"
+          }
+        },
+        {
+          "eventId": "task_3_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "搜寻指引",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_eddce9e0_4baa_495d_b6a6_1179ff7f40ce"
+          }
+        },
+        {
+          "eventId": "task_3_e4",
+          "eventType": "task",
+          "eventTypeDesc": "完成：补给危机",
+          "order": 4,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "task_3_enemy_e2"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_3_e5",
+          "eventType": "task",
+          "eventTypeDesc": "接取：补给危机",
+          "order": 5,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "接取任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_3_e6",
+          "eventType": "dialog",
+          "eventTypeDesc": "研究进展",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_2271d995_58ee_4a55_9af8_e7b85959a51f"
+          }
+        },
+        {
+          "eventId": "task_3_e7",
+          "eventType": "dialog",
+          "eventTypeDesc": "调配完成",
+          "order": 7,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_9f30b87b_0a21_4c30_9d07_b1a6ad918965",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "task_2_e6"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "task_4",
+      "npcName": "深入侦察",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_13",
+      "x": 264,
+      "y": -552,
+      "events": [
+        {
+          "eventId": "task_4_e1",
+          "eventType": "dialog",
+          "eventTypeDesc": "巢穴样本需求",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_fc3531ff_6341_49ee_b87a_367bf5a2278b"
+          }
+        },
+        {
+          "eventId": "task_4_e2",
+          "eventType": "choice",
+          "eventTypeDesc": "接受侦察任务",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_e95162e1-9088-4d94-9967-897ffe92f06b"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_e95162e1-9088-4d94-9967-897ffe92f06b"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_8bdc0a23_915b_44e4_a16d_9ea0ececf236"
+          }
+        },
+        {
+          "eventId": "task_4_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "样本获取成功",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_3cdf8a40_6db7_44bd_8a01_b467059ef550"
+          }
+        },
+        {
+          "eventId": "task_4_e4",
+          "eventType": "task",
+          "eventTypeDesc": "完成：深入侦察",
+          "order": 4,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "task_4_e9"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_4_e5",
+          "eventType": "dialog",
+          "eventTypeDesc": "深入巢穴外围",
+          "order": 5,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_c3bef4f9_d573_4dc9_a71d_eb65c7aa9ce2"
+          }
+        },
+        {
+          "eventId": "task_4_e6",
+          "eventType": "dialog",
+          "eventTypeDesc": "分析样本",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_ee3871b1_7cd2_403b_928d_b7ac40e7789b"
+          }
+        },
+        {
+          "eventId": "task_4_e7",
+          "eventType": "task",
+          "eventTypeDesc": "接取：深入侦察",
+          "order": 7,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "接取任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_4_e8",
+          "eventType": "dialog",
+          "eventTypeDesc": "准备进入战斗",
+          "order": 8,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_50fa5c51_f780_484d_b9d8_48172b811d96",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "task_3_e8"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "task_5",
+      "npcName": "决战前夜",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_15",
+      "x": 456,
+      "y": -888,
+      "events": [
+        {
+          "eventId": "task_5_e1",
+          "eventType": "task",
+          "eventTypeDesc": "接取任务",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "接取任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_5_e2",
+          "eventType": "dialog",
+          "eventTypeDesc": "虫族精英突袭",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_3f188cb9_526e_4d4a_a39c_4815f38f7378"
+          }
+        },
+        {
+          "eventId": "task_5_e3",
+          "eventType": "task",
+          "eventTypeDesc": "完成：决战前夜",
+          "order": 3,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "task_5_e6"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "task_5_e4",
+          "eventType": "dialog",
+          "eventTypeDesc": "准备进入战斗",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_202cb7d8_d936_4a2e_b1d0_18029bfbe692"
+          }
+        },
+        {
+          "eventId": "task_5_e5",
+          "eventType": "dialog",
+          "eventTypeDesc": "研究完成",
+          "order": 5,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_fbc302fa_5719_4b25_a5f6_a11d45bcb867"
+          }
+        },
+        {
+          "eventId": "task_5_e6",
+          "eventType": "dialog",
+          "eventTypeDesc": "防线转机",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_26658a49_9cba_4a5b_ada4_4dad36eae2cb"
+          }
+        },
+        {
+          "eventId": "task_5_e7",
+          "eventType": "dialog",
+          "eventTypeDesc": "告别",
+          "order": 7,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_258514d5_7b75_425a_ae2d_9e43b09d06dc",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "task_4_e8"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "task_1_enemy",
+      "npcName": "敌人",
+      "x": 120,
+      "y": -120,
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "task_active",
+            "taskId": 100001
+          }
+        ]
+      },
+      "hideWhenComplete": true,
+      "events": [
+        {
+          "eventId": "task_1_enemy_e1",
+          "eventType": "choice",
+          "eventTypeDesc": "战前选择",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_9d478473-f4bc-44bb-8e02-06bb1f558954"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_9d478473-f4bc-44bb-8e02-06bb1f558954"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_c656286c_e38b_4fab_aac0_f13b01f6d52e"
+          }
+        },
+        {
+          "eventId": "task_1_enemy_e2",
+          "eventType": "battle",
+          "eventTypeDesc": "战斗",
+          "order": 2,
+          "server": {
+            "requirements": [
+              {
+                "type": "task_active",
+                "taskId": 100001
+              }
+            ],
+            "effects": [],
+            "allowedChoiceIds": [
+              "opt_c36f6e48-7db9-43a8-aaf2-4e21db99fb5e"
+            ],
+            "battleRef": "battle_1-50"
+          },
+          "client": {
+            "choiceScriptId": "choice_node_3d1852c4_1f70_4b05_b611_21fb2ff0a3bc",
+            "endsSession": true
+          }
+        }
+      ]
+    },
+    {
+      "npcUid": "task_3_enemy",
+      "npcName": "敌人",
+      "x": 72,
+      "y": -504,
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "task_active",
+            "taskId": 100001
+          }
+        ]
+      },
+      "hideWhenComplete": true,
+      "events": [
+        {
+          "eventId": "task_3_enemy_e1",
+          "eventType": "choice",
+          "eventTypeDesc": "战前选择",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_d078f88a-8414-45f0-b9cb-1f95f1429dfb"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_d078f88a-8414-45f0-b9cb-1f95f1429dfb"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_344e23b1_6dd0_441d_b12d_df4597ad3aeb"
+          }
+        },
+        {
+          "eventId": "task_3_enemy_e2",
+          "eventType": "battle",
+          "eventTypeDesc": "战斗",
+          "order": 2,
+          "server": {
+            "requirements": [
+              {
+                "type": "task_active",
+                "taskId": 100001
+              }
+            ],
+            "effects": [],
+            "allowedChoiceIds": [
+              "opt_530e7348-93b0-4fd4-95e6-6673adf0f592"
+            ],
+            "battleRef": "battle_1-50"
+          },
+          "client": {
+            "choiceScriptId": "choice_node_5eaca144_24d1_4152_9d80_0667a6d8f3f6",
+            "endsSession": true
+          }
+        }
+      ]
+    }
+  ]
+}

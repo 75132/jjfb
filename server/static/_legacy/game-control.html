@@ -1139,7 +1139,11 @@
         return false;
       }
       try {
-        ws.send(JSON.stringify(msg));
+        const payload =
+          msg && msg.type && String(msg.type).startsWith('admin_')
+            ? { ...msg, admin_token: localStorage.getItem('admin_token') || 'dev_admin_token' }
+            : msg;
+        ws.send(JSON.stringify(payload));
         return true;
       } catch (err) {
         addLog(`❌ 发送消息失败: ${err.message}`, 'error');

@@ -115,6 +115,9 @@ def _should_force_map1_spawn(raw, normalized) -> bool:
         return True
     if abs(x) > 200000 or abs(y) > 200000:
         return True
+    # (0,0) 多为未初始化/进图竞态脏数据，地图1 应回到出生点
+    if abs(x) < 0.5 and abs(y) < 0.5:
+        return True
     return False
 
 

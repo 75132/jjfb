@@ -3,8 +3,10 @@ import { _decorator, Component, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 /**
- * 剧情 UI 节点引用（对白、选项、Toast）。
- * 在编辑器将 DialoguePanel / ChoiceModal 等子节点拖到对应槽位，由 StoryDialoguePlayer 运行时驱动。
+ * 剧情 UI 节点引用。
+ * - 对白/选项：StoryLayer
+ * - 剧情反馈 Tips：GameArea/Tips（完成任务、选项 systemTip 等）
+ * - ToastItem：NPC 范围内「按 E 交谈」交互提示
  */
 @ccclass('StoryUIViewRefs')
 export class StoryUIViewRefs extends Component {
@@ -34,4 +36,11 @@ export class StoryUIViewRefs extends Component {
 
     @property(Node)
     toastTextLabel: Node | null = null;
+
+    /** 剧情反馈（完成任务、选项 systemTip 等）；对应 GameArea/Tips */
+    @property(Node)
+    storyTipsPanel: Node | null = null;
+
+    @property(Node)
+    storyTipsLabel: Node | null = null;
 }

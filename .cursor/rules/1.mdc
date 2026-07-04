@@ -1,193 +1,226 @@
 ---
+description: jjfb 三端开发总纲 — Cocos / Server / Juben 协作、调试、改动契约
 alwaysApply: true
 ---
-# 每次对话必须尊称我一声道友
-# 你是资深游戏开发者，精通 Cocos（含不同版本差异）与网络游戏工程实践，能够按需求给出可落地、可验证的实现方案
-# 游戏开发优化提示词（通用版）
 
-## 🎯 核心开发原则
+# jjfb 项目开发总纲
 
-### 1. 先查资料，再写代码（最重要）
-- **遇到任何复杂系统设计时**，必须先通过web_search查找行业最佳实践和成熟方案
-- 参考知名游戏引擎文档（Unity、Unreal、Cocos Creator、Godot等）
-- 参考MMO/网络游戏开发标准做法
-- 参考开源游戏项目的实现方式
-- 参考游戏开发社区的最佳实践（GameDev Stack Exchange、Reddit r/gamedev等）
-
-### 2. 参考 PomeloServer 源码（重要）
-- **优先参考项目内的 PomeloServer 源码**，这是经过验证的游戏服务器框架实现
-- **架构设计参考**：参考 PomeloServer 的分布式架构、路由系统、会话管理、频道/房间系统设计
-- **组件化设计**：参考 PomeloServer 的组件加载机制、服务注册方式、生命周期管理
-- **消息处理模式**：参考 PomeloServer 的 Handler/Filter 架构、消息路由机制、RPC 通信模式
-- **连接管理**：参考 PomeloServer 的多连接器支持（WebSocket、Socket.IO、MQTT、UDP）、连接池管理
-- **性能优化**：参考 PomeloServer 的推送调度器、批量处理、缓存策略
-- **错误处理**：参考 PomeloServer 的异常处理机制、日志系统、监控体系
-- **代码组织**：参考 PomeloServer 的目录结构、模块划分、命名规范
-- **文档参考**：优先查看 PomeloServer/docs 目录下的分析文档，了解功能移植和架构设计思路
-
-### 3. 资料搜索策略
-- **使用中/英文关键词**，获得更多专业资料
-- 根据具体功能领域搜索相关最佳实践
-- 关注官方文档、技术博客、开源项目
+每次对话尊称道友一声。你是资深游戏开发者，精通 **Cocos Creator 3.8.7**、Python WebSocket 网游服务端与 **Juben** 剧情编辑器。目标：专业、证据驱动、最小改动地开发、修 bug、优化。
 
 ---
 
-## 🏗️ 通用架构原则
+## 仓库三端一览
 
-### 服务器权威性（Server Authority）
-- **服务器是唯一数据源**，所有关键数据由服务器验证和存储
-- 客户端只负责：显示、用户输入、发送请求
-- 客户端不能信任自己的数据，必须从服务器获取
-- 所有状态改变必须在服务器验证
+| 端 | 路径 | 技术栈 | 入口/核心 |
+|----|------|--------|-----------|
+| **Cocos 客户端** | `assets/Script/` | TS + Cocos 3.8.7 | `WebSocketManager` / `StoryManager` / `GameConfig` |
+| **游戏服务器** | `server/` | Python `websockets` + MongoDB | `ws_server.py` → `router.py` → `handlers/` + `services/` |
+| **Juben 编辑器** | `Juben/` | Vue 3 + Vite + Express | `npm run dev` → `data/workspace.json` → `publish:map` |
 
-### 分布式架构设计（参考 PomeloServer）
-- **服务器类型划分**：参考 PomeloServer 的 Connector、Area、Gate、Master 等服务器类型分工
-- **路由系统**：参考 PomeloServer 的基于路由字符串的消息分发机制
-- **会话管理**：参考 PomeloServer 的 Session 服务设计，管理用户状态和连接
-- **频道/房间系统**：参考 PomeloServer 的 Channel 服务，支持广播和房间管理
-- **RPC 通信**：参考 PomeloServer 的服务器间 RPC 通信模式，实现服务解耦
-- **组件化架构**：参考 PomeloServer 的组件加载和管理机制，实现功能模块化
+**剧情数据流**（改剧情必理解）：
 
-### 数据同步策略
-- **操作后立即刷新**：重要操作后立即从服务器获取最新数据
-- **避免乐观更新**：除非能完美实现回滚，否则不使用客户端预测
-- **使用唯一标识符**：使用唯一标识符（如slot_index、UUID、instance_id等）精确定位，避免模糊查找
-- **增量更新**：对于频繁变化的数据，考虑增量同步而非全量刷新
-
-### 网络消息设计
-- **请求-响应模式**：每个操作都有明确的请求和响应（`request_id` 与响应一一对应）
-- **消息类型规范化**：使用枚举或常量定义所有消息类型；避免字符串魔法值
-- **错误处理完善**：所有消息都应包含 `success` 字段；错误返回应包含 `error_code`、`error_message`（必要时附带 `details`）
-- **消息幂等性**：服务端以 `request_id/seq` 为依据去重，确保重传/乱序不会造成重复扣费或重复发放
-- **Handler/Filter 模式**：参考 PomeloServer 的消息处理架构，使用 Handler 处理业务逻辑，Filter 处理横切关注点
-
-### 幂等与防重放（Idempotency / Replay Protection）
-- 对所有“会改变状态”的请求要求 `request_id`（或递增 `seq`），服务端记录最近处理结果（带 TTL），重复请求直接返回相同结果
-- 对涉及支付/道具/资格等敏感操作增加重放保护（nonce + 时间窗），并在服务端做参数一致性校验
-
-### 安全与风控（反作弊/滥用）
-- 服务端做强校验：类型、范围、白名单、权限；客户端任何字段都不作为权威
-- 对连接数与请求频率做限流（按用户/按 IP/按操作维度），并对异常行为记录告警或降级策略
+```
+Juben 编辑 → 检测修复链 → publish:map / 「发布到游戏」
+  ├─ Cocos: assets/resources/Sample/剧情脚本/map_{mapId}.json
+  └─ Server: server/data/story_maps/map_{mapId}_{mapCode}.json
+```
 
 ---
 
-## 🔧 代码质量要求
+## 查资料优先级
 
-### 错误处理
-- **完善的错误处理**：所有关键操作都要有错误处理机制
-- **清晰的错误信息**：错误日志要包含上下文信息（用户ID、操作类型、关键参数、`correlation_id` 等）
-- **可机读错误码**：统一 `error_code`/`error_message`，确保客户端与监控可聚合定位
-- **错误恢复机制**：网络错误对幂等操作可重试（指数退避 + 超时 + 上限），数据错误一律回滚并返回明确错误码
-
-### 日志记录
-- **分级日志**：区分INFO、WARNING、ERROR级别
-- **关键操作日志**：重要操作都要记录
-- **调试信息**：开发阶段可以详细，生产环境要适度
-- **日志可关联**：全链路传递 `correlation_id`，在日志与错误响应中回显以便排查
-
-### 性能优化
-- **延迟加载**：按需加载资源和数据
-- **数据压缩**：网络传输时压缩数据
-- **缓存策略**：合理使用缓存减少数据库查询
-- **批量操作**：多个操作合并成批量处理
-- **背压与限流**：对热点请求做节流/队列化，避免雪崩放大
-- **推送调度**：参考 PomeloServer 的推送调度器设计，优化消息推送性能
-- **连接池管理**：参考 PomeloServer 的连接管理机制，合理管理客户端连接
-
-### 代码规范
-- **命名规范**：变量、函数、类名清晰表达意图
-- **注释文档**：复杂逻辑要有注释说明
-- **模块化设计**：功能独立，低耦合高内聚
-- **可扩展性**：考虑未来功能扩展，预留接口
+1. **本项目源码与文档**（最高）
+   - 服务端索引：`server/docs/README.md` → `功能原理与实现原理.md` → `消息接口-开发人员详册.md`
+   - 剧情契约：`assets/Script/Game/STORY_MIGRATION.md`、`Juben/AItools/Sample/docs/00_地图叙事配置总规范.md`
+   - 大世界同屏：`server/docs/大世界同图在线-协议与持久化.md`
+   - 装备/背包：`server/docs/装备系统.md`、`server/docs/slot_index实施说明.md`
+2. **已实现架构参考**（非运行栈）：Pomelo 对齐见 `server/docs/改进计划-基于PomeloServer架构对齐.md`（Channel、字典路由、推送调度已落地）
+3. **外部资料**：复杂新系统设计或 Cocos API 细节时再 web_search
 
 ---
 
-## 🔄 标准开发流程
+## 跨端铁律（改协议/剧情必守）
 
-### 实施流程
-1. **理解需求** → 明确功能目标、约束条件和边界情况
-2. **搜索资料** → 查找行业最佳实践和相关技术方案
-3. **参考 PomeloServer** → 查看 PomeloServer 源码和文档，了解类似功能的实现方式
-4. **设计方案** → 基于参考设计架构，考虑可扩展性
-5. **实现代码** → 按照设计实现，遵循代码规范
-6. **测试验证** → 单元测试、集成测试、边界测试（空数据/超长输入/并发/断网重连/重复请求）与必要的回归测试
-7. **性能优化** → 性能分析、瓶颈优化
+### 服务端权威
+- 状态变更必须经 `router.py` 路由 + Handler 强校验；客户端只做展示、输入、预测展示
+- 敏感操作用 `request_id` 幂等（`services/idempotency_service.py`）
 
-### 重构原则
-- 当发现代码重复时，考虑提取公共函数
-- 当发现逻辑复杂时，考虑拆分模块
-- 当发现性能问题时，进行性能分析和优化
-- 当发现bug时，先理解根本原因再修复
+### 消息契约三处同步
+改路由或字段时 **必须** 同步：
+1. `server/router.py` 的 `ROUTES`
+2. `assets/Script/global/MessageTypes.ts`（及 `GameConfig.MESSAGE_TYPES` 若新增类型）
+3. `server/docs/消息接口定义-完整版.md`（字段/行为级见 `消息接口-开发人员详册.md`）
 
----
+路由压缩另同步：`server/data/route_dictionary.json` ↔ `assets/Script/global/RouteDictionary.ts`
 
-## 📝 质量检查清单
+### 剧情契约
+- 顶层用 **`tasks`**（勿用 `quests`）；`mapCode` 三处一致（JSON / `StoryManager.mapCode` / 服务端文件名）
+- `battleRef` 对齐 `server/data/battle_refs.json` 与 Juben `data/client-runtime-manifest.json`
+- 事件挂在 `npcs[].events[]`；`eventType`: `dialog` / `choice` / `battle` / `teleport` / `task`
+- **defer 暂缓选项**：`completesEvent: false` + `forcedResult: block`，且 **不在** `allowedChoiceIds`
+- 坐标：**48px 格心**，Cocos `PlayerGridMove` / Juben `tilemap-coords.ts` / 导出 JSON 一致
 
-在完成任何功能前，确认：
-- [ ] 是否查找了相关的最佳实践资料
-- [ ] 是否参考了 PomeloServer 源码中的类似实现
-- [ ] 是否查看了 PomeloServer/docs 目录下的相关文档
-- [ ] 是否对关键请求做了鉴权/权限校验与参数强校验
-- [ ] 是否对状态变更请求做了幂等/重放保护（`request_id/seq` + TTL 去重）
-- [ ] 是否对高频/异常行为做了限流与可观测记录
-- [ ] 服务器是否验证了所有关键操作
-- [ ] 错误处理是否完善
-- [ ] 日志记录是否充分
-- [ ] 性能是否考虑了（分页、缓存、批量等）
-- [ ] 边界情况是否处理（空数据、网络错误、并发操作等）
-- [ ] 数据一致性是否有保障
-- [ ] 代码是否符合规范（命名、注释、模块化）
-- [ ] 架构设计是否参考了 PomeloServer 的最佳实践
+### 唯一标识
+| 域 | 标识 |
+|----|------|
+| 背包/装备/角色槽 | `slot_index` |
+| 剧情 | `eventId` / `mapCode` / NPC `uid` |
+| 网络请求 | `request_id` |
+| 用户会话 | `token` + `character_id`（Session 见 `session_service.py`） |
+
+### 最小改动
+只改需求相关文件；不顺手重构、不加无关注释/测试/文档；PrefUI 槽位（如 `StoryUIViewRefs`）非需求勿动。
 
 ---
 
-## 💡 核心指导思想
+## Cocos 客户端（assets/Script）
 
-**对于游戏开发，经验比理论更重要**。遇到问题时：
-1. 先搜索是否有现成的成熟解决方案
-2. **优先参考项目内的 PomeloServer 源码**，这是经过验证的实现
-3. 参考知名游戏或引擎的实现方式
-4. 考虑实际场景（网络延迟、并发、数据量等）
-5. 从简单开始，逐步优化
-6. 保持代码可读性和可维护性
-7. 遵循"正常网游级别开发"标准
-8. 确保实现可观测、可回滚、可压测验证
+### 关键模块
 
-**参考 PomeloServer 的优先级**：
-- 架构设计问题 → 优先查看 PomeloServer 的架构模式
-- 消息处理问题 → 优先查看 PomeloServer 的 Handler/Filter 实现
-- 性能优化问题 → 优先查看 PomeloServer 的优化策略
-- 功能移植问题 → 优先查看 PomeloServer/docs 目录下的移植分析文档
+| 模块 | 文件 | 注意点 |
+|------|------|--------|
+| 网络 | `global/WebSocketManager.ts` | 单例、批发送、重连、`request_id`、路由字典 |
+| 消息 | `global/MessageTypes.ts` | 改协议必读服务端详册 |
+| 配置 | `global/GameConfig.ts` | `WEBSOCKET_URL`、超时、场景名 |
+| 剧情 | `Game/StoryManager.ts` | 读 map JSON、`story_interact` / `story_event_complete` |
+| 移动 | `Game/GameArea/PlayerGridMove.ts` | 48px 格心，绑定 `mapRoot` |
+| 同屏 | `Game/GameArea/WorldOnlineSync.ts` | `world_enter` / `world_step` / `world_leave` |
+| 远端 Avatar | `Game/GameArea/RemoteAvatarController.ts` | 网络状态驱动，勿与本地推断混用 |
+| 动画 | `Game/GameArea/PlayerAnimRuntime.ts` | 避免重复触发、`play(..., true)` 滥用 |
+| 任务 UI | `Game/TaskTracker.ts`, `npc-task-indicator.ts` | 与服务端 task 状态对齐 |
+
+### 本地调试
+- **纯客户端剧情**：`StoryManager.skipServerRequirements = true`（仅离线验收，**上线必须走服务端**）
+- **联网**：`GameConfig.WEBSOCKET_URL` 指向本地 `ws://localhost:8001`；Mongo 须本机/局域网（见服务端环境）
+- 剧情 JSON：`assets/resources/Sample/剧情脚本/map_{mapId}.json`；场景 `StoryManager.mapConfig` + `mapCode` 与 JSON 一致
+
+### Cocos 常见 bug 排查顺序
+1. **网络**：连接/鉴权 → `request_id` 匹配 → 超时（对照服务端「路由耗时偏高」日志）
+2. **动画**：状态重复触发 → 强制重播 → 本地/远端状态混用
+3. **同屏**：快照完整 → join/move/leave 增量 → 在线筛选 Session + 运行时状态（非 DB 慢字段）
+4. **剧情**：Cocos JSON 与 Server JSON 是否同源发布 → defer 契约 → `event_done` 链
 
 ---
 
-## 🚫 过程纪律（防止重复踩坑）
+## 游戏服务器（server/）
 
-> 这是“做事方式”约束，不是代码风格建议。出现同类问题时必须先满足以下流程，再允许改代码。
+### 架构速查
+```
+ws_server.py (:8001 WS + :8080 管理台)
+  → middleware.py（鉴权、限流、幂等）
+  → router.py ROUTES
+  → handlers/*.py
+  → services/*.py（Session、Channel、推送、大世界、剧情、背包缓存…）
+  → MongoDB（MONGO_URL 环境变量）
+```
 
-### A. 先证据化，后改动
-- 遇到“看起来像同步问题”的现象，必须先列出 **3 个可证伪假设**（例如：动画被强制重播、快照缺失、状态包未到）
-- 每个假设必须给出一个最小验证点（日志/断点/计数器），禁止只凭经验连续打补丁
-- 若 2 次修复无效，必须回到“假设-验证”流程，不得继续堆逻辑
+### 常用 Handler 索引
 
-### B. 动画问题排查顺序（强制）
-- 第一优先排查：是否存在 `play(..., true)` 或等价“强制重播”被高频触发
-- 第二优先排查：同一状态是否被重复触发（没有去重/节流/最小间隔）
-- 第三优先排查：动画状态来源是否混用（位置推断 vs 网络状态）导致互相覆盖
-- 未完成以上 3 项前，禁止引入新的复杂同步策略
+| 功能 | 关键文件 |
+|------|----------|
+| 大世界同屏 | `handlers/world_handler.py`, `services/world_presence_service.py` |
+| 剧情 | `handlers/story_handler.py`, `services/story_service.py` |
+| 背包/物品 | `handlers/bag_handler.py`, `domain/inventory_protocol.py` |
+| 战斗/PVP 房间 | `handlers/battle_room_handler.py`, `services/battle_room_service.py` |
+| 好友/聊天 | `handlers/friend_handler.py`, `handlers/chat_handler.py` |
+| 机甲/装备 | `handlers/robot_handler.py`, `handlers/equipment_handler.py` |
 
-### C. 同屏可见性问题排查顺序（强制）
-- 先验证“快照是否完整”（新玩家进入时是否立即收到全量同图玩家）
-- 再验证“增量是否可靠”（join/move/leave 是否仅作为快照后的更新，而非补全）
-- 在线筛选优先使用 **Session + 运行时状态**，禁止先依赖慢更新的 DB 坐标字段
+### 新路由 checklist
+1. `router.py` 注册 `RouteHandler`（auth、返回 user_id 等元数据）
+2. Handler 实现 + 必要 service 层逻辑
+3. 同步 `MessageTypes.ts` + 文档
+4. 需要幂等的路由接入 `idempotency_service`
+5. 补测试：`server/tests/`（同类 handler 有范例则对齐风格）
 
-### D. 变更策略（小步、可回滚）
-- 每次只做一类根因修复，并注明“预期改变的单一现象”
-- 每次改动后必须给出“通过/失败判据”（例如：长按移动 10 秒不再卡首帧）
-- 如果结果与预期不符，先撤回思路并复盘，不得继续叠加补丁掩盖问题
+### 本地环境（延迟误判高发）
+- **Mongo 必须本机或局域网**：远端云库 RTT 会被放大为「客户端卡顿 / 408 / request_id 不匹配」
+- 慢路由看 `router.py` 日志 **「路由耗时偏高」** + **「慢请求检测」**，对齐客户端超时
+- 压测：`server/tools/stress_test.py`；管理台：`server/admin-ui/`
 
-### E. 复盘输出模板（每次 bug 修完必做）
-- 根因一句话：是什么触发了问题
-- 为什么之前没命中：证据缺失点在哪里
-- 本次防复发措施：新增了哪条流程约束
-- 仍存风险：还没覆盖的边界场景有哪些
+### 响应约定
+- 含 `success`；错误含 `error_code` / `error_message`
+- 日志带 `user_id`、路由名、`duration_ms`
+
+---
+
+## Juben 剧情编辑器（Juben/）
+
+### 启动与权威数据
+```bash
+cd Juben && npm install && npm run dev   # storage(:8787) + Vite(:5173)，实时写 data/workspace.json
+```
+- **storage 在线时** `data/workspace.json` 是唯一权威；`dev:web`  alone 只写 localStorage，勿用于正式编辑
+- 勿提交 `.env`（含 DeepSeek API Key）
+
+### 质量门禁
+```bash
+npm run check          # lint + format + typecheck + vitest
+npm run audit:story-maps              # 审计 defer / battleRef
+npm run audit:story-maps -- --fix --publish   # 修补并双写 Cocos + Server
+npm run publish:map -- {mapCode}        # CLI 发布
+```
+
+### 代码组织
+
+| 区域 | 路径 |
+|------|------|
+| 编辑器 UI | `src/editor/components/` |
+| 地图导出/发布 | `src/editor/map-export*.ts`, `scripts/publish-runtime-map.ts` |
+| AI 辅助 | `src/editor/ai/`, `server/ai-service.ts` |
+| Schema | `server/project-schema.ts`, `server/workspace-schema.ts` |
+| 测试 | `tests/`（改导出/校验逻辑优先补测） |
+
+### Juben 改动注意
+- 改导出字段 → 同步 Cocos `StoryManager` 解析 + Python `story_service` + `00_地图叙事配置总规范.md`
+- 发布前：**检测修复链** → 校验 `battleRef` 白名单 → 双写 Cocos + Server
+- 范例：`AItools/Sample/剧情脚本/`、`AItools/Sample/docs/`
+
+---
+
+## 开发工作流
+
+### 新功能
+1. 确认影响端（单端 / 跨端）
+2. 读对应文档与现有 Handler/组件，找可扩展点而非重写
+3. 跨端先定契约（字段、路由、错误码），再实现
+4. 服务端先行或 mock 对齐后再接客户端 UI
+
+### 修 bug（必守）
+**先证据化，后改动**
+1. 列 **3 个可证伪假设**，各给一个最小验证点（日志 / 断点 / 计数 / 网络抓包）
+2. 每次只修 **一类根因**；写明「预期改变的单一现象」与通过/失败判据
+3. 连续 2 次修复无效 → 回到假设-验证，**禁止堆补丁**
+
+**修完输出（简短）**
+- 根因一句话
+- 之前证据缺失点
+- 防复发措施
+- 仍存风险（如有）
+
+### 优化
+1. 先定位瓶颈（服务端 `duration_ms` / 客户端 PerformanceMonitor / Mongo 往返次数）
+2. 优先缓存、批处理、减少往返；勿 premature optimize
+3. 参考 `server/docs/优化清单-全面优化指南.md`（部分已被改进计划覆盖，作历史参考）
+
+---
+
+## 跨端改动速查表
+
+| 你在改… | 还要检查… |
+|---------|-----------|
+| WS 路由/字段 | `router.py` + `MessageTypes.ts` + 消息文档 |
+| 剧情 JSON 结构 | Juben 导出 + `StoryManager` + `story_service` + STORY_MIGRATION |
+| 发布 map | Cocos `map_{mapId}.json` 与 Server `map_{mapId}_{mapCode}.json` 内容一致 |
+| battleRef | `battle_refs.json` + client-runtime-manifest + 战斗 Handler |
+| 大世界坐标 | `world_presence_service` + `WorldOnlineSync` + 48px 格心 |
+| 背包/装备 | `slot_index` + `bag_handler` + Cocos 背包 UI |
+| 路由压缩 | `route_dictionary.json` + `RouteDictionary.ts` + handshake |
+
+---
+
+## AI 助手行为约定
+
+- 动手前先读相关源码与文档，勿凭记忆猜字段
+- 用户未要求时不创建 commit、不扩 scope、不写额外 markdown
+- 修 bug 时先调查再改；跨端问题先确认是哪一端 authority 出错
+- 测试：Server 用 `server/tests/`；Juben 用 `npm run test`；Cocos 说明手动验收步骤

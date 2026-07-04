@@ -1,5 +1,6 @@
 import { _decorator, Component, Node, UITransform, input, Input, EventKeyboard, KeyCode, misc, Animation, v3, TiledLayer, UIOpacity, Sprite } from 'cc';
 import { PlayerAnimRuntime } from './PlayerAnimRuntime';
+import { PlayerStateSync } from './PlayerStateSync';
 
 const { ccclass, property } = _decorator;
 
@@ -50,7 +51,7 @@ export class PlayerGridMove extends Component {
         tooltip:
             '等待服务器坐标恢复的超时（秒）。超时仍未恢复时，将使用 fallbackSpawnX/Y 作为兜底，避免角色卡在(0,0)。',
     })
-    serverRestoreTimeoutSec = 2.0;
+    serverRestoreTimeoutSec = 0.8;
 
     @property({ tooltip: '服务器坐标恢复超时后的兜底出生点 X（像素）' })
     fallbackSpawnX = 120.0;
@@ -102,6 +103,9 @@ export class PlayerGridMove extends Component {
     /** 当前按下的方向键（MV 式按住连走；引擎无 isKeyPress 时用 DOWN/UP 维护） */
     private readonly _heldCodes = new Set<number>();
 
+    /** 剧情对白/选项/战斗等由 StoryManager 锁定，对齐 RMV $gamePlayer._locked */
+    private _inputLocked = false;
+
     onLoad() {
         this._ut = this.getComponent(UITransform);
         this._anim = this.getComponent(Animation);
@@ -123,25 +127,58 @@ export class PlayerGridMove extends Component {
     }
 
     start() {
-        const anyNode = this.node as any;
-        const hasPlayerStateSync =
-            this.deferInitialPlaceToServerRestore && !!(anyNode?.getComponent?.('PlayerStateSync') ?? null);
+        const hasPlayerStateSync = this._hasDeferredServerRestore();
 
         if (!hasPlayerStateSync) {
-            if (this.useAnchorAsGridOrigin) {
+            if (this.startGridCol === 0 && this.startGridRow === 0) {
+                this.setPixelPosition(this.fallbackSpawnX, this.fallbackSpawnY, true);
+            } else if (this.useAnchorAsGridOrigin) {
                 this.placeAtGrid(this.startGridCol, this.startGridRow);
             } else {
                 this._snapToGridFromCurrentPos();
             }
         } else {
             this._scheduleRestoreTimeoutOnce();
+            this._nudgeFromUninitializedSpawn();
         }
         this._playIdleAnim(this._facing);
+    }
+
+    /** PlayerStateSync 可能挂在 GameArea 等父节点，而非 Player 自身。 */
+    private _hasDeferredServerRestore(): boolean {
+        if (!this.deferInitialPlaceToServerRestore) return false;
+        let n: Node | null = this.node;
+        while (n) {
+            if (n.getComponent(PlayerStateSync)) return true;
+            n = n.parent;
+        }
+        return false;
+    }
+
+    private _nudgeFromUninitializedSpawn(): void {
+        const p = this.node.position;
+        if (!this.isLikelyUninitializedPosition(p.x, p.y)) return;
+        this.scheduleOnce(() => {
+            if (this._serverRestored) return;
+            const q = this.node.position;
+            if (this.isLikelyUninitializedPosition(q.x, q.y)) {
+                this.setPixelPosition(this.fallbackSpawnX, this.fallbackSpawnY, true);
+            }
+        }, 0);
     }
 
     /** PlayerStateSync 首次应用服务器坐标后调用，避免超时兜底覆盖。 */
     public markServerRestored(): void {
         this._serverRestored = true;
+    }
+
+    /** 未初始化坐标（常见于 prefab 默认点或进图竞态），不应作为权威落点。 */
+    public isLikelyUninitializedPosition(x: number, y: number): boolean {
+        return Number.isFinite(x) && Number.isFinite(y) && Math.abs(x) < 0.5 && Math.abs(y) < 0.5;
+    }
+
+    public getFallbackSpawn(): { x: number; y: number } {
+        return { x: this.fallbackSpawnX, y: this.fallbackSpawnY };
     }
 
     private _scheduleRestoreTimeoutOnce(): void {
@@ -155,7 +192,28 @@ export class PlayerGridMove extends Component {
         }, sec);
     }
 
+    /** 由 StoryManager 在对白/选项/剧情战/事件链激活时调用 */
+    public setInputLocked(locked: boolean): void {
+        if (this._inputLocked === locked) return;
+        this._inputLocked = locked;
+        if (locked) {
+            this._heldCodes.clear();
+            this._moving = false;
+            this._axis = null;
+            this._playIdleAnim(this._facing);
+        }
+    }
+
+    public get inputLocked(): boolean {
+        return this._inputLocked;
+    }
+
     update(dt: number) {
+        if (this._inputLocked) {
+            this._updatePlantVisual(dt);
+            return;
+        }
+
         const dashing =
             this.dashLikeMV &&
             (this._heldCodes.has(KeyCode.SHIFT_LEFT) || this._heldCodes.has(KeyCode.SHIFT_RIGHT));
@@ -178,6 +236,7 @@ export class PlayerGridMove extends Component {
     }
 
     private _onKeyDown(e: EventKeyboard) {
+        if (this._inputLocked) return;
         this._heldCodes.add(e.keyCode);
     }
 
@@ -354,6 +413,20 @@ export class PlayerGridMove extends Component {
     /** 当前朝向（用于网络状态同步） */
     public getFacingDir(): MoveDir {
         return this._facing;
+    }
+
+    /** 剧情交互：面向目标世界坐标（RMV 式转向） */
+    public faceToward(worldX: number, worldY: number): void {
+        const p = this.node.worldPosition;
+        const dx = worldX - p.x;
+        const dy = worldY - p.y;
+        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            this._facing = dx > 0 ? 'right' : 'left';
+        } else {
+            this._facing = dy > 0 ? 'up' : 'down';
+        }
+        this._playIdleAnim(this._facing);
     }
 
     /** 外部设置角色动画前缀（例如 player7），并立即刷新到当前朝向待机动画。 */

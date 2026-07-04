@@ -1,0 +1,797 @@
+{
+  "configVersion": "1.0.1",
+  "mapId": 0,
+  "mapCode": "world_1783106205039",
+  "mapName": "新大地图",
+  "tileSize": 48,
+  "mapWidth": 1584,
+  "mapHeight": 1728,
+  "mapLayout": "vertical_stitch",
+  "imageSlices": [
+    "/Map/1-1.png",
+    "/Map/1-2.png",
+    "/Map/1-3.png"
+  ],
+  "tasks": [
+    {
+      "taskId": 100001,
+      "taskName": "新大地图",
+      "mainlineStep": 1
+    }
+  ],
+  "client": {
+    "dialogueScripts": {
+      "dlg_node_09f61ab8_761c_46da_b857_fb0460a5c82b": {
+        "speaker": "前哨指挥官",
+        "lines": [
+          "这里是前线哨站，我是负责人。根据上级指令，今天会有一批特殊的新兵报到。",
+          "你应该收到调令了，精神同步率超过临界值的适格者——机甲召唤师候补，没错吧？",
+          "虽然你还没碰过真正的召唤单元，但从此刻起，你将接受基础指引。"
+        ]
+      },
+      "dlg_node_fdf17f41_edcc_429a_9011_dc554e05d117": {
+        "speaker": "防卫司令",
+        "lines": [
+          "好，你来了。我一直在通过战术链路观察你前面的测试与补给训练。",
+          "实话说，虫族已经突破了我们第三道防线的外围屏障，我们急需能独当一面的召唤师。",
+          "你的同步率与补给意识都达到门槛，因此我代表本防区指挥部，决定提前授予你正式认证。"
+        ]
+      },
+      "dlg_node_a62e1bff_244c_4b4e_9a9c_117802360701": {
+        "speaker": "前哨指挥官",
+        "lines": [
+          "首先你要知道，召唤单元并非单纯机械操作——它与你的脑波共鸣，也就是我们说的「精神同步」。",
+          "同步率越高，召唤出的机甲就越接近你内心映射的战斗形态。虫族能撕裂我们所有常规防线，但挡不住机甲。",
+          "去补给仓的终端上查阅核心原理手册，那是每个召唤师的起点。找回手册后你再回来，我会继续讲第二课。"
+        ]
+      },
+      "dlg_node_a3f12e09_44c4_4262_8365_998b724e7cfa": {
+        "speaker": "防卫司令",
+        "lines": [
+          "很好。从现在起，你不再只是候补——你是本防区的正式机甲召唤师。",
+          "我们将你划入前线常备序列，你的召唤单元权限全面开放，补给配额转为正式级。",
+          "最后一步：到「核心召唤阵」终端完成身份绑定与权限签署。这标志着你从此与防线命运相连。"
+        ]
+      },
+      "dlg_node_7a2ea1d2_f582_47af_ae3e_4158d911e6f1": {
+        "speaker": "前线技术官",
+        "lines": [
+          "召唤师候补，你来得正是时候。虫族发动突袭，我们必须动用召唤单元进行第一次实战检验。",
+          "根据情报，这次只有一头虫族先锋撞进了缓冲区，我们将它标记为你的初级歼灭目标。",
+          "任务很简单：接通召唤单元，进入战场，击败目标，然后立刻回来交任务。随时准备进入战斗！"
+        ]
+      },
+      "dlg_node_73b4bdd7_f7d9_40a2_bedb_94c9cd0e6b5b": {
+        "speaker": "引导玩家称为机甲召唤师 · 第2幕",
+        "lines": [
+          "引导玩家称为机甲召唤师 · 第2幕：有件事需要你帮忙。"
+        ]
+      },
+      "dlg_node_87792e23_2f43_42a2_b5d7_f74e2387757b": {
+        "speaker": "前线技术官",
+        "lines": [
+          "记住：保持冷静才能稳定同步率，别被虫族的生物信息素干扰。",
+          "地图上已标出目标，带着你的召唤机甲将其击溃，在前线垮塌前完成任务。"
+        ]
+      },
+      "dlg_node_1a7ea639_d6a0_445c_9c9e_58e08a499809": {
+        "speaker": "引导玩家称为机甲召唤师 · 第2幕",
+        "lines": [
+          "引导玩家称为机甲召唤师 · 第2幕：敌人已在附近出现，找到并击败后再来找我交任务。"
+        ]
+      },
+      "dlg_node_3554164d_986a_4a98_a3dd_7c1af0f20dbf": {
+        "speaker": "后勤补给官",
+        "lines": [
+          "欢迎，召唤师候补。前线指挥部通知我，你需要了解补给规则。我是这里的补给官。",
+          "听着，机甲召唤不是次数无限的——每次战斗后，召唤单元都要重新充能与冷却，这就是补给链存在的理由。",
+          "在你接下来的任务里，你必须准确报告补给需求，否则会耽误整条防线的节奏。"
+        ]
+      },
+      "dlg_node_4d1f4534_4a2f_4a8b_8c50_f6041192c669": {
+        "speaker": "后勤补给官",
+        "lines": [
+          "补给分三档：轻充一次，能让你的召唤单元维持一次出击；标准补给适合常规驻守；满负荷补给必须经过前线确认。",
+          "每周自动配额有限，超出配额需要你用战功兑换。旁边这台终端记录了所有配给规则，你去查阅并回传确认码。",
+          "完成后回来找我，我会给你最后的补给许可，你的召唤师权限也将随之解锁最后一层。"
+        ]
+      }
+    },
+    "choiceScripts": {
+      "choice_node_0980a0e0_c633_40ca_a24a_0173e1c33e81": {
+        "title": "接受指引",
+        "options": [
+          {
+            "id": "opt_bb64446a-ca13-4d8a-bb31-dbf1572a66b9",
+            "text": "是，请告诉我该怎么做",
+            "systemTip": "开启引导任务",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_693ddafe-4d4b-4156-87be-944d08a2103e",
+            "text": "我暂时还没做好准备",
+            "systemTip": "任务不会推进，你可以随时回来",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_3e934c14_bc3c_480c_9fe0_d00ec95def87": {
+        "title": "誓约认证",
+        "options": [
+          {
+            "id": "opt_1cca92a5-014f-4541-a675-a76a463466a8",
+            "text": "我愿意宣誓",
+            "systemTip": "最终认证任务开启",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_23329db0-c9d1-4c29-ad9c-6d3cb605913e",
+            "text": "请再给我一些时间",
+            "systemTip": "认证未推进，但你仍是候补召唤师",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_f3d267e5_18ba_4c34_93bf_7b644483092f": {
+        "title": "确认出击",
+        "options": [
+          {
+            "id": "opt_8885c2b8-9ad1-4792-ae7b-618277fe8bce",
+            "text": "接受，启动召唤单元",
+            "systemTip": "获得清除指令，准备进入战斗",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_3d5a7452-e59e-4c75-b3ad-9f0da869fffa",
+            "text": "再想想",
+            "systemTip": "你没有接受指令，任务暂未推进",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_d56fe9b4_4342_455d_a028_b1a2010cd512": {
+        "title": "接取任务",
+        "options": [
+          {
+            "id": "opt_f5665b8d-3070-48f3-8afa-c18ca34eb6df",
+            "text": "接受任务"
+          },
+          {
+            "id": "opt_8aae4880-ab5d-4da0-b215-db6948033587",
+            "text": "再想想",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_2b0e3fcd_65f2_448b_b36e_dc76216c2bae": {
+        "title": "申请补给认证",
+        "options": [
+          {
+            "id": "opt_2cc81a81-08ef-4379-98e1-8c940ed72557",
+            "text": "马上学习补给流程",
+            "systemTip": "补给指引任务已开启",
+            "completesEvent": true
+          },
+          {
+            "id": "opt_8983b4d1-3261-45f6-a22e-7f46f3c284c9",
+            "text": "稍后再说",
+            "systemTip": "补给指引不会推进，补给官随时等你回来",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_39c84297_01ac_427e_a573_767f7d2b9976": {
+        "title": "战前选择",
+        "options": [
+          {
+            "id": "opt_fffdc9e8-f6f6-459d-a45b-7886db6e817d",
+            "text": "进入战斗",
+            "completesEvent": true,
+            "forcedResult": "start_battle"
+          },
+          {
+            "id": "opt_f8f592ab-033d-4950-bf3b-28167819a5b3",
+            "text": "稍后再来",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      },
+      "choice_node_fb7a9313_bca9_4be2_a805_1f7fe161b993": {
+        "title": "战前选择",
+        "options": [
+          {
+            "id": "opt_bdab3fa1-2618-4c97-a919-fc4ab3c0486c",
+            "text": "进入战斗",
+            "completesEvent": true,
+            "forcedResult": "start_battle"
+          },
+          {
+            "id": "opt_f1f0e59f-96a1-43d5-b15a-563863a18b61",
+            "text": "稍后再来",
+            "completesEvent": false,
+            "forcedResult": "block"
+          }
+        ]
+      }
+    }
+  },
+  "npcs": [
+    {
+      "npcUid": "world_1783106205039_chain_1",
+      "npcName": "引导玩家称为机甲召唤师 · 第1幕",
+      "characterName": "前哨指挥官",
+      "prefabKey": "Npc/Npc_01",
+      "x": 216,
+      "y": -120,
+      "events": [
+        {
+          "eventId": "world_1783106205039_chain_1_e1",
+          "eventType": "dialog",
+          "eventTypeDesc": "适格者报到",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_09f61ab8_761c_46da_b857_fb0460a5c82b"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_1_e2",
+          "eventType": "choice",
+          "eventTypeDesc": "接受指引",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_bb64446a-ca13-4d8a-bb31-dbf1572a66b9"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_bb64446a-ca13-4d8a-bb31-dbf1572a66b9"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_0980a0e0_c633_40ca_a24a_0173e1c33e81"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_1_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "防线司令召见",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_fdf17f41_edcc_429a_9011_dc554e05d117"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_1_e4",
+          "eventType": "dialog",
+          "eventTypeDesc": "同步理论简述",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_a62e1bff_244c_4b4e_9a9c_117802360701"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_1_e5",
+          "eventType": "choice",
+          "eventTypeDesc": "誓约认证",
+          "order": 5,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_1cca92a5-014f-4541-a675-a76a463466a8"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_1cca92a5-014f-4541-a675-a76a463466a8"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_3e934c14_bc3c_480c_9fe0_d00ec95def87"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_1_e6",
+          "eventType": "task",
+          "eventTypeDesc": "完成手册查阅",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_1_e7",
+          "eventType": "dialog",
+          "eventTypeDesc": "召唤师誓词",
+          "order": 7,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_a3f12e09_44c4_4262_8365_998b724e7cfa",
+            "endsSession": true
+          }
+        }
+      ],
+      "appear": {
+        "mode": "always",
+        "matchMode": "ALL",
+        "requirements": []
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "world_1783106205039_chain_2",
+      "npcName": "引导玩家称为机甲召唤师 · 第2幕",
+      "characterName": "前线技术官",
+      "prefabKey": "Npc/Npc_01",
+      "x": 216,
+      "y": -312,
+      "events": [
+        {
+          "eventId": "world_1783106205039_chain_2_e1",
+          "eventType": "dialog",
+          "eventTypeDesc": "战前召唤实验",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_7a2ea1d2_f582_47af_ae3e_4158d911e6f1"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e2",
+          "eventType": "dialog",
+          "eventTypeDesc": "任务对话",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_73b4bdd7_f7d9_40a2_bedb_94c9cd0e6b5b"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e3",
+          "eventType": "choice",
+          "eventTypeDesc": "确认出击",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_8885c2b8-9ad1-4792-ae7b-618277fe8bce"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_8885c2b8-9ad1-4792-ae7b-618277fe8bce"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_f3d267e5_18ba_4c34_93bf_7b644483092f"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e4",
+          "eventType": "dialog",
+          "eventTypeDesc": "全力投入初战",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_87792e23_2f43_42a2_b5d7_f74e2387757b"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e5",
+          "eventType": "task",
+          "eventTypeDesc": "回归报告",
+          "order": 5,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "world_1783106205039_chain_2_enemy_e2"
+              },
+              {
+                "type": "event_done",
+                "eventId": "world_1783106205039_chain_2_enemy_2_e2"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e6",
+          "eventType": "choice",
+          "eventTypeDesc": "接取任务",
+          "order": 6,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_f5665b8d-3070-48f3-8afa-c18ca34eb6df"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_f5665b8d-3070-48f3-8afa-c18ca34eb6df"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_d56fe9b4_4342_455d_a028_b1a2010cd512"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e7",
+          "eventType": "task",
+          "eventTypeDesc": "交任务",
+          "order": 7,
+          "server": {
+            "requirements": [
+              {
+                "type": "event_done",
+                "eventId": "world_1783106205039_chain_2_enemy_e2"
+              }
+            ],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_e8",
+          "eventType": "dialog",
+          "eventTypeDesc": "任务提示",
+          "order": 8,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_1a7ea639_d6a0_445c_9c9e_58e08a499809",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "world_1783106205039_chain_1_e7"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "world_1783106205039_chain_2_enemy",
+      "npcName": "敌人",
+      "prefabKey": "Npc/Npc_10",
+      "x": 312,
+      "y": -408,
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "world_1783106205039_chain_2_e3"
+          }
+        ]
+      },
+      "hideWhenComplete": true,
+      "events": [
+        {
+          "eventId": "world_1783106205039_chain_2_enemy_e1",
+          "eventType": "choice",
+          "eventTypeDesc": "战前选择",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_fffdc9e8-f6f6-459d-a45b-7886db6e817d"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_fffdc9e8-f6f6-459d-a45b-7886db6e817d"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_39c84297_01ac_427e_a573_767f7d2b9976"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_enemy_e2",
+          "eventType": "battle",
+          "eventTypeDesc": "战斗",
+          "order": 2,
+          "server": {
+            "requirements": [
+              {
+                "type": "task_active",
+                "taskId": 100001
+              }
+            ],
+            "effects": [],
+            "battleRef": "battle_1-50"
+          },
+          "client": {
+            "endsSession": true
+          }
+        }
+      ]
+    },
+    {
+      "npcUid": "world_1783106205039_chain_2_enemy_2",
+      "npcName": "敌人",
+      "prefabKey": "Npc/Npc_10",
+      "x": 216,
+      "y": -408,
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "world_1783106205039_chain_2_e3"
+          }
+        ]
+      },
+      "hideWhenComplete": true,
+      "events": [
+        {
+          "eventId": "world_1783106205039_chain_2_enemy_2_e1",
+          "eventType": "choice",
+          "eventTypeDesc": "战前选择",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_bdab3fa1-2618-4c97-a919-fc4ab3c0486c"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_bdab3fa1-2618-4c97-a919-fc4ab3c0486c"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_fb7a9313_bca9_4be2_a805_1f7fe161b993"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_2_enemy_2_e2",
+          "eventType": "battle",
+          "eventTypeDesc": "战斗",
+          "order": 2,
+          "server": {
+            "requirements": [
+              {
+                "type": "task_active",
+                "taskId": 100001
+              }
+            ],
+            "effects": [],
+            "battleRef": "battle_1-50"
+          },
+          "client": {
+            "endsSession": true
+          }
+        }
+      ]
+    },
+    {
+      "npcUid": "world_1783106205039_chain_3",
+      "npcName": "引导玩家称为机甲召唤师 · 第3幕",
+      "characterName": "后勤补给官",
+      "prefabKey": "Npc/Npc_06",
+      "x": 216,
+      "y": -792,
+      "events": [
+        {
+          "eventId": "world_1783106205039_chain_3_e1",
+          "eventType": "dialog",
+          "eventTypeDesc": "补给官相遇",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_3554164d_986a_4a98_a3dd_7c1af0f20dbf"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_3_e2",
+          "eventType": "choice",
+          "eventTypeDesc": "申请补给认证",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_2cc81a81-08ef-4379-98e1-8c940ed72557"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_2cc81a81-08ef-4379-98e1-8c940ed72557"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_2b0e3fcd_65f2_448b_b36e_dc76216c2bae"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_3_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "补给流程讲解",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_4d1f4534_4a2f_4a8b_8c50_f6041192c669"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_3_e4",
+          "eventType": "task",
+          "eventTypeDesc": "补给规则确认完成",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "world_1783106205039_chain_2_e8"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    },
+    {
+      "npcUid": "world_1783106205039_chain_4",
+      "npcName": "引导玩家称为机甲召唤师 · 第4幕",
+      "prefabKey": "Npc/Npc_14",
+      "x": 648,
+      "y": -840,
+      "events": [
+        {
+          "eventId": "world_1783106205039_chain_4_e1",
+          "eventType": "task",
+          "eventTypeDesc": "接取任务",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "接取任务：新大地图"
+          }
+        },
+        {
+          "eventId": "world_1783106205039_chain_4_e2",
+          "eventType": "task",
+          "eventTypeDesc": "认证绑定完成",
+          "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_complete",
+                "taskId": 100001
+              }
+            ]
+          },
+          "client": {
+            "taskUiHint": "完成任务：新大地图",
+            "endsSession": true
+          }
+        }
+      ],
+      "initialHidden": true,
+      "appear": {
+        "mode": "conditional",
+        "matchMode": "ALL",
+        "requirements": [
+          {
+            "type": "event_done",
+            "eventId": "world_1783106205039_chain_3_e4"
+          }
+        ]
+      },
+      "hideWhenComplete": true
+    }
+  ]
+}

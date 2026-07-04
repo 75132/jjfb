@@ -64,9 +64,17 @@ middleware_manager = MiddlewareManager()
 # ========== 内置中间件 ==========
 
 async def admin_auth_middleware(context: MiddlewareContext, next_func: Callable):
-    """管理后台路由鉴权：admin_token 或 is_admin 用户 token"""
+    """管理后台路由鉴权（可选）。
+
+    本地管理台（8080/game-control）与 admin_* 路由默认 require_auth=False，不做额外拦截。
+    仅当环境变量 ADMIN_REQUIRE_AUTH=1 时启用 admin_token / is_admin 校验。
+    """
     import os
     if not context.route or not context.route.startswith('admin_'):
+        return await next_func()
+
+    require_auth = os.environ.get('ADMIN_REQUIRE_AUTH', '').lower() in ('1', 'true', 'yes')
+    if not require_auth:
         return await next_func()
 
     admin_token = context.data.get('admin_token') or context.data.get('admin_secret')

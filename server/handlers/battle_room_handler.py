@@ -389,10 +389,18 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
         progress = await get_or_create_progress(user["_id"], str(cid), map_code)
         pending = progress.get("pending_battle") or {}
         if pending.get("event_id") != story_event_id:
+            import logging
+            logging.getLogger("game_server").warning(
+                "剧情战斗未授权 | cid=%s map=%s want=%s pending=%s",
+                cid,
+                map_code,
+                story_event_id,
+                pending,
+            )
             await utils.send_error_response(
                 websocket,
                 "battle_room_create",
-                "剧情战斗未授权",
+                "剧情战斗未授权，请重新与 NPC 交互后再试",
                 code=400,
                 request_data=data,
             )
@@ -400,6 +408,18 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
         battle_ref = pending.get("battle_ref")
         enemy_obj, err = await story_handler._generate_story_enemy(
             user["_id"], str(cid), battle_ref, data.get("player_pet_id")
+        )
+        if err:
+            await utils.send_error_response(
+                websocket, "battle_room_create", err, code=500, request_data=data
+            )
+            return
+        enemy_snapshot = _build_attrs_from_pet(enemy_obj)
+    elif data.get("battle_ref"):
+        from handlers import story_handler
+
+        enemy_obj, err = await story_handler._generate_story_enemy(
+            user["_id"], str(cid), str(data.get("battle_ref")), data.get("player_pet_id")
         )
         if err:
             await utils.send_error_response(
@@ -429,6 +449,7 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
         "battle_room_create",
         data={"room_id": cleaned_room["room_id"], "state": cleaned_room},
         request_data=data,
+        immediate=True,
     )
 
 

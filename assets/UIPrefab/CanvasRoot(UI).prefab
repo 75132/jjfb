@@ -4515,8 +4515,8 @@
     "toastTextLabel": {
       "__id__": 134
     },
-    "interactPrompt": null,
-    "interactPromptText": null,
+    "storyTipsPanel": null,
+    "storyTipsLabel": null,
     "_id": ""
   },
   {

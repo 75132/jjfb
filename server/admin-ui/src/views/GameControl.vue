@@ -144,7 +144,7 @@ function handleModifyRobot() {
     msg.attr_name = robotAttrName.value
     msg.attr_value = v
   }
-  send(msg)
+  sendAdmin('admin_modify_robot_pet', msg)
 }
 
 onMounted(() => {
@@ -185,6 +185,18 @@ onMounted(() => {
       if (d.success && d.character_id) {
         setTimeout(() => sendAdmin('admin_get_player_by_id', { character_id: d.character_id as string }), 500)
       }
+    }),
+    onMessage('admin_add_exp_response', (d) => {
+      if (!d.success) addLog(String(d.message || '添加经验失败'), 'error')
+    }),
+    onMessage('admin_modify_gold_response', (d) => {
+      if (!d.success) addLog(String(d.message || '修改金币失败'), 'error')
+    }),
+    onMessage('admin_modify_level_response', (d) => {
+      if (!d.success) addLog(String(d.message || '修改等级失败'), 'error')
+    }),
+    onMessage('admin_add_item_response', (d) => {
+      if (!d.success) addLog(String(d.message || '添加物品失败'), 'error')
     }),
     onMessage('admin_robot_pets_response', (d) => {
       if (d.success) {

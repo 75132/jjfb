@@ -526,6 +526,14 @@ async def handle_select_character(websocket, data, current_user_id, current_char
             await world_presence_service.leave_websocket(websocket)
         except Exception:
             pass
+        # 仅 STORY_RESET_ON_SELECT=1 时清空剧情（默认保留 Mongo / 内存进度）
+        try:
+            from services.story_service import STORY_RESET_ON_SELECT, clear_story_progress_for_character
+
+            if STORY_RESET_ON_SELECT:
+                clear_story_progress_for_character(str(character_id))
+        except Exception as _story_reset_err:
+            print(f"[story] select_character reset warn: {_story_reset_err}")
         await utils.send_direct_response(websocket, {'type': 'select_character_response', 'success': True, 'character_id': character_id}, request_data=data)
     
     return current_user_id, current_character_id

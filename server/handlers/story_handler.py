@@ -16,6 +16,7 @@ from services.story_service import (
     build_state_payload,
     get_battle_ref_config,
     reset_progress,
+    clear_story_progress_for_character,
 )
 from services.idempotency_service import idempotency_service
 
@@ -93,6 +94,8 @@ async def handle_story_event_complete(websocket, data, current_user_id, current_
         "success": True,
         "data": payload,
     }
+    if msg:
+        response["message"] = msg
     if request_id:
         idempotency_service.mark_processed(str(request_id), response)
     await utils.send_direct_response(websocket, response, request_data=data)
@@ -119,7 +122,13 @@ async def _generate_story_enemy(user_id, character_id: str, battle_ref: str, pla
             base_level = int(player.get("level", 1) or 1)
 
     fixed = ref_cfg.get("fixed_level")
-    if fixed is not None:
+    if ref_cfg.get("ignore_player_level"):
+        lo = int(ref_cfg.get("level_min", 1) or 1)
+        hi = int(ref_cfg.get("level_max", 10) or 10)
+        if lo > hi:
+            lo, hi = hi, lo
+        level = random.randint(lo, hi)
+    elif fixed is not None:
         level = int(fixed)
     else:
         offset = int(ref_cfg.get("level_offset", 0) or 0)
@@ -145,11 +154,15 @@ async def _generate_story_enemy(user_id, character_id: str, battle_ref: str, pla
     base_attrs = upgrade_manager.calculate_attributes(enemy_pet, robot_id=str(enemy_pet.get("RobotID", "")))
     if base_attrs:
         enemy_pet.update(base_attrs)
-    equipment_slots = battle_handler._build_equipment_for_pet(enemy_pet, level)
+    if ref_cfg.get("no_equipment"):
+        equipment_slots = {slot: {} for slot in ("Weapon", "Gun", "Dun", "Wing")}
+    else:
+        equipment_slots = battle_handler._build_equipment_for_pet(enemy_pet, level)
     enemy_pet["equipment"] = equipment_slots
-    equip_list = equipment_handler.load_equipment_data()
-    equip_cache = {int(e.get("id")): e for e in equip_list if e.get("id") is not None}
-    enemy_pet.update(battle_handler._apply_equipment_bonus_to_attrs(enemy_pet, equipment_slots, equip_cache))
+    if not ref_cfg.get("no_equipment"):
+        equip_list = equipment_handler.load_equipment_data()
+        equip_cache = {int(e.get("id")): e for e in equip_list if e.get("id") is not None}
+        enemy_pet.update(battle_handler._apply_equipment_bonus_to_attrs(enemy_pet, equipment_slots, equip_cache))
     if ref_cfg.get("elite"):
         for key in list(enemy_pet.keys()):
             if key.startswith("Current") and isinstance(enemy_pet[key], (int, float)):

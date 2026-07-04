@@ -2,7 +2,19 @@
 大世界同图在线：进入房间、同步步进、主动离开。
 """
 from . import utils
+from .player_handler import _get_default_spawn
 from services.world_presence_service import world_presence_service
+
+
+def _sanitize_enter_position(map_id: int, x: float, y: float) -> tuple[float, float]:
+    """进图坐标兜底：避免客户端尚未恢复时把 (0,0) 写入内存与数据库。"""
+    try:
+        mid = int(map_id)
+    except Exception:
+        mid = 1
+    if mid == 1 and abs(x) < 0.5 and abs(y) < 0.5:
+        return _get_default_spawn(1)
+    return x, y
 
 
 def _cid_str(raw) -> str:
@@ -44,6 +56,7 @@ async def handle_world_enter(websocket, data, current_user_id, current_character
         py = float(data.get('y', pos.get('y', -24.0)))
     except Exception:
         px, py = 120.0, -24.0
+    px, py = _sanitize_enter_position(map_id, px, py)
 
     facing = str(data.get('facing', 'down') or 'down')
     role_name = str(player.get('role_name', '') or '')

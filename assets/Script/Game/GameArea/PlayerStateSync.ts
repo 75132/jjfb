@@ -1,4 +1,4 @@
-import { _decorator, Component, Label } from 'cc';
+import { _decorator, Component, Label, Node } from 'cc';
 import { WebSocketManager } from '../../global/WebSocketManager';
 import { PlayerGridMove } from './PlayerGridMove';
 import { PlayerAnimRuntime } from './PlayerAnimRuntime';
@@ -33,10 +33,17 @@ export class PlayerStateSync extends Component {
         this.ws = WebSocketManager.getInstance();
         this.ws.on('player_info_response', this.onPlayerInfo, this);
         this.ws.on('player_info', this.onPlayerInfo, this);
-        this.playerMove?.onStep(null); // 保留纯本地移动，不做网络上报
+        this._resolvePlayerRefs();
+        this.playerMove?.onStep(null);
     }
 
     start() {
+        this._resolvePlayerRefs();
+        const cid = this.ws.getCharacterId();
+        if (!cid) {
+            this._applyFallbackSpawnIfNeeded();
+            return;
+        }
         this.requestRestore();
     }
 
@@ -47,9 +54,37 @@ export class PlayerStateSync extends Component {
     }
 
     public requestRestore() {
+        this._resolvePlayerRefs();
         const cid = this.ws.getCharacterId();
         if (!cid || this.restored) return;
         this.ws.request('get_player', { character_id: cid, map_id: this.mapId }, undefined, true, 10000);
+    }
+
+    private _resolvePlayerRefs(): void {
+        if (this.playerMove?.node?.isValid) {
+            if (!this.animRuntime) {
+                this.animRuntime = this.playerMove.getComponent(PlayerAnimRuntime);
+            }
+            return;
+        }
+        const worldRoot = this.node.getChildByName('WorldRoot');
+        const mv = worldRoot?.getComponentInChildren(PlayerGridMove) ?? null;
+        if (mv) {
+            this.playerMove = mv;
+            this.animRuntime = this.animRuntime ?? mv.getComponent(PlayerAnimRuntime);
+        }
+    }
+
+    private _applyFallbackSpawnIfNeeded(): void {
+        if (this.restored) return;
+        const mv = this.playerMove;
+        if (!mv) return;
+        const p = mv.node.position;
+        if (!mv.isLikelyUninitializedPosition(p.x, p.y)) return;
+        const fb = mv.getFallbackSpawn();
+        mv.setPixelPosition(fb.x, fb.y, true);
+        mv.markServerRestored();
+        this.restored = true;
     }
 
     private onPlayerInfo = (resp: any) => {
@@ -72,9 +107,17 @@ export class PlayerStateSync extends Component {
 
         // 只在首次进入时用服务器权威坐标覆盖，避免后续打断本地移动。
         if (!this.restored) {
-            this.playerMove?.setPixelPosition(x, y, true);
-            this.playerMove?.markServerRestored();
-            this.restored = true;
+            const mv = this.playerMove;
+            if (mv?.isLikelyUninitializedPosition(x, y)) {
+                const fb = mv.getFallbackSpawn();
+                mv.setPixelPosition(fb.x, fb.y, true);
+                mv.markServerRestored();
+                this.restored = true;
+            } else {
+                mv?.setPixelPosition(x, y, true);
+                mv?.markServerRestored();
+                this.restored = true;
+            }
         }
 
         const spriteIndex = Number(data.Sprite || 0);

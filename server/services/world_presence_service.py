@@ -285,10 +285,16 @@ class WorldPresenceService:
             import datetime
             from handlers import utils
 
+            mid = int(map_id)
+            sx = float(x)
+            sy = float(y)
+            if mid == 1 and abs(sx) < 0.5 and abs(sy) < 0.5:
+                sx, sy = 120.0, -24.0
+
             pos = {
-                'map_id': int(map_id),
-                'x': float(x),
-                'y': float(y),
+                'map_id': mid,
+                'x': sx,
+                'y': sy,
                 'updated_at': datetime.datetime.utcnow(),
             }
 

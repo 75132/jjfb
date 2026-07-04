@@ -15,6 +15,36 @@ from handlers import utils
 _story_progress_col = None
 _map_cache: Dict[str, dict] = {}
 _battle_refs_cache: Optional[dict] = None
+# 剧情进度持久化（默认写 Mongo；仅 STORY_LOCAL_TEST=1 时仅存内存，重启即丢）
+STORY_LOCAL_TEST = os.getenv("STORY_LOCAL_TEST", "0").strip().lower() in ("1", "true", "yes", "on")
+# 选角时是否清空剧情（调剧本时用 STORY_RESET_ON_SELECT=1；默认保留进度）
+STORY_RESET_ON_SELECT = os.getenv("STORY_RESET_ON_SELECT", "0").strip().lower() in ("1", "true", "yes", "on")
+_local_progress: Dict[str, dict] = {}
+
+
+def _progress_key(character_id: str, map_code: str) -> str:
+    return f"{character_id}:{map_code}"
+
+
+def clear_story_progress_for_character(character_id: str, map_code: Optional[str] = None) -> None:
+    """清除角色剧情进度（本地缓存；非本地模式时删 Mongo）。"""
+    if not character_id:
+        return
+    if STORY_LOCAL_TEST:
+        if map_code:
+            _local_progress.pop(_progress_key(character_id, map_code), None)
+        else:
+            prefix = f"{character_id}:"
+            for key in list(_local_progress.keys()):
+                if key.startswith(prefix):
+                    _local_progress.pop(key, None)
+        return
+    if _story_progress_col is None:
+        return
+    filt: dict = {"character_id": character_id}
+    if map_code:
+        filt["map_code"] = map_code
+    utils.safe_mongo_operation(lambda: _story_progress_col.delete_many(filt))
 
 
 def init_story_service(story_progress_col) -> None:
@@ -37,8 +67,6 @@ def load_battle_refs() -> dict:
 
 
 def load_map_config(map_code: str) -> Optional[dict]:
-    if map_code in _map_cache:
-        return _map_cache[map_code]
     story_dir = os.path.join(_data_dir(), "story_maps")
     if not os.path.isdir(story_dir):
         return None
@@ -50,6 +78,9 @@ def load_map_config(map_code: str) -> Optional[dict]:
             cfg = json.load(f)
         code = cfg.get("mapCode") or cfg.get("map_code")
         if code == map_code:
+            cached = _map_cache.get(map_code)
+            if cached and cached.get("configVersion") == cfg.get("configVersion"):
+                return cached
             _map_cache[map_code] = cfg
             return cfg
     return None
@@ -66,11 +97,24 @@ def _default_progress(character_id: str, user_id: ObjectId, map_code: str, story
         "mainline_step": 0,
         "story_version": story_version,
         "pending_battle": None,
+        "revealed_npc_uids": [],
+        "spawned_npc_uids": [],
+        "dynamic_npcs": [],
         "updated_at": datetime.datetime.utcnow(),
     }
 
 
 async def get_or_create_progress(user_id: ObjectId, character_id: str, map_code: str) -> dict:
+    if STORY_LOCAL_TEST:
+        key = _progress_key(character_id, map_code)
+        cached = _local_progress.get(key)
+        if cached:
+            return cached
+        cfg = load_map_config(map_code) or {}
+        version = str(cfg.get("configVersion", "1.0.0"))
+        progress = _default_progress(character_id, user_id, map_code, version)
+        _local_progress[key] = progress
+        return progress
     if _story_progress_col is None:
         raise RuntimeError("story_progress_col not initialized")
     doc = await utils.async_mongo_operation(
@@ -100,11 +144,63 @@ def _find_event(map_cfg: dict, event_id: str) -> Optional[Tuple[dict, dict, str]
 
 def _task_defs(map_cfg: dict) -> Dict[int, dict]:
     out: Dict[int, dict] = {}
-    for t in map_cfg.get("tasks", []) or []:
+    raw_tasks = map_cfg.get("tasks") or map_cfg.get("quests") or []
+    for t in raw_tasks or []:
         tid = t.get("taskId")
         if tid is not None:
             out[int(tid)] = t
     return out
+
+
+def _get_choice_script(map_cfg: dict, script_id: Optional[str]) -> Optional[dict]:
+    if not script_id:
+        return None
+    client = map_cfg.get("client") or {}
+    scripts = client.get("choiceScripts") or {}
+    return scripts.get(script_id)
+
+
+def _choice_completes_event(map_cfg: dict, ev: dict, choice_id: Optional[str]) -> Tuple[bool, str]:
+    if not choice_id:
+        return True, ""
+    server = ev.get("server") or {}
+    allowed = server.get("allowedChoiceIds")
+    if allowed and choice_id not in allowed:
+        return False, "该选项无法推进此事件"
+    client = ev.get("client") or {}
+    script = _get_choice_script(map_cfg, client.get("choiceScriptId"))
+    if not script:
+        return True, ""
+    for opt in script.get("options") or []:
+        if opt.get("id") != choice_id:
+            continue
+        if opt.get("completesEvent") is False:
+            return False, ""
+        forced = opt.get("forcedResult")
+        if forced in ("block", "none"):
+            return False, ""
+        return True, ""
+    return True, ""
+
+
+async def _apply_teleport(user_id: ObjectId, character_id: str, eff: dict) -> dict:
+    to_map = int(eff.get("toMapId", eff.get("to_map_id", 0)) or 0)
+    to_x = float(eff.get("toX", eff.get("to_x", 0)) or 0)
+    to_y = float(eff.get("toY", eff.get("to_y", 0)) or 0)
+    pos = {
+        "map_id": to_map,
+        "x": to_x,
+        "y": to_y,
+        "updated_at": datetime.datetime.utcnow(),
+    }
+    await utils.async_mongo_operation(
+        lambda: utils.players_col.update_one(
+            {"user_id": user_id, "character_id": character_id},
+            {"$set": {"position": pos}},
+        ),
+        timeout=2.0,
+    )
+    return {"action": "teleport", "toMapId": to_map, "toX": to_x, "toY": to_y}
 
 
 def _event_completed(progress: dict, event_id: str) -> bool:
@@ -182,23 +278,42 @@ async def check_requirements(
     return True, ""
 
 
+def _find_npc_row(map_cfg: dict, npc_uid: str) -> Optional[dict]:
+    for npc in map_cfg.get("npcs", []) or []:
+        if str(npc.get("npcUid", "")) == npc_uid:
+            return npc
+    return None
+
+
 async def apply_effects(
     user_id: ObjectId,
     character_id: str,
     progress: dict,
     map_cfg: dict,
     effects: List[dict],
+    choice_id: Optional[str] = None,
 ) -> List[dict]:
     applied: List[dict] = []
     task_defs = _task_defs(map_cfg)
     for eff in effects or []:
         if not isinstance(eff, dict):
             continue
+        eff_choice = eff.get("choiceId")
+        if eff_choice and eff_choice != choice_id:
+            continue
         action = eff.get("action")
         if action == "task_accept":
             tid = int(eff.get("taskId", 0))
-            if _task_status(progress, tid) is None:
-                progress.setdefault("active_tasks", []).append({"taskId": tid, "status": "accepted"})
+            if tid <= 0:
+                continue
+            st = _task_status(progress, tid)
+            if st is None or st == "completed":
+                completed = list(progress.get("completed_task_ids") or [])
+                if tid in completed:
+                    progress["completed_task_ids"] = [x for x in completed if int(x) != tid]
+                active = [t for t in (progress.get("active_tasks") or []) if int(t.get("taskId", -1)) != tid]
+                active.append({"taskId": tid, "status": "accepted"})
+                progress["active_tasks"] = active
                 tdef = task_defs.get(tid, {})
                 step = int(tdef.get("mainlineStep", 0) or 0)
                 if step > int(progress.get("mainline_step", 0) or 0):
@@ -239,6 +354,55 @@ async def apply_effects(
                 attachments=eff.get("attachments") or [],
             )
             applied.append({"action": "send_mail"})
+        elif action == "teleport":
+            tp = await _apply_teleport(user_id, character_id, eff)
+            applied.append(tp)
+        elif action == "reveal_npc":
+            uid = str(eff.get("npcUid", "")).strip()
+            if not uid:
+                continue
+            row = _find_npc_row(map_cfg, uid)
+            if not row:
+                continue
+            revealed = list(progress.get("revealed_npc_uids") or [])
+            if uid not in revealed:
+                revealed.append(uid)
+            progress["revealed_npc_uids"] = revealed
+            applied.append({"action": "reveal_npc", "npcUid": uid})
+        elif action == "spawn_npc":
+            uid = str(eff.get("npcUid", "")).strip()
+            if not uid:
+                continue
+            spawned = list(progress.get("spawned_npc_uids") or [])
+            if uid in spawned:
+                applied.append({"action": "spawn_npc", "npcUid": uid, "already_spawned": True})
+                continue
+            existing = _find_npc_row(map_cfg, uid)
+            if existing and not existing.get("initialHidden"):
+                continue
+            x = eff.get("x")
+            y = eff.get("y")
+            if x is not None and y is not None:
+                try:
+                    x_f, y_f = float(x), float(y)
+                    if x_f < 0 or y_f < 0:
+                        continue
+                except (TypeError, ValueError):
+                    continue
+            spawned.append(uid)
+            progress["spawned_npc_uids"] = spawned
+            dyn = {
+                "npcUid": uid,
+                "npcName": eff.get("npcName") or existing.get("npcName") if existing else eff.get("npcName"),
+                "prefabKey": eff.get("prefabKey") or (existing.get("prefabKey") if existing else None),
+                "x": eff.get("x") if eff.get("x") is not None else (existing.get("x") if existing else None),
+                "y": eff.get("y") if eff.get("y") is not None else (existing.get("y") if existing else None),
+            }
+            dynamic = list(progress.get("dynamic_npcs") or [])
+            if not any(str(d.get("npcUid", "")) == uid for d in dynamic):
+                dynamic.append(dyn)
+            progress["dynamic_npcs"] = dynamic
+            applied.append({"action": "spawn_npc", "npcUid": uid, **{k: v for k, v in dyn.items() if v is not None}})
     return applied
 
 
@@ -246,6 +410,10 @@ async def save_progress(progress: dict) -> None:
     progress["updated_at"] = datetime.datetime.utcnow()
     cid = progress.get("character_id")
     map_code = progress.get("map_code")
+    if STORY_LOCAL_TEST:
+        if cid and map_code:
+            _local_progress[_progress_key(str(cid), str(map_code))] = progress
+        return
     await utils.async_mongo_operation(
         lambda: _story_progress_col.update_one(
             {"character_id": cid, "map_code": map_code},
@@ -279,6 +447,9 @@ def build_state_payload(progress: dict, map_cfg: dict) -> dict:
         "story_version": progress.get("story_version"),
         "tasks": tasks_out,
         "pending_battle": progress.get("pending_battle"),
+        "revealed_npc_uids": list(progress.get("revealed_npc_uids") or []),
+        "spawned_npc_uids": list(progress.get("spawned_npc_uids") or []),
+        "dynamic_npcs": list(progress.get("dynamic_npcs") or []),
     }
 
 
@@ -390,13 +561,21 @@ async def complete_event(
     if not ok:
         return False, msg, build_state_payload(progress, map_cfg)
 
+    can_complete, choice_msg = _choice_completes_event(map_cfg, ev, choice_id)
+    if not can_complete:
+        if choice_msg:
+            return False, choice_msg, build_state_payload(progress, map_cfg)
+        return True, "choice_blocked", build_state_payload(progress, map_cfg)
+
     completed = progress.get("completed_event_ids") or []
     if event_id not in completed:
         completed.append(event_id)
     progress["completed_event_ids"] = completed
     progress["pending_battle"] = None
 
-    applied = await apply_effects(user_id, character_id, progress, map_cfg, server.get("effects") or [])
+    applied = await apply_effects(
+        user_id, character_id, progress, map_cfg, server.get("effects") or [], choice_id=choice_id
+    )
     await save_progress(progress)
 
     return True, "", {
@@ -413,6 +592,11 @@ def get_battle_ref_config(battle_ref: str) -> Optional[dict]:
 
 
 async def reset_progress(character_id: str, map_code: str) -> bool:
+    if STORY_LOCAL_TEST:
+        key = _progress_key(character_id, map_code)
+        existed = key in _local_progress
+        _local_progress.pop(key, None)
+        return existed
     if _story_progress_col is None:
         return False
     r = await utils.async_mongo_operation(

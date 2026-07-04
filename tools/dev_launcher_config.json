@@ -1,0 +1,17 @@
+{
+  "geometry": "1100x671+424+136",
+  "port_spec": "8787,5173-5179,8001,8080-8081",
+  "theme": "dark",
+  "auto_start": false,
+  "auto_start_services": [
+    "juben",
+    "ws_server"
+  ],
+  "stop_on_failure": false,
+  "last_log_tab": "ws_server",
+  "nav_page": "服务",
+  "log_panel_height": 180,
+  "log_auto_scroll": true,
+  "log_max_lines": 8000,
+  "health_poll_sec": 3.0
+}

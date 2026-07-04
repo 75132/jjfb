@@ -22,5 +22,15 @@
     "level_offset": 2,
     "fixed_level": null,
     "elite": true
+  },
+  "battle_1-50": {
+    "name": "凯尔博士遇袭（测试）",
+    "ignore_player_level": true,
+    "level_min": 1,
+    "level_max": 10,
+    "fixed_level": null,
+    "level_offset": 0,
+    "no_equipment": true,
+    "elite": false
   }
 }

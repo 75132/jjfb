@@ -18,8 +18,34 @@ import subprocess
 import sys
 import time
 import logging
+import io
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
+
+def _ensure_utf8_stdio() -> None:
+    """Windows 管道/控制台为 GBK 时，print 含 emoji 会 UnicodeEncodeError。"""
+    if sys.platform != "win32":
+        return
+    for name in ("stdout", "stderr"):
+        stream = getattr(sys, name, None)
+        if stream is None:
+            continue
+        enc = (getattr(stream, "encoding", None) or "").lower().replace("-", "")
+        if enc == "utf8":
+            continue
+        buf = getattr(stream, "buffer", None)
+        if buf is None:
+            continue
+        setattr(
+            sys,
+            name,
+            io.TextIOWrapper(buf, encoding="utf-8", errors="replace", line_buffering=True),
+        )
+
+
+_ensure_utf8_stdio()
+
 from handlers.robot_upgrade import get_upgrade_manager
 from handlers import utils as handler_utils
 from handlers import login_handler
@@ -1368,10 +1394,16 @@ async def main():
     init_daletou_service(daletou_draws_col)
     from services.minigame2_service import init_minigame2_service
     init_minigame2_service(minigame2_rounds_col, minigame2_bets_col, players_col)
-    from services.story_service import init_story_service
+    from services.story_service import init_story_service, STORY_LOCAL_TEST, STORY_RESET_ON_SELECT
     from services.mail_service import init_mail_service
     from services.battle_room_service import battle_room_service
     init_story_service(story_progress_col)
+    if STORY_LOCAL_TEST:
+        logger.info('📝 剧情：内存模式（不写 Mongo，重启丢失）STORY_LOCAL_TEST=1')
+    else:
+        logger.info('📝 剧情：进度持久化到 Mongo（STORY_LOCAL_TEST=0）')
+    if STORY_RESET_ON_SELECT:
+        logger.info('📝 剧情：选角时清空进度 STORY_RESET_ON_SELECT=1')
     init_mail_service(mails_col)
     battle_room_service.init_persistence(battle_rooms_col)
     character_handler.init_character_handler(create_robot_pet, broadcast_to_user_async)

@@ -93,7 +93,14 @@ export class WorldOnlineSync extends Component {
             node.on('network_disconnect', this.onNetworkDisconnect, this);
             node.on('auth_response', this.onAuthResponseWorld, this);
         }
+        this._resolveLocalPlayerMove();
         this.localPlayerMove?.onStep((dir, x, y) => this.onLocalStepEnd(dir, x, y));
+    }
+
+    private _resolveLocalPlayerMove(): void {
+        if (this.localPlayerMove?.node?.isValid) return;
+        const wr = this.worldRoot ?? this.node.getChildByName('WorldRoot');
+        this.localPlayerMove = wr?.getComponentInChildren(PlayerGridMove) ?? null;
     }
 
     start() {
@@ -197,6 +204,16 @@ export class WorldOnlineSync extends Component {
         }
     };
 
+    /** 进图/重连上报前过滤未初始化坐标，避免 world_enter 把 (0,0) 落库。 */
+    private _resolveWorldEnterPosition(): { x: number; y: number } | null {
+        const mv = this.localPlayerMove;
+        if (!mv) return null;
+        const p = mv.getPixelPosition();
+        if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return null;
+        if (mv.isLikelyUninitializedPosition(p.x, p.y)) return null;
+        return { x: p.x, y: p.y };
+    }
+
     private onSelfPlayerInfo = (resp: any) => {
         if (!this.enableOnline) return;
         const data = resp?.data && typeof resp.data === 'object' ? { ...resp, ...resp.data } : resp;
@@ -206,9 +223,15 @@ export class WorldOnlineSync extends Component {
         this._setLocalNameLabel(data.role_name);
 
         const pos = data.position || {};
-        const x = Number(pos.x);
-        const y = Number(pos.y);
+        let x = Number(pos.x);
+        let y = Number(pos.y);
         if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        const mv = this.localPlayerMove;
+        if (mv?.isLikelyUninitializedPosition(x, y)) {
+            const fb = mv.getFallbackSpawn();
+            x = fb.x;
+            y = fb.y;
+        }
 
         const cid = this.ws.getCharacterId();
         if (!cid) return;
@@ -244,17 +267,17 @@ export class WorldOnlineSync extends Component {
         if (!this.enableOnline || this._enteredCid || this._pendingEnter) return;
         const cid = this.ws.getCharacterId();
         if (!cid || !this.ws.isConnected()) return;
+        const pos = this._resolveWorldEnterPosition();
+        if (!pos) return;
         const mv = this.localPlayerMove;
         if (!mv) return;
-        const p = mv.getPixelPosition();
-        if (!Number.isFinite(p.x)) return;
         this._pendingEnter = true;
         this.ws.request(
             'world_enter',
             {
                 map_id: this.mapId,
-                x: p.x,
-                y: p.y,
+                x: pos.x,
+                y: pos.y,
                 facing: mv.getFacingDir(),
                 request_id: `we_fb_${Date.now()}`,
             },
@@ -273,18 +296,18 @@ export class WorldOnlineSync extends Component {
         if (!this.enableOnline || !this.ws.isConnected()) return;
         const cid = this.ws.getCharacterId();
         if (!cid) return;
+        const pos = this._resolveWorldEnterPosition();
+        if (!pos) return;
         const mv = this.localPlayerMove;
         if (!mv) return;
-        const p = mv.getPixelPosition();
-        if (!Number.isFinite(p.x)) return;
         if (this._pendingEnter) return;
         this._pendingEnter = true;
         this.ws.request(
             'world_enter',
             {
                 map_id: this.mapId,
-                x: p.x,
-                y: p.y,
+                x: pos.x,
+                y: pos.y,
                 facing: mv.getFacingDir(),
                 request_id: `we_sync_${Date.now()}`,
             },

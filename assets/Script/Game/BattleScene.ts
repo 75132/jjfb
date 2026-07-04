@@ -175,6 +175,7 @@ export class BattleScene extends Component {
 
     // 玩家信息请求的一次性监听器（防止 BattleScene 关闭时泄漏）
     private playerInfoListener: ((resp: any) => void) | null = null;
+    private enemyInfoListener: ((resp: any) => void) | null = null;
 
     // 房间制战斗相关（默认开启，一场战斗一个房间，支持断线恢复）
     private useServerRoomBattle: boolean = true;
@@ -190,7 +191,7 @@ export class BattleScene extends Component {
     /** 修复点：重连恢复中置位，避免 onEnable 再次请求 resume 覆盖已拉取的状态 */
     private _restoringFromReconnect: boolean = false;
     /** 剧情战斗结束回调 */
-    private _storyBattleCallback: ((won: boolean) => void) | null = null;
+    private _storyBattleCallback: ((won: boolean, errMsg?: string) => void) | null = null;
     private _storyBattleMeta: { eventId: string; battleRef: string; mapCode: string } | null = null;
 
     /**
@@ -207,6 +208,12 @@ export class BattleScene extends Component {
         // 仅在服务端房间战斗模式下启用该兜底
         if (!this.useServerRoomBattle) return;
         console.error('[BattleScene] 进入战斗房间超时：未能应用完整 room state，自动退出面板避免卡死');
+        const storyCb = this._storyBattleCallback;
+        if (storyCb) {
+            this._storyBattleCallback = null;
+            this._storyBattleMeta = null;
+            storyCb(false, '进入战斗超时，请重试');
+        }
         this.state = BattleState.FINISHED;
         this.isAnimating = false;
         this.isRequestingAction = false;
@@ -270,12 +277,15 @@ export class BattleScene extends Component {
             this.backButton.node.off(Button.EventType.CLICK, this.onBackClicked, this);
         }
         this.clearPlayerInfoListener();
+        this.clearEnemyInfoListener();
         this._unbindNetworkReconnect();
     }
 
     onEnable() {
         // 重置所有状态标志，确保每次打开都是干净的状态
-        this._sessionId += 1;
+        if (!this._storyBattleMeta) {
+            this._sessionId += 1;
+        }
         this.state = BattleState.INIT;
         this._roomStateApplied = false;
         this.isAnimating = false;
@@ -294,6 +304,12 @@ export class BattleScene extends Component {
         // 修复点：重置双方机甲透明度，避免上一场击破动画（alpha=0）导致下次战斗不显示
         this.resetRobotShowOpacity(this.playerRobotShow);
         this.resetRobotShowOpacity(this.enemyRobotShow);
+        this._syncBattlePortraitVisibility();
+
+        // 剧情战：房间由 startStoryBattle 发起 CREATE，此处不再走 enterBattleRoom
+        if (this._storyBattleMeta) {
+            return;
+        }
 
         // 修复点：重连/加载时由外部已拉取 state，直接应用并不再请求 resume（避免二次请求导致误创建新房间）
         if (this._restoringFromReconnect) {
@@ -340,6 +356,7 @@ export class BattleScene extends Component {
         }
         this.stopAttributeAutoRefresh();
         this.clearPlayerInfoListener();
+        this.clearEnemyInfoListener();
 
         // 修复点：停止所有 Tween 和 schedule，避免禁用后回调仍执行导致状态错乱
         if (this.playerRobotShow?.node) Tween.stopAllByTarget(this.playerRobotShow.node);
@@ -436,13 +453,15 @@ export class BattleScene extends Component {
     // =========================
 
     /**
-     * 剧情战斗入口：先 story_interact 授权后，带 story_event_id 创建 PVE 房间
+     * 剧情战斗入口：与模拟战斗相同走 WS 战斗房间；skipServerAuth 仅跳过 story_interact 授权。
      */
     public startStoryBattle(opts: {
         mapCode: string;
         eventId: string;
         battleRef: string;
-        onFinished: (won: boolean) => void;
+        /** 跳过 story_interact 授权（本地剧情验收）；战斗仍走 battle_room_create */
+        skipServerAuth?: boolean;
+        onFinished: (won: boolean, errMsg?: string) => void;
     }): void {
         this._storyBattleCallback = opts.onFinished;
         this._storyBattleMeta = {
@@ -452,31 +471,37 @@ export class BattleScene extends Component {
         };
         this.currentBattleMode = 'pve';
         this._sessionId += 1;
-        this.node.active = true;
         this._roomStateApplied = false;
         this.unschedule(this._onBattleEnterTimeout);
+
+        this.node.active = true;
         this.scheduleOnce(this._onBattleEnterTimeout, this.BATTLE_ENTER_TIMEOUT_SEC);
 
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
             console.error('[BattleScene] 剧情战：未获取 characterId');
-            opts.onFinished(false);
+            opts.onFinished(false, '未选择角色，无法进入战斗');
             return;
         }
         const sessionId = this._sessionId;
+        const createPayload: Record<string, string> = { character_id: characterId };
+        if (!opts.skipServerAuth) {
+            createPayload.story_event_id = opts.eventId;
+            createPayload.map_code = opts.mapCode;
+        } else if (opts.battleRef) {
+            createPayload.battle_ref = opts.battleRef;
+        }
         this.ws.request(
             GameConfig.MESSAGE_TYPES.BATTLE_ROOM_CREATE,
-            {
-                character_id: characterId,
-                story_event_id: opts.eventId,
-                map_code: opts.mapCode,
-            },
+            createPayload,
             (createResp: any) => {
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
                 if (!createResp?.success || !createResp.data?.state) {
+                    const msg = createResp?.message || '剧情战斗房间创建失败';
                     console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
-                    this._storyBattleCallback?.(false);
+                    this._storyBattleCallback?.(false, msg);
                     this._storyBattleCallback = null;
+                    this._storyBattleMeta = null;
                     this.node.active = false;
                     return;
                 }
@@ -677,6 +702,11 @@ export class BattleScene extends Component {
             } catch {}
         }
 
+        if (!forRoundAnimation) {
+            const enemyCid = enemyActor?.character_id ? String(enemyActor.character_id) : null;
+            this.refreshPlayerAndEnemyShows(enemyCid);
+        }
+
         // 更新属性面板与 HP 条
         this.ensureMechAttributeInited();
         this.refreshPlayerMechAttributeUI(true);
@@ -821,13 +851,19 @@ export class BattleScene extends Component {
         if (this.entranceEnemyPos) enemyNode.setPosition(this.entranceEnemyPos);
     }
 
+    /** 本地模拟战（useServerRoomBattle=false）无法开战时关闭面板 */
+    private _abortBattleEntry(errMsg: string): void {
+        console.error('[BattleScene]', errMsg);
+        this.node.active = false;
+    }
+
     /**
      * 检查缓存并开始战斗（如果缓存为空则先请求数据）
      */
     private checkAndStartBattle() {
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
-            console.error('[BattleScene] 未获取到 characterId，无法开始战斗');
+            this._abortBattleEntry('未选择角色，无法进入战斗');
             return;
         }
 
@@ -858,7 +894,7 @@ export class BattleScene extends Component {
     private requestRobotPetsAndStart() {
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
-            console.error('[BattleScene] 未获取到 characterId，无法请求机甲列表');
+            this._abortBattleEntry('未选择角色，无法进入战斗');
             return;
         }
 
@@ -896,20 +932,87 @@ export class BattleScene extends Component {
 
         const success = data.success === true || data.success === 'true';
         if (!success) {
-            console.error('[BattleScene] 获取机甲列表失败:', data.message || data.data?.message || '未知错误');
+            this._abortBattleEntry(String(data.message || data.data?.message || '获取机甲列表失败'));
             return;
         }
 
-        // 更新缓存
         const characterId = this.ws.getCharacterId?.();
         if (characterId) {
             this.cacheManager.setRobotPetsCache(characterId, data);
         }
 
+        const pets = this._extractPetsFromCache(data);
+        if (pets.length === 0) {
+            this._abortBattleEntry('你没有可用的机甲，无法进入战斗');
+            return;
+        }
+
         console.log('[BattleScene] 机甲列表数据已更新，开始战斗');
-        // 数据已更新，开始战斗
         this.startNewBattle();
     };
+
+    private _extractPetsFromCache(raw: any): any[] {
+        const data = raw?.data && typeof raw.data === 'object' ? raw.data : raw;
+        if (data?.data && Array.isArray(data.data.pets)) return data.data.pets;
+        if (Array.isArray(data?.pets)) return data.pets;
+        return [];
+    }
+
+    private _normPetId(id: string): string {
+        return String(id || '').trim().toLowerCase();
+    }
+
+    private _battleTeamFromCache(listCache: any): string[] {
+        const raw =
+            listCache?.battle_team ??
+            listCache?.data?.battle_team ??
+            listCache?.data?.data?.battle_team;
+        if (!Array.isArray(raw)) return [];
+        return raw.map((x: any) => String(x)).filter((x: string) => x);
+    }
+
+    /** 优先出战队伍第一位，否则列表第一只有效机甲 */
+    private _pickBattlePet(
+        pets: any[],
+        battleTeam: string[],
+    ): { petId: string; firstPet: any } | null {
+        if (!pets?.length) return null;
+        const norm = (id: string) => this._normPetId(id);
+        if (battleTeam.length > 0) {
+            const bid = battleTeam[0];
+            const matched = pets.find(
+                (p) => norm(String(p.pet_id || p._id || p.id || '')) === norm(bid),
+            );
+            if (matched) {
+                const petId = String(matched.pet_id || matched._id || matched.id || '');
+                if (petId) return { petId, firstPet: matched };
+            }
+        }
+        const firstPet = pets[0];
+        const petId = String(firstPet.pet_id || firstPet._id || firstPet.id || '');
+        if (!petId) return null;
+        return { petId, firstPet };
+    }
+
+    private _applyPlayerPetFromInfo(petId: string, info: any): void {
+        this.playerUnit = this.buildUnitFromRobotInfo('player', petId, info, '玩家机甲');
+
+        if (this.playerRobotShow && info) {
+            try {
+                const dataForShow = { ...info, pet_id: petId };
+                this.playerRobotShow.updateFromRobotData(dataForShow);
+            } catch (e) {
+                console.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
+            }
+        }
+
+        this.ensureMechAttributeInited();
+        this.refreshPlayerMechAttributeUI(true);
+        this.startAttributeAutoRefresh();
+        const classValue = Number((info as any)?.Class ?? (info as any)?.data?.Class ?? 1);
+        this.updatePlayer1ClassIcon(classValue);
+        this.initEnemyUnit();
+    }
 
     private startNewBattle() {
         this.logClear();
@@ -1040,94 +1143,62 @@ export class BattleScene extends Component {
     private initPlayerUnit() {
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
-            console.error('[BattleScene] 未获取到 characterId，无法初始化玩家单位');
+            this._abortBattleEntry('未选择角色，无法进入战斗');
             return;
         }
 
         const listCache = this.cacheManager.getRobotPetsCache(characterId);
-        let pets: any[] = [];
-        if (listCache) {
-            if (listCache.data && Array.isArray(listCache.data.pets)) {
-                pets = listCache.data.pets;
-            } else if (Array.isArray(listCache.pets)) {
-                pets = listCache.pets;
-            }
-        }
+        const pets = this._extractPetsFromCache(listCache);
 
         if (!pets || pets.length === 0) {
-            console.error('[BattleScene] 机甲列表缓存为空，无法初始化玩家单位');
+            this._abortBattleEntry('你没有可用的机甲，无法进入战斗');
             return;
         }
 
-        // 出战队伍改为服务器权威：先拉取，再决定使用哪台机甲（当前只取第一位主战）
+        const cachedTeam = this._battleTeamFromCache(listCache);
         const sessionId = this._sessionId;
+
+        const finishPick = (battleTeam: string[]) => {
+            if (!this.node?.isValid || this._sessionId !== sessionId) return;
+            const picked = this._pickBattlePet(pets, battleTeam);
+            if (!picked) {
+                this._abortBattleEntry('你没有可用的机甲，无法进入战斗');
+                return;
+            }
+            const { petId, firstPet } = picked;
+            console.log(`[BattleScene] 使用机甲: ${petId}`);
+
+            let info = this.cacheManager.getRobotPetInfoCache(petId);
+            if (!info) {
+                console.warn('[BattleScene] 未找到机甲详情缓存，正在请求详情数据...');
+                this.requestRobotPetInfoAndInit(petId, firstPet);
+                return;
+            }
+            if (info.data) info = info.data;
+            this._applyPlayerPetFromInfo(petId, info);
+        };
+
+        // 仍请求服务端出战队伍；失败或未设置时回退缓存/列表首只（与 battle_room_handler 对齐）
         this.ws.request(
             GameConfig.MESSAGE_TYPES.GET_BATTLE_TEAM,
             { character_id: characterId },
             (resp: any) => {
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
                 let battleTeam: string[] = [];
-                if (resp && resp.success === true && resp.data && Array.isArray(resp.data.battle_team)) {
+                if (resp?.success && resp.data && Array.isArray(resp.data.battle_team)) {
                     battleTeam = resp.data.battle_team.map((x: any) => String(x)).filter((x: string) => x);
                 }
-
-                // 优先使用出战队伍第一位，否则回退列表第一位
-                let firstPet: any = null;
-                let petId: string = '';
                 if (battleTeam.length > 0) {
-                    const battlePetId = battleTeam[0];
-                    firstPet = pets.find(p => String(p.pet_id || p._id || p.id || '') === battlePetId);
-                    if (firstPet) {
-                        petId = battlePetId;
-                        console.log(`[BattleScene] 使用服务器出战队伍第一位机甲: ${petId}`);
-                    }
-                }
-
-                if (!firstPet || !petId) {
-                    firstPet = pets[0];
-                    petId = String(firstPet.pet_id || firstPet._id || firstPet.id || '');
-                    if (!petId) {
-                        console.error('[BattleScene] 第一个机甲缺少 pet_id，无法初始化玩家单位');
-                        return;
-                    }
-                }
-
-                // 从机甲详情缓存中读取属性（MechAttributeTEST 已经在查看详情时写入）
-                let info = this.cacheManager.getRobotPetInfoCache(petId);
-                if (!info) {
-                    console.warn('[BattleScene] 未找到机甲详情缓存，正在请求详情数据...');
-                    this.requestRobotPetInfoAndInit(petId, firstPet);
+                    finishPick(battleTeam);
                     return;
-                } else if (info.data) {
-                    info = info.data;
                 }
-
-                this.playerUnit = this.buildUnitFromRobotInfo('player', petId, info, '玩家机甲');
-
-                // 更新展示（RobotShow）
-                if (this.playerRobotShow && info) {
-                    try {
-                        const dataForShow = { ...info, pet_id: petId };
-                        this.playerRobotShow.updateFromRobotData(dataForShow);
-                    } catch (e) {
-                        console.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
-                    }
+                if (!resp?.success) {
+                    console.warn('[BattleScene] GET_BATTLE_TEAM 失败，尝试缓存/列表回退:', resp?.message);
                 }
-
-                // ✅ 战斗机甲属性面板：初始化 + 立刻刷新（只显示当前出场机甲）
-                this.ensureMechAttributeInited();
-                this.refreshPlayerMechAttributeUI(true);
-                this.startAttributeAutoRefresh();
-
-                // ✅ Player1 图标：按机甲类型切换 gedou/sheji/quanneng
-                const classValue = Number((info as any)?.Class ?? (info as any)?.data?.Class ?? 1);
-                this.updatePlayer1ClassIcon(classValue);
-
-                // 玩家准备好后再生成敌人（敌人依赖 playerUnit.petId）
-                this.initEnemyUnit();
+                finishPick(cachedTeam.length > 0 ? cachedTeam : []);
             },
             true,
-            5000
+            5000,
         );
     }
 
@@ -1164,9 +1235,16 @@ export class BattleScene extends Component {
 
         const success = data.success === true || data.success === 'true';
         if (!success) {
-            console.error('[BattleScene] 获取机甲详情失败:', data.message || data.data?.message || '未知错误');
-            // 失败时使用列表中的基础数据
+            console.warn('[BattleScene] 获取机甲详情失败，使用列表基础数据:', data.message || data.data?.message);
             this.initPlayerUnitWithFallback();
+            if (this.playerUnit) {
+                this.initEnemyUnit();
+                if (this.enemyUnit) {
+                    this.scheduleOnce(() => this.beginBattleAfterReady(), 0.1);
+                }
+            } else {
+                this._abortBattleEntry('获取机甲详情失败');
+            }
             return;
         }
 
@@ -1202,29 +1280,17 @@ export class BattleScene extends Component {
         }
 
         const listCache = this.cacheManager.getRobotPetsCache(characterId);
-        let pets: any[] = [];
-        if (listCache) {
-            if (listCache.data && Array.isArray(listCache.data.pets)) {
-                pets = listCache.data.pets;
-            } else if (Array.isArray(listCache.pets)) {
-                pets = listCache.pets;
-            }
-        }
-
-        if (!pets || pets.length === 0) {
+        const pets = this._extractPetsFromCache(listCache);
+        const cachedTeam = this._battleTeamFromCache(listCache);
+        const picked = this._pickBattlePet(pets, cachedTeam);
+        if (!picked) {
             return;
         }
 
-        const firstPet = pets[0];
-        const petId = String(firstPet.pet_id || firstPet._id || firstPet.id || '');
-        if (!petId) {
-            return;
-        }
-
+        const { petId, firstPet } = picked;
         console.warn('[BattleScene] 使用列表中的基础数据构建玩家单位（可能缺少完整属性）');
         this.playerUnit = this.buildUnitFromRobotInfo('player', petId, firstPet, '玩家机甲');
 
-        // 更新展示
         if (this.playerRobotShow) {
             try {
                 const dataForShow = { ...firstPet, pet_id: petId };
@@ -1234,7 +1300,6 @@ export class BattleScene extends Component {
             }
         }
 
-        // 备用数据也尽量刷新属性面板与图标
         this.ensureMechAttributeInited();
         this.refreshPlayerMechAttributeUI(true);
         this.startAttributeAutoRefresh();
@@ -1274,7 +1339,6 @@ export class BattleScene extends Component {
                     return;
                 }
 
-                // 构建敌方单位（攻击/防御/initiative 用 Current* 优先）
                 const melee = Number(enemy.CurrentMelee ?? enemy.Melee ?? 0);
                 const shoot = Number(enemy.CurrentShooting ?? enemy.Shooting ?? 0);
                 const armor = Number(enemy.CurrentArmor ?? enemy.Armor ?? 0);
@@ -1295,7 +1359,6 @@ export class BattleScene extends Component {
                     rawData: enemy,
                 };
 
-                // 更新敌方展示（含满装备）
                 if (this.enemyRobotShow) {
                     try {
                         this.enemyRobotShow.updateFromRobotData(enemy);
@@ -1304,14 +1367,12 @@ export class BattleScene extends Component {
                     }
                 }
 
-                // ✅ 敌人已生成：如果当前还在 INIT（或刚启动战斗），立即进入指令选择阶段
-                // 这样操作面板/倒计时必然会出现
                 if (this.state === BattleState.INIT && this.playerUnit && this.enemyUnit) {
                     this.beginBattleAfterReady();
                 }
             },
             true,
-            10000
+            10000,
         );
     }
 
@@ -2102,14 +2163,43 @@ export class BattleScene extends Component {
     }
 
     // =========================
-    // 新增：PlayerShow / EnemyPlayerShow（角色形象+名字）
+    // PlayerShow / EnemyPlayerShow（角色形象+名字）
+    // 剧情战：玩家形象+机甲；敌方仅机甲
+    // 模拟战/PVP：双方形象+机甲
     // =========================
 
-    private refreshPlayerAndEnemyShows(): void {
-        // 玩家：必须与玩家数据一致（get_player / is_self=true）
+    private _isStoryBattle(): boolean {
+        return !!this._storyBattleMeta;
+    }
+
+    /** 按战斗类型切换人物形象节点显隐（机甲 RobotShow 始终展示） */
+    private _syncBattlePortraitVisibility(): void {
+        const story = this._isStoryBattle();
+        if (this.playerShowRoot) {
+            this.playerShowRoot.active = true;
+        }
+        if (this.enemyPlayerShowRoot) {
+            this.enemyPlayerShowRoot.active = !story;
+        }
+        if (this.playerRobotShow?.node) {
+            this.playerRobotShow.node.active = true;
+        }
+        if (this.enemyRobotShow?.node) {
+            this.enemyRobotShow.node.active = true;
+        }
+    }
+
+    private refreshPlayerAndEnemyShows(enemyCharacterId?: string | null): void {
+        this._syncBattlePortraitVisibility();
         this.refreshPlayerShowFromServer();
-        // 敌人：暂时随机
-        this.refreshEnemyShowRandom();
+        if (this._isStoryBattle()) {
+            return;
+        }
+        if (enemyCharacterId && this.currentBattleMode === 'pvp') {
+            this.refreshEnemyShowFromCharacterId(enemyCharacterId);
+        } else {
+            this.refreshEnemyShowRandom();
+        }
     }
 
     private refreshPlayerShowFromServer(): void {
@@ -2164,6 +2254,52 @@ export class BattleScene extends Component {
             this.ws.off('player_info_response', this.playerInfoListener, this);
         }
         this.playerInfoListener = null;
+    }
+
+    private refreshEnemyShowFromCharacterId(characterId: string): void {
+        if (!this.enemyPlayerShowRoot || !characterId) {
+            this.refreshEnemyShowRandom();
+            return;
+        }
+
+        const requestId = `battle_get_enemy_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+        const req: any = { character_id: characterId, request_id: requestId };
+        const userId = this.ws.getUserId?.();
+        if (userId) req.user_id = userId;
+
+        this.clearEnemyInfoListener();
+
+        const handler = (resp: any) => {
+            const data = (resp && resp.success && resp.data && typeof resp.data === 'object')
+                ? { ...resp, ...resp.data }
+                : resp;
+            if (!data || data.success !== true) return;
+            if (data.request_id !== undefined && data.request_id !== null) {
+                if (data.request_id !== requestId) return;
+            } else {
+                const respCid = String(data.character_id || '');
+                if (respCid && respCid !== characterId) return;
+            }
+            const name = String(data.role_name || '');
+            const spriteIndex = Number(data.Sprite || data.sprite || 0);
+            this.applyRoleShow(this.enemyPlayerShowRoot!, name, spriteIndex);
+            cleanup();
+        };
+        this.enemyInfoListener = handler;
+        const cleanup = () => this.clearEnemyInfoListener();
+
+        this.ws.on('player_info', handler, this);
+        this.ws.on('player_info_response', handler, this);
+        this.ws.send({ type: 'get_player', ...req } as any, true, true);
+    }
+
+    private clearEnemyInfoListener(): void {
+        if (!this.enemyInfoListener) return;
+        if (this.ws) {
+            this.ws.off('player_info', this.enemyInfoListener, this);
+            this.ws.off('player_info_response', this.enemyInfoListener, this);
+        }
+        this.enemyInfoListener = null;
     }
 
     private refreshEnemyShowRandom(): void {

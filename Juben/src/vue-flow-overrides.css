@@ -1,0 +1,117 @@
+/* 默认连线略加粗，浅色底上更清晰 */
+.vue-flow {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.vue-flow__viewport.vue-flow__container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.vue-flow__edge-path,
+.vue-flow__connection-path {
+  stroke: #94a3b8;
+  stroke-width: 2;
+}
+
+/* Vue Flow 默认把选中边改成深灰 #555，视觉像变细、发闷；改为高亮加粗 */
+.vue-flow__edge.selected .vue-flow__edge-path,
+.vue-flow__edge:focus .vue-flow__edge-path,
+.vue-flow__edge:focus-visible .vue-flow__edge-path {
+  stroke: #38bdf8 !important;
+  stroke-width: 4 !important;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.6));
+}
+
+.vue-flow__edge.selectable:hover .vue-flow__edge-path {
+  stroke: #e2e8f0;
+  stroke-width: 3;
+}
+
+.vue-flow__edge.selected.selectable:hover .vue-flow__edge-path {
+  stroke: #7dd3fc !important;
+  stroke-width: 4 !important;
+}
+
+/* 地图框始终在剧情节点下方，且框体区域点击穿透（仅标题栏/缩放手柄可点） */
+.vue-flow__node-mapFrame {
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+.vue-flow__node-mapFrame .map-header,
+.vue-flow__node-mapFrame .select-strip,
+.vue-flow__node-mapFrame .resize-handle {
+  pointer-events: auto !important;
+}
+
+.vue-flow__node-mapFrame .map-header,
+.vue-flow__node-mapFrame .select-strip {
+  cursor: grab;
+}
+
+.vue-flow__node-mapFrame.selected .map-header,
+.vue-flow__node-mapFrame.selected .select-strip {
+  cursor: grabbing;
+}
+
+.vue-flow__node-storyNode {
+  z-index: 0;
+}
+
+/* 选中态：提升层级 + 高亮边框（scoped 组件内样式有时不触发，此处全局兜底） */
+.vue-flow__node.selected {
+  z-index: 2 !important;
+}
+
+.vue-flow__node-mapFrame.selected {
+  z-index: 0 !important;
+}
+
+.vue-flow__node.selected .story-node,
+.vue-flow__node .story-node.editor-selected,
+.story-node.selected {
+  border-color: #38bdf8 !important;
+  box-shadow:
+    0 0 0 2px rgba(56, 189, 248, 0.65),
+    0 0 16px rgba(14, 165, 233, 0.35),
+    0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}
+
+.vue-flow__node.selected .story-node.dimmed,
+.vue-flow__node .story-node.editor-selected.dimmed {
+  opacity: 0.72 !important;
+}
+
+.vue-flow__node-mapFrame.selected .map-frame,
+.vue-flow__node-mapFrame .map-frame.selected {
+  border-color: rgba(56, 189, 248, 0.95) !important;
+  box-shadow:
+    0 0 0 2px rgba(56, 189, 248, 0.5),
+    inset 0 0 0 1px rgba(14, 165, 233, 0.25) !important;
+  background: rgba(14, 165, 233, 0.14) !important;
+}
+
+.vue-flow__node.selected .portal-node,
+.vue-flow__node .portal-node.selected {
+  border-color: #38bdf8 !important;
+  box-shadow:
+    0 0 0 2px rgba(56, 189, 248, 0.65),
+    0 0 12px rgba(14, 165, 233, 0.3) !important;
+}
+
+/* 禁用 Vue Flow 多选外框（改用单节点 editorSelected 高亮） */
+.vue-flow__nodesselection {
+  display: none !important;
+}
+
+.vue-flow__minimap {
+  background: #0f172a !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  border-radius: 6px;
+  overflow: hidden;
+}
