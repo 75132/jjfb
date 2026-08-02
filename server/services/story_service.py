@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -493,7 +494,12 @@ async def interact(
         progress["pending_battle"] = {
             "event_id": event_id,
             "battle_ref": battle_ref,
+            "map_code": map_code,
+            "status": "authorized",
+            "room_id": None,
+            "request_id": None,
             "npc_uid": npc_uid,
+            "updated_at": time.time(),
         }
         await save_progress(progress)
         payload["action"] = "battle"

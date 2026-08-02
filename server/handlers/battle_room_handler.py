@@ -380,62 +380,96 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
 
     player_snapshot = _build_attrs_from_pet(player_pet)
 
-    # 已有进行中房间：禁止再 create，由客户端走 BattleResumeController 恢复
-    existing = battle_room_service.get_room_for_character(str(cid))
-    if existing and existing.get("status") == "in_progress":
+    request_id = data.get("request_id")
+    story_event_id = data.get("story_event_id")
+    map_code = data.get("map_code") or "test_base"
+    battle_ref = data.get("battle_ref")
+    # 可变 holder：enemy_factory 内填充，供 get_or_create 成功后绑定 pending
+    story_context: Dict[str, Any] = {}
+
+    async def _enemy_factory():
+        if story_event_id:
+            from services.story_battle_service import (
+                StoryBattleError,
+                prepare_story_battle,
+            )
+
+            try:
+                prep = await prepare_story_battle(
+                    user["_id"],
+                    str(cid),
+                    map_code,
+                    str(story_event_id),
+                    str(battle_ref) if battle_ref else None,
+                    data.get("player_pet_id"),
+                    require_battle_ref_match=bool(battle_ref),
+                    request_id=str(request_id) if request_id else None,
+                    mark_creating=True,
+                )
+            except StoryBattleError as e:
+                raise RuntimeError(e.message) from e
+            story_context.clear()
+            story_context.update({
+                "event_id": prep.event_id,
+                "map_code": prep.map_code,
+                "user_id": user["_id"],
+            })
+            return _build_attrs_from_pet(prep.enemy)
+        if battle_ref:
+            from services.story_battle_shared import generate_story_enemy
+
+            enemy_obj, err = await generate_story_enemy(
+                user["_id"], str(cid), str(battle_ref), data.get("player_pet_id")
+            )
+            if err:
+                raise RuntimeError(err)
+            return _build_attrs_from_pet(enemy_obj)
+        return await _generate_enemy_snapshot(user, player_snapshot.get("pet_id"))
+
+    try:
+        room, created = await battle_room_service.get_or_create_pve_room(
+            user_id=str(user["_id"]),
+            character_id=str(cid),
+            player_doc=player_snapshot,
+            enemy_factory=_enemy_factory,
+            request_id=str(request_id) if request_id else None,
+            story_context=story_context,
+        )
+    except RuntimeError as e:
+        msg = str(e) or "创建战斗房间失败"
+        code = 400 if ("未授权" in msg or "缺少" in msg) else 500
+        await utils.send_error_response(
+            websocket, "battle_room_create", msg, code=code, request_data=data
+        )
+        return
+    except Exception as e:
         await utils.send_error_response(
             websocket,
             "battle_room_create",
-            "已有进行中的战斗房间，请先恢复",
-            code=409,
+            f"创建战斗房间失败: {e}",
+            code=500,
             request_data=data,
-            error_code="ACTIVE_BATTLE_ROOM",
         )
         return
 
-    story_event_id = data.get("story_event_id")
-    map_code = data.get("map_code") or "test_base"
-    if story_event_id:
-        from services.story_battle_shared import consume_or_validate_pending_battle
-
-        _pending, enemy_obj, err = await consume_or_validate_pending_battle(
-            user["_id"],
-            str(cid),
-            map_code,
-            story_event_id,
-            player_pet_id=data.get("player_pet_id"),
-        )
-        if err:
+    if not created:
+        # 幂等重试：同 request_id 命中已有房间 → 成功返回
+        idempotent = False
+        if request_id:
+            key = (str(cid), str(request_id))
+            cached = battle_room_service._pve_create_idempotency.get(key)
+            if cached and cached[0] == room.get("room_id"):
+                idempotent = True
+        if not idempotent:
             await utils.send_error_response(
-                websocket, "battle_room_create", err, code=400 if "未授权" in err else 500, request_data=data
+                websocket,
+                "battle_room_create",
+                "已有进行中的战斗房间，请先恢复",
+                code=409,
+                request_data=data,
+                error_code="ACTIVE_BATTLE_ROOM",
             )
             return
-        enemy_snapshot = _build_attrs_from_pet(enemy_obj)
-    elif data.get("battle_ref"):
-        # 本地验收：仅 battle_ref、不校验 pending（skipServerAuth）
-        from services.story_battle_shared import generate_story_enemy
-
-        enemy_obj, err = await generate_story_enemy(
-            user["_id"], str(cid), str(data.get("battle_ref")), data.get("player_pet_id")
-        )
-        if err:
-            await utils.send_error_response(
-                websocket, "battle_room_create", err, code=500, request_data=data
-            )
-            return
-        enemy_snapshot = _build_attrs_from_pet(enemy_obj)
-    else:
-        enemy_snapshot = await _generate_enemy_snapshot(
-            user, player_snapshot.get("pet_id")
-        )
-
-    # 这里的 user_id 只用于标识归属，统一转成字符串，避免 ObjectId 不能 JSON 序列化的问题
-    room = battle_room_service.create_pve_room(
-        user_id=str(user["_id"]),
-        character_id=str(cid),
-        player_doc=player_snapshot,
-        enemy_doc=enemy_snapshot,
-    )
 
     # 确保返回的 room state 完全清理了 ObjectId（双重保险）
     cleaned_room = _clean_objectid_for_json(room)

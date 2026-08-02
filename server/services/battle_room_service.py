@@ -17,11 +17,13 @@ from __future__ import annotations
 import time
 import asyncio
 import uuid
-from typing import Any, Dict, Optional, Literal
+from typing import Any, Awaitable, Callable, Dict, Optional, Literal, Tuple, Union
 from bson import ObjectId
+import inspect
 
 Side = Literal["player", "enemy"]
 ActionType = Literal["ATTACK", "DEFEND", "ESCAPE"]
+EnemyFactory = Callable[[], Union[Dict[str, Any], Awaitable[Dict[str, Any]]]]
 
 
 def _clean_objectid_for_json(obj: Any) -> Any:
@@ -47,6 +49,9 @@ class BattleRoomService:
     # 每回合指令阶段时长（秒），客户端倒计时以此为准，重连时从 state 恢复
     COMMAND_PHASE_SECONDS = 30
 
+    # request_id 幂等缓存 TTL（秒）
+    IDEMPOTENCY_TTL_SECONDS = 30 * 60
+
     def __init__(self) -> None:
         # room_id -> room_state
         self.rooms: Dict[str, Dict[str, Any]] = {}
@@ -59,8 +64,140 @@ class BattleRoomService:
         # (room_id, round) -> event
         self._pvp_round_events: Dict[str, asyncio.Event] = {}
 
+        # PVE 创建：角色级锁，防止并发重复 create
+        self._pve_create_locks: Dict[str, asyncio.Lock] = {}
+        # (character_id, request_id) -> (room_id, created_at)
+        self._pve_create_idempotency: Dict[Tuple[str, str], Tuple[str, float]] = {}
+
         # 房间空闲超时时间（秒），超过则自动清理
         self.ROOM_IDLE_TIMEOUT = 10 * 60  # 10 分钟
+
+    def _get_pve_create_lock(self, character_id: str) -> asyncio.Lock:
+        cid = str(character_id)
+        lock = self._pve_create_locks.get(cid)
+        if lock is None:
+            lock = asyncio.Lock()
+            self._pve_create_locks[cid] = lock
+        return lock
+
+    def _cleanup_expired_idempotency(self, now: Optional[float] = None) -> None:
+        now = now if now is not None else self._now()
+        expired = [
+            key
+            for key, (_rid, ts) in self._pve_create_idempotency.items()
+            if now - ts > self.IDEMPOTENCY_TTL_SECONDS
+        ]
+        for key in expired:
+            self._pve_create_idempotency.pop(key, None)
+
+    def _clear_idempotency_for_room(self, room_id: str) -> None:
+        dead = [key for key, (rid, _ts) in self._pve_create_idempotency.items() if rid == room_id]
+        for key in dead:
+            self._pve_create_idempotency.pop(key, None)
+
+    def _maybe_drop_pve_lock(self, character_id: str) -> None:
+        """无活跃请求后清理角色锁，避免字典无限增长。"""
+        cid = str(character_id)
+        lock = self._pve_create_locks.get(cid)
+        if lock is not None and not lock.locked():
+            self._pve_create_locks.pop(cid, None)
+
+    async def get_or_create_pve_room(
+        self,
+        *,
+        user_id: Any,
+        character_id: str,
+        player_doc: Dict[str, Any],
+        enemy_factory: EnemyFactory,
+        request_id: Optional[str] = None,
+        story_context: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[Dict[str, Any], bool]:
+        """
+        角色级原子 get-or-create。
+
+        Returns:
+            (room, created) — created=True 表示本调用新建了房间。
+            同 request_id 重试返回同房间且 created=False。
+            已有活动房间时返回已有房间且 created=False。
+
+        story_context（可选）: event_id / map_code / user_id 等，用于成功后绑定 pending。
+        """
+        cid = str(character_id)
+        lock = self._get_pve_create_lock(cid)
+        await lock.acquire()
+        created = False
+        room: Optional[Dict[str, Any]] = None
+        try:
+            self._cleanup_expired_idempotency()
+
+            existing = self.get_room_for_character(cid)
+            if existing and existing.get("status") == "in_progress":
+                return existing, False
+
+            if request_id:
+                key = (cid, str(request_id))
+                cached = self._pve_create_idempotency.get(key)
+                if cached:
+                    rid, _ts = cached
+                    cached_room = self.get_room_by_id(rid)
+                    if cached_room and cached_room.get("status") == "in_progress":
+                        return cached_room, False
+
+            enemy_doc = enemy_factory()
+            if inspect.isawaitable(enemy_doc):
+                enemy_doc = await enemy_doc
+            if not isinstance(enemy_doc, dict):
+                raise RuntimeError("enemy_factory must return dict")
+
+            room = self.create_pve_room(
+                user_id=user_id,
+                character_id=cid,
+                player_doc=player_doc,
+                enemy_doc=enemy_doc,
+            )
+            created = True
+
+            if request_id:
+                self._pve_create_idempotency[(cid, str(request_id))] = (
+                    room["room_id"],
+                    self._now(),
+                )
+
+            if story_context and story_context.get("event_id"):
+                from services.story_battle_service import transition_pending_to_in_room
+
+                await transition_pending_to_in_room(
+                    story_context.get("user_id") or user_id,
+                    cid,
+                    story_context.get("map_code") or "test_base",
+                    str(story_context["event_id"]),
+                    room["room_id"],
+                )
+
+            return room, True
+        except Exception:
+            # 创建异常不得留下孤儿 room / 错误索引
+            if created and room is not None:
+                rid = room.get("room_id")
+                if rid:
+                    self._clear_idempotency_for_room(str(rid))
+                    self._destroy_room(str(rid))
+            if story_context and story_context.get("event_id"):
+                try:
+                    from services.story_battle_service import rollback_pending_to_authorized
+
+                    await rollback_pending_to_authorized(
+                        story_context.get("user_id") or user_id,
+                        cid,
+                        story_context.get("map_code") or "test_base",
+                        str(story_context["event_id"]),
+                    )
+                except Exception:
+                    pass
+            raise
+        finally:
+            lock.release()
+            self._maybe_drop_pve_lock(cid)
 
     # ----------------------
     # 房间生命周期
@@ -322,6 +459,7 @@ class BattleRoomService:
     def _destroy_room(self, room_id: str) -> None:
         room = self.rooms.pop(room_id, None)
         if not room:
+            self._clear_idempotency_for_room(room_id)
             return
         if room.get("mode") == "pvp":
             for cid_raw in [room.get("player_character_id"), room.get("enemy_character_id")]:
@@ -332,6 +470,7 @@ class BattleRoomService:
             cid = str(room.get("character_id") or "")
             if cid and self.char_room_index.get(cid) == room_id:
                 self.char_room_index.pop(cid, None)
+        self._clear_idempotency_for_room(room_id)
 
     # ----------------------
     # 战斗指令与结算
@@ -592,15 +731,18 @@ class BattleRoomService:
         if room.get("status") == "finished":
             room["updated_at"] = self._now()
             # 修复点：房间结束后从 char_room_index 移除，避免 resume 再找到该房间，后续战斗必须走 create 开新局
+            rid = room.get("room_id")
             if room.get("mode") == "pvp":
                 for cid_raw in [room.get("player_character_id"), room.get("enemy_character_id")]:
                     cid = str(cid_raw or "")
-                    if cid and self.char_room_index.get(cid) == room.get("room_id"):
+                    if cid and self.char_room_index.get(cid) == rid:
                         self.char_room_index.pop(cid, None)
             else:
                 cid = str(room.get("character_id") or "")
-                if cid and self.char_room_index.get(cid) == room.get("room_id"):
+                if cid and self.char_room_index.get(cid) == rid:
                     self.char_room_index.pop(cid, None)
+            if rid:
+                self._clear_idempotency_for_room(str(rid))
 
 
 # 全局单例，供 handler 使用
