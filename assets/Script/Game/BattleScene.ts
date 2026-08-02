@@ -11,6 +11,7 @@ import {
     type BattleEntryIntent,
 } from './battle-entry-intent';
 import { validateBattleRestoreState } from './battle-restore';
+import type { StoryBattleFinishedResult } from './story-runtime-mode';
 
 const { ccclass, property } = _decorator;
 
@@ -203,7 +204,7 @@ export class BattleScene extends Component {
     /** 已应用过的恢复 room_id，避免同房重复入场动画 */
     private _appliedRestoreRoomId: string | null = null;
     /** 剧情战斗结束回调与上下文（由 story intent 携带，不参与来源猜测） */
-    private _storyBattleCallback: ((won: boolean, errMsg?: string) => void) | null = null;
+    private _storyBattleCallback: ((result: StoryBattleFinishedResult) => void) | null = null;
     private _storyContext: { eventId: string; battleRef: string; mapCode: string } | null = null;
 
     /**
@@ -224,7 +225,13 @@ export class BattleScene extends Component {
         if (storyCb) {
             this._storyBattleCallback = null;
             this._storyContext = null;
-            storyCb(false, '进入战斗超时，请重试');
+            storyCb({
+                won: false,
+                roomId: this.roomId || '',
+                winner: 'enemy',
+                reason: 'timeout',
+                errMsg: '进入战斗超时，请重试',
+            });
         }
         this.state = BattleState.FINISHED;
         this.isAnimating = false;
@@ -470,7 +477,7 @@ export class BattleScene extends Component {
         battleRef: string;
         /** 跳过 story_interact 授权（本地剧情验收）；战斗仍走 battle_room_create */
         skipServerAuth?: boolean;
-        onFinished: (won: boolean, errMsg?: string) => void;
+        onFinished: (result: StoryBattleFinishedResult) => void;
     }): void {
         const validated = validateStoryBattleCreate({
             eventId: opts.eventId,
@@ -480,11 +487,17 @@ export class BattleScene extends Component {
         });
         if (validated.ok === false) {
             console.error('[BattleScene] 剧情战拒绝创建:', validated.reason);
-            opts.onFinished(false, validated.reason === 'missing_event_id'
-                ? '缺少 event_id'
-                : validated.reason === 'missing_map_code'
-                    ? '缺少 map_code'
-                    : '剧情战斗参数不完整');
+            opts.onFinished({
+                won: false,
+                roomId: '',
+                winner: 'enemy',
+                reason: validated.reason,
+                errMsg: validated.reason === 'missing_event_id'
+                    ? '缺少 event_id'
+                    : validated.reason === 'missing_map_code'
+                        ? '缺少 map_code'
+                        : '剧情战斗参数不完整',
+            });
             return;
         }
 
@@ -506,7 +519,13 @@ export class BattleScene extends Component {
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
             console.error('[BattleScene] 剧情战：未获取 characterId');
-            opts.onFinished(false, '未选择角色，无法进入战斗');
+            opts.onFinished({
+                won: false,
+                roomId: '',
+                winner: 'enemy',
+                reason: 'no_character',
+                errMsg: '未选择角色，无法进入战斗',
+            });
             return;
         }
         const sessionId = this._sessionId;
@@ -535,7 +554,13 @@ export class BattleScene extends Component {
                 if (!createResp?.success || !createResp.data?.state) {
                     const msg = createResp?.message || '剧情战斗房间创建失败';
                     console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
-                    this._storyBattleCallback?.(false, msg);
+                    this._storyBattleCallback?.({
+                        won: false,
+                        roomId: '',
+                        winner: 'enemy',
+                        reason: 'create_failed',
+                        errMsg: msg,
+                    });
                     this._storyBattleCallback = null;
                     this._storyContext = null;
                     this._entryIntent = null;
@@ -2091,11 +2116,12 @@ export class BattleScene extends Component {
             reason,
         };
 
-        // 通知服务器战斗结果（当前仅用于记录日志）
+        // 通知服务器战斗结果（仅日志，无胜负权威意义；剧情结算走 story_battle_finalize）
         try {
             this.ws.send(
                 {
                     type: 'battle_result',
+                    // DEPRECATED: 客户端 battle_result / battle_won 不得作为剧情权威证据
                     winner: winner === 'player' ? 'player' : 'enemy',
                     reason,
                     player: this.playerUnit ? this.buildUnitSummary(this.playerUnit) : null,
@@ -2126,7 +2152,7 @@ export class BattleScene extends Component {
 
         this.log(`战斗结束：${result.type === 'win' ? '玩家胜利' : '玩家失败'}（原因：${reason === 'ko' ? '击倒' : '逃跑'}）`);
 
-        const finishedRoomId = this.roomId;
+        const finishedRoomId = this.roomId || '';
         if (finishedRoomId) {
             try {
                 BattleResumeController.getInstance().notifyRoomFinished(finishedRoomId);
@@ -2141,7 +2167,12 @@ export class BattleScene extends Component {
         if (storyCb) {
             this._storyBattleCallback = null;
             this._storyContext = null;
-            storyCb(won);
+            storyCb({
+                won,
+                roomId: finishedRoomId,
+                winner,
+                reason,
+            });
         }
 
         // 关闭 BattleScene 面板（上层可选择重新激活）

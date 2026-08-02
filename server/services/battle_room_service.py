@@ -154,6 +154,7 @@ class BattleRoomService:
                 character_id=cid,
                 player_doc=player_doc,
                 enemy_doc=enemy_doc,
+                story_context=story_context if (story_context and story_context.get("event_id")) else None,
             )
             created = True
 
@@ -225,12 +226,14 @@ class BattleRoomService:
         character_id: str,
         player_doc: Dict[str, Any],
         enemy_doc: Dict[str, Any],
+        story_context: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         创建一场 PVE 战斗房间。
 
         player_doc / enemy_doc 为“机甲属性快照”，应包含：
         - RobotName / Level / MaxHP / CurrentHP / Melee / Shooting / Armor / Initiative 等
+        story_context: 剧情房间必填 {map_code, event_id, battle_ref}；普通 PVE 为 None
         """
         room_id = self._gen_room_id()
         now = self._now()
@@ -253,6 +256,12 @@ class BattleRoomService:
             "enemy": enemy_actor,
             "result": None,  # {'winner': 'player'|'enemy', 'reason': 'ko'|'escape'|'timeout'}
         }
+        if story_context and isinstance(story_context, dict) and story_context.get("event_id"):
+            room["story_context"] = {
+                "map_code": str(story_context.get("map_code") or ""),
+                "event_id": str(story_context.get("event_id") or ""),
+                "battle_ref": str(story_context.get("battle_ref") or ""),
+            }
         self._set_command_phase_deadline(room)
 
         self.rooms[room_id] = room
@@ -743,6 +752,8 @@ class BattleRoomService:
                     self.char_room_index.pop(cid, None)
             if rid:
                 self._clear_idempotency_for_room(str(rid))
+            # 持久化 finished（含 story_context），供 story_battle_finalize 按 room_id 校验
+            self._persist_room(room)
 
 
 # 全局单例，供 handler 使用

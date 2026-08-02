@@ -67,6 +67,16 @@ import {
     isStaleMainlineGiver,
     parseEnemyGiverUid,
 } from './story-npc-visibility';
+import {
+    allowsSkipServerStoryApis,
+    DEFAULT_STORY_RUNTIME_MODE,
+    normalizeStoryRuntimeMode,
+    shouldAutoFinalizeSettlement,
+    shouldPlayRewardAnimation,
+    type StoryBattleFinishedResult,
+    type StoryRuntimeMode,
+} from './story-runtime-mode';
+import { GameConfig } from '../global/GameConfig';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -164,13 +174,13 @@ export class StoryManager extends Component {
 
     @property({
         tooltip:
-            '本地剧情模式（默认开启）：不请求 story_get_state / story_interact / story_event_complete；战斗仍走 WS 房间。接回服务端时取消勾选。',
+            '剧情运行模式：server-development=联调/正式（走服务端）；local-preview=制作预览（可跳过 get_state/interact/complete）。',
     })
-    skipServerRequirements = true;
+    storyRuntimeMode: string = DEFAULT_STORY_RUNTIME_MODE;
 
     @property({
         tooltip:
-            '本地模式下每次进入场景从头跑主线（清 localStorage、不存档）。关则可跨次保留进度。',
+            '仅 local-preview 有效：每次进入场景从头跑主线（清 localStorage、不存档）。',
     })
     resetLocalStoryOnEnter = true;
 
@@ -326,6 +336,14 @@ export class StoryManager extends Component {
     private readonly _tmpWorld = v3();
     private readonly _tmpLp = v3();
 
+    private _isLocalPreview(): boolean {
+        return allowsSkipServerStoryApis(this.storyRuntimeMode);
+    }
+
+    private _runtimeMode(): StoryRuntimeMode {
+        return normalizeStoryRuntimeMode(this.storyRuntimeMode);
+    }
+
     onLoad(): void {
         this._resolveRefs();
         input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
@@ -333,6 +351,13 @@ export class StoryManager extends Component {
         this._resolveLocalPlayerOnce();
         this._resolveNpcs();
         this._ensureTaskStatusFramesLoaded();
+        const ws = WebSocketManager.getInstance();
+        storyLog('info', 'story_runtime_mode', {
+            story_runtime_mode: this._runtimeMode(),
+            map_code: this.mapCode,
+            config_version: String((this.mapConfig?.json as any)?.configVersion ?? ''),
+            character_id: ws?.getCharacterId?.() ?? null,
+        });
         if (this.debugLog) {
             storyLog('info', 'StoryManager.onLoad', {
                 host: this.node?.name,
@@ -355,7 +380,7 @@ export class StoryManager extends Component {
         this.scheduleOnce(() => {
             this._resolveLocalPlayerOnce();
             this._resolveNpcs();
-            if (this.skipServerRequirements) {
+            if (this._isLocalPreview()) {
                 this._loadLocalStoryState();
             } else {
                 this._fetchStoryStateFromServer();
@@ -365,7 +390,7 @@ export class StoryManager extends Component {
 
     private _onCharacterSelected = (data: { success?: boolean } | null): void => {
         if (!data?.success) return;
-        if (this.skipServerRequirements) {
+        if (this._isLocalPreview()) {
             if (!this._storyStateLoaded) {
                 this._loadLocalStoryState();
             }
@@ -927,11 +952,11 @@ export class StoryManager extends Component {
     }
 
     private _fetchStoryStateFromServer(): void {
-        if (this.skipServerRequirements) return;
+        if (this._isLocalPreview()) return;
         this._ws = WebSocketManager.getInstance();
         if (!this._ws?.getCharacterId?.()) return;
         this._ws.request(
-            'story_get_state',
+            GameConfig.MESSAGE_TYPES.STORY_GET_STATE,
             { map_code: this.mapCode },
             (resp: any) => {
                 if (!this._alive()) return;
@@ -945,10 +970,74 @@ export class StoryManager extends Component {
                 this._storyStateLoaded = true;
                 this._refreshNpcVisibility();
                 this._refreshOwnedItemsFromWs();
+                void this._maybeAutoFinalizePendingSettlement(d);
             },
             true,
             8000,
         );
+    }
+
+    /** 断线窗口：服务端已判胜但未 finalize → 自动结算，不打开战斗、不 resume */
+    private async _maybeAutoFinalizePendingSettlement(d: Record<string, unknown>): Promise<void> {
+        if (!shouldAutoFinalizeSettlement(d as any)) return;
+        const settlement = d.pending_story_settlement as {
+            room_id: string;
+            event_id: string;
+        };
+        storyLog('info', 'StoryManager: pending settlement → auto finalize', {
+            room_id: settlement.room_id,
+            event_id: settlement.event_id,
+        });
+        try {
+            const data = await this._promiseBattleFinalize(settlement.event_id, settlement.room_id);
+            if (shouldPlayRewardAnimation(data as any)) {
+                this._applyEffectsFromResponse(data);
+            } else {
+                this._syncProgressFromPayload(data);
+            }
+            this._refreshNpcVisibility();
+            this._syncNpcTaskIndicators();
+            this._refreshOwnedItemsFromWs();
+            // 再拉一次状态确认
+            this.scheduleOnce(() => this._fetchStoryStateFromServer(), 0.2);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : '剧情结算待恢复';
+            this.showToast(`战斗已完成，剧情结算待恢复：${msg}`, 4000);
+        }
+    }
+
+    private async _promiseBattleFinalize(
+        eventId: string,
+        roomId: string,
+        choiceId?: string,
+    ): Promise<Record<string, unknown>> {
+        if (this._isLocalPreview()) {
+            return {};
+        }
+        this._showFlowWaiting(true);
+        try {
+            const ws = this._ws || WebSocketManager.getInstance();
+            const resp = await promisifyWsRequest(
+                (route, payload, cb, useRid, timeout) => ws.request(route, payload, cb, useRid, timeout),
+                GameConfig.MESSAGE_TYPES.STORY_BATTLE_FINALIZE,
+                {
+                    map_code: this.mapCode,
+                    event_id: eventId,
+                    room_id: roomId,
+                    choice_id: choiceId,
+                },
+                12000,
+            );
+            const d = (resp.data || resp) as Record<string, unknown>;
+            this._syncProgressFromPayload(d);
+            return d;
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : '剧情结算失败';
+            this.showToast(msg, 2800);
+            throw err;
+        } finally {
+            this._showFlowWaiting(false);
+        }
     }
 
     private _localStoryStorageKey(): string {
@@ -958,7 +1047,7 @@ export class StoryManager extends Component {
     }
 
     private _loadLocalStoryState(): void {
-        if (!this.skipServerRequirements) return;
+        if (!this._isLocalPreview()) return;
 
         if (this.resetLocalStoryOnEnter) {
             clearLocalStoryPersist(this._localStoryStorageKey());
@@ -1005,7 +1094,7 @@ export class StoryManager extends Component {
     }
 
     private _persistLocalStoryState(): void {
-        if (!this.skipServerRequirements || this.resetLocalStoryOnEnter) return;
+        if (!this._isLocalPreview() || this.resetLocalStoryOnEnter) return;
         const data: LocalStoryPersist = {
             completed_event_ids: [...this._localCompletedEventIds],
             battle_cleared_event_ids: [...this._battleClearedEventIds],
@@ -1019,7 +1108,7 @@ export class StoryManager extends Component {
 
     /** 清除当前 map 本地剧情进度（调试 / 重开主线） */
     public clearLocalStoryProgress(): void {
-        if (!this.skipServerRequirements) return;
+        if (!this._isLocalPreview()) return;
         clearLocalStoryPersist(this._localStoryStorageKey());
         this._resetStoryRuntimeState();
         if (this.debugLog) storyLog('info', 'StoryManager: 本地剧情进度已清除', { mapCode: this.mapCode });
@@ -1052,7 +1141,7 @@ export class StoryManager extends Component {
         ev: MapNpcEvent,
         choiceId?: string,
     ): Promise<StoryInteractPayload> {
-        if (this.skipServerRequirements) {
+        if (this._isLocalPreview()) {
             const client = ev.client ?? {};
             if (ev.eventType === 'battle' && client.choiceScriptId && !choiceId) {
                 return { action: 'choice_then_battle' };
@@ -1078,10 +1167,9 @@ export class StoryManager extends Component {
     private async _promiseComplete(
         npcUid: string,
         ev: MapNpcEvent,
-        opts?: { battleWon?: boolean; choiceId?: string },
+        opts?: { choiceId?: string },
     ): Promise<Record<string, unknown>> {
-        if (this.skipServerRequirements) {
-            if (opts?.battleWon === false) return {};
+        if (this._isLocalPreview()) {
             const data = buildLocalCompletePayload(ev, opts?.choiceId);
             this._applyEffectsFromResponse(data);
             this._persistLocalStoryState();
@@ -1093,11 +1181,11 @@ export class StoryManager extends Component {
             const ws = this._ws || WebSocketManager.getInstance();
             const resp = await promisifyWsRequest(
                 (route, payload, cb, useRid, timeout) => ws.request(route, payload, cb, useRid, timeout),
-                'story_event_complete',
+                GameConfig.MESSAGE_TYPES.STORY_EVENT_COMPLETE,
                 {
                     map_code: this.mapCode,
                     event_id: eventId,
-                    battle_won: opts?.battleWon !== false,
+                    // DEPRECATED: battle_won 不再作为权威字段；非战斗事件可忽略
                     choice_id: opts?.choiceId,
                 },
                 10000,
@@ -1136,10 +1224,43 @@ export class StoryManager extends Component {
         ev: MapNpcEvent,
         choiceId?: string,
         alreadyAuthorized = false,
-    ): Promise<boolean> {
+    ): Promise<StoryBattleFinishedResult> {
         return new Promise((resolve) => {
-            this._startStoryBattle(npcUid, ev, choiceId, alreadyAuthorized, (won) => resolve(won));
+            this._startStoryBattle(npcUid, ev, choiceId, alreadyAuthorized, (result) => resolve(result));
         });
+    }
+
+    private async _finalizeAfterStoryBattleWin(
+        npcUid: string,
+        ev: MapNpcEvent,
+        battleResult: StoryBattleFinishedResult,
+        choiceId?: string,
+    ): Promise<void> {
+        if (this._isLocalPreview()) {
+            const data = await this._promiseComplete(npcUid, ev, { choiceId });
+            this._applyEffectsFromResponse(data);
+            this._markEventDone(npcUid, ev, choiceId ? { choiceId } : {});
+            return;
+        }
+        if (!battleResult.roomId) {
+            this.showToast('战斗已完成，缺少 roomId，剧情结算待恢复', 4000);
+            this._endActivation();
+            return;
+        }
+        try {
+            const eventId = this._stableEventId(npcUid, ev);
+            const data = await this._promiseBattleFinalize(eventId, battleResult.roomId, choiceId);
+            if (shouldPlayRewardAnimation(data as any)) {
+                this._applyEffectsFromResponse(data);
+            } else {
+                this._syncProgressFromPayload(data);
+            }
+            this._markEventDone(npcUid, ev, choiceId ? { choiceId } : {});
+        } catch {
+            this.showToast('战斗已完成，剧情结算待恢复', 4000);
+            this._endActivation();
+            this._syncNpcTaskIndicators();
+        }
     }
 
     private _showChoiceFeedback(opt: ChoiceOption): void {
@@ -1184,20 +1305,16 @@ export class StoryManager extends Component {
                     }
                     this._activationPausedForBattle = true;
                     await this._promiseInteract(npcUid, ev, opt.id);
-                    const won = await this._promiseStoryBattle(npcUid, ev, opt.id, true);
-                    if (!won) return;
-                    const data = await this._promiseComplete(npcUid, ev, { battleWon: true });
-                    this._applyEffectsFromResponse(data);
-                    this._markEventDone(npcUid, ev, {});
+                    const battleResult = await this._promiseStoryBattle(npcUid, ev, opt.id, true);
+                    if (!battleResult.won) return;
+                    await this._finalizeAfterStoryBattleWin(npcUid, ev, battleResult, opt.id);
                     return;
                 }
 
                 this._activationPausedForBattle = true;
-                const won = await this._promiseStoryBattle(npcUid, ev, undefined, true);
-                if (!won) return;
-                const data = await this._promiseComplete(npcUid, ev, { battleWon: true });
-                this._applyEffectsFromResponse(data);
-                this._markEventDone(npcUid, ev, {});
+                const battleResult = await this._promiseStoryBattle(npcUid, ev, undefined, true);
+                if (!battleResult.won) return;
+                await this._finalizeAfterStoryBattleWin(npcUid, ev, battleResult);
                 return;
             }
 
@@ -1240,7 +1357,7 @@ export class StoryManager extends Component {
                     return;
                 }
                 const data = await this._promiseComplete(npcUid, ev, { choiceId: opt.id });
-                if (!this.skipServerRequirements && (!data || Object.keys(data).length === 0)) return;
+                if (!this._isLocalPreview() && (!data || Object.keys(data).length === 0)) return;
                 this._applyEffectsFromResponse(data);
                 this._markEventDone(npcUid, ev, { choiceId: opt.id });
                 return;
@@ -1403,14 +1520,14 @@ export class StoryManager extends Component {
     }
 
     /**
-     * @param onFinished 战斗结束回调（剧情流 Promise 用）
+     * @param onFinished 战斗结束回调（含 roomId，供权威 finalize）
      */
     private _startStoryBattle(
         npcUid: string,
         ev: MapNpcEvent,
         choiceId?: string,
         alreadyAuthorized = false,
-        onFinished?: (won: boolean) => void,
+        onFinished?: (result: StoryBattleFinishedResult) => void,
     ): void {
         const eventId = this._stableEventId(npcUid, ev);
         const battleRef = ev.server?.battleRef || 'battle_300001';
@@ -1419,7 +1536,7 @@ export class StoryManager extends Component {
         if (!battle) {
             this._activationPausedForBattle = false;
             this.showToast('未配置 BattleScene，无法进入剧情战', 3000);
-            onFinished?.(false);
+            onFinished?.({ won: false, roomId: '', winner: 'enemy', reason: 'no_battle_scene' });
             return;
         }
 
@@ -1429,23 +1546,23 @@ export class StoryManager extends Component {
                 mapCode: this.mapCode,
                 eventId,
                 battleRef,
-                skipServerAuth: this.skipServerRequirements,
-                onFinished: (won, errMsg) => {
+                skipServerAuth: this._isLocalPreview(),
+                onFinished: (result) => {
                     this._activationPausedForBattle = false;
-                    if (!won) {
+                    if (!result.won) {
                         this._clearBattleProgress(npcUid, ev);
                         this._endActivation();
-                        this.showToast(errMsg || '战斗失败', 3200);
+                        this.showToast(result.errMsg || '战斗失败', 3200);
                         this._syncNpcTaskIndicators();
-                        onFinished?.(false);
+                        onFinished?.(result);
                         return;
                     }
-                    onFinished?.(true);
+                    onFinished?.(result);
                 },
             });
         };
 
-        if (this.skipServerRequirements || alreadyAuthorized) {
+        if (this._isLocalPreview() || alreadyAuthorized) {
             launchBattle();
             return;
         }
@@ -1453,7 +1570,7 @@ export class StoryManager extends Component {
         const ws = this._ws || WebSocketManager.getInstance();
         const eid = this._stableEventId(npcUid, ev);
         ws.request(
-            'story_interact',
+            GameConfig.MESSAGE_TYPES.STORY_INTERACT,
             { map_code: this.mapCode, event_id: eid, npc_uid: npcUid, choice_id: choiceId },
             (resp: { success?: boolean; message?: string }) => {
                 if (!this._alive()) return;
@@ -1461,7 +1578,7 @@ export class StoryManager extends Component {
                     this._activationPausedForBattle = false;
                     this.showToast(resp?.message || '战斗未授权', 3200);
                     this._endActivation();
-                    onFinished?.(false);
+                    onFinished?.({ won: false, roomId: '', winner: 'enemy', reason: 'unauthorized', errMsg: resp?.message });
                     return;
                 }
                 launchBattle();

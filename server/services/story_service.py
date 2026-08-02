@@ -426,6 +426,8 @@ async def save_progress(progress: dict) -> None:
 
 
 def build_state_payload(progress: dict, map_cfg: dict) -> dict:
+    from services.story_battle_service import build_pending_story_settlement
+
     tasks_out = []
     task_defs = _task_defs(map_cfg)
     for tid, tdef in sorted(task_defs.items()):
@@ -439,7 +441,8 @@ def build_state_payload(progress: dict, map_cfg: dict) -> dict:
                     "status": st,
                 }
             )
-    return {
+    pending = progress.get("pending_battle")
+    payload = {
         "map_code": progress.get("map_code"),
         "completed_event_ids": list(progress.get("completed_event_ids") or []),
         "active_tasks": progress.get("active_tasks") or [],
@@ -447,11 +450,15 @@ def build_state_payload(progress: dict, map_cfg: dict) -> dict:
         "mainline_step": int(progress.get("mainline_step", 0) or 0),
         "story_version": progress.get("story_version"),
         "tasks": tasks_out,
-        "pending_battle": progress.get("pending_battle"),
+        "pending_battle": pending,
         "revealed_npc_uids": list(progress.get("revealed_npc_uids") or []),
         "spawned_npc_uids": list(progress.get("spawned_npc_uids") or []),
         "dynamic_npcs": list(progress.get("dynamic_npcs") or []),
     }
+    settlement = build_pending_story_settlement(progress)
+    if settlement:
+        payload["pending_story_settlement"] = settlement
+    return payload
 
 
 async def interact(
@@ -498,6 +505,7 @@ async def interact(
             "status": "authorized",
             "room_id": None,
             "request_id": None,
+            "battle_result": None,
             "npc_uid": npc_uid,
             "updated_at": time.time(),
         }
@@ -538,7 +546,13 @@ async def complete_event(
     event_id: str,
     battle_won: bool = True,
     choice_id: Optional[str] = None,
+    room_id: Optional[str] = None,
 ) -> Tuple[bool, str, dict]:
+    """
+    完成剧情事件。
+    battle 事件：不再信任 battle_won；须走权威 finalize（可用 room_id / pending.room_id）。
+    battle_won 仅兼容日志，无权威意义（deprecated）。
+    """
     map_cfg = load_map_config(map_code)
     if not map_cfg:
         return False, f"未知地图 {map_code}", {}
@@ -549,19 +563,32 @@ async def complete_event(
     progress = await get_or_create_progress(user_id, character_id, map_code)
 
     if _event_completed(progress, event_id):
-        return True, "already_completed", build_state_payload(progress, map_cfg)
+        return True, "already_completed", {
+            **build_state_payload(progress, map_cfg),
+            "authoritative_battle_verified": ev.get("eventType") == "battle",
+            "idempotent_replay": True,
+        }
 
     event_type = ev.get("eventType", "")
     server = ev.get("server") or {}
 
     if event_type == "battle":
-        if not battle_won:
-            progress["pending_battle"] = None
-            await save_progress(progress)
-            return False, "战斗失败", build_state_payload(progress, map_cfg)
+        # deprecated: battle_won 被忽略；必须验证真实房间结果
+        _ = battle_won  # noqa: F841 — 兼容旧客户端字段，无权威意义
         pending = progress.get("pending_battle") or {}
-        if pending.get("event_id") != event_id:
-            return False, "请先通过 story_interact 发起战斗", build_state_payload(progress, map_cfg)
+        rid = room_id or (pending.get("room_id") if isinstance(pending, dict) else None)
+        if not rid:
+            return False, "缺少 room_id，请调用 story_battle_finalize", build_state_payload(progress, map_cfg)
+        from services.story_battle_service import finalize_story_battle
+
+        return await finalize_story_battle(
+            user_id=user_id,
+            character_id=str(character_id),
+            map_code=map_code,
+            event_id=event_id,
+            room_id=str(rid),
+            choice_id=choice_id,
+        )
 
     ok, msg = await check_requirements(user_id, character_id, progress, server.get("requirements") or [])
     if not ok:

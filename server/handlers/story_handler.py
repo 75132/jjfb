@@ -73,17 +73,77 @@ async def handle_story_event_complete(websocket, data, current_user_id, current_
             await utils.send_direct_response(websocket, cached, request_data=data)
             return current_user_id, current_character_id
 
+    # DEPRECATED: battle_won 无权威意义，仅兼容旧客户端；战斗事件委托 finalize 校验房间结果
     battle_won = data.get("battle_won", True)
     if isinstance(battle_won, str):
         battle_won = battle_won.lower() in ("1", "true", "yes")
     choice_id = data.get("choice_id")
-    ok, msg, payload = await complete_event(uid, cid, map_code, event_id, battle_won=battle_won, choice_id=choice_id)
+    room_id = data.get("room_id")
+    ok, msg, payload = await complete_event(
+        uid,
+        cid,
+        map_code,
+        event_id,
+        battle_won=battle_won,
+        choice_id=choice_id,
+        room_id=room_id,
+    )
     if not ok:
         await utils.send_error_response(websocket, "story_event_complete", msg, code=400, request_data=data)
         return current_user_id, current_character_id
 
     response = {
         "type": "story_event_complete_response",
+        "success": True,
+        "data": payload,
+    }
+    if msg:
+        response["message"] = msg
+    if request_id:
+        idempotency_service.mark_processed(str(request_id), response)
+    await utils.send_direct_response(websocket, response, request_data=data)
+    return current_user_id, current_character_id
+
+
+async def handle_story_battle_finalize(websocket, data, current_user_id, current_character_id):
+    """权威剧情战斗结算：不接受客户端 battle_won。"""
+    user, uid, cid = await _resolve_user_character(websocket, data, current_user_id, current_character_id)
+    if not user:
+        return current_user_id, current_character_id
+    map_code = data.get("map_code") or "test_base"
+    event_id = data.get("event_id")
+    room_id = data.get("room_id")
+    if not event_id:
+        await utils.send_error_response(websocket, "story_battle_finalize", "缺少 event_id", code=400, request_data=data)
+        return current_user_id, current_character_id
+    if not room_id:
+        await utils.send_error_response(websocket, "story_battle_finalize", "缺少 room_id", code=400, request_data=data)
+        return current_user_id, current_character_id
+
+    request_id = data.get("request_id")
+    if request_id:
+        cached = idempotency_service.get_result(str(request_id))
+        if cached:
+            await utils.send_direct_response(websocket, cached, request_data=data)
+            return current_user_id, current_character_id
+
+    from services.story_battle_service import finalize_story_battle
+
+    ok, msg, payload = await finalize_story_battle(
+        user_id=uid,
+        character_id=str(cid),
+        map_code=map_code,
+        event_id=str(event_id),
+        room_id=str(room_id),
+        request_id=str(request_id) if request_id else None,
+        choice_id=data.get("choice_id"),
+    )
+    if not ok:
+        await utils.send_error_response(websocket, "story_battle_finalize", msg, code=400, request_data=data)
+        return current_user_id, current_character_id
+
+    response = {
+        "type": "story_battle_finalize_response",
         "success": True,
         "data": payload,
     }

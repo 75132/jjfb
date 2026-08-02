@@ -432,7 +432,13 @@ ROUTES: Dict[str, RouteHandler] = {
         story_handler.handle_story_event_complete,
         require_auth=True,
         returns_user_ids=True,
-        description='剧情事件完成上报'
+        description='剧情事件完成上报（战斗事件委托权威 finalize）'
+    ),
+    'story_battle_finalize': RouteHandler(
+        story_handler.handle_story_battle_finalize,
+        require_auth=True,
+        returns_user_ids=True,
+        description='权威剧情战斗结算（校验房间结果，不接受 battle_won）'
     ),
     'story_battle_start': RouteHandler(
         story_handler.handle_story_battle_start,

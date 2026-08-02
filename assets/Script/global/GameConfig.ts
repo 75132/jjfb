@@ -106,6 +106,7 @@ export class GameConfig {
         STORY_GET_STATE: 'story_get_state',
         STORY_INTERACT: 'story_interact',
         STORY_EVENT_COMPLETE: 'story_event_complete',
+        STORY_BATTLE_FINALIZE: 'story_battle_finalize',
         STORY_BATTLE_START: 'story_battle_start',
         MAIL_LIST: 'mail_list',
         MAIL_READ: 'mail_read',

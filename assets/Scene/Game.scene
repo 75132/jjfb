@@ -68835,7 +68835,7 @@
       "__uuid__": "5e7baf89-d1b0-4dd9-8ae6-2f20f14cf3d9",
       "__expectedType__": "cc.JsonAsset"
     },
-    "skipServerRequirements": true,
+    "storyRuntimeMode": "server-development",
     "interactKey": 69,
     "hideNpcWhenStoryComplete": true,
     "sequentialStoryNpcReveal": true,

@@ -33,6 +33,7 @@ THROTTLE_CONFIG = {
     'story_get_state': 0.5,
     'story_interact': 0.5,
     'story_event_complete': 0.5,
+    'story_battle_finalize': 0.5,
     'story_battle_start': 1.0,
     'mail_list': 0.5,
     'mail_claim': 0.5,

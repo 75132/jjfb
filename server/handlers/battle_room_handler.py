@@ -412,6 +412,7 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
             story_context.update({
                 "event_id": prep.event_id,
                 "map_code": prep.map_code,
+                "battle_ref": prep.battle_ref,
                 "user_id": user["_id"],
             })
             return _build_attrs_from_pet(prep.enemy)
@@ -567,6 +568,20 @@ async def handle_battle_room_action(websocket, data: Dict[str, Any], current_cha
 
     # 战斗结束后将玩家机甲 CurrentHP 回写数据库，保证“实打实”血量持久化（robotpet 表里 user_id 是 ObjectId）
     if new_state.get("status") == "finished":
+        # 剧情房间：服务端权威更新 pending（不依赖客户端 battle_result）
+        if new_state.get("story_context") and new_state.get("mode") != "pvp":
+            try:
+                from services.story_battle_service import record_story_battle_result
+
+                await record_story_battle_result(
+                    character_id=str(cid),
+                    room=new_state,
+                    user_id=user["_id"],
+                )
+            except Exception as e:
+                import traceback
+                print(f"[battle_room_action] record_story_battle_result 失败: {e}", traceback.format_exc())
+
         if new_state.get("mode") == "pvp":
             # PVP：回写双方
             for internal_side in ("player", "enemy"):
