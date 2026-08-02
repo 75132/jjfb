@@ -1,0 +1,18 @@
+{
+  "__type__": "cc.SpriteAtlas",
+  "content": {
+    "name": "SkillIcon",
+    "spriteFrames": [
+      "skill_1",
+      "c7533286-bd2d-4dde-b3d3-7680ef444383@bf082",
+      "skill_2",
+      "c7533286-bd2d-4dde-b3d3-7680ef444383@9d75b",
+      "skill_3",
+      "c7533286-bd2d-4dde-b3d3-7680ef444383@636fd",
+      "skill_4",
+      "c7533286-bd2d-4dde-b3d3-7680ef444383@82bb1",
+      "skill_5",
+      "c7533286-bd2d-4dde-b3d3-7680ef444383@dee53"
+    ]
+  }
+}

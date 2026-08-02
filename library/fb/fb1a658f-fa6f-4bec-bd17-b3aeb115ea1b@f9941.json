@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Npc_10",
+    "atlas": "",
+    "rect": {
+      "x": 4,
+      "y": 0,
+      "width": 39,
+      "height": 48
+    },
+    "offset": {
+      "x": -0.5,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 48,
+      "height": 48
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -19.5,
+        -24,
+        0,
+        19.5,
+        -24,
+        0,
+        -19.5,
+        24,
+        0,
+        19.5,
+        24,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        4,
+        48,
+        43,
+        48,
+        4,
+        0,
+        43,
+        0
+      ],
+      "nuv": [
+        0.08333333333333333,
+        0,
+        0.8958333333333334,
+        0,
+        0.08333333333333333,
+        1,
+        0.8958333333333334,
+        1
+      ],
+      "minPos": {
+        "x": -19.5,
+        "y": -24,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 19.5,
+        "y": 24,
+        "z": 0
+      }
+    },
+    "texture": "fb1a658f-fa6f-4bec-bd17-b3aeb115ea1b@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

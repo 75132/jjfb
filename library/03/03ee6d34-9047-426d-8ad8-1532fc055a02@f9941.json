@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "gs_L1-0",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 2,
+      "width": 140,
+      "height": 138
+    },
+    "offset": {
+      "x": 0,
+      "y": -1
+    },
+    "originalSize": {
+      "width": 140,
+      "height": 140
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -70,
+        -69,
+        0,
+        70,
+        -69,
+        0,
+        -70,
+        69,
+        0,
+        70,
+        69,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        138,
+        140,
+        138,
+        0,
+        0,
+        140,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0.9857142857142858,
+        1,
+        0.9857142857142858
+      ],
+      "minPos": {
+        "x": -70,
+        "y": -69,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 70,
+        "y": 69,
+        "z": 0
+      }
+    },
+    "texture": "03ee6d34-9047-426d-8ad8-1532fc055a02@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

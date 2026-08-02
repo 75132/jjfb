@@ -1,0 +1,53 @@
+{
+  "data": {
+    "path": {
+      "Map\\2\\Map1-2.tmx": [
+        "Map\\2\\Map1.png"
+      ],
+      "Map\\1\\1-1.tmx": [
+        "Map\\1\\MAP1.png"
+      ],
+      "Map\\1\\1-3.tmx": [
+        "Map\\1\\MAP1.png"
+      ],
+      "Map\\1\\1-2.tmx": [
+        "Map\\1\\MAP1.png"
+      ],
+      "Map\\2\\Map1-1.tmx": [
+        "Map\\2\\Map1.png"
+      ],
+      "UI\\Skill_icon\\SkillIcon.plist": [
+        "UI\\Skill_icon\\SkillIcon.png"
+      ],
+      "UI\\UI\\UI.plist": [
+        "UI\\UI\\UI.png"
+      ],
+      "resources\\NumberIcon\\NumberIcon.plist": [
+        "resources\\NumberIcon\\NumberIcon.png"
+      ],
+      "UI\\NumberIcon\\NumberIcon.plist": [
+        "UI\\NumberIcon\\NumberIcon.png"
+      ],
+      "UI\\UI2\\UI2.plist": [
+        "UI\\UI2\\UI2.png"
+      ],
+      "Image\\Weapon\\Dun\\Dun.plist": [
+        "Image\\Weapon\\Dun\\Dun.png"
+      ],
+      "Image\\Weapon\\Gun\\Gun.plist": [
+        "Image\\Weapon\\Gun\\Gun.png"
+      ],
+      "Image\\Weapon\\Wing\\Wing.plist": [
+        "Image\\Weapon\\Wing\\Wing.png"
+      ],
+      "Image\\Weapon\\Weapon\\Weapon.plist": [
+        "Image\\Weapon\\Weapon\\Weapon.png"
+      ],
+      "resources\\IconSet2\\IconSet2.plist": [
+        "resources\\IconSet2\\IconSet2.png"
+      ]
+    },
+    "uuid": {}
+  },
+  "version": "1.0.0"
+}

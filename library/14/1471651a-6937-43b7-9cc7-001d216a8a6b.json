@@ -1,0 +1,8 @@
+{
+  "__type__": "cc.TextAsset",
+  "_name": "00_地图叙事配置总规范",
+  "_objFlags": 0,
+  "__editorExtras__": {},
+  "_native": "",
+  "text": "# 地图叙事配置总规范（对齐 README + 剧情）\r\n\r\n## 1. 总原则\r\n- 一个地图一个 JSON：`map_{mapId}.json`\r\n- 三层副本不是同图分层，而是三张独立地图（3 个 `mapId`）\r\n- 所有交互统一挂在 `npcs[].events[]`，不再拆独立传送表\r\n- `eventType` 用英文常量，额外保留 `eventTypeDesc` 中文备注便于策划阅读\r\n\r\n## 2. 事件类型命名（统一）\r\n- `dialog`（对话）\r\n- `battle`（战斗）\r\n- `teleport`（传送）\r\n- `shop`（商店）\r\n- `task`（任务）\r\n- `capture`（捉宠）\r\n- `pvp`（竞技）\r\n\r\n## 3. 事件参数建议\r\n- `dialog`：`dialogId`\r\n- `battle`：`battleId`, `enemyGroupId`\r\n- `teleport`：`toMapId`, `toX`, `toY`, `unlockKey?`\r\n- `shop`：`shopId`\r\n- `task`：`taskId`, `phase`（`accept`/`submit`）\r\n- `capture`：`capturePoolId`, `captureRate`\r\n- `pvp`：`roomType`, `ratingMin`, `ratingMax`\r\n\r\n## 4. NPC 命名约定\r\n- `npcUid`：`{mapId}_{role}_{index}`，如 `1_commander_01`\r\n- `prefabKey`：优先复用旧资源命名（可参考 `tip/mapman.txt`）\r\n\r\n## 5. 对话写作口径（结合原始提取）\r\n- 主线风格：防线、虫族、机甲、补给、前哨、守卫\r\n- 系统提示可复用：如“准备进入战斗”“任务已达成条件”“连接中，请稍等”\r\n- 引导语可复用 `tip/hint@hint.txt` 中提示文本作为 NPC 常驻台词池\r\n\r\n## 6. 三层副本字段建议\r\n在地图 JSON 的 `copyInfo` 内保留：\r\n- `dungeonId`：副本组 ID（1/2/3 层共用）\r\n- `layer`：当前地图层号（1/2/3）\r\n- `isMainLine`：是否主线必过\r\n- `refreshTime`：每日刷新时间（如 `04:00`）\r\n\r\n"
+}

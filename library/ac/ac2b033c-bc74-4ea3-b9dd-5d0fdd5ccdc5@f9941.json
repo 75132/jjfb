@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Menu2",
+    "atlas": "",
+    "rect": {
+      "x": 2,
+      "y": 0,
+      "width": 476,
+      "height": 48
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 480,
+      "height": 48
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -238,
+        -24,
+        0,
+        238,
+        -24,
+        0,
+        -238,
+        24,
+        0,
+        238,
+        24,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        2,
+        48,
+        478,
+        48,
+        2,
+        0,
+        478,
+        0
+      ],
+      "nuv": [
+        0.004166666666666667,
+        0,
+        0.9958333333333333,
+        0,
+        0.004166666666666667,
+        1,
+        0.9958333333333333,
+        1
+      ],
+      "minPos": {
+        "x": -238,
+        "y": -24,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 238,
+        "y": 24,
+        "z": 0
+      }
+    },
+    "texture": "ac2b033c-bc74-4ea3-b9dd-5d0fdd5ccdc5@6c48a",
+    "packable": true,
+    "pixelsToUnit": 100,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": 0
+  }
+}

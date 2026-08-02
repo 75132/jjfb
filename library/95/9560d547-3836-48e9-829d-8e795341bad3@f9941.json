@@ -1,0 +1,90 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Map1",
+    "atlas": "",
+    "rect": {
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 320
+    },
+    "offset": {
+      "x": 0,
+      "y": 0
+    },
+    "originalSize": {
+      "width": 192,
+      "height": 320
+    },
+    "rotated": false,
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "vertices": {
+      "rawPosition": [
+        -96,
+        -160,
+        0,
+        96,
+        -160,
+        0,
+        -96,
+        160,
+        0,
+        96,
+        160,
+        0
+      ],
+      "indexes": [
+        0,
+        1,
+        2,
+        2,
+        1,
+        3
+      ],
+      "uv": [
+        0,
+        320,
+        192,
+        320,
+        0,
+        0,
+        192,
+        0
+      ],
+      "nuv": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "minPos": {
+        "x": -96,
+        "y": -160,
+        "z": 0
+      },
+      "maxPos": {
+        "x": 96,
+        "y": 160,
+        "z": 0
+      }
+    },
+    "texture": "9560d547-3836-48e9-829d-8e795341bad3@6c48a",
+    "packable": false,
+    "pixelsToUnit": 0,
+    "pivot": {
+      "x": 0,
+      "y": 0
+    },
+    "meshType": 0
+  }
+}

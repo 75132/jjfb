@@ -1,0 +1,6 @@
+2026-06-18 00:14:36 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - _OperationCancelled: operation cancelled
+2026-06-18 00:14:36 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - _OperationCancelled: operation cancelled
+2026-06-18 00:18:53 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - _OperationCancelled: operation cancelled
+2026-06-18 00:18:53 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - _OperationCancelled: operation cancelled
+2026-06-18 01:27:01 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10054] 远程主机强迫关闭了一个现有的连接。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
+2026-06-18 01:27:01 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10054] 远程主机强迫关闭了一个现有的连接。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)

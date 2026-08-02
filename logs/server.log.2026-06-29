@@ -1,0 +1,540 @@
+2026-06-29 00:02:40 | INFO     | game_server | ============================================================
+2026-06-29 00:02:40 | INFO     | game_server | 🎮 MMO游戏服务器启动
+2026-06-29 00:02:40 | INFO     | game_server | ============================================================
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用数据库操作线程池（50 个工作线程）
+2026-06-29 00:02:42 | INFO     | game_server | 消息推送调度器已启动 | flush_interval=0.02
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用消息推送调度器（Buffer Scheduler）
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用幂等性服务（Idempotency Service）
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用Token服务（Token Service）- 支持刷新和撤销
+2026-06-29 00:02:42 | INFO     | game_server | 📝 剧情：进度持久化到 Mongo（STORY_LOCAL_TEST=0）
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用背包缓存服务（最大500个，TTL 300秒）
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 路由字典已保存: d:\jjfbol-cocos\jjfbol-cocos\jjfb\server\data\route_dictionary.json
+2026-06-29 00:02:42 | INFO     | game_server | WebSocket服务器运行在 ws://localhost:8001
+2026-06-29 00:02:42 | INFO     | game_server | 最大连接数: 500 (支持 500 人同时在线)
+2026-06-29 00:02:42 | INFO     | game_server | MongoDB连接池: 最大 Database(MongoClient(host=['8.140.236.16:27017'], document_class=dict, tz_aware=False, connect=True, authsource='admin', authmechanism='SCRAM-SHA-256', maxpoolsize=300, minpoolsize=20, maxidletimems=60000, connecttimeoutms=30000, serverselectiontimeoutms=30000, sockettimeoutms=60000, waitqueuetimeoutms=30000, heartbeatfrequencyms=30000, retrywrites=True, retryreads=True), 'max_pool_size'), 最小 Database(MongoClient(host=['8.140.236.16:27017'], document_class=dict, tz_aware=False, connect=True, authsource='admin', authmechanism='SCRAM-SHA-256', maxpoolsize=300, minpoolsize=20, maxidletimems=60000, connecttimeoutms=30000, serverselectiontimeoutms=30000, sockettimeoutms=60000, waitqueuetimeoutms=30000, heartbeatfrequencyms=30000, retrywrites=True, retryreads=True), 'min_pool_size')
+2026-06-29 00:02:42 | INFO     | game_server | 心跳间隔: 30秒, 超时: 60秒
+2026-06-29 00:02:42 | INFO     | game_server | 消息大小限制: 10.0MB
+2026-06-29 00:02:42 | INFO     | game_server | 用户缓存TTL: 60秒
+2026-06-29 00:02:42 | INFO     | game_server | 查询缓存TTL: 30秒
+2026-06-29 00:02:42 | INFO     | game_server | 批量处理间隔: 0.1秒, 批量大小: 10
+2026-06-29 00:02:42 | INFO     | game_server | 广播并发数: 全局50, 用户10 (避免阻塞)
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用消息压缩（deflate）
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用异步消息广播（不阻塞主线程）
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用连接池和资源管理
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用性能监控和统计
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用 Session 管理服务
+2026-06-29 00:02:42 | INFO     | game_server | ✅ 已启用结构化日志服务
+2026-06-29 00:02:42 | INFO     | game_server | ============================================================
+2026-06-29 00:02:42 | INFO     | game_server | 💡 提示: 服务器已优化支持100+人同时在线
+2026-06-29 00:02:42 | INFO     | game_server | ============================================================
+2026-06-29 00:02:48 | INFO     | game_server | 收到握手请求 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:02:48 | INFO     | game_server | 返回完整字典 | dict_version=0311dfa7
+2026-06-29 00:02:48 | INFO     | game_server | 握手响应已发送 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:02:48 | INFO     | game_server | 路由处理完成 | route=handshake | user_id=anonymous | elapsed_ms=8.01ms
+2026-06-29 00:02:48 | INFO     | game_server | 路由处理完成 | route=connection_init | user_id=anonymous | elapsed_ms=0.00ms
+2026-06-29 00:02:49 | INFO     | game_server | Token已撤销 | token=f7ea6226...
+2026-06-29 00:02:49 | INFO     | game_server | Token已撤销 | token=973dbd68...
+2026-06-29 00:02:49 | INFO     | game_server | 加入频道 | channel=global_chat | user_id=69cd2b1d17d8322502e10ae0 | member_count=1
+2026-06-29 00:02:49 | INFO     | game_server | 用户登录成功 | account=1 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:49 | WARNING  | game_server | 慢请求检测 | route=login | duration_ms=619.93 | user_id=None
+2026-06-29 00:02:49 | INFO     | game_server | 路由处理完成 | route=login | user_id=anonymous | elapsed_ms=620.93ms
+2026-06-29 00:02:52 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=3185.38 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:52 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=3186.38ms
+2026-06-29 00:02:52 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=160.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:52 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=162.00ms
+2026-06-29 00:02:52 | INFO     | game_server | 验证成功 | user_id=69cd2b1d17d8322502e10ae0 | is_test_mode=False
+2026-06-29 00:02:52 | INFO     | game_server | auth_request: 未传 character_id，已从历史 session 恢复 | user_id=69cd2b1d17d8322502e10ae0 | character_id=8d1b9844-908e-4422-9ece-357feb738e18
+2026-06-29 00:02:53 | INFO     | game_server | 自动选择角色 | character_id=8d1b9844-908e-4422-9ece-357feb738e18 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:53 | WARNING  | game_server | 慢请求检测 | route=auth_request | duration_ms=148.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:53 | INFO     | game_server | 路由处理完成 | route=auth_request | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.00ms
+2026-06-29 00:02:53 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=152.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:53 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=155.00ms
+2026-06-29 00:02:53 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=155.9 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:53 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=156.90ms
+2026-06-29 00:02:55 | INFO     | game_server | 路由处理完成 | route=select_character | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=76.00ms
+2026-06-29 00:02:55 | INFO     | game_server | 路由处理完成 | route=bag_get | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=72.81ms
+2026-06-29 00:02:55 | WARNING  | game_server | 慢请求检测 | route=get_robot_pets | duration_ms=195.54 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:55 | INFO     | game_server | 路由处理完成 | route=get_robot_pets | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=196.54ms
+2026-06-29 00:02:59 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=173.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=175.00ms
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=get_chat_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=86.98ms
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=get_announcements_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=79.99ms
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=story_get_state | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=69.53ms
+2026-06-29 00:02:59 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=161.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=162.00ms
+2026-06-29 00:02:59 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=161.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=162.00ms
+2026-06-29 00:02:59 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:03:00 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:03:01 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:03:01 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=82.66ms
+2026-06-29 00:03:01 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:03:01 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.02ms
+2026-06-29 00:03:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:03:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:03:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:03:03 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=77.15ms
+2026-06-29 00:03:03 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:03:06 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=184.54 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:06 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=185.53ms
+2026-06-29 00:03:06 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=95.02ms
+2026-06-29 00:03:07 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=81.97ms
+2026-06-29 00:03:08 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=194.82 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:08 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=195.81ms
+2026-06-29 00:03:08 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=206.04 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:08 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=207.04ms
+2026-06-29 00:03:10 | WARNING  | game_server | 慢请求检测 | route=battle_room_create | duration_ms=904.32 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:10 | INFO     | game_server | 路由处理完成 | route=battle_room_create | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=905.32ms
+2026-06-29 00:03:12 | WARNING  | game_server | 慢请求检测 | route=battle_room_action | duration_ms=333.53 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:12 | INFO     | game_server | 路由处理完成 | route=battle_room_action | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=334.53ms
+2026-06-29 00:03:12 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=193.62 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:12 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=194.63ms
+2026-06-29 00:03:12 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=159.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:12 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=162.01ms
+2026-06-29 00:03:14 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=71.18ms
+2026-06-29 00:03:15 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=179.74 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:15 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=179.74ms
+2026-06-29 00:03:15 | INFO     | game_server | 路由处理完成 | route=battle_result | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:03:15 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=211.56 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:15 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=212.54ms
+2026-06-29 00:03:29 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=180.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:29 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=182.00ms
+2026-06-29 00:03:32 | WARNING  | game_server | 慢请求检测 | route=world_leave | duration_ms=221.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:03:32 | INFO     | game_server | 路由处理完成 | route=world_leave | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=223.00ms
+2026-06-29 00:08:56 | INFO     | game_server | 收到握手请求 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:08:56 | INFO     | game_server | 返回完整字典 | dict_version=0311dfa7
+2026-06-29 00:08:56 | INFO     | game_server | 握手响应已发送 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=handshake | user_id=anonymous | elapsed_ms=43.00ms
+2026-06-29 00:08:56 | INFO     | game_server | 验证成功 | user_id=69cd2b1d17d8322502e10ae0 | is_test_mode=False
+2026-06-29 00:08:56 | INFO     | game_server | 自动选择角色 | character_id=8d1b9844-908e-4422-9ece-357feb738e18 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:08:56 | INFO     | game_server | 加入频道 | channel=global_chat | user_id=69cd2b1d17d8322502e10ae0 | member_count=1
+2026-06-29 00:08:56 | WARNING  | game_server | 慢请求检测 | route=auth_request | duration_ms=190.01 | user_id=None
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=auth_request | user_id=anonymous | elapsed_ms=191.00ms
+2026-06-29 00:08:56 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=151.76 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=152.76ms
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=2.00ms
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=get_chat_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=76.00ms
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=get_announcements_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=93.00ms
+2026-06-29 00:08:56 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=140.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:08:56 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=143.01ms
+2026-06-29 00:08:57 | WARNING  | game_server | 慢请求检测 | route=story_get_state | duration_ms=171.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:08:57 | INFO     | game_server | 路由处理完成 | route=story_get_state | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=171.99ms
+2026-06-29 00:08:57 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=152.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:08:57 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=153.01ms
+2026-06-29 00:08:57 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:08:57 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=142.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:08:57 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=144.00ms
+2026-06-29 00:08:57 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:08:58 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:00 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:02 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:03 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:03 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:03 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:09:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:05 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:05 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:09:05 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:05 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:09:06 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:06 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:06 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:06 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:09 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=131.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:09 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=132.00ms
+2026-06-29 00:09:09 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=175.26 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:09 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=176.26ms
+2026-06-29 00:09:10 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=631.46 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:10 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=631.46ms
+2026-06-29 00:09:10 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=69.00ms
+2026-06-29 00:09:12 | INFO     | game_server | 用户已登出（切换角色，保留token）
+2026-06-29 00:09:13 | WARNING  | game_server | 慢请求检测 | route=logout | duration_ms=124.97 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:13 | INFO     | game_server | 路由处理完成 | route=logout | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=125.97ms
+2026-06-29 00:09:14 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=1040.19 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:14 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1041.20ms
+2026-06-29 00:09:14 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=117.68 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:14 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=117.68ms
+2026-06-29 00:09:14 | INFO     | game_server | 收到握手请求 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:09:14 | INFO     | game_server | 字典版本一致 | dict_version=0311dfa7
+2026-06-29 00:09:14 | INFO     | game_server | 握手响应已发送 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:09:14 | INFO     | game_server | 路由处理完成 | route=handshake | user_id=anonymous | elapsed_ms=2.99ms
+2026-06-29 00:09:14 | INFO     | game_server | 验证成功 | user_id=69cd2b1d17d8322502e10ae0 | is_test_mode=False
+2026-06-29 00:09:14 | INFO     | game_server | 加入频道 | channel=global_chat | user_id=69cd2b1d17d8322502e10ae0 | member_count=1
+2026-06-29 00:09:14 | INFO     | game_server | 路由处理完成 | route=auth_request | user_id=anonymous | elapsed_ms=86.72ms
+2026-06-29 00:09:14 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=122.6 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:14 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=123.60ms
+2026-06-29 00:09:15 | INFO     | game_server | 路由处理完成 | route=get_character_info | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=64.27ms
+2026-06-29 00:09:18 | WARNING  | game_server | 慢请求检测 | route=create_character | duration_ms=485.41 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:18 | INFO     | game_server | 路由处理完成 | route=create_character | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=486.41ms
+2026-06-29 00:09:18 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=219.56 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:18 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=220.56ms
+2026-06-29 00:09:18 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=140.11 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:18 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=142.10ms
+2026-06-29 00:09:18 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=153.68 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:18 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=154.69ms
+2026-06-29 00:09:20 | INFO     | game_server | 路由处理完成 | route=select_character | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=91.08ms
+2026-06-29 00:09:21 | WARNING  | game_server | 慢请求检测 | route=bag_get | duration_ms=142.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=bag_get | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=144.00ms
+2026-06-29 00:09:21 | WARNING  | game_server | 慢请求检测 | route=get_robot_pets | duration_ms=151.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=get_robot_pets | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=153.99ms
+2026-06-29 00:09:21 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=146.55 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=148.55ms
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=get_chat_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=51.00ms
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=get_announcements_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=62.00ms
+2026-06-29 00:09:21 | WARNING  | game_server | 慢请求检测 | route=story_get_state | duration_ms=124.49 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=story_get_state | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=125.49ms
+2026-06-29 00:09:21 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=174.23 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:21 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=175.23ms
+2026-06-29 00:09:22 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=132.1 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:22 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=133.09ms
+2026-06-29 00:09:22 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.98ms
+2026-06-29 00:09:22 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:23 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:23 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:09:23 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:23 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:24 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=63.00ms
+2026-06-29 00:09:24 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:24 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:24 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:26 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:09:34 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=143.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:34 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=145.01ms
+2026-06-29 00:09:34 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=123.11 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:34 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=124.11ms
+2026-06-29 00:09:36 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=570.61 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:36 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=572.61ms
+2026-06-29 00:09:51 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=173.53 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:09:51 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=177.53ms
+2026-06-29 00:10:06 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=222.66 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:10:06 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=223.68ms
+2026-06-29 00:10:21 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=167.12 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:10:21 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=168.12ms
+2026-06-29 00:10:36 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=154.12 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:10:36 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=154.12ms
+2026-06-29 00:10:52 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=917.22 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:10:52 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=918.22ms
+2026-06-29 00:11:06 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=143.54 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:11:06 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.55ms
+2026-06-29 00:11:21 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=252.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:11:21 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=254.00ms
+2026-06-29 00:11:36 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=133.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:11:36 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=133.00ms
+2026-06-29 00:11:51 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=124.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:11:51 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=126.00ms
+2026-06-29 00:12:06 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=143.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:06 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=144.01ms
+2026-06-29 00:12:21 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=179.66 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:21 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=180.66ms
+2026-06-29 00:12:27 | WARNING  | game_server | 慢请求检测 | route=world_leave | duration_ms=102.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:27 | INFO     | game_server | 路由处理完成 | route=world_leave | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=103.01ms
+2026-06-29 00:12:45 | INFO     | game_server | 收到握手请求 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:12:45 | INFO     | game_server | 返回完整字典 | dict_version=0311dfa7
+2026-06-29 00:12:45 | INFO     | game_server | 握手响应已发送 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=handshake | user_id=anonymous | elapsed_ms=19.00ms
+2026-06-29 00:12:45 | INFO     | game_server | 验证成功 | user_id=69cd2b1d17d8322502e10ae0 | is_test_mode=False
+2026-06-29 00:12:45 | INFO     | game_server | 自动选择角色 | character_id=dc6c731f-7540-442c-99c5-7ed65ab2111e | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:45 | INFO     | game_server | 加入频道 | channel=global_chat | user_id=69cd2b1d17d8322502e10ae0 | member_count=1
+2026-06-29 00:12:45 | WARNING  | game_server | 慢请求检测 | route=auth_request | duration_ms=206.34 | user_id=None
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=auth_request | user_id=anonymous | elapsed_ms=208.34ms
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=get_chat_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=84.00ms
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=get_announcements_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=78.00ms
+2026-06-29 00:12:45 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=153.53 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=154.54ms
+2026-06-29 00:12:45 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=189.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=190.99ms
+2026-06-29 00:12:45 | INFO     | game_server | 路由处理完成 | route=story_get_state | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=86.00ms
+2026-06-29 00:12:46 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=165.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:46 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=166.00ms
+2026-06-29 00:12:46 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:12:46 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=140.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:46 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=142.01ms
+2026-06-29 00:12:46 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:12:47 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:12:49 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:12:58 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=329.04 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:58 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=330.04ms
+2026-06-29 00:12:58 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=142.32 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:58 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=143.32ms
+2026-06-29 00:12:58 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=143.27 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:12:58 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=145.27ms
+2026-06-29 00:12:59 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=72.00ms
+2026-06-29 00:13:03 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=80.93ms
+2026-06-29 00:13:03 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:05 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=66.14ms
+2026-06-29 00:13:09 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=154.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:09 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=156.00ms
+2026-06-29 00:13:10 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=87.40ms
+2026-06-29 00:13:11 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=92.38ms
+2026-06-29 00:13:11 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=150.9 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:11 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.91ms
+2026-06-29 00:13:12 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=58.79ms
+2026-06-29 00:13:14 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=160.97 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:14 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=161.97ms
+2026-06-29 00:13:15 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=124.65 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:15 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=125.67ms
+2026-06-29 00:13:15 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=90.01ms
+2026-06-29 00:13:15 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=169.67 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:15 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=170.21ms
+2026-06-29 00:13:16 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=73.84ms
+2026-06-29 00:13:18 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=169.28 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:18 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=170.29ms
+2026-06-29 00:13:19 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=83.99ms
+2026-06-29 00:13:19 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=183.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:19 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=184.00ms
+2026-06-29 00:13:20 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=91.72ms
+2026-06-29 00:13:22 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=178.03 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:22 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=179.03ms
+2026-06-29 00:13:26 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=98.26ms
+2026-06-29 00:13:26 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:13:27 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:13:27 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:28 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=64.67ms
+2026-06-29 00:13:28 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=78.78ms
+2026-06-29 00:13:29 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=73.99ms
+2026-06-29 00:13:31 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=194.82 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:31 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=195.83ms
+2026-06-29 00:13:32 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=91.24ms
+2026-06-29 00:13:33 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=146.98 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:33 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=147.98ms
+2026-06-29 00:13:34 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=173.43 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:34 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=175.43ms
+2026-06-29 00:13:37 | WARNING  | game_server | 慢请求检测 | route=battle_room_create | duration_ms=402.15 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:37 | INFO     | game_server | 路由处理完成 | route=battle_room_create | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=403.15ms
+2026-06-29 00:13:38 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=165.45 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:38 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=166.45ms
+2026-06-29 00:13:41 | INFO     | game_server | 用户已登出（切换角色，保留token）
+2026-06-29 00:13:41 | INFO     | game_server | 路由处理完成 | route=logout | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=73.23ms
+2026-06-29 00:13:41 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=245.28 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:41 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=247.28ms
+2026-06-29 00:13:42 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=164.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:42 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=166.00ms
+2026-06-29 00:13:42 | INFO     | game_server | 收到握手请求 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:13:42 | INFO     | game_server | 字典版本一致 | dict_version=0311dfa7
+2026-06-29 00:13:42 | INFO     | game_server | 握手响应已发送 | client_type=websocket | client_version=1.0.0
+2026-06-29 00:13:42 | INFO     | game_server | 路由处理完成 | route=handshake | user_id=anonymous | elapsed_ms=2.00ms
+2026-06-29 00:13:42 | INFO     | game_server | 验证成功 | user_id=69cd2b1d17d8322502e10ae0 | is_test_mode=False
+2026-06-29 00:13:42 | INFO     | game_server | 加入频道 | channel=global_chat | user_id=69cd2b1d17d8322502e10ae0 | member_count=1
+2026-06-29 00:13:42 | INFO     | game_server | 路由处理完成 | route=auth_request | user_id=anonymous | elapsed_ms=62.98ms
+2026-06-29 00:13:42 | WARNING  | game_server | 慢请求检测 | route=get_all_characters | duration_ms=116.05 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:42 | INFO     | game_server | 路由处理完成 | route=get_all_characters | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=117.05ms
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=select_character | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=89.95ms
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=bag_get | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=83.00ms
+2026-06-29 00:13:43 | WARNING  | game_server | 慢请求检测 | route=get_robot_pets | duration_ms=147.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=get_robot_pets | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=148.00ms
+2026-06-29 00:13:43 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=143.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=144.01ms
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.98ms
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=get_chat_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=51.01ms
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=get_announcements_history | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=82.00ms
+2026-06-29 00:13:43 | INFO     | game_server | 路由处理完成 | route=story_get_state | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=93.11ms
+2026-06-29 00:13:44 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=147.03 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:44 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=148.05ms
+2026-06-29 00:13:44 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=151.46 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:44 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=152.45ms
+2026-06-29 00:13:44 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:44 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:45 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:45 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:45 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:46 | WARNING  | game_server | 慢请求检测 | route=world_step | duration_ms=159.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:46 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=159.62ms
+2026-06-29 00:13:46 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:46 | WARNING  | game_server | 慢请求检测 | route=battle_room_resume | duration_ms=206.68 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:46 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=207.69ms
+2026-06-29 00:13:46 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:46 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:13:47 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:47 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.00ms
+2026-06-29 00:13:47 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:13:48 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:13:48 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=95.04ms
+2026-06-29 00:13:48 | INFO     | game_server | 路由处理完成 | route=battle_room_resume | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:13:50 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=174.33 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:50 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=174.33ms
+2026-06-29 00:13:51 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=76.00ms
+2026-06-29 00:13:52 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=85.30ms
+2026-06-29 00:13:52 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=150.93 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:52 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.94ms
+2026-06-29 00:13:52 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=89.99ms
+2026-06-29 00:13:54 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=238.44 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:54 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=239.43ms
+2026-06-29 00:13:54 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=115.34 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:54 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=116.35ms
+2026-06-29 00:13:54 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=195.95 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:54 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=196.95ms
+2026-06-29 00:13:55 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=51.79ms
+2026-06-29 00:13:56 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=138.49 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:56 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=139.49ms
+2026-06-29 00:13:57 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=135.95 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:57 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=136.94ms
+2026-06-29 00:13:57 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=149.81 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:57 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=150.80ms
+2026-06-29 00:13:57 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=64.02ms
+2026-06-29 00:13:58 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=125.38 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:58 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=126.37ms
+2026-06-29 00:13:58 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=55.72ms
+2026-06-29 00:13:58 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=52.00ms
+2026-06-29 00:13:59 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=213.31 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:13:59 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=214.31ms
+2026-06-29 00:14:03 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=58.05ms
+2026-06-29 00:14:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:14:04 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:14:04 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=75.00ms
+2026-06-29 00:14:07 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=152.93 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:07 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=153.94ms
+2026-06-29 00:14:08 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=92.59ms
+2026-06-29 00:14:10 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=195.32 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:10 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=196.32ms
+2026-06-29 00:14:10 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=204.66 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:10 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=205.66ms
+2026-06-29 00:14:12 | WARNING  | game_server | 慢请求检测 | route=battle_room_create | duration_ms=708.22 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:12 | INFO     | game_server | 路由处理完成 | route=battle_room_create | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=709.22ms
+2026-06-29 00:14:13 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=138.1 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:13 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=138.10ms
+2026-06-29 00:14:14 | WARNING  | game_server | 慢请求检测 | route=battle_room_action | duration_ms=135.6 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:14 | INFO     | game_server | 路由处理完成 | route=battle_room_action | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=135.60ms
+2026-06-29 00:14:17 | WARNING  | game_server | 慢请求检测 | route=battle_room_action | duration_ms=184.74 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:17 | INFO     | game_server | 路由处理完成 | route=battle_room_action | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=184.74ms
+2026-06-29 00:14:20 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=126.73 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:20 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=127.73ms
+2026-06-29 00:14:20 | INFO     | game_server | 路由处理完成 | route=battle_result | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:14:20 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=133.18 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:20 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=134.18ms
+2026-06-29 00:14:20 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=133.36 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:20 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=135.36ms
+2026-06-29 00:14:22 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=72.69ms
+2026-06-29 00:14:24 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=85.78ms
+2026-06-29 00:14:25 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=164.38 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:25 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=165.39ms
+2026-06-29 00:14:25 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=61.17ms
+2026-06-29 00:14:27 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=154.43 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:27 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=156.41ms
+2026-06-29 00:14:28 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=62.75ms
+2026-06-29 00:14:28 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=167.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:28 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=168.00ms
+2026-06-29 00:14:28 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=161.2 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:28 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=162.20ms
+2026-06-29 00:14:29 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=119.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:29 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=120.99ms
+2026-06-29 00:14:31 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=160.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:32 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=162.00ms
+2026-06-29 00:14:34 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=90.00ms
+2026-06-29 00:14:35 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=69.99ms
+2026-06-29 00:14:35 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.02ms
+2026-06-29 00:14:37 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=157.6 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:37 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=159.61ms
+2026-06-29 00:14:37 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=69.79ms
+2026-06-29 00:14:39 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=65.00ms
+2026-06-29 00:14:39 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=144.63 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:39 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=145.62ms
+2026-06-29 00:14:40 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=79.56ms
+2026-06-29 00:14:42 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=150.71 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:42 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.71ms
+2026-06-29 00:14:43 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=67.01ms
+2026-06-29 00:14:43 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=133.46 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:43 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=134.46ms
+2026-06-29 00:14:43 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=141.61 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:43 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=142.64ms
+2026-06-29 00:14:43 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=80.20ms
+2026-06-29 00:14:47 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=258.78 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:47 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=259.79ms
+2026-06-29 00:14:48 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=103.37 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:48 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=104.37ms
+2026-06-29 00:14:48 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=175.9 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:48 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=176.90ms
+2026-06-29 00:14:49 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=70.01ms
+2026-06-29 00:14:51 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=200.13 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:51 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=201.14ms
+2026-06-29 00:14:53 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=62.43ms
+2026-06-29 00:14:53 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:14:53 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=112.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:53 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=114.01ms
+2026-06-29 00:14:55 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=137.68 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:55 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=139.68ms
+2026-06-29 00:14:56 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=78.93ms
+2026-06-29 00:14:57 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=80.18ms
+2026-06-29 00:14:57 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=175.87 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:57 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=176.86ms
+2026-06-29 00:14:58 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=62.44ms
+2026-06-29 00:14:58 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=121.19 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:14:58 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=123.03ms
+2026-06-29 00:15:00 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=132.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:00 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=133.99ms
+2026-06-29 00:15:00 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=89.66ms
+2026-06-29 00:15:00 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=151.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:00 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.99ms
+2026-06-29 00:15:01 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=95.49ms
+2026-06-29 00:15:02 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=151.05 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:02 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=152.03ms
+2026-06-29 00:15:02 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=169.89 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:02 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=170.89ms
+2026-06-29 00:15:04 | WARNING  | game_server | 慢请求检测 | route=battle_room_create | duration_ms=565.42 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:04 | INFO     | game_server | 路由处理完成 | route=battle_room_create | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=566.41ms
+2026-06-29 00:15:06 | WARNING  | game_server | 慢请求检测 | route=battle_room_action | duration_ms=150.63 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:06 | INFO     | game_server | 路由处理完成 | route=battle_room_action | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.63ms
+2026-06-29 00:15:09 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=132.08 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:09 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=133.08ms
+2026-06-29 00:15:09 | INFO     | game_server | 路由处理完成 | route=battle_result | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.99ms
+2026-06-29 00:15:09 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=160.16 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:09 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=161.16ms
+2026-06-29 00:15:10 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=143.35 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:10 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=144.35ms
+2026-06-29 00:15:11 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:15:11 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:15:11 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=0.00ms
+2026-06-29 00:15:12 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=92.99ms
+2026-06-29 00:15:13 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=154.85 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:13 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=155.85ms
+2026-06-29 00:15:13 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=74.31ms
+2026-06-29 00:15:14 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=165.81 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:14 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=166.81ms
+2026-06-29 00:15:14 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=135.04 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:14 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=136.03ms
+2026-06-29 00:15:16 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=150.0 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:16 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=150.99ms
+2026-06-29 00:15:16 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=73.24ms
+2026-06-29 00:15:16 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=154.04 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:16 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=156.04ms
+2026-06-29 00:15:18 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=86.43ms
+2026-06-29 00:15:20 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=131.24 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:20 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=133.24ms
+2026-06-29 00:15:23 | WARNING  | game_server | 慢请求检测 | route=world_step | duration_ms=120.05 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:23 | INFO     | game_server | 路由处理完成 | route=world_step | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=120.08ms
+2026-06-29 00:15:23 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=73.69ms
+2026-06-29 00:15:24 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=437.53 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:24 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=439.53ms
+2026-06-29 00:15:24 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=87.20ms
+2026-06-29 00:15:24 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=60.09ms
+2026-06-29 00:15:25 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=158.08 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:25 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=159.05ms
+2026-06-29 00:15:25 | WARNING  | game_server | 慢请求检测 | route=story_interact | duration_ms=169.39 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:25 | INFO     | game_server | 路由处理完成 | route=story_interact | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=169.39ms
+2026-06-29 00:15:27 | WARNING  | game_server | 慢请求检测 | route=battle_room_create | duration_ms=667.34 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:27 | INFO     | game_server | 路由处理完成 | route=battle_room_create | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=668.34ms
+2026-06-29 00:15:28 | WARNING  | game_server | 慢请求检测 | route=battle_room_action | duration_ms=192.4 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:28 | INFO     | game_server | 路由处理完成 | route=battle_room_action | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=193.41ms
+2026-06-29 00:15:28 | WARNING  | game_server | 慢请求检测 | route=world_enter | duration_ms=151.01 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:28 | INFO     | game_server | 路由处理完成 | route=world_enter | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=151.99ms
+2026-06-29 00:15:31 | WARNING  | game_server | 慢请求检测 | route=get_player | duration_ms=143.29 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:31 | INFO     | game_server | 路由处理完成 | route=get_player | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=145.29ms
+2026-06-29 00:15:31 | INFO     | game_server | 路由处理完成 | route=battle_result | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=1.01ms
+2026-06-29 00:15:31 | WARNING  | game_server | 慢请求检测 | route=story_event_complete | duration_ms=167.99 | user_id=69cd2b1d17d8322502e10ae0
+2026-06-29 00:15:31 | INFO     | game_server | 路由处理完成 | route=story_event_complete | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=168.99ms
+2026-06-29 00:15:33 | INFO     | game_server | 路由处理完成 | route=world_leave | user_id=69cd2b1d17d8322502e10ae0 | elapsed_ms=96.99ms
+2026-06-29 00:17:13 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10054] 远程主机强迫关闭了一个现有的连接。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
+2026-06-29 00:17:13 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10054] 远程主机强迫关闭了一个现有的连接。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
+2026-06-29 00:17:13 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10051] 向一个无法连接的网络尝试了一个套接字操作。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
+2026-06-29 00:17:13 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10051] 向一个无法连接的网络尝试了一个套接字操作。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
+2026-06-29 00:17:13 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10054] 远程主机强迫关闭了一个现有的连接。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
+2026-06-29 00:17:13 | WARNING  | game_server | [MongoDB] 后台连接检查失败: ('8.140.236.16', 27017) - AutoReconnect: 8.140.236.16:27017: [WinError 10051] 向一个无法连接的网络尝试了一个套接字操作。 (configured timeouts: socketTimeoutMS: 30000.0ms, connectTimeoutMS: 30000.0ms)
