@@ -11,7 +11,7 @@ server/
 │
 ├── admin-ui/             # Vue 3 管理台（Vite + Element Plus）
 │   ├── src/              # 前端源码
-│   └── dist/             # 构建产物（由 ws_server 自动 build 或手动 npm run build）
+│   └── dist/             # 构建产物（python tools/build_admin_ui.py）
 │
 ├── handlers/             # 业务处理器
 ├── docs/                 # 文档
@@ -27,19 +27,37 @@ server/
 pip install -r requirements.txt
 ```
 
-### 2. 安装 Node.js（管理台）
+### 2. 配置环境变量
 
-管理台为 Vue SPA，需要 **Node.js 18+**（首次启动会自动 `npm ci` + `npm run build`）。
+复制 `server/.env.example` 为 `server/.env`（勿提交真实凭据）。  
+配置由 `config.py` 统一读取：`WS_HOST` / `WS_PORT` / `ADMIN_HOST` / `ADMIN_PORT` / `MONGO_URL` / `ENCRYPTION_KEY` / `ENVIRONMENT`。
 
-若已手动构建，可设置 `ADMIN_UI_SKIP_BUILD=1` 跳过自动构建以加快启动。
+- `ENVIRONMENT=development`：未设置时默认连接本机 MongoDB；可临时生成 `ENCRYPTION_KEY`
+- `ENVIRONMENT=production`：缺少 `MONGO_URL` 或 `ENCRYPTION_KEY` 时拒绝启动
 
-### 3. 启动服务器
+首次或变更索引后请单独执行迁移（普通启动不会改索引/删文档）：
+
+```bash
+python tools/migrate_db.py --dry-run
+python tools/migrate_db.py
+```
+
+### 3. 构建管理台（独立步骤）
+
+管理台为 Vue SPA，需要 **Node.js 18+**。`ws_server` **不会**在启动时执行 npm 安装/构建：
+
+```bash
+python tools/build_admin_ui.py
+# 或: cd admin-ui && npm ci && npm run build
+```
+
+### 4. 启动服务器
 
 ```bash
 python ws_server.py
 ```
 
-启动后访问（默认 `127.0.0.1:8080`）：
+启动后访问（默认 `ADMIN_HOST:ADMIN_PORT`，通常 `127.0.0.1:8080`）：
 
 | 页面 | URL |
 |------|-----|
@@ -53,19 +71,12 @@ python ws_server.py
 
 WebSocket 游戏端口：`ws://localhost:8001`
 
-### 4. 仅开发前端（可选）
+### 5. 仅开发前端（可选）
 
 ```bash
 cd admin-ui
 npm install
 npm run dev    # Vite 开发服务器 :5173，代理 /api 到 8080
-```
-
-生产构建：
-
-```bash
-cd admin-ui
-npm run build  # 输出到 admin-ui/dist
 ```
 
 ## 管理台架构
@@ -93,6 +104,6 @@ npm run build  # 输出到 admin-ui/dist
 
 ## 注意事项
 
-- 生产环境请设置 `ENCRYPTION_KEY` 环境变量
-- MongoDB 连接信息在 `ws_server.py` 中配置
+- 生产环境必须设置固定的 `ENCRYPTION_KEY` 与 `MONGO_URL`
+- 端口占用时服务会报告 PID 并退出，不会强杀占用进程
 - 日志文件保存在 `logs/` 目录

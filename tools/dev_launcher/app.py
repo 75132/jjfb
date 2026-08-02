@@ -103,7 +103,7 @@ class DevLauncherApp(ctk.CTk):
             f"工作区：{ROOT}\n"
             f"{env_line}"
             f"{ai_line}"
-            "ws_server 数据库连接以 server/ws_server.py / 环境变量 MONGO_URL 为准。\n"
+            "ws_server 数据库连接以 server/config.py（MONGO_URL / server/.env）为准。\n"
             "Juben 就绪后访问 http://localhost:5173\n"
         )
 

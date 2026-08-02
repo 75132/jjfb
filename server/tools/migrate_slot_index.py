@@ -15,15 +15,14 @@
 import sys
 import os
 
-# 添加项目根目录到路径
+# 添加 server 目录到路径
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pymongo import MongoClient
 from bson import ObjectId
 from datetime import datetime
+from config import ConfigError, load_config, redact_mongo_url
 
-# MongoDB 连接配置（与 ws_server.py 保持一致）
-MONGO_URL = "mongodb://jifbol:jifbol13579@8.140.236.16:27017/?authSource=admin&authMechanism=SCRAM-SHA-256"
 DB_NAME = "jjfb"
 COLLECTION_NAME = "RobotPet"
 
@@ -32,8 +31,13 @@ def migrate_slot_index():
     print("🚀 开始迁移 slot_index...")
     
     try:
-        # 连接 MongoDB
-        client = MongoClient(MONGO_URL)
+        try:
+            cfg = load_config()
+        except ConfigError as exc:
+            print(f"❌ 配置错误: {exc}")
+            return False
+        print(f"Mongo: {redact_mongo_url(cfg.mongo_url)}")
+        client = MongoClient(cfg.mongo_url)
         db = client[DB_NAME]
         robotpet_col = db[COLLECTION_NAME]
         

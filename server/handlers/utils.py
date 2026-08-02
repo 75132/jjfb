@@ -84,6 +84,8 @@ def mongo_op_once(operation):
 
 
 # MongoDB操作包装函数（自动处理连接错误）
+# 统一封装：仅此模块提供同步重试；ws_server 不再重复定义。
+# time.sleep 仅允许出现在线程池工作线程中；事件循环内请用 async_mongo_operation*。
 def safe_mongo_operation(operation, max_retries=5):
     """
     安全的MongoDB操作，自动重试连接错误（同步版本，用于线程池）

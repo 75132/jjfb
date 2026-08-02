@@ -102,7 +102,7 @@ SERVICES: list[ServiceDef] = [
         urls=[ServiceUrl("管理后台", "http://127.0.0.1:8080/")],
         health_checks=[HealthCheck("http://127.0.0.1:8080/", require_ok=False)],
         log_tab="ws_server",
-        notes="MongoDB：使用 server/ws_server.py 默认远端库（或环境变量 MONGO_URL），控制台不会修改",
+        notes="MongoDB：由 server/config.py 读取 MONGO_URL（development 默认本机）；控制台不会修改",
     ),
 ]
 

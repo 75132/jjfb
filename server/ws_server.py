@@ -6,7 +6,7 @@ from functools import partial
 import websockets
 import json
 from pymongo import MongoClient
-from pymongo.errors import AutoReconnect, ConnectionFailure, ServerSelectionTimeoutError, NetworkTimeout
+from pymongo.errors import NetworkTimeout
 from pymongo import monitoring
 from bson import ObjectId
 import hashlib
@@ -14,7 +14,6 @@ import uuid
 import datetime
 import random
 import socket
-import subprocess
 import sys
 import time
 import logging
@@ -61,15 +60,33 @@ from services.world_presence_service import world_presence_service
 from services.logger_service import init_logger, get_logger
 from services.channel_service import channel_service
 
-# 加密密钥（用于服务器中间加密解密）
-ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY') or ''
-if not ENCRYPTION_KEY:
-    print('[安全提醒] 未设置 ENCRYPTION_KEY，使用临时随机密钥。请在生产环境通过环境变量提供固定密钥。')
-    ENCRYPTION_KEY = uuid.uuid4().hex
+from config import ConfigError, load_config, redact_mongo_url
+from port_utils import check_port_available
 
-# WebSocket 服务配置
-WS_HOST = os.getenv('WS_HOST', '0.0.0.0')
-WS_PORT = int(os.getenv('WS_PORT', '8001'))
+# 集中配置（production 缺少 MONGO_URL/ENCRYPTION_KEY 时拒绝启动）
+try:
+    _server_config = load_config()
+except ConfigError as _cfg_err:
+    print(f'[配置错误] {_cfg_err}', file=sys.stderr)
+    raise SystemExit(2) from _cfg_err
+
+ENCRYPTION_KEY = _server_config.encryption_key
+WS_HOST = _server_config.ws_host
+WS_PORT = _server_config.ws_port
+ADMIN_HOST = _server_config.admin_host
+ADMIN_PORT = _server_config.admin_port
+ENVIRONMENT = _server_config.environment
+mongo_url = _server_config.mongo_url
+
+if _server_config.encryption_key_ephemeral:
+    print(
+        '[安全提醒] 未设置 ENCRYPTION_KEY，已生成临时随机密钥（仅 development）。'
+        '生产环境必须通过环境变量提供固定密钥。'
+    )
+print(
+    f'[config] environment={ENVIRONMENT} ws={WS_HOST}:{WS_PORT} '
+    f'admin={ADMIN_HOST}:{ADMIN_PORT} mongo={redact_mongo_url(mongo_url)}'
+)
 
 # MongoDB事件监听器：捕获后台连接错误，避免未处理的异常
 class MongoErrorLogger(monitoring.ServerHeartbeatListener):
@@ -104,38 +121,18 @@ class MongoErrorLogger(monitoring.ServerHeartbeatListener):
 # 注册事件监听器（在创建MongoClient之前注册，捕获所有后台错误）
 monitoring.register(MongoErrorLogger())
 
-# 连接MongoDB（MMO级优化：使用连接池）
-# 生产部署时建议通过环境变量提供，避免把主机/IP硬编码到代码里。
-# - 如果宝塔与 MongoDB 在同一台机器：不设置 MONGO_URL，将默认连接到 localhost
-# - 如果 MongoDB 在远端：设置 MONGO_URL 为你的真实连接串
-
-
-# 生产部署时建议通过环境变量提供，避免把主机/IP硬编码到代码里。
-# - 如果宝塔与 MongoDB 在同一台机器：不设置 MONGO_URL，将默认连接到 localhost
-# - 如果 MongoDB 在远端：设置 MONGO_URL 为你的真实连接串
-
-
-
-mongo_url = os.getenv(
-    'MONGO_URL',
-    #  这是部署到云服务器上的mongodb地址
-    # 'mongodb://jifbol:jifbol13579@127.0.0.1:27017/?authSource=admin&authMechanism=SCRAM-SHA-256'
-    "mongodb://jifbol:jifbol13579@8.140.236.16:27017/?authSource=admin&authMechanism=SCRAM-SHA-256"
-)
-# MMO级优化：配置连接池参数，支持高并发
-# 注意：maxPoolSize 应该 >= MAX_CONNECTIONS，确保每个连接都能获得数据库连接
-# 500并发用户建议至少 200-300 连接池，留有余量
-# 优化：增加超时时间，减少心跳频率，提高网络不稳定环境下的稳定性
+# 连接MongoDB（连接串仅来自环境变量 / server/.env；见 config.py）
+# minPoolSize=0：Mongo 不可达时避免启动阶段占满后台连接并卡住 asyncio 绑定端口
 client = MongoClient(
     mongo_url,
     maxPoolSize=300,  # 最大连接池大小（支持500并发用户，建议300+）
-    minPoolSize=20,   # 最小连接池大小（提高初始连接数）
+    minPoolSize=0,    # 按需建连；不可达时不阻塞 WebSocket 启动
     maxIdleTimeMS=60000,  # 连接空闲时间（增加到60秒，减少连接回收频率）
-    connectTimeoutMS=30000,  # 连接超时（增加到30秒，适应网络延迟）
-    serverSelectionTimeoutMS=30000,  # 服务器选择超时（增加到30秒）
-    socketTimeoutMS=60000,  # Socket超时（增加到60秒，适应网络不稳定）
-    waitQueueTimeoutMS=30000,  # 等待队列超时（增加到30秒）
-    heartbeatFrequencyMS=30000,  # 心跳频率（30秒一次，减少后台检查频率）
+    connectTimeoutMS=5000,
+    serverSelectionTimeoutMS=5000,
+    socketTimeoutMS=20000,
+    waitQueueTimeoutMS=10000,
+    heartbeatFrequencyMS=30000,
     retryWrites=True,  # 自动重试写入
     retryReads=True    # 自动重试读取
 )
@@ -157,80 +154,8 @@ mails_col = db['mails']
 battle_rooms_col = db['battle_rooms']
 user_clients = {}
 
-try:
-    daletou_draws_col.create_index('day', unique=True)
-except Exception as _e:
-    print(f'[daletou_draws] create_index: {_e}')
-
-# MiniGame2 索引
-try:
-    minigame2_rounds_col.create_index('issue_key', unique=True)
-except Exception as _e:
-    print(f'[minigame2_rounds] create_index: {_e}')
-
-try:
-    # 每个角色在同一期只能下注一次
-    # MiniGame2：允许同一期对多个类目下注，因此唯一键必须包含 selected_key
-    minigame2_bets_col.create_index([('issue_key', 1), ('character_id', 1), ('selected_key', 1)], unique=True)
-except Exception as _e:
-    print(f'[minigame2_bets] create_index: {_e}')
-
-try:
-    # 让查询“某玩家今天的回报历史”时按 close_time 范围筛轮次更快
-    minigame2_rounds_col.create_index('close_time', unique=False)
-except Exception as _e:
-    print(f'[minigame2_rounds] create_index(close_time): {_e}')
-
-try:
-    # 辅助：bets 查询时用 character_id 固定，issue_key 做 $in
-    minigame2_bets_col.create_index([('character_id', 1), ('issue_key', 1)], unique=False)
-except Exception as _e:
-    print(f'[minigame2_bets] create_index(character_id, issue_key): {_e}')
-
-try:
-    story_progress_col.create_index([('character_id', 1), ('map_code', 1)], unique=True)
-except Exception as _e:
-    print(f'[story_progress] create_index: {_e}')
-
-try:
-    mails_col.create_index([('character_id', 1), ('created_at', -1)])
-    mails_col.create_index('mail_id', unique=True)
-except Exception as _e:
-    print(f'[mails] create_index: {_e}')
-
-try:
-    battle_rooms_col.create_index('room_id', unique=True)
-    battle_rooms_col.create_index([('character_id', 1), ('status', 1)])
-except Exception as _e:
-    print(f'[battle_rooms] create_index: {_e}')
-
-# MongoDB操作包装函数（自动处理连接错误）
-def safe_mongo_operation(operation, max_retries=3):
-    """安全的MongoDB操作，自动重试连接错误"""
-    for attempt in range(max_retries):
-        try:
-            return operation()
-        except (AutoReconnect, ConnectionFailure, ServerSelectionTimeoutError, NetworkTimeout) as e:
-            # 处理所有MongoDB连接相关错误，包括NetworkTimeout
-            if attempt < max_retries - 1:
-                delay = 1.0 * (attempt + 1)  # 递增延迟：1s, 2s, 3s
-                try:
-                    logger = get_logger()
-                    logger.warning(f'[MongoDB] 连接错误，{delay}秒后重试 ({attempt + 1}/{max_retries}): {type(e).__name__}')
-                except Exception:
-                    print(f'⚠️ [MongoDB] 连接错误，{delay}秒后重试 ({attempt + 1}/{max_retries}): {type(e).__name__}')
-                time.sleep(delay)
-                continue
-            else:
-                try:
-                    logger = get_logger()
-                    logger.error(f'[MongoDB] 连接失败，已重试{max_retries}次: {type(e).__name__}: {e}')
-                except Exception:
-                    print(f'❌ [MongoDB] 连接失败，已重试{max_retries}次: {type(e).__name__}: {e}')
-                raise
-        except Exception as e:
-            # 其他错误直接抛出
-            raise
+# 索引与一次性数据清理已迁至 migrations + tools/migrate_db.py；普通启动不做库结构变更。
+# Mongo 安全封装见 handlers.utils.safe_mongo_operation（供 db_executor 线程池使用）。
 
 # MMO级优化：连接数限制和资源管理
 MAX_CONNECTIONS = 500  # 最大连接数（可根据服务器配置调整）
@@ -239,6 +164,7 @@ connection_lock = asyncio.Lock()  # 连接数锁
 
 # MMO级优化：线程池执行器（用于执行阻塞的数据库操作，避免阻塞事件循环）
 # 参考 PomeloServer：使用线程池处理阻塞操作
+# 注意：handlers.utils.safe_mongo_operation 内的 time.sleep 仅应在本线程池中执行
 db_executor = None  # 将在 main() 中初始化
 DB_THREAD_POOL_SIZE = 50  # 数据库操作线程池大小
 
@@ -319,82 +245,8 @@ CACHE_TTL = 60  # 缓存60秒
 query_cache = {}  # {cache_key: {data: result, timestamp: time}}
 QUERY_CACHE_TTL = 30  # 查询缓存30秒
 
-# 网游级优化：消息队列（批量处理玩家操作）
-# 注意：message_queue 需要在事件循环中创建，所以在 main() 函数中初始化
-message_queue = None  # 将在 main() 中初始化
-BATCH_PROCESS_INTERVAL = 0.1  # 100ms批量处理一次
-BATCH_SIZE = 10  # 每批处理10条消息
-
 # 网游级优化：防抖节流配置
 # THROTTLE_CONFIG 和 throttle_timers 已移至 handlers/utils.py
-
-# 确保索引存在
-users_col.create_index('account', unique=True)
-# 创建token索引，忽略null值
-try:
-    users_col.create_index('token', unique=True, sparse=True)
-except Exception as e:
-    print(f"创建token索引时出错: {e}")
-    # 如果索引已存在但不是sparse的，尝试删除并重新创建
-    try:
-        users_col.drop_index('token_1')
-        users_col.create_index('token', unique=True, sparse=True)
-        print("成功重新创建token索引")
-    except Exception as e2:
-        print(f"重新创建token索引失败: {e2}")
-
-try:
-    players_col.drop_index('user_id_1')
-except Exception:
-    pass
-players_col.delete_many({'character_id': None})
-players_col.delete_many({'character_id': {'$exists': False}})
-try:
-    players_col.drop_index('character_id_1')
-except Exception:
-    pass
-players_col.create_index('character_id', unique=True, name='character_id_partial', partialFilterExpression={'character_id': {'$exists': True}})
-players_col.create_index([('user_id', 1), ('slot_index', 1)], unique=True)
-# 网游级优化：为角色查询添加索引
-try:
-    players_col.create_index([('user_id', 1), ('slot_index', 1), ('character_id', 1)])
-except Exception:
-    pass
-try:
-    players_col.create_index([('user_id', 1), ('character_id', 1)])
-except Exception:
-    pass
-messages_col.create_index([('type', 1), ('created_at', -1)])
-try:
-    robotbase_col.create_index('RobotID', unique=True, sparse=True)
-except Exception:
-    pass
-try:
-    robotpet_col.create_index([('user_id', 1), ('character_id', 1)])
-    # 网游级优化：为常用查询字段添加复合索引
-    robotpet_col.create_index([('user_id', 1), ('character_id', 1), ('Level', 1)])
-    # 关键优化：为 slot_index 添加索引，优化排序查询
-    robotpet_col.create_index([('user_id', 1), ('character_id', 1), ('slot_index', 1)])
-except Exception:
-    pass
-try:
-    robotpet_col.create_index('robot_base_id')
-except Exception:
-    pass
-try:
-    inventory_col.create_index([('user_id', 1), ('character_id', 1)], unique=True)
-except Exception:
-    pass
-try:
-    players_col.create_index('friend_id', unique=True, sparse=True)
-except Exception:
-    pass
-try:
-    # 防恶意锁号：按账号+IP唯一记录登录/改密失败计数与锁定时间
-    account_limits_col.create_index([('username', 1), ('ip', 1)], unique=True, name='username_ip_unique')
-    account_limits_col.create_index('update_time')
-except Exception:
-    pass
 
 # 计算指定用户在指定角色下的机甲数量
 def compute_robot_count(user_id, character_id):
@@ -1071,121 +923,6 @@ def get_user_by_token(token):
         set_cached_user(token, user)
     return user
 
-def check_and_free_port(port):
-    """检查端口是否被占用，如果被占用则尝试关闭占用进程"""
-    try:
-        # 检查端口是否被占用
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex(('127.0.0.1', port))
-        sock.close()
-        
-        if result == 0:  # 端口被占用
-            print(f'[警告] 端口 {port} 已被占用，正在尝试释放...')
-            try:
-                # Windows 系统：查找占用端口的进程并关闭
-                if sys.platform == 'win32':
-                    # 使用 netstat 查找占用端口的进程
-                    result = subprocess.run(
-                        ['netstat', '-ano'],
-                        capture_output=True,
-                        text=True,
-                        encoding='gbk'
-                    )
-                    for line in result.stdout.split('\n'):
-                        if f':{port}' in line and 'LISTENING' in line:
-                            parts = line.split()
-                            if len(parts) >= 5:
-                                pid = parts[-1]
-                                try:
-                                    # 关闭占用端口的进程
-                                    subprocess.run(
-                                        ['taskkill', '/F', '/PID', pid],
-                                        capture_output=True,
-                                        check=False
-                                    )
-                                    print(f'[成功] 已关闭占用端口 {port} 的进程 (PID: {pid})')
-                                    import time
-                                    time.sleep(1)  # 等待端口释放
-                                    return True
-                                except Exception as e:
-                                    print(f'[错误] 无法关闭进程 {pid}: {e}')
-                                    return False
-                else:
-                    # Linux/Mac 系统
-                    result = subprocess.run(
-                        ['lsof', '-ti', f':{port}'],
-                        capture_output=True,
-                        text=True
-                    )
-                    if result.returncode == 0:
-                        pid = result.stdout.strip()
-                        subprocess.run(['kill', '-9', pid], check=False)
-                        print(f'[成功] 已关闭占用端口 {port} 的进程 (PID: {pid})')
-                        import time
-                        time.sleep(1)
-                        return True
-            except Exception as e:
-                print(f'[错误] 释放端口失败: {e}')
-                return False
-        return True
-    except Exception as e:
-        print(f'[警告] 检查端口时出错: {e}')
-        return True  # 出错时继续尝试启动
-
-async def batch_message_processor():
-    """网游级优化：批量处理消息队列"""
-    global message_queue
-    
-    # 等待队列初始化
-    while message_queue is None:
-        await asyncio.sleep(0.1)
-    
-    while True:
-        try:
-            batch = []
-            # 收集一批消息
-            while len(batch) < BATCH_SIZE:
-                try:
-                    message = await asyncio.wait_for(message_queue.get(), timeout=BATCH_PROCESS_INTERVAL)
-                    batch.append(message)
-                except asyncio.TimeoutError:
-                    break
-            
-            if batch:
-                # 批量处理消息（可以合并相同类型的操作）
-                # 例如：多个升级请求可以合并为一个批量升级
-                await process_batch_messages(batch)
-        except asyncio.CancelledError:
-            break
-        except Exception as e:
-            # 减少错误日志输出（避免刷屏）
-            if 'different loop' not in str(e):
-                print(f'批量消息处理错误: {e}')
-            await asyncio.sleep(1)  # 出错后等待1秒再继续
-
-async def process_batch_messages(batch):
-    """处理批量消息（网游级优化：合并相同操作）"""
-    # 按类型分组
-    grouped = {}
-    for msg in batch:
-        msg_type = msg.get('type')
-        if msg_type not in grouped:
-            grouped[msg_type] = []
-        grouped[msg_type].append(msg)
-    
-    # 批量处理相同类型的消息
-    for msg_type, messages in grouped.items():
-        if msg_type == 'upgrade_robot':
-            # 可以合并多个升级请求
-            await process_batch_upgrades(messages)
-        # 其他类型可以类似处理
-
-async def process_batch_upgrades(messages):
-    """批量处理升级请求（网游级优化）"""
-    # 这里可以实现批量升级逻辑
-    # 暂时保持原有逻辑，但可以优化为批量数据库操作
-    pass
-
 def get_cached_query(cache_key):
     """获取缓存的查询结果"""
     cache_entry = query_cache.get(cache_key)
@@ -1203,72 +940,16 @@ def set_cached_query(cache_key, result):
     }
 
 
-def ensure_admin_ui_built():
-    """构建 Vue 管理台（admin-ui/dist），供 HTTP 控制台托管。"""
-    if os.getenv('ADMIN_UI_SKIP_BUILD', '').strip() in ('1', 'true', 'yes'):
-        print('[admin-ui] 已跳过构建 (ADMIN_UI_SKIP_BUILD=1)')
-        return
 
+def warn_admin_ui_dist():
+    """启动时仅检查 dist 是否存在，不执行 npm 构建。"""
     base_dir = os.path.dirname(__file__)
-    admin_ui_dir = os.path.join(base_dir, 'admin-ui')
-    dist_dir = os.path.join(admin_ui_dir, 'dist')
-    dist_index = os.path.join(dist_dir, 'index.html')
-    package_json = os.path.join(admin_ui_dir, 'package.json')
-
-    if not os.path.isdir(admin_ui_dir) or not os.path.isfile(package_json):
-        print('[admin-ui] 未找到 server/admin-ui，跳过 Vue 管理台构建')
-        return
-
-    def _needs_rebuild():
-        if not os.path.isfile(dist_index):
-            return True
-        dist_mtime = os.path.getmtime(dist_index)
-        if os.path.getmtime(package_json) > dist_mtime:
-            return True
-        src_dir = os.path.join(admin_ui_dir, 'src')
-        if os.path.isdir(src_dir):
-            for root, _dirs, files in os.walk(src_dir):
-                for name in files:
-                    fp = os.path.join(root, name)
-                    try:
-                        if os.path.getmtime(fp) > dist_mtime:
-                            return True
-                    except OSError:
-                        pass
-        return False
-
-    if not _needs_rebuild():
+    dist_index = os.path.join(base_dir, 'admin-ui', 'dist', 'index.html')
+    if os.path.isfile(dist_index):
         print(f'[admin-ui] 使用已有构建: {dist_index}')
-        return
-
-    npm_cmd = 'npm.cmd' if sys.platform == 'win32' else 'npm'
-    try:
-        subprocess.run([npm_cmd, '--version'], capture_output=True, check=True, cwd=admin_ui_dir)
-    except (FileNotFoundError, subprocess.CalledProcessError):
-        print('[admin-ui] 错误: 未检测到 Node.js/npm。请安装 Node.js 18+ 后重试，')
-        print('           或在 server/admin-ui 目录手动执行 npm ci && npm run build')
-        print('           也可设置 ADMIN_UI_SKIP_BUILD=1 跳过自动构建')
-        return
-
-    node_modules = os.path.join(admin_ui_dir, 'node_modules')
-    if not os.path.isdir(node_modules):
-        print('[admin-ui] 正在 npm ci ...')
-        r = subprocess.run([npm_cmd, 'ci'], cwd=admin_ui_dir)
-        if r.returncode != 0:
-            print('[admin-ui] npm ci 失败，尝试 npm install ...')
-            r = subprocess.run([npm_cmd, 'install'], cwd=admin_ui_dir)
-            if r.returncode != 0:
-                print('[admin-ui] 依赖安装失败，无法构建 Vue 管理台')
-                return
-
-    print('[admin-ui] 正在 npm run build ...')
-    r = subprocess.run([npm_cmd, 'run', 'build'], cwd=admin_ui_dir)
-    if r.returncode != 0:
-        print('[admin-ui] 构建失败，HTTP 控制台可能无法加载 Vue 页面')
-    elif os.path.isfile(dist_index):
-        print(f'[admin-ui] 构建完成: {dist_index}')
     else:
-        print('[admin-ui] 构建结束但未找到 dist/index.html')
+        print('[admin-ui] 未找到 admin-ui/dist，HTTP 管理台将回退到 server/static')
+        print('           如需构建 Vue 管理台，请运行: python tools/build_admin_ui.py')
 
 
 async def main():
@@ -1279,11 +960,16 @@ async def main():
     logger.info('🎮 MMO游戏服务器启动')
     logger.info('=' * 60)
     
-    # 检查并释放端口
-    if not check_and_free_port(WS_PORT):
-        logger.error(f'无法释放端口 {WS_PORT}，请手动关闭占用该端口的进程')
-        logger.info(f'可以使用命令: netstat -ano | findstr :{WS_PORT}')
-        return
+    # 端口占用时只报告 PID 并安全退出（不强制结束占用进程）
+    occupant = check_port_available(WS_HOST, WS_PORT)
+    if occupant is not None:
+        pid_info = f'PID={occupant.pid}' if occupant.pid else occupant.detail
+        logger.error(f'端口 {WS_PORT} 已被占用（{pid_info}），拒绝启动')
+        if sys.platform == 'win32':
+            logger.info(f'请手动处理占用进程，例如: netstat -ano | findstr :{WS_PORT}')
+        else:
+            logger.info(f'请手动处理占用进程，例如: lsof -i :{WS_PORT}')
+        raise SystemExit(1)
     
     # 启动缓存清理任务（定期清理过期缓存）
     async def cache_cleanup_task():
@@ -1346,11 +1032,8 @@ async def main():
                 print(f'  数据库查询: {performance_stats["db_queries"]}')
                 print(f'  平均QPS: {performance_stats["total_requests"] / uptime:.1f} 请求/秒')
     
-    # 初始化消息队列（必须在事件循环中创建）
-    global message_queue, db_executor
-    message_queue = asyncio.Queue()
-    
     # 初始化数据库操作线程池（MMO级优化：避免阻塞事件循环）
+    global db_executor
     db_executor = ThreadPoolExecutor(max_workers=DB_THREAD_POOL_SIZE, thread_name_prefix="db_worker")
     logger.info(f'✅ 已启用数据库操作线程池（{DB_THREAD_POOL_SIZE} 个工作线程）')
     
@@ -1437,16 +1120,14 @@ async def main():
     # 启动后台任务
     asyncio.create_task(cache_cleanup_task())
     asyncio.create_task(session_cleanup_task())
-    asyncio.create_task(batch_message_processor())
     
     logger.info(f'WebSocket服务器运行在 ws://localhost:{WS_PORT}')
     logger.info(f'最大连接数: {MAX_CONNECTIONS} (支持 {MAX_CONNECTIONS} 人同时在线)')
-    logger.info(f'MongoDB连接池: 最大 {client.max_pool_size}, 最小 {client.min_pool_size}')
+    logger.info('MongoDB 连接池: maxPoolSize=300, minPoolSize=0（按需建连）')
     logger.info(f'心跳间隔: {HEARTBEAT_INTERVAL}秒, 超时: {HEARTBEAT_TIMEOUT}秒')
     logger.info(f'消息大小限制: {MAX_MESSAGE_SIZE / 1024 / 1024}MB')
     logger.info(f'用户缓存TTL: {CACHE_TTL}秒')
     logger.info(f'查询缓存TTL: {QUERY_CACHE_TTL}秒')
-    logger.info(f'批量处理间隔: {BATCH_PROCESS_INTERVAL}秒, 批量大小: {BATCH_SIZE}')
     logger.info(f'广播并发数: 全局50, 用户10 (避免阻塞)')
     logger.info('✅ 已启用消息压缩（deflate）')
     logger.info('✅ 已启用异步消息广播（不阻塞主线程）')
@@ -1458,7 +1139,7 @@ async def main():
     logger.info('💡 提示: 服务器已优化支持100+人同时在线')
     logger.info('=' * 60)
     
-    ensure_admin_ui_built()
+    warn_admin_ui_dist()
 
     def start_console_server():
         base_dir = os.path.dirname(__file__)
@@ -1769,54 +1450,50 @@ async def main():
         
         handler = ConsoleHandler
         
-        # 尝试常用端口
-        for host, port in [("127.0.0.1", 8080), ("127.0.0.1", 8081)]:
+        candidates = [
+            (ADMIN_HOST, ADMIN_PORT),
+            (ADMIN_HOST, ADMIN_PORT + 1 if ADMIN_PORT < 65535 else ADMIN_PORT),
+            (ADMIN_HOST, 0),
+        ]
+        seen = set()
+        for host, port in candidates:
+            key = (host, port)
+            if key in seen:
+                continue
+            seen.add(key)
             try:
                 httpd = http.server.ThreadingHTTPServer((host, port), handler)
                 t = threading.Thread(target=httpd.serve_forever, daemon=True)
                 t.start()
-                print(f'管理后台 (Vue): http://{host}:{port}/')
-                print(f'  游戏控制:     http://{host}:{port}/game-control')
-                print(f'  服务器监控:   http://{host}:{port}/server-monitor')
-                print(f'  客户端模拟:   http://{host}:{port}/client-simulator')
-                print(f'  战斗房间监控: http://{host}:{port}/battle-rooms')
-                print(f'  大乐透运维:   http://{host}:{port}/daletou')
-                print(f'  期货运维:     http://{host}:{port}/minigame2')
+                bound_host, bound_port = httpd.socket.getsockname()[:2]
+                print(f'管理后台 (Vue): http://{bound_host}:{bound_port}/')
+                print(f'  游戏控制:     http://{bound_host}:{bound_port}/game-control')
+                print(f'  服务器监控:   http://{bound_host}:{bound_port}/server-monitor')
+                print(f'  客户端模拟:   http://{bound_host}:{bound_port}/client-simulator')
+                print(f'  战斗房间监控: http://{bound_host}:{bound_port}/battle-rooms')
+                print(f'  大乐透运维:   http://{bound_host}:{bound_port}/daletou')
+                print(f'  期货运维:     http://{bound_host}:{bound_port}/minigame2')
                 return
-            except Exception:
-                # 端口占用，尝试下一个
-                pass
-        
-        # 如果常用端口都被占用，尝试随机端口
-        try:
-            httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
-            host, port = httpd.socket.getsockname()
-            t = threading.Thread(target=httpd.serve_forever, daemon=True)
-            t.start()
-            print(f'管理后台 (Vue): http://{host}:{port}/')
-            return
-        except Exception as e:
-            print(f'启动控制台失败: {e}')
-            
+            except Exception as e:
+                print(f'[admin] 绑定 {host}:{port} 失败: {e}')
         print('控制台未启动')
 
-    start_console_server()
+    # 先绑定 WebSocket，再启动管理台 HTTP，避免 Mongo 不可达时 create_server 被拖死
     try:
-        # 网游级优化：启用消息压缩（perMessageDeflate）
-        # 参考 PomeloServer：优化连接处理，提高并发能力
         async with websockets.serve(
-            handle_client, 
-            WS_HOST, 
+            handle_client,
+            WS_HOST,
             WS_PORT,
-            compression="deflate",  # 启用消息压缩
-            max_size=MAX_MESSAGE_SIZE,  # 限制消息大小
-            ping_interval=HEARTBEAT_INTERVAL,  # 自动心跳
+            compression="deflate",
+            max_size=MAX_MESSAGE_SIZE,
+            ping_interval=HEARTBEAT_INTERVAL,
             ping_timeout=HEARTBEAT_TIMEOUT,
-            # MMO级优化：提高连接处理能力
-            max_queue=1000,  # 增加连接队列大小
-            read_limit=2**20,  # 1MB读取限制
-            write_limit=2**20  # 1MB写入限制
+            max_queue=1000,
+            read_limit=2**20,
+            write_limit=2**20,
         ):
+            logger.info(f'WebSocket 已监听 ws://{WS_HOST}:{WS_PORT}')
+            start_console_server()
             await asyncio.Future()
     except OSError as e:
         if e.errno == 10048 or 'Address already in use' in str(e):

@@ -23,6 +23,12 @@ wheels/
 .installed.cfg
 *.egg
 
+# 密钥与本地环境（保留 .env.example）
+.env
+.env.local
+.env.*.local
+!.env.example
+
 # 日志文件
 logs/
 *.log
@@ -33,8 +39,6 @@ logs/
 *.swp
 *.swo
 *~
-
-
 
 # 数据库
 *.db
