@@ -1048,22 +1048,8 @@ export class BattleScene extends Component {
             return;
         }
 
-        // 进入"指令选择阶段"：双方都需要先选择（目前敌方默认普攻）
+        // 进入指令选择阶段前的本地提示（不再发送未注册的 battle_start；正式开战走 battle_room_*）
         this.log('战斗开始！进入指令选择阶段（双方先选，再按出手值结算）');
-
-        // 通知服务器一场战斗开始（先用于日志，后续可扩展为真正战斗接口）
-        try {
-            this.ws.send(
-                {
-                    type: 'battle_start',
-                    player: this.buildUnitSummary(this.playerUnit),
-                    enemy: this.buildUnitSummary(this.enemyUnit),
-                } as any,
-                true,
-            );
-        } catch (e) {
-            console.warn('[BattleScene] 发送 battle_start 失败:', e);
-        }
 
         // 播放入场平移动画，动画完成后开始第一回合的指令选择
         this.playEntranceAnimation();

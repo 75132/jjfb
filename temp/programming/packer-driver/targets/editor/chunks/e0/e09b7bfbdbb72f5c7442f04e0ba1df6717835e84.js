@@ -83,16 +83,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           /** 游戏内「切换角色/返回选角」流程中：即将断开当前角色会话（非登录页的账号登出） */
           this.isSwitchingCharacterSession = false;
-          // 消息批处理和限流
-          this.messageBatchTimer = -1;
-          this.pendingMessages = [];
-          this.lastSendTime = 0;
-          this.BATCH_INTERVAL = 50;
-          // 50ms批处理间隔
-          this.MIN_SEND_INTERVAL = 10;
-          // 最小发送间隔10ms
-          this.MAX_BATCH_SIZE = 10;
-          // 每批最多10条消息
           this.currentToken = null;
           this.currentUserId = null;
           this.currentCharacterId = null;
@@ -324,7 +314,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (characterId) {
               msgWithAuth.character_id = characterId;
             }
-          } // 如果未连接，加入队列
+          } // 如果未连接，加入离线队列（保持发送顺序）；连接后由 flushMessageQueue 按序发出
 
 
           if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.isConnectedFlag) {
@@ -335,34 +325,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             return;
-          } // 立即发送（用于心跳等关键消息）
+          } // 直发：服务端无批量协议，原批处理层最终仍逐条 send，仅增加延迟
 
 
-          if (immediate) {
-            try {
-              this.socket.send(JSON.stringify(msgWithAuth));
-              this.lastSendTime = Date.now();
-              return;
-            } catch {
-              this.messageQueue.push(msgWithAuth);
-              return;
-            }
-          } // 批处理发送
-
-
-          this.pendingMessages.push(msgWithAuth); // 如果达到批量大小，立即发送
-
-          if (this.pendingMessages.length >= this.MAX_BATCH_SIZE) {
-            this.flushPendingMessages();
-            return;
-          } // 启动批处理定时器
-
-
-          if (this.messageBatchTimer === -1) {
-            this.messageBatchTimer = setTimeout(() => {
-              this.flushPendingMessages();
-              this.messageBatchTimer = -1;
-            }, this.BATCH_INTERVAL);
+          try {
+            this.socket.send(JSON.stringify(msgWithAuth));
+          } catch {
+            this.messageQueue.push(msgWithAuth);
           }
         }
         /**
@@ -419,6 +388,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               case 'get_robot_pets':
                 responseType = 'robot_pets_response';
+                break;
+
+              case 'get_player':
+                // 服务端 send_success_response(..., 'player_info') → player_info_response
+                responseType = 'player_info_response';
+                break;
+
+              case 'get_robot_pet_info':
+                // 服务端成功/失败均为 robot_pet_info_response（非 get_robot_pet_info_response）
+                responseType = 'robot_pet_info_response';
                 break;
 
               case 'world_enter':
@@ -556,41 +535,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             ...data
           };
           this.send(message, requireAuth, false);
-        }
-
-        flushPendingMessages() {
-          if (this.pendingMessages.length === 0) return;
-
-          if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.isConnectedFlag) {
-            // 如果连接断开，将消息移回队列
-            this.messageQueue.push(...this.pendingMessages);
-            this.pendingMessages = [];
-            return;
-          } // 限流：检查最小发送间隔
-
-
-          const now = Date.now();
-
-          if (now - this.lastSendTime < this.MIN_SEND_INTERVAL) {
-            // 延迟发送
-            setTimeout(() => this.flushPendingMessages(), this.MIN_SEND_INTERVAL - (now - this.lastSendTime));
-            return;
-          } // 批量发送
-
-
-          const messages = this.pendingMessages.splice(0, this.MAX_BATCH_SIZE);
-
-          try {
-            // 如果只有一条消息，直接发送；多条消息可以合并（但为了兼容性，暂时逐条发送）
-            for (const msg of messages) {
-              this.socket.send(JSON.stringify(msg));
-            }
-
-            this.lastSendTime = Date.now();
-          } catch {
-            // 发送失败，移回队列
-            this.messageQueue.push(...messages);
-          }
         }
 
         getToken() {
@@ -1095,13 +1039,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         close() {
           this.stopHeartbeat();
 
-          if (this.messageBatchTimer !== -1) {
-            clearTimeout(this.messageBatchTimer);
-            this.messageBatchTimer = -1;
-          }
-
-          this.flushPendingMessages(); // 发送剩余消息
-
           if (this.socket) {
             this.socket.close();
           }
@@ -1178,7 +1115,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (message && this.socket && this.socket.readyState === WebSocket.OPEN) {
               try {
                 this.socket.send(JSON.stringify(message));
-                this.lastSendTime = Date.now();
               } catch {
                 this.messageQueue.unshift(message);
                 break;
@@ -1467,12 +1403,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         onDestroy() {
           this.stopHeartbeat();
-
-          if (this.messageBatchTimer !== -1) {
-            clearTimeout(this.messageBatchTimer);
-            this.messageBatchTimer = -1;
-          }
-
           this.close();
         }
 

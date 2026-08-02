@@ -694,12 +694,22 @@ async def handle_bag_get(websocket, data, current_character_id):
     user_id = data.get('user_id')  # 测试模式：支持通过user_id获取用户
     user = utils.get_user_by_id_or_token(user_id=user_id, token=token)
     if not user:
-        await utils.send_error_response(websocket, 'bag_get', '用户不存在或未登录', code=401, request_data=data)
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_items',
+            'success': False,
+            'code': 401,
+            'message': '用户不存在或未登录',
+        }, request_data=data)
         return
     
     cid = data.get('character_id') or current_character_id
     if not cid:
-        await utils.send_error_response(websocket, 'bag_get', '角色ID不能为空', code=400, request_data=data)
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_items',
+            'success': False,
+            'code': 400,
+            'message': '角色ID不能为空',
+        }, request_data=data)
         return
     
     try:
@@ -859,7 +869,12 @@ async def handle_bag_get(websocket, data, current_character_id):
         print(f'❌ [BagHandler] 获取背包物品失败: {e}')
         import traceback
         traceback.print_exc()
-        await utils.send_error_response(websocket, 'bag_get', f'获取背包物品失败: {str(e)}', code=500, request_data=data)
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_items',
+            'success': False,
+            'code': 500,
+            'message': f'获取背包物品失败: {str(e)}',
+        }, request_data=data)
 
 
 async def _pet_owned_by_character(user, character_id, pet_id) -> bool:

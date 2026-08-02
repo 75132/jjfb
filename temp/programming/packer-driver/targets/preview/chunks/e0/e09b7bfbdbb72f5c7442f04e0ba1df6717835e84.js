@@ -85,16 +85,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           /** 游戏内「切换角色/返回选角」流程中：即将断开当前角色会话（非登录页的账号登出） */
           this.isSwitchingCharacterSession = false;
-          // 消息批处理和限流
-          this.messageBatchTimer = -1;
-          this.pendingMessages = [];
-          this.lastSendTime = 0;
-          this.BATCH_INTERVAL = 50;
-          // 50ms批处理间隔
-          this.MIN_SEND_INTERVAL = 10;
-          // 最小发送间隔10ms
-          this.MAX_BATCH_SIZE = 10;
-          // 每批最多10条消息
           this.currentToken = null;
           this.currentUserId = null;
           this.currentCharacterId = null;
@@ -346,7 +336,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (characterId) {
               msgWithAuth.character_id = characterId;
             }
-          } // 如果未连接，加入队列
+          } // 如果未连接，加入离线队列（保持发送顺序）；连接后由 flushMessageQueue 按序发出
 
 
           if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.isConnectedFlag) {
@@ -357,34 +347,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             return;
-          } // 立即发送（用于心跳等关键消息）
+          } // 直发：服务端无批量协议，原批处理层最终仍逐条 send，仅增加延迟
 
 
-          if (immediate) {
-            try {
-              this.socket.send(JSON.stringify(msgWithAuth));
-              this.lastSendTime = Date.now();
-              return;
-            } catch (_unused4) {
-              this.messageQueue.push(msgWithAuth);
-              return;
-            }
-          } // 批处理发送
-
-
-          this.pendingMessages.push(msgWithAuth); // 如果达到批量大小，立即发送
-
-          if (this.pendingMessages.length >= this.MAX_BATCH_SIZE) {
-            this.flushPendingMessages();
-            return;
-          } // 启动批处理定时器
-
-
-          if (this.messageBatchTimer === -1) {
-            this.messageBatchTimer = setTimeout(() => {
-              this.flushPendingMessages();
-              this.messageBatchTimer = -1;
-            }, this.BATCH_INTERVAL);
+          try {
+            this.socket.send(JSON.stringify(msgWithAuth));
+          } catch (_unused4) {
+            this.messageQueue.push(msgWithAuth);
           }
         }
         /**
@@ -453,6 +422,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               case 'get_robot_pets':
                 responseType = 'robot_pets_response';
+                break;
+
+              case 'get_player':
+                // 服务端 send_success_response(..., 'player_info') → player_info_response
+                responseType = 'player_info_response';
+                break;
+
+              case 'get_robot_pet_info':
+                // 服务端成功/失败均为 robot_pet_info_response（非 get_robot_pet_info_response）
+                responseType = 'robot_pet_info_response';
                 break;
 
               case 'world_enter':
@@ -602,41 +581,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.send(message, requireAuth, false);
         }
 
-        flushPendingMessages() {
-          if (this.pendingMessages.length === 0) return;
-
-          if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.isConnectedFlag) {
-            // 如果连接断开，将消息移回队列
-            this.messageQueue.push(...this.pendingMessages);
-            this.pendingMessages = [];
-            return;
-          } // 限流：检查最小发送间隔
-
-
-          var now = Date.now();
-
-          if (now - this.lastSendTime < this.MIN_SEND_INTERVAL) {
-            // 延迟发送
-            setTimeout(() => this.flushPendingMessages(), this.MIN_SEND_INTERVAL - (now - this.lastSendTime));
-            return;
-          } // 批量发送
-
-
-          var messages = this.pendingMessages.splice(0, this.MAX_BATCH_SIZE);
-
-          try {
-            // 如果只有一条消息，直接发送；多条消息可以合并（但为了兼容性，暂时逐条发送）
-            for (var msg of messages) {
-              this.socket.send(JSON.stringify(msg));
-            }
-
-            this.lastSendTime = Date.now();
-          } catch (_unused5) {
-            // 发送失败，移回队列
-            this.messageQueue.push(...messages);
-          }
-        }
-
         getToken() {
           if (this.currentToken) return this.currentToken; // 懒加载：从本地恢复 token（用于“重进自动登录”）
 
@@ -716,7 +660,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (num < 1e12) return Math.floor(num * 1000);
             return Math.floor(num);
-          } catch (_unused6) {
+          } catch (_unused5) {
             return null;
           }
         } // 保存 token 过期时间（用于 getToken 的到期校验）
@@ -794,7 +738,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (rt) this.saveRefreshToken(rt, rte);
               onDone == null || onDone(true);
             }, false, 10000);
-          } catch (_unused7) {
+          } catch (_unused6) {
             onDone == null || onDone(false);
           }
         }
@@ -1003,7 +947,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           try {
             console.log("WebSocket \u8FDE\u63A5\u5730\u5740: " + this.url);
-          } catch (_unused8) {}
+          } catch (_unused7) {}
 
           var seq = ++this._connectSeq;
           var ws = new WebSocket(this.url);
@@ -1015,7 +959,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             try {
               console.log("[WS] \u5DF2\u8FDE\u63A5: " + this.url);
-            } catch (_unused9) {}
+            } catch (_unused8) {}
 
             this.invalidateSessionAuth();
             this.isConnectedFlag = true;
@@ -1040,7 +984,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             try {
               console.warn("[WS] \u8FDE\u63A5\u5173\u95ED code=" + (ev == null ? void 0 : ev.code) + " reason=" + ((ev == null ? void 0 : ev.reason) || ''));
-            } catch (_unused10) {}
+            } catch (_unused9) {}
 
             this.stopHeartbeat(); // 停止心跳
 
@@ -1118,7 +1062,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             try {
               console.error('[WS] 错误', (e == null ? void 0 : e.message) || e);
-            } catch (_unused11) {}
+            } catch (_unused10) {}
 
             this.stopHeartbeat(); // 停止心跳
 
@@ -1138,13 +1082,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         close() {
           this.stopHeartbeat();
-
-          if (this.messageBatchTimer !== -1) {
-            clearTimeout(this.messageBatchTimer);
-            this.messageBatchTimer = -1;
-          }
-
-          this.flushPendingMessages(); // 发送剩余消息
 
           if (this.socket) {
             this.socket.close();
@@ -1222,8 +1159,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (message && this.socket && this.socket.readyState === WebSocket.OPEN) {
               try {
                 this.socket.send(JSON.stringify(message));
-                this.lastSendTime = Date.now();
-              } catch (_unused12) {
+              } catch (_unused11) {
                 this.messageQueue.unshift(message);
                 break;
               }
@@ -1447,7 +1383,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               try {
                 console.log("\uD83D\uDCE5 [WebSocketManager] \u6536\u5230\u6D88\u606F: type=" + data.type, data);
-              } catch (_unused13) {}
+              } catch (_unused12) {}
 
               var node = this.node;
 
@@ -1456,7 +1392,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
                 try {
                   console.log("\u2705 [WebSocketManager] \u5DF2\u89E6\u53D1\u4E8B\u4EF6: " + data.type);
-                } catch (_unused14) {}
+                } catch (_unused13) {}
               } else {
                 console.warn("\u26A0\uFE0F [WebSocketManager] \u65E0\u6CD5\u89E6\u53D1\u4E8B\u4EF6 " + data.type + "\uFF0Cnode\u65E0\u6548");
               }
@@ -1512,12 +1448,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         onDestroy() {
           this.stopHeartbeat();
-
-          if (this.messageBatchTimer !== -1) {
-            clearTimeout(this.messageBatchTimer);
-            this.messageBatchTimer = -1;
-          }
-
           this.close();
         }
 

@@ -28,14 +28,6 @@ export class WebSocketManager extends Component {
     /** 游戏内「切换角色/返回选角」流程中：即将断开当前角色会话（非登录页的账号登出） */
     private isSwitchingCharacterSession: boolean = false;
     
-    // 消息批处理和限流
-    private messageBatchTimer: number = -1;
-    private pendingMessages: ClientMessage[] = [];
-    private lastSendTime: number = 0;
-    private readonly BATCH_INTERVAL = 50; // 50ms批处理间隔
-    private readonly MIN_SEND_INTERVAL = 10; // 最小发送间隔10ms
-    private readonly MAX_BATCH_SIZE = 10; // 每批最多10条消息
-
     private currentToken: string | null = null;
     private currentUserId: string | null = null;
     private currentCharacterId: string | null = null;
@@ -245,40 +237,18 @@ export class WebSocketManager extends Component {
             }
         }
         
-        // 如果未连接，加入队列
+        // 如果未连接，加入离线队列（保持发送顺序）；连接后由 flushMessageQueue 按序发出
         if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.isConnectedFlag) {
             this.messageQueue.push(msgWithAuth);
             if (!this.isConnecting) { this.connect(); }
             return;
         }
-        
-        // 立即发送（用于心跳等关键消息）
-        if (immediate) {
-            try {
-                this.socket.send(JSON.stringify(msgWithAuth));
-                this.lastSendTime = Date.now();
-                return;
-            } catch {
-                this.messageQueue.push(msgWithAuth);
-                return;
-            }
-        }
-        
-        // 批处理发送
-        this.pendingMessages.push(msgWithAuth);
-        
-        // 如果达到批量大小，立即发送
-        if (this.pendingMessages.length >= this.MAX_BATCH_SIZE) {
-            this.flushPendingMessages();
-            return;
-        }
-        
-        // 启动批处理定时器
-        if (this.messageBatchTimer === -1) {
-            this.messageBatchTimer = setTimeout(() => {
-                this.flushPendingMessages();
-                this.messageBatchTimer = -1;
-            }, this.BATCH_INTERVAL) as any;
+
+        // 直发：服务端无批量协议，原批处理层最终仍逐条 send，仅增加延迟
+        try {
+            this.socket.send(JSON.stringify(msgWithAuth));
+        } catch {
+            this.messageQueue.push(msgWithAuth);
         }
     }
 
@@ -345,6 +315,14 @@ export class WebSocketManager extends Component {
                     break;
                 case 'get_robot_pets':
                     responseType = 'robot_pets_response';
+                    break;
+                case 'get_player':
+                    // 服务端 send_success_response(..., 'player_info') → player_info_response
+                    responseType = 'player_info_response';
+                    break;
+                case 'get_robot_pet_info':
+                    // 服务端成功/失败均为 robot_pet_info_response（非 get_robot_pet_info_response）
+                    responseType = 'robot_pet_info_response';
                     break;
                 case 'world_enter':
                     responseType = 'world_enter_response';
@@ -478,37 +456,6 @@ export class WebSocketManager extends Component {
             ...data
         };
         this.send(message, requireAuth, false);
-    }
-    
-    private flushPendingMessages(): void {
-        if (this.pendingMessages.length === 0) return;
-        if (!this.socket || this.socket.readyState !== WebSocket.OPEN || !this.isConnectedFlag) {
-            // 如果连接断开，将消息移回队列
-            this.messageQueue.push(...this.pendingMessages);
-            this.pendingMessages = [];
-            return;
-        }
-        
-        // 限流：检查最小发送间隔
-        const now = Date.now();
-        if (now - this.lastSendTime < this.MIN_SEND_INTERVAL) {
-            // 延迟发送
-            setTimeout(() => this.flushPendingMessages(), this.MIN_SEND_INTERVAL - (now - this.lastSendTime));
-            return;
-        }
-        
-        // 批量发送
-        const messages = this.pendingMessages.splice(0, this.MAX_BATCH_SIZE);
-        try {
-            // 如果只有一条消息，直接发送；多条消息可以合并（但为了兼容性，暂时逐条发送）
-            for (const msg of messages) {
-                this.socket.send(JSON.stringify(msg));
-            }
-            this.lastSendTime = Date.now();
-        } catch {
-            // 发送失败，移回队列
-            this.messageQueue.push(...messages);
-        }
     }
 
     public getToken(): string | null { 
@@ -917,11 +864,6 @@ export class WebSocketManager extends Component {
 
     public close(): void { 
         this.stopHeartbeat();
-        if (this.messageBatchTimer !== -1) {
-            clearTimeout(this.messageBatchTimer);
-            this.messageBatchTimer = -1;
-        }
-        this.flushPendingMessages(); // 发送剩余消息
         if (this.socket) { this.socket.close(); } 
     }
     /**
@@ -983,7 +925,6 @@ export class WebSocketManager extends Component {
             if (message && this.socket && this.socket.readyState === WebSocket.OPEN) { 
                 try { 
                     this.socket.send(JSON.stringify(message)); 
-                    this.lastSendTime = Date.now();
                 } catch { 
                     this.messageQueue.unshift(message); 
                     break; 
@@ -1036,7 +977,7 @@ export class WebSocketManager extends Component {
             }
         };
         
-        // 握手消息立即发送，不使用批处理
+        // 握手无鉴权直发
         this.send(handshakeMsg as any, false, true);
         
         // 设置超时（3秒后如果还没收到握手响应，继续正常流程，向后兼容）
@@ -1227,10 +1168,6 @@ export class WebSocketManager extends Component {
     start(): void { if (this === WebSocketManager.instance) { this.connect(); } }
     onDestroy(): void { 
         this.stopHeartbeat();
-        if (this.messageBatchTimer !== -1) {
-            clearTimeout(this.messageBatchTimer);
-            this.messageBatchTimer = -1;
-        }
         this.close(); 
     }
 }

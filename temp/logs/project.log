@@ -7584,3 +7584,2859 @@ export class Foo {            //  ↓
 }
 2026-8-2 18:59:53 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668393062
 2026-8-2 18:59:53 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:00:08 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668408.1664407,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668408073',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:00:08 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668408073
+2026-8-2 19:00:08 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:00:23 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668423.2293515,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668423089',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:00:23 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668423089
+2026-8-2 19:00:23 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:00:38 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668438.1924846,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668438100',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:00:38 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668438100
+2026-8-2 19:00:38 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:00:53 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668453.2041705,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668453112',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:00:53 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668453112
+2026-8-2 19:00:53 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:01:08 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668468.2049665,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668468115',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:01:08 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668468115
+2026-8-2 19:01:08 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:01:23 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668483.2121818,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668483122',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:01:23 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668483122
+2026-8-2 19:01:23 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:01:38 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668498.2584085,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668498130',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:01:38 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668498130
+2026-8-2 19:01:38 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:01:53 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668513.2387483,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668513134',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:01:53 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668513134
+2026-8-2 19:01:53 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:02:08 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668528.2339482,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668528140',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:02:08 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668528140
+2026-8-2 19:02:08 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:04:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668670.0398455,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668669802',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:04:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668669802
+2026-8-2 19:04:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:04:44 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668684.9243567,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668684816',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:04:44 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668684816
+2026-8-2 19:04:44 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:04:59 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668699.911768,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668699820',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:04:59 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668699820
+2026-8-2 19:04:59 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:05:14 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668714.935419,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668714825',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:05:14 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668714825
+2026-8-2 19:05:14 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:05:29 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668729.9336936,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668729840',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:05:29 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668729840
+2026-8-2 19:05:29 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:05:44 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668744.9772158,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668744846',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:05:44 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668744846
+2026-8-2 19:05:44 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:05:59 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668759.9695663,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668759856',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:05:59 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668759856
+2026-8-2 19:05:59 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:06:14 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668774.9972014,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668774867',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:06:14 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668774867
+2026-8-2 19:06:14 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:06:18 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668778.2531142,
+  version: '1.0.0',
+  request_id: 'ws_1785668778196_276208',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:18 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:18 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668778.5306613,
+  version: '1.0.0',
+  request_id: 'ws_1785668778473_604805',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:18 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:18 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668778.8317146,
+  version: '1.0.0',
+  request_id: 'ws_1785668778758_965036',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:18 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:19 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668779.1121776,
+  version: '1.0.0',
+  request_id: 'ws_1785668779041_146304',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:19 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:20 - log: [PreviewInEditor] [Story] StoryManager: range {"prevUid":null,"bestUid":"world_1783159547543_chain_5","bestDist":39}
+2026-8-2 19:06:20 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668780.7266665,
+  version: '1.0.0',
+  request_id: 'ws_1785668780671_533813',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:20 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager.startDialogue {"speaker":"系统","linesLen":1,"rawKeys":["speaker","lines"]}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager._advanceFromUi {"source":"key"}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager._advanceLine {"lineIndex":0,"linesLen":1,"willClose":true}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"available","frameIndex":0}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":"world_1783159547543_chain_5","resolved":["world_1783159547543_chain_5"]}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"available","frameIndex":0}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"available","frameIndex":0}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":"world_1783159547543_chain_5","resolved":["world_1783159547543_chain_5"]}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"available","frameIndex":0}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: 事件已完成 {"npcUid":"world_1783159547543_chain_5","eventId":"world_1783159547543_chain_5_e1","eventType":"task"}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":"world_1783159547543_chain_5","resolved":["world_1783159547543_chain_5"]}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"in_progress","frameIndex":1}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"in_progress","frameIndex":1}
+2026-8-2 19:06:21 - log: [PreviewInEditor] [Story] StoryManager.startDialogue {"speaker":"韩诺","linesLen":3,"rawKeys":["speaker","lines"]}
+2026-8-2 19:06:22 - log: [PreviewInEditor] [Story] StoryManager._advanceFromUi {"source":"key"}
+2026-8-2 19:06:22 - log: [PreviewInEditor] [Story] StoryManager._advanceLine {"lineIndex":0,"linesLen":3,"willClose":false}
+2026-8-2 19:06:22 - log: [PreviewInEditor] [Story] StoryManager._advanceFromUi {"source":"key"}
+2026-8-2 19:06:22 - log: [PreviewInEditor] [Story] StoryManager._advanceLine {"lineIndex":1,"linesLen":3,"willClose":false}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager._advanceFromUi {"source":"key"}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager._advanceLine {"lineIndex":2,"linesLen":3,"willClose":true}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 事件已完成 {"npcUid":"world_1783159547543_chain_5","eventId":"world_1783159547543_chain_5_e2","eventType":"dialog"}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":"world_1783159547543_chain_5","resolved":["world_1783159547543_chain_5"]}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"turn_in","frameIndex":2}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"turn_in","frameIndex":2}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager.startDialogue {"speaker":"系统","linesLen":1,"rawKeys":["speaker","lines"]}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager._advanceFromUi {"source":"key"}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager._advanceLine {"lineIndex":0,"linesLen":1,"willClose":true}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"turn_in","frameIndex":2}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":"world_1783159547543_chain_5","resolved":["world_1783159547543_chain_5"]}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"turn_in","frameIndex":2}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"turn_in","frameIndex":2}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":"world_1783159547543_chain_5","resolved":["world_1783159547543_chain_5"]}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: NPC 任务图标 {"npcUid":"world_1783159547543_chain_5","kind":"turn_in","frameIndex":2}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 事件已完成 {"npcUid":"world_1783159547543_chain_5","eventId":"world_1783159547543_chain_5_e3","eventType":"task"}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 剧情已完成，已销毁克隆 NPC {"npcUid":"world_1783159547543_chain_5"}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":null,"resolved":[]}
+2026-8-2 19:06:23 - log: [PreviewInEditor] [Story] StoryManager: 顺序可见性 {"currentUid":null,"resolved":[]}
+2026-8-2 19:06:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668785.390031,
+  version: '1.0.0',
+  request_id: 'ws_1785668785320_769022',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668785.6741133,
+  version: '1.0.0',
+  request_id: 'ws_1785668785603_422146',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668785.9567635,
+  version: '1.0.0',
+  request_id: 'ws_1785668785886_730402',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:26 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668786.2148874,
+  version: '1.0.0',
+  request_id: 'ws_1785668786158_734032',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:26 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:26 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668786.4869072,
+  version: '1.0.0',
+  request_id: 'ws_1785668786431_648965',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:26 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:26 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668786.7722085,
+  version: '1.0.0',
+  request_id: 'ws_1785668786702_942424',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:26 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:27 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668787.0342162,
+  version: '1.0.0',
+  request_id: 'ws_1785668786976_907875',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:27 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:27 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668787.3226838,
+  version: '1.0.0',
+  request_id: 'ws_1785668787252_346520',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:27 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:27 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668787.5906758,
+  version: '1.0.0',
+  request_id: 'ws_1785668787518_600704',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:06:27 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:06:29 - log: [PreviewInEditor] ⚔️ 测试：启动战斗场景
+2026-8-2 19:06:29 - log: [PreviewInEditor] ✅ 战斗场景已启动
+2026-8-2 19:06:29 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=battle_room_resume_response {
+  type: 'battle_room_resume_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668789.8204234,
+  version: '1.0.0',
+  request_id: '7fb52dbc',
+  data: { has_room: false }
+}
+2026-8-2 19:06:29 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (battle_room_resume): 7fb52dbc
+2026-8-2 19:06:29 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: battle_room_resume_response
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=battle_room_create_response {
+  type: 'battle_room_create_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668790.2122345,
+  version: '1.0.0',
+  request_id: '25acff7b',
+  data: {
+    room_id: '541756b7d2a4436697cd4235ec0d113b',
+    state: {
+      room_id: '541756b7d2a4436697cd4235ec0d113b',
+      mode: 'pve',
+      user_id: '69cd2b1d17d8322502e10ae0',
+      character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+      created_at: 1785668790.1682358,
+      updated_at: 1785668790.1682358,
+      last_action_ts: 1785668790.1682358,
+      status: 'in_progress',
+      round: 1,
+      seed: 3257362328,
+      player: [Object],
+      enemy: [Object],
+      result: null,
+      command_phase_start_ts: 1785668790169,
+      command_deadline_ts: 1785668820169,
+      remaining_command_seconds: 29.957
+    }
+  }
+}
+2026-8-2 19:06:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (battle_room_create): 25acff7b
+2026-8-2 19:06:30 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: fl_L1
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:19 -> (88, 62) for AniID:fl_L1
+2026-8-2 19:06:30 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: df_L3
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:27 -> (95, 110) for AniID:df_L3
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Dun spriteIndex:48 -> (-38, 30) for AniID:df_L3
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Wing spriteIndex:31 -> (5, 119) for AniID:df_L3
+2026-8-2 19:06:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: battle_room_create_response
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668790.2522378,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668789883',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:06:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668789883
+2026-8-2 19:06:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=player_info_response {
+  type: 'player_info_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668790.3672411,
+  version: '1.0.0',
+  request_id: 'battle_get_player_1785668790220_87672',
+  data: {
+    is_self: true,
+    is_friend: false,
+    role_name: '康勇',
+    level: 1,
+    exp: 0,
+    total_exp: 0,
+    current_level_exp: 0,
+    next_level_need_exp: 370,
+    friend_id: '047678',
+    Sprite: 1,
+    class: 1,
+    robotcount: 1,
+    gold: 0,
+    energy_blocks: 0,
+    alliance: '',
+    record: '',
+    rank: '',
+    position: { map_id: 1, x: 840, y: -599.9999961720112 },
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+    user_id: '69cd2b1d17d8322502e10ae0',
+    items: {}
+  }
+}
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📥 [GameCommonData] 收到player_info响应（原始数据）: {
+  type: 'player_info_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668790.3672411,
+  version: '1.0.0',
+  request_id: 'battle_get_player_1785668790220_87672',
+  data: {
+    is_self: true,
+    is_friend: false,
+    role_name: '康勇',
+    level: 1,
+    exp: 0,
+    total_exp: 0,
+    current_level_exp: 0,
+    next_level_need_exp: 370,
+    friend_id: '047678',
+    Sprite: 1,
+    class: 1,
+    robotcount: 1,
+    gold: 0,
+    energy_blocks: 0,
+    alliance: '',
+    record: '',
+    rank: '',
+    position: { map_id: 1, x: 840, y: -599.9999961720112 },
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+    user_id: '69cd2b1d17d8322502e10ae0',
+    items: {}
+  }
+}
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📥 [GameCommonData] 检测到标准响应格式，合并数据字段
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📥 [GameCommonData] 收到带 request_id 的响应: battle_get_player_1785668790220_87672
+2026-8-2 19:06:30 - log: [PreviewInEditor] ✅ [GameCommonData] 玩家信息已更新（确认是自己的数据） - 等级: 1, 经验: 0, 名称: 康勇
+2026-8-2 19:06:30 - log: [PreviewInEditor] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-8-2 19:06:30 - log: [PreviewInEditor] 📊 角色经验信息：
+2026-8-2 19:06:30 - log: [PreviewInEditor]   - 当前等级：1
+2026-8-2 19:06:30 - log: [PreviewInEditor]   - 当前总经验：0
+2026-8-2 19:06:30 - log: [PreviewInEditor]   - 距离下次升级所需经验：370
+2026-8-2 19:06:30 - log: [PreviewInEditor] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-8-2 19:06:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: player_info_response
+2026-8-2 19:06:31 - log: [PreviewInEditor] [BattleScene] 请选择指令（普攻 / 逃跑）。30 秒未操作则自动选择普攻。
+2026-8-2 19:06:31 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=battle_room_action_response {
+  type: 'battle_room_action_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668791.7883682,
+  version: '1.0.0',
+  request_id: '1fd51f61',
+  data: {
+    room_id: '541756b7d2a4436697cd4235ec0d113b',
+    state: {
+      room_id: '541756b7d2a4436697cd4235ec0d113b',
+      mode: 'pve',
+      user_id: '69cd2b1d17d8322502e10ae0',
+      character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+      created_at: 1785668790.1682358,
+      updated_at: 1785668791.7519193,
+      last_action_ts: 1785668791.7519193,
+      status: 'in_progress',
+      round: 2,
+      seed: 3257362328,
+      player: [Object],
+      enemy: [Object],
+      result: null,
+      command_phase_start_ts: 1785668791751,
+      command_deadline_ts: 1785668821751,
+      remaining_command_seconds: 29.963
+    }
+  }
+}
+2026-8-2 19:06:31 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (battle_room_action): 1fd51f61
+2026-8-2 19:06:31 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: fl_L1
+2026-8-2 19:06:31 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:19 -> (88, 62) for AniID:fl_L1
+2026-8-2 19:06:31 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: df_L3
+2026-8-2 19:06:31 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:27 -> (95, 110) for AniID:df_L3
+2026-8-2 19:06:31 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Dun spriteIndex:48 -> (-38, 30) for AniID:df_L3
+2026-8-2 19:06:31 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Wing spriteIndex:31 -> (5, 119) for AniID:df_L3
+2026-8-2 19:06:31 - log: [PreviewInEditor] [BattleScene] 玩家 造成 4767 点伤害（按服务器结果）
+2026-8-2 19:06:31 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: battle_room_action_response
+2026-8-2 19:06:33 - log: [PreviewInEditor] [BattleScene] 敌人 造成 6552 点伤害（按服务器结果）
+2026-8-2 19:06:34 - log: [PreviewInEditor] [BattleScene] 请选择指令（普攻 / 逃跑）。30 秒未操作则自动选择普攻。
+2026-8-2 19:06:35 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=battle_room_action_response {
+  type: 'battle_room_action_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668795.5537324,
+  version: '1.0.0',
+  request_id: '42a9312d',
+  data: {
+    room_id: '541756b7d2a4436697cd4235ec0d113b',
+    state: {
+      room_id: '541756b7d2a4436697cd4235ec0d113b',
+      mode: 'pve',
+      user_id: '69cd2b1d17d8322502e10ae0',
+      character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+      created_at: 1785668790.1682358,
+      updated_at: 1785668795.5168405,
+      last_action_ts: 1785668795.5168405,
+      status: 'in_progress',
+      round: 3,
+      seed: 3257362328,
+      player: [Object],
+      enemy: [Object],
+      result: null,
+      command_phase_start_ts: 1785668795516,
+      command_deadline_ts: 1785668825516,
+      remaining_command_seconds: 29.963
+    }
+  }
+}
+2026-8-2 19:06:35 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (battle_room_action): 42a9312d
+2026-8-2 19:06:35 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: fl_L1
+2026-8-2 19:06:35 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:19 -> (88, 62) for AniID:fl_L1
+2026-8-2 19:06:35 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: df_L3
+2026-8-2 19:06:35 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:27 -> (95, 110) for AniID:df_L3
+2026-8-2 19:06:35 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Dun spriteIndex:48 -> (-38, 30) for AniID:df_L3
+2026-8-2 19:06:35 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Wing spriteIndex:31 -> (5, 119) for AniID:df_L3
+2026-8-2 19:06:35 - log: [PreviewInEditor] [BattleScene] 玩家 造成 4767 点伤害（按服务器结果）
+2026-8-2 19:06:35 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: battle_room_action_response
+2026-8-2 19:06:37 - log: [PreviewInEditor] [BattleScene] 敌人 造成 6552 点伤害（按服务器结果）
+2026-8-2 19:06:38 - log: [PreviewInEditor] [BattleScene] 请选择指令（普攻 / 逃跑）。30 秒未操作则自动选择普攻。
+2026-8-2 19:06:39 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=battle_room_action_response {
+  type: 'battle_room_action_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668799.1369183,
+  version: '1.0.0',
+  request_id: '2be6f23f',
+  data: {
+    room_id: '541756b7d2a4436697cd4235ec0d113b',
+    state: {
+      room_id: '541756b7d2a4436697cd4235ec0d113b',
+      mode: 'pve',
+      user_id: '69cd2b1d17d8322502e10ae0',
+      character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+      created_at: 1785668790.1682358,
+      updated_at: 1785668799.0492623,
+      last_action_ts: 1785668799.0492623,
+      status: 'finished',
+      round: 4,
+      seed: 3257362328,
+      player: [Object],
+      enemy: [Object],
+      result: [Object],
+      command_phase_start_ts: 1785668795516,
+      command_deadline_ts: 1785668825516,
+      remaining_command_seconds: 26.38
+    }
+  }
+}
+2026-8-2 19:06:39 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (battle_room_action): 2be6f23f
+2026-8-2 19:06:39 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: fl_L1
+2026-8-2 19:06:39 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:19 -> (88, 62) for AniID:fl_L1
+2026-8-2 19:06:39 - log: [PreviewInEditor] 🎬 [RobotShow] 播放动画: df_L3
+2026-8-2 19:06:39 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Weapon spriteIndex:27 -> (95, 110) for AniID:df_L3
+2026-8-2 19:06:39 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Dun spriteIndex:48 -> (-38, 30) for AniID:df_L3
+2026-8-2 19:06:39 - log: [PreviewInEditor] 📍 [RobotShow] 装备位置设置: Wing spriteIndex:31 -> (5, 119) for AniID:df_L3
+2026-8-2 19:06:39 - log: [PreviewInEditor] [BattleScene] 玩家 造成 4767 点伤害（按服务器结果）
+2026-8-2 19:06:39 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: battle_room_action_response
+2026-8-2 19:06:40 - log: [PreviewInEditor] [BattleScene] 敌人 造成 5992 点伤害（按服务器结果）
+2026-8-2 19:06:42 - log: [PreviewInEditor] 🗑️ [DataCacheManager] 已清除机甲详情数据缓存 (pet_id: 6a48f6b9235fdddf57035f02)
+2026-8-2 19:06:42 - log: [PreviewInEditor] [BattleScene] 战斗结束：玩家失败（原因：击倒）
+2026-8-2 19:06:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=player_info_response {
+  type: 'player_info_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668802.6664362,
+  version: '1.0.0',
+  data: {
+    is_self: true,
+    is_friend: false,
+    role_name: '康勇',
+    level: 1,
+    exp: 0,
+    total_exp: 0,
+    current_level_exp: 0,
+    next_level_need_exp: 370,
+    friend_id: '047678',
+    Sprite: 1,
+    class: 1,
+    robotcount: 1,
+    gold: 0,
+    energy_blocks: 0,
+    alliance: '',
+    record: '',
+    rank: '',
+    position: { map_id: 1, x: 840, y: -599.9999961720112 },
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+    user_id: '69cd2b1d17d8322502e10ae0',
+    items: {}
+  }
+}
+2026-8-2 19:06:42 - log: [PreviewInEditor] 📥 [GameCommonData] 收到player_info响应（原始数据）: {
+  type: 'player_info_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668802.6664362,
+  version: '1.0.0',
+  data: {
+    is_self: true,
+    is_friend: false,
+    role_name: '康勇',
+    level: 1,
+    exp: 0,
+    total_exp: 0,
+    current_level_exp: 0,
+    next_level_need_exp: 370,
+    friend_id: '047678',
+    Sprite: 1,
+    class: 1,
+    robotcount: 1,
+    gold: 0,
+    energy_blocks: 0,
+    alliance: '',
+    record: '',
+    rank: '',
+    position: { map_id: 1, x: 840, y: -599.9999961720112 },
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7',
+    user_id: '69cd2b1d17d8322502e10ae0',
+    items: {}
+  }
+}
+2026-8-2 19:06:42 - log: [PreviewInEditor] 📥 [GameCommonData] 检测到标准响应格式，合并数据字段
+2026-8-2 19:06:42 - log: [PreviewInEditor] ✅ [GameCommonData] 玩家信息已更新（确认是自己的数据） - 等级: 1, 经验: 0, 名称: 康勇
+2026-8-2 19:06:42 - log: [PreviewInEditor] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-8-2 19:06:42 - log: [PreviewInEditor] 📊 角色经验信息：
+2026-8-2 19:06:42 - log: [PreviewInEditor]   - 当前等级：1
+2026-8-2 19:06:42 - log: [PreviewInEditor]   - 当前总经验：0
+2026-8-2 19:06:42 - log: [PreviewInEditor]   - 距离下次升级所需经验：370
+2026-8-2 19:06:42 - log: [PreviewInEditor] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2026-8-2 19:06:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: player_info_response
+2026-8-2 19:06:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=battle_result_response {
+  type: 'battle_result_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668802.6694362,
+  version: '1.0.0',
+  data: { ok: true }
+}
+2026-8-2 19:06:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: battle_result_response
+2026-8-2 19:06:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668802.768158,
+  version: '1.0.0',
+  request_id: 'we_pi_1785668802673_601065',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:06:42 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_pi_1785668802673_601065
+2026-8-2 19:06:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:06:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668805.0332782,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668804888',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:06:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668804888
+2026-8-2 19:06:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:07:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668819.9984467,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668819893',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:07:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668819893
+2026-8-2 19:07:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 使用手动绑定的 Message 模板节点
+2026-8-2 19:07:12 - log: [PreviewInEditor] 📤 [ChatRoomFull] 发送请求: get_chat_history, get_announcements_history
+2026-8-2 19:07:12 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=get_chat_history_response {
+  type: 'get_chat_history_response',
+  success: true,
+  messages: [
+    {
+      text: '这不对吧',
+      sender: '33',
+      character_id: 'ab3591d4-6103-4b03-be69-2abfb5e9b586',
+      created_at: '2026-06-27T02:11:23.112000'
+    },
+    {
+      text: '你们怎么这样',
+      sender: '任维朋',
+      character_id: '8d1b9844-908e-4422-9ece-357feb738e18',
+      created_at: '2026-06-27T02:10:31.374000'
+    },
+    {
+      text: '呃呃呃呃呃呃呃呃呃呃呃',
+      sender: '任维朋',
+      character_id: '8d1b9844-908e-4422-9ece-357feb738e18',
+      created_at: '2026-06-17T15:45:09.044000'
+    },
+    {
+      text: '你们好',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-05-02T20:49:55.706000'
+    },
+    {
+      text: '3333333333',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-04-25T03:42:46.322000'
+    },
+    {
+      text: '你谁',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-04-02T07:54:41.055000'
+    },
+    {
+      text: '11',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-04-02T07:54:31.265000'
+    }
+  ],
+  request_id: '602fd9f6',
+  version: '1.0.0'
+}
+2026-8-2 19:07:12 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (get_chat_history): 602fd9f6
+2026-8-2 19:07:12 - log: [PreviewInEditor] 📥 [ChatRoomFull] 收到chat_history响应: {
+  type: 'get_chat_history_response',
+  success: true,
+  messages: [
+    {
+      text: '这不对吧',
+      sender: '33',
+      character_id: 'ab3591d4-6103-4b03-be69-2abfb5e9b586',
+      created_at: '2026-06-27T02:11:23.112000'
+    },
+    {
+      text: '你们怎么这样',
+      sender: '任维朋',
+      character_id: '8d1b9844-908e-4422-9ece-357feb738e18',
+      created_at: '2026-06-27T02:10:31.374000'
+    },
+    {
+      text: '呃呃呃呃呃呃呃呃呃呃呃',
+      sender: '任维朋',
+      character_id: '8d1b9844-908e-4422-9ece-357feb738e18',
+      created_at: '2026-06-17T15:45:09.044000'
+    },
+    {
+      text: '你们好',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-05-02T20:49:55.706000'
+    },
+    {
+      text: '3333333333',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-04-25T03:42:46.322000'
+    },
+    {
+      text: '你谁',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-04-02T07:54:41.055000'
+    },
+    {
+      text: '11',
+      sender: '李贵',
+      character_id: '8c194029-7438-43c7-b229-43442ff12337',
+      created_at: '2026-04-02T07:54:31.265000'
+    }
+  ],
+  request_id: '602fd9f6',
+  version: '1.0.0'
+}
+2026-8-2 19:07:12 - log: [PreviewInEditor] ✅ [ChatRoomFull] 聊天历史已加载，共 7 条
+2026-8-2 19:07:12 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: get_chat_history_response
+2026-8-2 19:07:12 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=get_announcements_history_response {
+  type: 'get_announcements_history_response',
+  success: true,
+  announcements: [],
+  request_id: '24bdcf9c',
+  version: '1.0.0'
+}
+2026-8-2 19:07:12 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (get_announcements_history): 24bdcf9c
+2026-8-2 19:07:12 - log: [PreviewInEditor] 📥 [ChatRoomFull] 收到announcement_list响应: {
+  type: 'get_announcements_history_response',
+  success: true,
+  announcements: [],
+  request_id: '24bdcf9c',
+  version: '1.0.0'
+}
+2026-8-2 19:07:12 - log: [PreviewInEditor] ✅ [ChatRoomFull] 公告列表已加载，共 0 条
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]李贵：11...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 2
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]李贵：你谁...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 3
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]李贵：3333333333...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 4
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]李贵：你们好...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 5
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]任维朋：呃呃呃呃呃呃呃呃呃呃呃...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 6
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]任维朋：你们怎么这样...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 7
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]33：这不对吧...
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 8
+2026-8-2 19:07:12 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: get_announcements_history_response
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:12 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668835.0065382,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668834898',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:07:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668834898
+2026-8-2 19:07:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:07:17 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=chat_message {
+  type: 'chat_message',
+  text: 'www',
+  sender: '康勇',
+  character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+}
+2026-8-2 19:07:17 - log: [PreviewInEditor] [ChatRoomFull] 找到 Text 节点: Text
+2026-8-2 19:07:17 - log: [PreviewInEditor] [ChatRoomFull] 准备添加消息: [世]康勇：www...
+2026-8-2 19:07:17 - log: [PreviewInEditor] [ChatRoomFull] 消息节点已插入，content 子节点数: 9
+2026-8-2 19:07:17 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: chat_message
+2026-8-2 19:07:17 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=post_chat_response {
+  type: 'post_chat_response',
+  success: true,
+  message: '消息发送成功',
+  request_id: '66c09fbf',
+  version: '1.0.0'
+}
+2026-8-2 19:07:17 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (post_chat): 66c09fbf
+2026-8-2 19:07:17 - log: [PreviewInEditor] ✅ [ChatRoomFull] 聊天消息发送成功
+2026-8-2 19:07:17 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: post_chat_response
+2026-8-2 19:07:17 - log: [PreviewInEditor] [ChatRoomFull] 调整 Message 高度: 文本高度=50.4, Message高度=50.4, Text位置=(4, -14)
+2026-8-2 19:07:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668850.0080447,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668849902',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:07:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668849902
+2026-8-2 19:07:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:07:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668865.005099,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668864913',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:07:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668864913
+2026-8-2 19:07:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:08:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668880.075483,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668879928',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:08:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668879928
+2026-8-2 19:08:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:08:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668895.0422802,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668894933',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:08:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668894933
+2026-8-2 19:08:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:08:23 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668902.9808996,
+  version: '1.0.0',
+  request_id: 'ws_1785668902910_4620',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:23 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:23 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668903.4744203,
+  version: '1.0.0',
+  request_id: 'ws_1785668903420_931036',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:23 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:23 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668903.8259845,
+  version: '1.0.0',
+  request_id: 'ws_1785668903769_785237',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:23 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:24 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668904.8242154,
+  version: '1.0.0',
+  request_id: 'ws_1785668904765_203579',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:24 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668905.0962121,
+  version: '1.0.0',
+  request_id: 'ws_1785668905041_613782',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668905.380459,
+  version: '1.0.0',
+  request_id: 'ws_1785668905309_225944',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668905.637832,
+  version: '1.0.0',
+  request_id: 'ws_1785668905581_274749',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:25 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668905.910927,
+  version: '1.0.0',
+  request_id: 'ws_1785668905854_291429',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:25 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:26 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668906.2138634,
+  version: '1.0.0',
+  request_id: 'ws_1785668906141_830823',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:26 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:26 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668906.4712038,
+  version: '1.0.0',
+  request_id: 'ws_1785668906413_900429',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:26 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:26 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668906.761866,
+  version: '1.0.0',
+  request_id: 'ws_1785668906691_594646',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:26 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:27 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668907.044705,
+  version: '1.0.0',
+  request_id: 'ws_1785668906974_571771',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:27 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:27 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668907.3134289,
+  version: '1.0.0',
+  request_id: 'ws_1785668907257_346555',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:27 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:27 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668907.6388273,
+  version: '1.0.0',
+  request_id: 'ws_1785668907583_351085',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:27 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:28 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668907.9760866,
+  version: '1.0.0',
+  request_id: 'ws_1785668907907_2366',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:28 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:28 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668908.2361536,
+  version: '1.0.0',
+  request_id: 'ws_1785668908179_730448',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:28 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:28 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668908.526471,
+  version: '1.0.0',
+  request_id: 'ws_1785668908456_314',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:28 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:28 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668908.7843537,
+  version: '1.0.0',
+  request_id: 'ws_1785668908729_172490',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:28 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:29 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668909.0583785,
+  version: '1.0.0',
+  request_id: 'ws_1785668909003_980991',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:29 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:29 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668909.575181,
+  version: '1.0.0',
+  request_id: 'ws_1785668909505_362157',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:29 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:29 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668909.858804,
+  version: '1.0.0',
+  request_id: 'ws_1785668909788_668638',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:29 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668910.0455735,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668909938',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:08:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668909938
+2026-8-2 19:08:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:08:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668910.1490743,
+  version: '1.0.0',
+  request_id: 'ws_1785668910071_436714',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668910.4193702,
+  version: '1.0.0',
+  request_id: 'ws_1785668910349_317606',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668910.708618,
+  version: '1.0.0',
+  request_id: 'ws_1785668910638_642720',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668910.9657733,
+  version: '1.0.0',
+  request_id: 'ws_1785668910909_689584',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:31 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668911.2407758,
+  version: '1.0.0',
+  request_id: 'ws_1785668911186_181709',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:31 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:31 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668911.5410187,
+  version: '1.0.0',
+  request_id: 'ws_1785668911470_749056',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:31 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:32 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668912.190948,
+  version: '1.0.0',
+  request_id: 'ws_1785668912120_6351',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:32 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:32 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668912.7893076,
+  version: '1.0.0',
+  request_id: 'ws_1785668912720_324466',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:32 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:33 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668913.3532822,
+  version: '1.0.0',
+  request_id: 'ws_1785668913296_760794',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:33 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:33 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668913.923542,
+  version: '1.0.0',
+  request_id: 'ws_1785668913852_855045',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:33 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:34 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668914.4732485,
+  version: '1.0.0',
+  request_id: 'ws_1785668914402_114422',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:34 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:35 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668915.1332226,
+  version: '1.0.0',
+  request_id: 'ws_1785668915079_391378',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:35 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:35 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668915.4382048,
+  version: '1.0.0',
+  request_id: 'ws_1785668915368_589332',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:35 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:35 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668915.7045987,
+  version: '1.0.0',
+  request_id: 'ws_1785668915634_848976',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:35 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:36 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668916.3509219,
+  version: '1.0.0',
+  request_id: 'ws_1785668916280_11638',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:36 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:36 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668916.8016794,
+  version: '1.0.0',
+  request_id: 'ws_1785668916732_774272',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:36 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:37 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668917.2530046,
+  version: '1.0.0',
+  request_id: 'ws_1785668917183_336334',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:37 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:37 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668917.5263412,
+  version: '1.0.0',
+  request_id: 'ws_1785668917449_24906',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:37 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:37 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668917.8359523,
+  version: '1.0.0',
+  request_id: 'ws_1785668917765_896324',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:37 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:38 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668918.102286,
+  version: '1.0.0',
+  request_id: 'ws_1785668918032_841437',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:38 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:38 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668918.3744233,
+  version: '1.0.0',
+  request_id: 'ws_1785668918303_374546',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:38 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:38 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668918.6685786,
+  version: '1.0.0',
+  request_id: 'ws_1785668918597_324053',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:38 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:38 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668918.9349852,
+  version: '1.0.0',
+  request_id: 'ws_1785668918865_78910',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:38 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:39 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668919.2222993,
+  version: '1.0.0',
+  request_id: 'ws_1785668919148_682024',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:39 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:39 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668919.597896,
+  version: '1.0.0',
+  request_id: 'ws_1785668919543_479595',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:39 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:40 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668920.277699,
+  version: '1.0.0',
+  request_id: 'ws_1785668920223_534501',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:40 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:40 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668920.7666779,
+  version: '1.0.0',
+  request_id: 'ws_1785668920697_340523',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:40 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:41 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668921.3992493,
+  version: '1.0.0',
+  request_id: 'ws_1785668921330_299604',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:41 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:41 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668921.765292,
+  version: '1.0.0',
+  request_id: 'ws_1785668921712_122607',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:41 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668922.0670118,
+  version: '1.0.0',
+  request_id: 'ws_1785668921996_984128',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668922.3491604,
+  version: '1.0.0',
+  request_id: 'ws_1785668922279_452130',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668922.6391885,
+  version: '1.0.0',
+  request_id: 'ws_1785668922567_982049',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:42 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668922.9008045,
+  version: '1.0.0',
+  request_id: 'ws_1785668922842_816929',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:42 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:43 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668923.2663226,
+  version: '1.0.0',
+  request_id: 'ws_1785668923195_22197',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:43 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:43 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668923.5310266,
+  version: '1.0.0',
+  request_id: 'ws_1785668923461_722226',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:43 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:43 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668923.8151286,
+  version: '1.0.0',
+  request_id: 'ws_1785668923744_571674',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:43 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:44 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668924.0977898,
+  version: '1.0.0',
+  request_id: 'ws_1785668924028_396948',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:44 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:44 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668924.35622,
+  version: '1.0.0',
+  request_id: 'ws_1785668924300_558695',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:44 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:44 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668924.6279662,
+  version: '1.0.0',
+  request_id: 'ws_1785668924572_228693',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:44 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:44 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668924.9137177,
+  version: '1.0.0',
+  request_id: 'ws_1785668924844_383467',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:44 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668925.0478384,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668924943',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:08:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668924943
+2026-8-2 19:08:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:08:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668925.1798527,
+  version: '1.0.0',
+  request_id: 'ws_1785668925110_881566',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668925.4628932,
+  version: '1.0.0',
+  request_id: 'ws_1785668925393_61801',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668925.7468917,
+  version: '1.0.0',
+  request_id: 'ws_1785668925676_346087',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:46 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668926.0294604,
+  version: '1.0.0',
+  request_id: 'ws_1785668925959_104573',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:46 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:46 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668926.3140259,
+  version: '1.0.0',
+  request_id: 'ws_1785668926243_316339',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:46 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:46 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668926.5787868,
+  version: '1.0.0',
+  request_id: 'ws_1785668926509_23221',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:46 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:46 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668926.84644,
+  version: '1.0.0',
+  request_id: 'ws_1785668926776_149062',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:46 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:47 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668927.2619295,
+  version: '1.0.0',
+  request_id: 'ws_1785668927191_987192',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:47 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:47 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668927.5285676,
+  version: '1.0.0',
+  request_id: 'ws_1785668927458_618867',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:47 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:47 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668927.8107052,
+  version: '1.0.0',
+  request_id: 'ws_1785668927741_974791',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:47 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:48 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668928.0727692,
+  version: '1.0.0',
+  request_id: 'ws_1785668928017_377165',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:48 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:48 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668928.3609266,
+  version: '1.0.0',
+  request_id: 'ws_1785668928291_990182',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:48 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:48 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668928.6190026,
+  version: '1.0.0',
+  request_id: 'ws_1785668928565_525639',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:48 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:48 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668928.91299,
+  version: '1.0.0',
+  request_id: 'ws_1785668928841_496888',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:48 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:49 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668929.1779773,
+  version: '1.0.0',
+  request_id: 'ws_1785668929107_743118',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:49 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:49 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668929.4603648,
+  version: '1.0.0',
+  request_id: 'ws_1785668929390_651758',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:49 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:49 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668929.7193985,
+  version: '1.0.0',
+  request_id: 'ws_1785668929664_857707',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:49 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:50 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668930.0230098,
+  version: '1.0.0',
+  request_id: 'ws_1785668929958_327707',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:50 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:50 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668930.3105528,
+  version: '1.0.0',
+  request_id: 'ws_1785668930239_839632',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:50 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:50 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668930.5931766,
+  version: '1.0.0',
+  request_id: 'ws_1785668930523_716027',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:50 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:50 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668930.8439965,
+  version: '1.0.0',
+  request_id: 'ws_1785668930789_870847',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:50 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:51 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668931.5583348,
+  version: '1.0.0',
+  request_id: 'ws_1785668931488_771407',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:51 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:55 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668935.3967183,
+  version: '1.0.0',
+  request_id: 'ws_1785668935339_887819',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:55 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:55 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668935.6726687,
+  version: '1.0.0',
+  request_id: 'ws_1785668935615_302454',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:55 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:56 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668935.9714415,
+  version: '1.0.0',
+  request_id: 'ws_1785668935901_487586',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:56 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:56 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668936.2432382,
+  version: '1.0.0',
+  request_id: 'ws_1785668936168_48689',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:56 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:08:56 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_step_response {
+  type: 'world_step_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668936.877467,
+  version: '1.0.0',
+  request_id: 'ws_1785668936822_325926',
+  data: { ok: true, character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7' }
+}
+2026-8-2 19:08:56 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_step_response
+2026-8-2 19:09:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668940.0557318,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668939948',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:09:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668939948
+2026-8-2 19:09:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:09:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668955.0970092,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668954953',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:09:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668954953
+2026-8-2 19:09:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:09:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668970.0660074,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668969958',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:09:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668969958
+2026-8-2 19:09:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:09:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785668985.0536165,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668984960',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:09:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668984960
+2026-8-2 19:09:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:10:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669000.0645576,
+  version: '1.0.0',
+  request_id: 'we_sync_1785668999972',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:10:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785668999972
+2026-8-2 19:10:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:10:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669015.0676334,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669014974',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:10:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669014974
+2026-8-2 19:10:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:10:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669030.1197617,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669029990',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:10:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669029990
+2026-8-2 19:10:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:10:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669045.1048372,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669044998',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:10:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669044998
+2026-8-2 19:10:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:11:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669060.1106277,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669060003',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:11:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669060003
+2026-8-2 19:11:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:11:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669075.097193,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669075004',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:11:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669075004
+2026-8-2 19:11:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:11:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669090.1586866,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669090014',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:11:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669090014
+2026-8-2 19:11:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:11:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669105.1265516,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669105018',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:11:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669105018
+2026-8-2 19:11:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:12:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669120.134157,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669120023',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:12:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669120023
+2026-8-2 19:12:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:12:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669135.144245,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669135028',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:12:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669135028
+2026-8-2 19:12:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:12:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669150.142588,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669150033',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:12:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669150033
+2026-8-2 19:12:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:12:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669165.1862042,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669165037',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:12:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669165037
+2026-8-2 19:12:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:13:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669180.139576,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669180042',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:13:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669180042
+2026-8-2 19:13:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:13:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669195.1512995,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669195044',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:13:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669195044
+2026-8-2 19:13:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:13:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669210.1596637,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669210052',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:13:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669210052
+2026-8-2 19:13:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:13:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669225.1653652,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669225056',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:13:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669225056
+2026-8-2 19:13:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:14:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669240.1985948,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669240070',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:14:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669240070
+2026-8-2 19:14:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:14:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669255.1902637,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669255083',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:14:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669255083
+2026-8-2 19:14:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:14:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669270.1969888,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669270087',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:14:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669270087
+2026-8-2 19:14:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:14:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669285.199598,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669285092',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:14:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669285092
+2026-8-2 19:14:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:15:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669300.2430358,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669300097',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:15:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669300097
+2026-8-2 19:15:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:15:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669315.2100973,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669315103',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:15:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669315103
+2026-8-2 19:15:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:15:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669330.2155247,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669330107',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:15:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669330107
+2026-8-2 19:15:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:15:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669345.220284,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669345112',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:15:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669345112
+2026-8-2 19:15:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:16:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669360.2091086,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669360113',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:16:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669360113
+2026-8-2 19:16:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:16:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669375.2906263,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669375118',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:16:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669375118
+2026-8-2 19:16:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:16:30 - warn: [Scene] Found possible circular reference in "pack:///chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js", happened when use "PlayerGridMove" imported from "./PlayerGridMove"  Error: 
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/file:/D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerStateSync.ts:10:21)
+    at doExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:517:30)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:508:21)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)Error: [Scene] Found possible circular reference in "pack:///chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js", happened when use "PlayerGridMove" imported from "./PlayerGridMove"  Error: 
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)
+    at Logger._logHandler (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\startup\log.ccc:1:487)
+    at Logger.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:458)
+    at console.<anonymous> (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:1260)
+    at console.warn (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@sentry\core\src\utils-hoist\instrument\console.ts:40:14)
+    at Module.report (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6a/cce:/internal/code-quality/cr.mjs:15:13)
+    at _reportPossibleCrUseOfPlayerGridMove (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js:17:17)
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/file:/D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerStateSync.ts:10:21)
+    at doExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:517:30)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:508:21)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)
+2026-8-2 19:16:30 - warn: [Scene] You are explicitly specifying `undefined` type to cc property "playerMove" of cc class "PlayerStateSync".
+Is this intended? If not, this may indicate a circular reference.
+For example:
+
+ 
+// foo.ts
+import { _decorator } from 'cc';
+import { Bar } from './bar';  // Given that './bar' also reference 'foo.ts'.
+                              // When importing './bar', execution of './bar' is hung on to wait execution of 'foo.ts',
+                              // the `Bar` imported here is `undefined` until './bar' finish its execution.
+                              // It leads to that
+@_decorator.ccclass           //  ↓
+export class Foo {            //  ↓
+    @_decorator.type(Bar)     //  → is equivalent to `@_decorator.type(undefined)`
+    public bar: Bar;          // To eliminate this error, either:
+                              // - Refactor your module structure(recommended), or
+                              // - specify the type as cc class name: `@_decorator.type('Bar'/* or any name you specified for `Bar` */)`
+}Error: [Scene] You are explicitly specifying `undefined` type to cc property "playerMove" of cc class "PlayerStateSync".
+Is this intended? If not, this may indicate a circular reference.
+For example:
+
+ 
+// foo.ts
+import { _decorator } from 'cc';
+import { Bar } from './bar';  // Given that './bar' also reference 'foo.ts'.
+@_decorator.ccclass           //  ↓
+export class Foo {            //  ↓
+    @_decorator.type(Bar)     //  → is equivalent to `@_decorator.type(undefined)`
+    public bar: Bar;          // To eliminate this error, either:
+                              // - Refactor your module structure(recommended), or
+                              // - specify the type as cc class name: `@_decorator.type('Bar'/* or any name you specified for `Bar` */)`
+}
+    at Logger._logHandler (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\startup\log.ccc:1:487)
+    at Logger.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:458)
+    at console.<anonymous> (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:1260)
+    at console.warn (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@sentry\core\src\utils-hoist\instrument\console.ts:40:14)
+    at warn (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:165229:12)
+    at warnID (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:165417:5)
+    at parseAttributes (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:146250:7)
+    at defineProp (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:145997:5)
+    at declareProperties (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:146161:11)
+    at CCClass (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:146186:5)
+    at eval (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:276445:21)
+    at eval (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:277456:18)
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js:67:11)
+    at doExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:517:30)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:508:21)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)
+2026-8-2 19:16:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669390.2379084,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669390127',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:16:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669390127
+2026-8-2 19:16:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:16:30 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.10
+2026-8-2 19:16:30 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.10
+2026-8-2 19:16:30 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.9
+2026-8-2 19:16:34 - warn: [Scene] Found possible circular reference in "pack:///chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js", happened when use "PlayerGridMove" imported from "./PlayerGridMove"  Error: 
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/file:/D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerStateSync.ts:10:21)
+    at doExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:517:30)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:508:21)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)Error: [Scene] Found possible circular reference in "pack:///chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js", happened when use "PlayerGridMove" imported from "./PlayerGridMove"  Error: 
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)
+    at Logger._logHandler (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\startup\log.ccc:1:487)
+    at Logger.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:458)
+    at console.<anonymous> (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:1260)
+    at console.warn (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@sentry\core\src\utils-hoist\instrument\console.ts:40:14)
+    at Module.report (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6a/cce:/internal/code-quality/cr.mjs:15:13)
+    at _reportPossibleCrUseOfPlayerGridMove (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js:17:17)
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/file:/D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerStateSync.ts:10:21)
+    at doExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:517:30)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:508:21)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)
+2026-8-2 19:16:34 - warn: [Scene] You are explicitly specifying `undefined` type to cc property "playerMove" of cc class "PlayerStateSync".
+Is this intended? If not, this may indicate a circular reference.
+For example:
+
+ 
+// foo.ts
+import { _decorator } from 'cc';
+import { Bar } from './bar';  // Given that './bar' also reference 'foo.ts'.
+                              // When importing './bar', execution of './bar' is hung on to wait execution of 'foo.ts',
+                              // the `Bar` imported here is `undefined` until './bar' finish its execution.
+                              // It leads to that
+@_decorator.ccclass           //  ↓
+export class Foo {            //  ↓
+    @_decorator.type(Bar)     //  → is equivalent to `@_decorator.type(undefined)`
+    public bar: Bar;          // To eliminate this error, either:
+                              // - Refactor your module structure(recommended), or
+                              // - specify the type as cc class name: `@_decorator.type('Bar'/* or any name you specified for `Bar` */)`
+}Error: [Scene] You are explicitly specifying `undefined` type to cc property "playerMove" of cc class "PlayerStateSync".
+Is this intended? If not, this may indicate a circular reference.
+For example:
+
+ 
+// foo.ts
+import { _decorator } from 'cc';
+import { Bar } from './bar';  // Given that './bar' also reference 'foo.ts'.
+@_decorator.ccclass           //  ↓
+export class Foo {            //  ↓
+    @_decorator.type(Bar)     //  → is equivalent to `@_decorator.type(undefined)`
+    public bar: Bar;          // To eliminate this error, either:
+                              // - Refactor your module structure(recommended), or
+                              // - specify the type as cc class name: `@_decorator.type('Bar'/* or any name you specified for `Bar` */)`
+}
+    at Logger._logHandler (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\startup\log.ccc:1:487)
+    at Logger.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:458)
+    at console.<anonymous> (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@base\electron-logger\lib\renderer.ccc:1:1260)
+    at console.warn (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@sentry\core\src\utils-hoist\instrument\console.ts:40:14)
+    at warn (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:165229:12)
+    at warnID (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:165417:5)
+    at parseAttributes (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:146250:7)
+    at defineProp (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:145997:5)
+    at declareProperties (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:146161:11)
+    at CCClass (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:146186:5)
+    at eval (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:276445:21)
+    at eval (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\resources\3d\engine\bin\.cache\dev\editor\bundled\index.js:277456:18)
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/a4/a43be3c598be571d3a79d446f42eff29a6321d7e.js:67:11)
+    at doExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:517:30)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:508:21)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:493:28
+    at Array.forEach (<anonymous>)
+    at postOrderExec (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:491:10)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\static\executor\systemjs-bridge\out\index.js:440:12
+    at file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:8:13
+    at Object.execute (file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/temp/programming/packer-driver/targets/editor/chunks/6d/cce:/internal/x/prerequisite-imports:4:1)
+    at Executor._importPrerequisiteModules (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:358:13)
+    at Executor.reload (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\node_modules\@editor\lib-programming\src\executor\index.ts:235:13)
+    at C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:1893
+    at GlobalEnv.processQueue (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2290)
+    at GlobalEnv.record (C:\ProgramData\cocos\editors\Creator\3.8.7\resources\app.asar\builtin\scene\dist\script\3d\manager\scripts.ccc:1:2061)
+2026-8-2 19:16:35 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.10
+2026-8-2 19:16:35 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.10
+2026-8-2 19:16:35 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.9
+2026-8-2 19:16:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669405.2238743,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669405129',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:16:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669405129
+2026-8-2 19:16:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:17:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669420.2411218,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669420145',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:17:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669420145
+2026-8-2 19:17:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:17:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669435.2516425,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669435157',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:17:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669435157
+2026-8-2 19:17:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:17:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669450.2914565,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669450160',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:17:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669450160
+2026-8-2 19:17:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:17:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669465.2747722,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669465167',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:17:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669465167
+2026-8-2 19:17:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:18:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669480.2824595,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669480172',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:18:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669480172
+2026-8-2 19:18:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:18:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669495.2845225,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669495177',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:18:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669495177
+2026-8-2 19:18:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:18:30 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669510.290804,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669510182',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:18:30 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669510182
+2026-8-2 19:18:30 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:18:45 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669525.3146589,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669525183',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:18:45 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669525183
+2026-8-2 19:18:45 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:19:00 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669540.2835264,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669540188',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:19:00 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669540188
+2026-8-2 19:19:00 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:19:15 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_enter_response {
+  type: 'world_enter_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669555.2974892,
+  version: '1.0.0',
+  request_id: 'we_sync_1785669555205',
+  data: {
+    map_id: 1,
+    others: [],
+    character_id: '06c2e687-347e-4e9d-88d4-e6a06b344bd7'
+  }
+}
+2026-8-2 19:19:15 - log: [PreviewInEditor] [Request] ✅ request_id 匹配 (world_enter): we_sync_1785669555205
+2026-8-2 19:19:15 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_enter_response
+2026-8-2 19:20:12 - log: [PreviewInEditor] ⏹️ 游戏状态监控已停止
+2026-8-2 19:20:12 - log: [PreviewInEditor] 🎮 游戏场景控制器销毁 - 场景: Game
+2026-8-2 19:20:12 - log: [PreviewInEditor] 🧪 测试脚本销毁
+2026-8-2 19:20:12 - log: [PreviewInEditor] 📥 [WebSocketManager] 收到消息: type=world_leave_response {
+  type: 'world_leave_response',
+  success: true,
+  code: 200,
+  timestamp: 1785669612.8261,
+  version: '1.0.0',
+  request_id: 'wl_1785669612759',
+  data: { ok: true }
+}
+2026-8-2 19:20:12 - log: [PreviewInEditor] ✅ [WebSocketManager] 已触发事件: world_leave_response
+2026-8-2 19:20:13 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.10
+2026-8-2 19:20:13 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.10
+2026-8-2 19:20:13 - log: [Scene] cocos2d: TMXFormat: Unsupported TMX version: 1.9
+2026-8-2 19:20:17 - info: [PreviewInEditor] preview process is ready
