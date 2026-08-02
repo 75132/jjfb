@@ -52,6 +52,7 @@
             "resources\\Weapon\\Wing",
             "Script\\Game\\GameArea",
             "Script\\Game\\GlobalChat",
+            "Script\\global\\protocol",
             "UI\\Game\\BackControl",
             "UI\\Game\\Bag",
             "UI\\Game\\BattleScene",
@@ -623,6 +624,8 @@
             "Script\\Game\\AnnouncementPanel.ts",
             "Script\\Game\\AutoLoginUser.ts",
             "Script\\Game\\BagItem.ts",
+            "Script\\Game\\battle-resume-gate.ts",
+            "Script\\Game\\BattleResumeController.ts",
             "Script\\Game\\BattleScene.ts",
             "Script\\Game\\CentralMenu.ts",
             "Script\\Game\\CharacterProfile.ts",
@@ -960,6 +963,7 @@
             "Script\\Game\\GameArea\\WorldOnlineSync.ts",
             "Script\\Game\\GlobalChat\\ChatRoom.ts",
             "Script\\Game\\GlobalChat\\ChatRoomFull.ts",
+            "Script\\global\\protocol\\BagProtocol.ts",
             "UI\\Game\\BackControl\\back.png",
             "UI\\Game\\BackControl\\backing.png",
             "UI\\Game\\Bag\\auto-atlas.pac",
@@ -1508,10 +1512,8 @@
             "UI\\Game\\MiniGame\\Daletou\\ui_main_screen.png",
             "UI\\Game\\MiniGame\\Daletou\\ui_modal_dialog.png",
             "UI\\Game\\MiniGame\\Daletou\\ui_modal_dim.png",
-            "Script\\global\\protocol",
-            "Script\\global\\protocol\\BagProtocol.ts",
-            "Script\\Game\\battle-resume-gate.ts",
-            "Script\\Game\\BattleResumeController.ts"
+            "Script\\Game\\battle-entry-intent.ts",
+            "Script\\Game\\battle-restore.ts"
         ]
     }
 }

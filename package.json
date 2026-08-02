@@ -8,5 +8,9 @@
   "devDependencies": {
     "vitest": "^4.1.3",
     "typescript": "^5.4.5"
-  }
+  },
+  "creator": {
+    "version": "3.8.7"
+  },
+  "uuid": "ffeca9ad-8d12-45b5-8bd1-725452d85289"
 }

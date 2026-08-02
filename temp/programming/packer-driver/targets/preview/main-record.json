@@ -1,7 +1,7 @@
 {
   "modules": {
     "cce:/internal/x/cc": {
-      "mTimestamp": 16394.338,
+      "mTimestamp": 12758.2467,
       "chunkId": "93ba276ea7b26ffcdc433fab14afc1ed6f05647b",
       "imports": [
         {
@@ -535,7 +535,7 @@
       ]
     },
     "cce:/internal/x/prerequisite-imports": {
-      "mTimestamp": 6002739.3685,
+      "mTimestamp": 1074311.321,
       "chunkId": "6d8fd2b0177941b032ddc0733af48a561fb60657",
       "imports": [
         {
@@ -1225,7 +1225,7 @@
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-entry-intent.ts",
           "resolved": "__unresolved_49",
           "loc": {
             "start": {
@@ -1234,12 +1234,12 @@
             },
             "end": {
               "line": 53,
-              "column": 91
+              "column": 92
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/npc-task-indicator.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-restore.ts",
           "resolved": "__unresolved_50",
           "loc": {
             "start": {
@@ -1248,12 +1248,12 @@
             },
             "end": {
               "line": 54,
-              "column": 91
+              "column": 87
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-event-flow.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts",
           "resolved": "__unresolved_51",
           "loc": {
             "start": {
@@ -1262,12 +1262,12 @@
             },
             "end": {
               "line": 55,
-              "column": 89
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-local-mode.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/npc-task-indicator.ts",
           "resolved": "__unresolved_52",
           "loc": {
             "start": {
@@ -1276,12 +1276,12 @@
             },
             "end": {
               "line": 56,
-              "column": 89
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-npc-visibility.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-event-flow.ts",
           "resolved": "__unresolved_53",
           "loc": {
             "start": {
@@ -1290,12 +1290,12 @@
             },
             "end": {
               "line": 57,
-              "column": 93
+              "column": 89
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-requirements.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-local-mode.ts",
           "resolved": "__unresolved_54",
           "loc": {
             "start": {
@@ -1304,12 +1304,12 @@
             },
             "end": {
               "line": 58,
-              "column": 91
+              "column": 89
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-sanitize.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-npc-visibility.ts",
           "resolved": "__unresolved_55",
           "loc": {
             "start": {
@@ -1318,12 +1318,12 @@
             },
             "end": {
               "line": 59,
-              "column": 95
+              "column": 93
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/tilemap-coords.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-requirements.ts",
           "resolved": "__unresolved_56",
           "loc": {
             "start": {
@@ -1332,12 +1332,12 @@
             },
             "end": {
               "line": 60,
-              "column": 87
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BagEvent.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-sanitize.ts",
           "resolved": "__unresolved_57",
           "loc": {
             "start": {
@@ -1346,12 +1346,12 @@
             },
             "end": {
               "line": 61,
-              "column": 83
+              "column": 95
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BaseSceneController.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/tilemap-coords.ts",
           "resolved": "__unresolved_58",
           "loc": {
             "start": {
@@ -1360,12 +1360,12 @@
             },
             "end": {
               "line": 62,
-              "column": 94
+              "column": 87
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/CentralMenu.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BagEvent.ts",
           "resolved": "__unresolved_59",
           "loc": {
             "start": {
@@ -1374,12 +1374,12 @@
             },
             "end": {
               "line": 63,
-              "column": 86
+              "column": 83
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/DataCacheManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BaseSceneController.ts",
           "resolved": "__unresolved_60",
           "loc": {
             "start": {
@@ -1388,12 +1388,12 @@
             },
             "end": {
               "line": 64,
-              "column": 91
+              "column": 94
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/CentralMenu.ts",
           "resolved": "__unresolved_61",
           "loc": {
             "start": {
@@ -1402,12 +1402,12 @@
             },
             "end": {
               "line": 65,
-              "column": 85
+              "column": 86
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/MessageTypes.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/DataCacheManager.ts",
           "resolved": "__unresolved_62",
           "loc": {
             "start": {
@@ -1416,12 +1416,12 @@
             },
             "end": {
               "line": 66,
-              "column": 87
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/PerformanceMonitor.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts",
           "resolved": "__unresolved_63",
           "loc": {
             "start": {
@@ -1430,12 +1430,12 @@
             },
             "end": {
               "line": 67,
-              "column": 93
+              "column": 85
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RequestRetryManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/MessageTypes.ts",
           "resolved": "__unresolved_64",
           "loc": {
             "start": {
@@ -1444,12 +1444,12 @@
             },
             "end": {
               "line": 68,
-              "column": 94
+              "column": 87
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RobotGameEvents.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/PerformanceMonitor.ts",
           "resolved": "__unresolved_65",
           "loc": {
             "start": {
@@ -1458,12 +1458,12 @@
             },
             "end": {
               "line": 69,
-              "column": 90
+              "column": 93
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RouteDictionary.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RequestRetryManager.ts",
           "resolved": "__unresolved_66",
           "loc": {
             "start": {
@@ -1472,12 +1472,12 @@
             },
             "end": {
               "line": 70,
-              "column": 90
+              "column": 94
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/SceneLoadMonitor.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RobotGameEvents.ts",
           "resolved": "__unresolved_67",
           "loc": {
             "start": {
@@ -1486,12 +1486,12 @@
             },
             "end": {
               "line": 71,
-              "column": 91
+              "column": 90
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/UILockManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RouteDictionary.ts",
           "resolved": "__unresolved_68",
           "loc": {
             "start": {
@@ -1500,12 +1500,12 @@
             },
             "end": {
               "line": 72,
-              "column": 88
+              "column": 90
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/SceneLoadMonitor.ts",
           "resolved": "__unresolved_69",
           "loc": {
             "start": {
@@ -1519,7 +1519,7 @@
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/log.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/UILockManager.ts",
           "resolved": "__unresolved_70",
           "loc": {
             "start": {
@@ -1528,12 +1528,12 @@
             },
             "end": {
               "line": 74,
-              "column": 78
+              "column": 88
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts",
           "resolved": "__unresolved_71",
           "loc": {
             "start": {
@@ -1542,12 +1542,12 @@
             },
             "end": {
               "line": 75,
-              "column": 95
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/log.ts",
           "resolved": "__unresolved_72",
           "loc": {
             "start": {
@@ -1556,12 +1556,12 @@
             },
             "end": {
               "line": 76,
-              "column": 93
+              "column": 78
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/login.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts",
           "resolved": "__unresolved_73",
           "loc": {
             "start": {
@@ -1570,6 +1570,34 @@
             },
             "end": {
               "line": 77,
+              "column": 95
+            }
+          }
+        },
+        {
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts",
+          "resolved": "__unresolved_74",
+          "loc": {
+            "start": {
+              "line": 78,
+              "column": 7
+            },
+            "end": {
+              "line": 78,
+              "column": 93
+            }
+          }
+        },
+        {
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/login.ts",
+          "resolved": "__unresolved_75",
+          "loc": {
+            "start": {
+              "line": 79,
+              "column": 7
+            },
+            "end": {
+              "line": 79,
               "column": 79
             }
           }
@@ -1917,6 +1945,20 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/TopRole.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-entry-intent.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-restore.ts"
           },
           "messages": []
         },
@@ -7899,7 +7941,7 @@
       ]
     },
     "cce:/internal/code-quality/cr.mjs": {
-      "mTimestamp": 1785665159481,
+      "mTimestamp": 1785671519588,
       "chunkId": "6a5019a719a9014c047e67aa1cf34453ab8392ce",
       "imports": [],
       "type": "esm",
@@ -9582,7 +9624,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleScene.ts": {
       "mTimestamp": {
-        "mtime": 1785670953788.448,
+        "mtime": 1785672378362.7317,
         "uuid": "90ca8aeb-27fd-454f-83d1-e679150a214f"
       },
       "chunkId": "12dd9bdad0808c821c7cf9253f53d13628985bd3",
@@ -9693,6 +9735,34 @@
               "column": 95
             }
           }
+        },
+        {
+          "value": "./battle-entry-intent",
+          "resolved": "__unresolved_7",
+          "loc": {
+            "start": {
+              "line": 12,
+              "column": 7
+            },
+            "end": {
+              "line": 12,
+              "column": 30
+            }
+          }
+        },
+        {
+          "value": "./battle-restore",
+          "resolved": "__unresolved_8",
+          "loc": {
+            "start": {
+              "line": 13,
+              "column": 43
+            },
+            "end": {
+              "line": 13,
+              "column": 61
+            }
+          }
         }
       ],
       "type": "esm",
@@ -9764,6 +9834,20 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-entry-intent.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-restore.ts"
           },
           "messages": []
         }
@@ -15659,7 +15743,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleResumeController.ts": {
       "mTimestamp": {
-        "mtime": 1785670443551.3086,
+        "mtime": 1785672329874.813,
         "uuid": "f5250bfc-ed9b-4b6f-854a-cdd3a2cc3c7b"
       },
       "chunkId": "74d1c767579e919fad5a921cc3b03853bbafdec4",
@@ -15720,11 +15804,11 @@
           "resolved": "__unresolved_3",
           "loc": {
             "start": {
-              "line": 15,
+              "line": 25,
               "column": 7
             },
             "end": {
-              "line": 15,
+              "line": 25,
               "column": 29
             }
           }
@@ -15785,7 +15869,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts": {
       "mTimestamp": {
-        "mtime": 1785670383909.9175,
+        "mtime": 1785672313746.3076,
         "uuid": "1acef8c5-9d41-4e46-a8fa-98956fecd4f3"
       },
       "chunkId": "8d089ca320d444b6c1cdd8894990e32a86e67f61",
@@ -15800,6 +15884,82 @@
           "resolved": {
             "type": "module",
             "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        }
+      ]
+    },
+    "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-entry-intent.ts": {
+      "mTimestamp": {
+        "mtime": 1785672301141.7378,
+        "uuid": "c5f96be1-27e5-45e5-83e9-5410cfc4b146"
+      },
+      "chunkId": "9e85b753f878d5bdc6b26fe6816aafb75f7687ea",
+      "imports": [
+        {
+          "value": "cc"
+        }
+      ],
+      "type": "esm",
+      "resolutions": [
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        }
+      ]
+    },
+    "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-restore.ts": {
+      "mTimestamp": {
+        "mtime": 1785672295341.3784,
+        "uuid": "9ab50f02-84c7-41f9-b2bb-2e4728edf40f"
+      },
+      "chunkId": "367e7ac65c7823d33d9806d9faccdc903e6028e2",
+      "imports": [
+        {
+          "value": "cce:/internal/code-quality/cr.mjs",
+          "resolved": "__unresolved_0"
+        },
+        {
+          "value": "cc"
+        },
+        {
+          "value": "./battle-resume-gate",
+          "resolved": "__unresolved_1",
+          "loc": {
+            "start": {
+              "line": 4,
+              "column": 51
+            },
+            "end": {
+              "line": 4,
+              "column": 73
+            }
+          }
+        }
+      ],
+      "type": "esm",
+      "resolutions": [
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/code-quality/cr.mjs"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts"
           },
           "messages": []
         }

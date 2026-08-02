@@ -86,7 +86,7 @@
       "uuid": "417669d8-a87a-41c9-b258-0fe6dfc4639d"
     },
     "Script\\Game": {
-      "time": 1785670946020.057,
+      "time": 1785672589313.5984,
       "uuid": "3bae7031-f184-47c7-9153-defd9af00a25"
     },
     "Script\\global": {
@@ -2474,7 +2474,7 @@
       "uuid": "a63322a7-0a8f-4979-af8c-fed717835ca6"
     },
     "Script\\Game\\BattleScene.ts": {
-      "time": 1785670953788.448,
+      "time": 1785672378362.7317,
       "uuid": "90ca8aeb-27fd-454f-83d1-e679150a214f"
     },
     "Script\\Game\\CentralMenu.ts": {
@@ -10579,12 +10579,26 @@
       "time": 1785670946380.7576
     },
     "Script\\Game\\battle-resume-gate.ts": {
-      "time": 1785670383909.9175,
+      "time": 1785672313746.3076,
       "uuid": "1acef8c5-9d41-4e46-a8fa-98956fecd4f3"
     },
     "Script\\Game\\BattleResumeController.ts": {
-      "time": 1785670443551.3086,
+      "time": 1785672329874.813,
       "uuid": "f5250bfc-ed9b-4b6f-854a-cdd3a2cc3c7b"
+    },
+    "Script\\Game\\battle-entry-intent.ts.meta": {
+      "time": 1785672589630.568
+    },
+    "Script\\Game\\battle-restore.ts.meta": {
+      "time": 1785672589631.5652
+    },
+    "Script\\Game\\battle-entry-intent.ts": {
+      "time": 1785672301141.7378,
+      "uuid": "c5f96be1-27e5-45e5-83e9-5410cfc4b146"
+    },
+    "Script\\Game\\battle-restore.ts": {
+      "time": 1785672295341.3784,
+      "uuid": "9ab50f02-84c7-41f9-b2bb-2e4728edf40f"
     }
   },
   "missing": {}
