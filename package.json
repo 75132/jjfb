@@ -1,0 +1,12 @@
+{
+  "name": "jjfb-runtime-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:runtime": "vitest run --config vitest.runtime.config.ts"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.3",
+    "typescript": "^5.4.5"
+  }
+}

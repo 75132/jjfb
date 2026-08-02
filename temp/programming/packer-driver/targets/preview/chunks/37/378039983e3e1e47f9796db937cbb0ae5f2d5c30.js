@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13", "__unresolved_14"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, assetManager, BoxCollider2D, Button, Collider2D, Component, director, input, Input, instantiate, JsonAsset, KeyCode, Label, Node, Color, Sprite, SpriteFrame, UITransform, v3, PlayerGridMove, BattleTriggerOnContact, ResourceManager, StoryUIViewRefs, WebSocketManager, BattleScene, isBattleInteractAction, isChoiceBlockedMessage, promisifyWsRequest, shouldCompleteChoice, shouldStartBattleFromChoice, evaluateAppearRequirements, evaluateRequirements, buildLocalCompletePayload, clearLocalStoryPersist, loadLocalStoryPersist, localStoryStorageKey, saveLocalStoryPersist, sanitizeBattlePseudoChoicesInRuntime, decideNpcVisibility, isHiddenByMainlineStep, visibilityHiddenUntilReveal, isStaleMainlineGiver, parseEnemyGiverUid, logicalToParentLocal, mapContentBoundsInParentSpace, TILE_CELL, getNpcTaskStatusFrameUuids, npcTaskIndicatorKindToIndex, resolveNpcTaskIndicatorKind, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _class3, _crd, ccclass, property, executionOrder, PREFIX, StoryManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, assetManager, BoxCollider2D, Button, Collider2D, Component, director, input, Input, instantiate, JsonAsset, KeyCode, Label, Node, Color, Sprite, SpriteFrame, UITransform, v3, PlayerGridMove, BattleTriggerOnContact, ResourceManager, StoryUIViewRefs, WebSocketManager, normalizeBagItemsResponse, ownedItemIdsFromSnapshot, BattleScene, isBattleInteractAction, isChoiceBlockedMessage, promisifyWsRequest, shouldCompleteChoice, shouldStartBattleFromChoice, evaluateAppearRequirements, evaluateRequirements, buildLocalCompletePayload, clearLocalStoryPersist, loadLocalStoryPersist, localStoryStorageKey, saveLocalStoryPersist, sanitizeBattlePseudoChoicesInRuntime, decideNpcVisibility, isHiddenByMainlineStep, visibilityHiddenUntilReveal, isStaleMainlineGiver, parseEnemyGiverUid, logicalToParentLocal, mapContentBoundsInParentSpace, TILE_CELL, getNpcTaskStatusFrameUuids, npcTaskIndicatorKindToIndex, resolveNpcTaskIndicatorKind, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _class3, _crd, ccclass, property, executionOrder, PREFIX, StoryManager;
 
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -60,6 +60,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfnormalizeBagItemsResponse(extras) {
+    _reporterNs.report("normalizeBagItemsResponse", "../global/protocol/BagProtocol", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfownedItemIdsFromSnapshot(extras) {
+    _reporterNs.report("ownedItemIdsFromSnapshot", "../global/protocol/BagProtocol", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfBattleScene(extras) {
@@ -221,38 +229,41 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_6) {
       WebSocketManager = _unresolved_6.WebSocketManager;
     }, function (_unresolved_7) {
-      BattleScene = _unresolved_7.BattleScene;
+      normalizeBagItemsResponse = _unresolved_7.normalizeBagItemsResponse;
+      ownedItemIdsFromSnapshot = _unresolved_7.ownedItemIdsFromSnapshot;
     }, function (_unresolved_8) {
-      isBattleInteractAction = _unresolved_8.isBattleInteractAction;
-      isChoiceBlockedMessage = _unresolved_8.isChoiceBlockedMessage;
-      promisifyWsRequest = _unresolved_8.promisifyWsRequest;
-      shouldCompleteChoice = _unresolved_8.shouldCompleteChoice;
-      shouldStartBattleFromChoice = _unresolved_8.shouldStartBattleFromChoice;
+      BattleScene = _unresolved_8.BattleScene;
     }, function (_unresolved_9) {
-      evaluateAppearRequirements = _unresolved_9.evaluateAppearRequirements;
-      evaluateRequirements = _unresolved_9.evaluateRequirements;
+      isBattleInteractAction = _unresolved_9.isBattleInteractAction;
+      isChoiceBlockedMessage = _unresolved_9.isChoiceBlockedMessage;
+      promisifyWsRequest = _unresolved_9.promisifyWsRequest;
+      shouldCompleteChoice = _unresolved_9.shouldCompleteChoice;
+      shouldStartBattleFromChoice = _unresolved_9.shouldStartBattleFromChoice;
     }, function (_unresolved_10) {
-      buildLocalCompletePayload = _unresolved_10.buildLocalCompletePayload;
-      clearLocalStoryPersist = _unresolved_10.clearLocalStoryPersist;
-      loadLocalStoryPersist = _unresolved_10.loadLocalStoryPersist;
-      localStoryStorageKey = _unresolved_10.localStoryStorageKey;
-      saveLocalStoryPersist = _unresolved_10.saveLocalStoryPersist;
+      evaluateAppearRequirements = _unresolved_10.evaluateAppearRequirements;
+      evaluateRequirements = _unresolved_10.evaluateRequirements;
     }, function (_unresolved_11) {
-      sanitizeBattlePseudoChoicesInRuntime = _unresolved_11.sanitizeBattlePseudoChoicesInRuntime;
+      buildLocalCompletePayload = _unresolved_11.buildLocalCompletePayload;
+      clearLocalStoryPersist = _unresolved_11.clearLocalStoryPersist;
+      loadLocalStoryPersist = _unresolved_11.loadLocalStoryPersist;
+      localStoryStorageKey = _unresolved_11.localStoryStorageKey;
+      saveLocalStoryPersist = _unresolved_11.saveLocalStoryPersist;
     }, function (_unresolved_12) {
-      decideNpcVisibility = _unresolved_12.decideNpcVisibility;
-      isHiddenByMainlineStep = _unresolved_12.isHiddenByMainlineStep;
-      visibilityHiddenUntilReveal = _unresolved_12.isNpcHiddenUntilReveal;
-      isStaleMainlineGiver = _unresolved_12.isStaleMainlineGiver;
-      parseEnemyGiverUid = _unresolved_12.parseEnemyGiverUid;
+      sanitizeBattlePseudoChoicesInRuntime = _unresolved_12.sanitizeBattlePseudoChoicesInRuntime;
     }, function (_unresolved_13) {
-      logicalToParentLocal = _unresolved_13.logicalToParentLocal;
-      mapContentBoundsInParentSpace = _unresolved_13.mapContentBoundsInParentSpace;
-      TILE_CELL = _unresolved_13.TILE_CELL;
+      decideNpcVisibility = _unresolved_13.decideNpcVisibility;
+      isHiddenByMainlineStep = _unresolved_13.isHiddenByMainlineStep;
+      visibilityHiddenUntilReveal = _unresolved_13.isNpcHiddenUntilReveal;
+      isStaleMainlineGiver = _unresolved_13.isStaleMainlineGiver;
+      parseEnemyGiverUid = _unresolved_13.parseEnemyGiverUid;
     }, function (_unresolved_14) {
-      getNpcTaskStatusFrameUuids = _unresolved_14.getNpcTaskStatusFrameUuids;
-      npcTaskIndicatorKindToIndex = _unresolved_14.npcTaskIndicatorKindToIndex;
-      resolveNpcTaskIndicatorKind = _unresolved_14.resolveNpcTaskIndicatorKind;
+      logicalToParentLocal = _unresolved_14.logicalToParentLocal;
+      mapContentBoundsInParentSpace = _unresolved_14.mapContentBoundsInParentSpace;
+      TILE_CELL = _unresolved_14.TILE_CELL;
+    }, function (_unresolved_15) {
+      getNpcTaskStatusFrameUuids = _unresolved_15.getNpcTaskStatusFrameUuids;
+      npcTaskIndicatorKindToIndex = _unresolved_15.npcTaskIndicatorKindToIndex;
+      resolveNpcTaskIndicatorKind = _unresolved_15.resolveNpcTaskIndicatorKind;
     }],
     execute: function () {
       _crd = true;
@@ -628,22 +639,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             error: Error()
           }), WebSocketManager) : WebSocketManager).getInstance();
           if (!(ws != null && ws.getCharacterId != null && ws.getCharacterId())) return;
-          ws.request('bag_get', {}, resp => {
-            var _resp$data$slots, _resp$data;
-
-            if (!(resp != null && resp.success)) return;
-
-            this._ownedItemIds.clear();
-
-            var slots = (_resp$data$slots = (_resp$data = resp.data) == null ? void 0 : _resp$data.slots) != null ? _resp$data$slots : [];
-
-            for (var s of slots) {
-              var _ref, _s$item_id, _s$count;
-
-              var iid = Number((_ref = (_s$item_id = s.item_id) != null ? _s$item_id : s.itemId) != null ? _ref : 0);
-              var cnt = Number((_s$count = s.count) != null ? _s$count : 0);
-              if (iid > 0 && cnt > 0) this._ownedItemIds.add(iid);
-            }
+          ws.request('bag_get', {
+            page: 1,
+            page_size: 200
+          }, resp => {
+            var snapshot = (_crd && normalizeBagItemsResponse === void 0 ? (_reportPossibleCrUseOfnormalizeBagItemsResponse({
+              error: Error()
+            }), normalizeBagItemsResponse) : normalizeBagItemsResponse)(resp);
+            if (!snapshot.success) return;
+            this._ownedItemIds = (_crd && ownedItemIdsFromSnapshot === void 0 ? (_reportPossibleCrUseOfownedItemIdsFromSnapshot({
+              error: Error()
+            }), ownedItemIdsFromSnapshot) : ownedItemIdsFromSnapshot)(snapshot);
 
             this._refreshNpcVisibility();
 
@@ -1396,7 +1402,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._ws.request('story_get_state', {
             map_code: this.mapCode
           }, resp => {
-            var _resp$data2;
+            var _resp$data;
 
             if (!this._alive()) return;
 
@@ -1405,7 +1411,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               return;
             }
 
-            var d = (_resp$data2 = resp.data) != null ? _resp$data2 : resp;
+            var d = (_resp$data = resp.data) != null ? _resp$data : resp;
             if (!d || typeof d !== 'object') return;
 
             this._syncProgressFromPayload(d);
@@ -1944,9 +1950,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.showStoryTip(iid ? "\u83B7\u5F97\u7269\u54C1 \xD7" + cnt : '获得物品', 2800);
               rewardEmitted = true;
             } else if (action === 'add_exp') {
-              var _ref2, _eff$value;
+              var _ref, _eff$value;
 
-              var exp = Number((_ref2 = (_eff$value = eff.value) != null ? _eff$value : eff.exp) != null ? _ref2 : 0);
+              var exp = Number((_ref = (_eff$value = eff.value) != null ? _eff$value : eff.exp) != null ? _ref : 0);
               this.showStoryTip(exp > 0 ? "\u83B7\u5F97\u7ECF\u9A8C +" + exp : '获得经验', 2800);
               rewardEmitted = true;
             } else if (action === 'send_mail') {
@@ -2036,7 +2042,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _spawnDynamicNpcRow(row) {
-          var _ref3, _this$_npcRows$find, _row$events7;
+          var _ref2, _this$_npcRows$find, _row$events7;
 
           var uid = row.npcUid;
           if (!uid) return;
@@ -2045,7 +2051,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var canvas = this._findNodeByName(scene, 'Canvas');
 
-          var templateNpc = (_ref3 = canvas && this._getChildByPath(canvas, 'GameArea/WorldRoot/NPC')) != null ? _ref3 : null;
+          var templateNpc = (_ref2 = canvas && this._getChildByPath(canvas, 'GameArea/WorldRoot/NPC')) != null ? _ref2 : null;
           var refRow = (_this$_npcRows$find = this._npcRows.find(r => r.npcUid === '0_lead_01')) != null ? _this$_npcRows$find : this._npcRows[0];
           if (!(templateNpc != null && templateNpc.isValid)) return;
           var cloneStackSlot = this._spawnedNpcRoots.length + 1;
@@ -2246,7 +2252,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _parseMap() {
-          var _this$mapConfig3, _ref4, _raw$mapCode, _raw$client, _client$dialogueScrip, _client$choiceScripts, _raw$npcs, _ref5, _raw$tasks, _raw$mapWidth, _raw$mapHeight, _raw$server, _server$antiCheat;
+          var _this$mapConfig3, _ref3, _raw$mapCode, _raw$client, _client$dialogueScrip, _client$choiceScripts, _raw$npcs, _ref4, _raw$tasks, _raw$mapWidth, _raw$mapHeight, _raw$server, _server$antiCheat;
 
           var raw = (_this$mapConfig3 = this.mapConfig) == null ? void 0 : _this$mapConfig3.json;
 
@@ -2255,7 +2261,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          var jsonMapCode = String((_ref4 = (_raw$mapCode = raw.mapCode) != null ? _raw$mapCode : raw.map_code) != null ? _ref4 : '').trim();
+          var jsonMapCode = String((_ref3 = (_raw$mapCode = raw.mapCode) != null ? _raw$mapCode : raw.map_code) != null ? _ref3 : '').trim();
 
           if (jsonMapCode && jsonMapCode !== this.mapCode) {
             if (this.debugLog) {
@@ -2275,7 +2281,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._dialogueScripts = (_client$dialogueScrip = client.dialogueScripts) != null ? _client$dialogueScrip : {};
           this._choiceScripts = (_client$choiceScripts = client.choiceScripts) != null ? _client$choiceScripts : {};
           this._npcRows = (_raw$npcs = raw.npcs) != null ? _raw$npcs : [];
-          this._taskDefs = (_ref5 = (_raw$tasks = raw.tasks) != null ? _raw$tasks : raw.quests) != null ? _ref5 : [];
+          this._taskDefs = (_ref4 = (_raw$tasks = raw.tasks) != null ? _raw$tasks : raw.quests) != null ? _ref4 : [];
           var mw = Number((_raw$mapWidth = raw.mapWidth) != null ? _raw$mapWidth : raw.map_width);
           var mh = Number((_raw$mapHeight = raw.mapHeight) != null ? _raw$mapHeight : raw.map_height);
 
@@ -2965,7 +2971,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _resolveNpcs() {
-          var _ref6, _this$_npcRows$find2;
+          var _ref5, _this$_npcRows$find2;
 
           this._unbindNpcTouchHandlers();
 
@@ -2978,7 +2984,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var canvas = this._findNodeByName(scene, 'Canvas');
 
-          var templateNpc = (_ref6 = canvas && this._getChildByPath(canvas, 'GameArea/WorldRoot/NPC')) != null ? _ref6 : null;
+          var templateNpc = (_ref5 = canvas && this._getChildByPath(canvas, 'GameArea/WorldRoot/NPC')) != null ? _ref5 : null;
           var refRow = (_this$_npcRows$find2 = this._npcRows.find(r => r.npcUid === '0_lead_01')) != null ? _this$_npcRows$find2 : this._npcRows[0];
           var ordered = [...this._npcRows].sort((a, b) => {
             var pa = a.npcUid === '0_lead_01' ? 1 : 0;
@@ -3346,7 +3352,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _findNpcNodeFallback(scene, row, used) {
-          var _ref7, _this$_playerMove$nod, _this$_playerMove7, _scene$getComponentIn, _row$npcUid10;
+          var _ref6, _this$_playerMove$nod, _this$_playerMove7, _scene$getComponentIn, _row$npcUid10;
 
           var canvas = this._findNodeByName(scene, 'Canvas');
 
@@ -3365,9 +3371,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var wr = this._findNodeByName(scene, 'WorldRoot');
 
           if (!wr) return null;
-          var pmNode = (_ref7 = (_this$_playerMove$nod = (_this$_playerMove7 = this._playerMove) == null ? void 0 : _this$_playerMove7.node) != null ? _this$_playerMove$nod : (_scene$getComponentIn = scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
+          var pmNode = (_ref6 = (_this$_playerMove$nod = (_this$_playerMove7 = this._playerMove) == null ? void 0 : _this$_playerMove7.node) != null ? _this$_playerMove$nod : (_scene$getComponentIn = scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
             error: Error()
-          }), PlayerGridMove) : PlayerGridMove)) == null ? void 0 : _scene$getComponentIn.node) != null ? _ref7 : null;
+          }), PlayerGridMove) : PlayerGridMove)) == null ? void 0 : _scene$getComponentIn.node) != null ? _ref6 : null;
 
           var colliders = this._collectColliderNpcNodes(wr, pmNode).filter(n => !used.has(n));
 
@@ -3641,13 +3647,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         // --- UI（原 StoryDialoguePlayer） ---
         _resolveRefs() {
-          var _ref8, _this$getComponent, _this$node5;
+          var _ref7, _this$getComponent, _this$node5;
 
-          this._refs = (_ref8 = (_this$getComponent = this.getComponent(_crd && StoryUIViewRefs === void 0 ? (_reportPossibleCrUseOfStoryUIViewRefs({
+          this._refs = (_ref7 = (_this$getComponent = this.getComponent(_crd && StoryUIViewRefs === void 0 ? (_reportPossibleCrUseOfStoryUIViewRefs({
             error: Error()
           }), StoryUIViewRefs) : StoryUIViewRefs)) != null ? _this$getComponent : (_this$node5 = this.node) == null ? void 0 : _this$node5.getComponentInChildren(_crd && StoryUIViewRefs === void 0 ? (_reportPossibleCrUseOfStoryUIViewRefs({
             error: Error()
-          }), StoryUIViewRefs) : StoryUIViewRefs)) != null ? _ref8 : null;
+          }), StoryUIViewRefs) : StoryUIViewRefs)) != null ? _ref7 : null;
 
           if (!this._refs) {
             var _this$node6;

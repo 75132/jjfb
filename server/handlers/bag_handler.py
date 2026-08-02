@@ -699,6 +699,7 @@ async def handle_bag_get(websocket, data, current_character_id):
             'success': False,
             'code': 401,
             'message': '用户不存在或未登录',
+            'items': [],
         }, request_data=data)
         return
     
@@ -709,6 +710,7 @@ async def handle_bag_get(websocket, data, current_character_id):
             'success': False,
             'code': 400,
             'message': '角色ID不能为空',
+            'items': [],
         }, request_data=data)
         return
     
@@ -874,6 +876,7 @@ async def handle_bag_get(websocket, data, current_character_id):
             'success': False,
             'code': 500,
             'message': f'获取背包物品失败: {str(e)}',
+            'items': [],
         }, request_data=data)
 
 

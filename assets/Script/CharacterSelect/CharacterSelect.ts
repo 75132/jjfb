@@ -5,6 +5,7 @@ import { DataCacheManager } from '../global/DataCacheManager';
 import { RobotShow } from '../Game/RobotShow';
 import { getEnergyBlocksFromPayload } from '../global/MessageTypes';
 import { CharacterCreatePanel } from './CharacterPanel';
+import { normalizeBagItemsResponse } from '../global/protocol/BagProtocol';
 const { ccclass, property } = _decorator;
 
 @ccclass('CharacterSelect')
@@ -1210,8 +1211,9 @@ export class CharacterSelect extends Component {
                 bag_version: 0 // 首次加载，版本号为0
             },
             (response: any) => {
-                if (response && response.success) {
-                    cacheManager.setBagCache(characterId, response);
+                const snapshot = normalizeBagItemsResponse(response);
+                if (snapshot.success) {
+                    cacheManager.setBagCache(characterId, snapshot);
                     console.log(`✅ [CharacterSelect] 背包数据预加载完成`);
                 }
             },

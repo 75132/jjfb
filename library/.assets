@@ -1507,7 +1507,11 @@
             "UI\\Game\\MiniGame\\Daletou\\ui_btn_pressed.png",
             "UI\\Game\\MiniGame\\Daletou\\ui_main_screen.png",
             "UI\\Game\\MiniGame\\Daletou\\ui_modal_dialog.png",
-            "UI\\Game\\MiniGame\\Daletou\\ui_modal_dim.png"
+            "UI\\Game\\MiniGame\\Daletou\\ui_modal_dim.png",
+            "Script\\global\\protocol",
+            "Script\\global\\protocol\\BagProtocol.ts",
+            "Script\\Game\\battle-resume-gate.ts",
+            "Script\\Game\\BattleResumeController.ts"
         ]
     }
 }

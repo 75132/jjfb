@@ -34677,5 +34677,25 @@
     "url": "db://assets/Script/Game/story-runtime-sanitize.ts",
     "value": {},
     "versionCode": 1
+  },
+  "43bf5d2e-385e-4f40-b65f-839a17b24058": {
+    "url": "db://assets/Script/global/protocol/BagProtocol.ts",
+    "value": {},
+    "versionCode": 1
+  },
+  "757dccd7-0b1f-48da-9ea4-9bd2fb5bfd82": {
+    "url": "db://assets/Script/global/protocol",
+    "value": {},
+    "versionCode": 1
+  },
+  "1acef8c5-9d41-4e46-a8fa-98956fecd4f3": {
+    "url": "db://assets/Script/Game/battle-resume-gate.ts",
+    "value": {},
+    "versionCode": 1
+  },
+  "f5250bfc-ed9b-4b6f-854a-cdd3a2cc3c7b": {
+    "url": "db://assets/Script/Game/BattleResumeController.ts",
+    "value": {},
+    "versionCode": 1
   }
 }

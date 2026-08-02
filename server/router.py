@@ -438,7 +438,7 @@ ROUTES: Dict[str, RouteHandler] = {
         story_handler.handle_story_battle_start,
         require_auth=True,
         returns_user_ids=True,
-        description='剧情战斗生成敌人'
+        description='[DEPRECATED] 剧情战斗生成敌人；请用 story_interact → battle_room_create(story_event_id)'
     ),
 
     # ========== 邮件 ==========

@@ -1,0 +1,43 @@
+/**
+ * 游戏脚本 TypeScript 检查基线（不含 Cocos 场景编译产物 / Juben / library）
+ *
+ * 用法（仓库根 jjfb）：
+ *   npx --yes typescript@5.4.5 --project tsconfig.gamecheck.json --noEmit
+ * 或安装 typescript 后：
+ *   tsc -p tsconfig.gamecheck.json --noEmit
+ */
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "ES2015",
+    "moduleResolution": "node",
+    "lib": ["ES2018", "DOM"],
+    "strict": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "./temp/declarations/cc.custom-macro",
+      "./temp/declarations/cc",
+      "./temp/declarations/jsb",
+      "./temp/declarations/cc.env"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "db://assets/*": ["assets/*"]
+    }
+  },
+  "include": [
+    "assets/Script/**/*.ts"
+  ],
+  "exclude": [
+    "library/**",
+    "temp/**",
+    "build/**",
+    "Juben/**",
+    "server/**",
+    "node_modules/**",
+    "assets/Script/**/*.test.ts"
+  ]
+}

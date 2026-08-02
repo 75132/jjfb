@@ -3,6 +3,8 @@ import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 import { DataCacheManager } from '../global/DataCacheManager';
 import { RobotShow } from './RobotShow';
+import { BattleResumeController, ensureBattleResumeController } from './BattleResumeController';
+import { isActiveRoomConflict, roomIdOf, type BattleRoomStateLike } from './battle-resume-gate';
 
 const { ccclass, property } = _decorator;
 
@@ -188,8 +190,11 @@ export class BattleScene extends Component {
 
     /** 修复点：会话标识，异步回调中校验，避免快速开关面板时旧回调覆盖新状态 */
     private _sessionId: number = 0;
-    /** 修复点：重连恢复中置位，避免 onEnable 再次请求 resume 覆盖已拉取的状态 */
+    /** 由 BattleResumeController 注入：onEnable 时直接应用，不再自行 resume */
     private _restoringFromReconnect: boolean = false;
+    private _pendingRestoreState: BattleRoomStateLike | null = null;
+    /** 已应用过的恢复 room_id，避免同房重复入场动画 */
+    private _appliedRestoreRoomId: string | null = null;
     /** 剧情战斗结束回调 */
     private _storyBattleCallback: ((won: boolean, errMsg?: string) => void) | null = null;
     private _storyBattleMeta: { eventId: string; battleRef: string; mapCode: string } | null = null;
@@ -242,10 +247,8 @@ export class BattleScene extends Component {
             RobotShow.preloadResources();
         } catch {}
 
-        // 修复点：在 onLoad 绑定重连监听，断线重连后无论面板是否可见都尝试恢复战斗并刷新数据
-        this._bindNetworkReconnect();
-
-        // 注：加载时“是否在战斗中”的检测由常驻节点 Test 负责（BattleScene 面板默认隐藏时 schedule 不执行，无法在此处可靠检测）
+        // 自动恢复由 BattleResumeController 统一负责（本组件只注册自身供恢复打开面板）
+        ensureBattleResumeController().registerBattleScene(this);
 
         // 绑定按钮事件（使用 Button.EventType.CLICK 与项目其他模块一致）
         if (this.attackButton) {
@@ -278,7 +281,9 @@ export class BattleScene extends Component {
         }
         this.clearPlayerInfoListener();
         this.clearEnemyInfoListener();
-        this._unbindNetworkReconnect();
+        try {
+            BattleResumeController.getInstance().unregisterBattleScene(this);
+        } catch (_) {}
     }
 
     onEnable() {
@@ -374,6 +379,11 @@ export class BattleScene extends Component {
 
         // 离开面板时不主动销毁房间，由服务器根据超时自动清理
         this.roomId = null;
+        this._appliedRestoreRoomId = null;
+        this._pendingRestoreState = null;
+        try {
+            BattleResumeController.getInstance().notifyBattleSessionEnded();
+        } catch (_) {}
 
         this.unschedule(this._onBattleEnterTimeout);
 
@@ -496,6 +506,14 @@ export class BattleScene extends Component {
             createPayload,
             (createResp: any) => {
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
+                if (isActiveRoomConflict(createResp)) {
+                    console.log('[BattleScene] 剧情 create 冲突：转统一恢复');
+                    this._storyBattleCallback = null;
+                    this._storyBattleMeta = null;
+                    this.node.active = false;
+                    ensureBattleResumeController().checkAndRestore('story_create_conflict');
+                    return;
+                }
                 if (!createResp?.success || !createResp.data?.state) {
                     const msg = createResp?.message || '剧情战斗房间创建失败';
                     console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
@@ -505,6 +523,7 @@ export class BattleScene extends Component {
                     this.node.active = false;
                     return;
                 }
+                // 剧情战必须带 story 上下文创建，成功后按新房间播进入场
                 this.applyServerRoomState(createResp.data.state, true);
             },
             true,
@@ -513,9 +532,9 @@ export class BattleScene extends Component {
     }
 
     /**
-     * 进入房间制战斗：
-     * - 先尝试 resume（恢复进行中的战斗）
-     * - 没有房间时再创建一场新的 PVE 房间
+     * 玩家明确发起普通新战斗：直接 battle_room_create。
+     * 自动恢复不走此路径（由 BattleResumeController 负责）。
+     * 若服务端返回已有活动房间冲突 → 转统一恢复，不二次 create。
      */
     private enterBattleRoom() {
         const characterId = this.ws.getCharacterId?.();
@@ -526,97 +545,47 @@ export class BattleScene extends Component {
 
         const sessionId = this._sessionId;
         this.ws.request(
-            GameConfig.MESSAGE_TYPES.BATTLE_ROOM_RESUME,
+            GameConfig.MESSAGE_TYPES.BATTLE_ROOM_CREATE,
             { character_id: characterId },
-            (resp: any) => {
+            (createResp: any) => {
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
-                // 只有服务器仍在战斗中才恢复；掉线期间战斗已结束则不再拉入房间，走创建新局
-                if (resp?.success && resp.data?.has_room && resp.data.state && resp.data.state.status === 'in_progress') {
-                    // 恢复已有房间：isNewRoom = false，直接设置到战斗位置
-                    this.applyServerRoomState(resp.data.state, false);
+                if (isActiveRoomConflict(createResp)) {
+                    console.log('[BattleScene] create 冲突：已有活动房间，转 BattleResumeController');
+                    this.node.active = false;
+                    ensureBattleResumeController().checkAndRestore('create_conflict');
                     return;
                 }
-                // 没有进行中的房间（或房间已结束），创建一场新的战斗
-                this.ws.request(
-                    GameConfig.MESSAGE_TYPES.BATTLE_ROOM_CREATE,
-                    { character_id: characterId },
-                    (createResp: any) => {
-                        if (!this.node?.isValid || this._sessionId !== sessionId) return;
-                        if (!createResp?.success || !createResp.data?.state) {
-                            console.error('[BattleScene] 创建战斗房间失败:', createResp?.message || createResp);
-                            // PvE：数据异常/没有机甲，进入房间不应继续卡在面板里
-                            this.roomId = null;
-                            this.state = BattleState.FINISHED;
-                            this.pendingPlayerAction = null;
-                            this.pendingEnemyAction = null;
-                            this.isAnimating = false;
-                            this.isRequestingAction = false;
-                            this.setButtonsInteractable(true);
-                            this.node.active = false;
-                            return;
-                        }
-                        // 新创建房间：isNewRoom = true，播放入场动画
-                        this.applyServerRoomState(createResp.data.state, true);
-                    },
-                    true,
-                    10000
-                );
+                if (!createResp?.success || !createResp.data?.state) {
+                    console.error('[BattleScene] 创建战斗房间失败:', createResp?.message || createResp);
+                    this.roomId = null;
+                    this.state = BattleState.FINISHED;
+                    this.pendingPlayerAction = null;
+                    this.pendingEnemyAction = null;
+                    this.isAnimating = false;
+                    this.isRequestingAction = false;
+                    this.setButtonsInteractable(true);
+                    this.node.active = false;
+                    return;
+                }
+                this.applyServerRoomState(createResp.data.state, true);
             },
             true,
-            8000
+            10000
         );
     }
 
     /**
-     * 修复点：断线重连恢复战斗——重连后若服务器仍在战斗中，立即恢复战斗场景并刷新最新数据。
-     * 不依赖 roomId 与面板是否打开：仅凭 character_id 向服务器 resume，有房间则展示面板并应用 state。
+     * 统一恢复入口：由 BattleResumeController 在打开面板前注入 state。
+     * onEnable 将直接 apply，不会 create 新房间。
      */
-    private _onNetworkReconnect = (): void => {
-        if (!this.node?.isValid || !this.ws) return;
-        if (!this.useServerRoomBattle) return;
-        const characterId = this.ws.getCharacterId?.();
-        if (!characterId) return;
-        this.ws.request(
-            GameConfig.MESSAGE_TYPES.BATTLE_ROOM_RESUME,
-            { character_id: characterId },
-            (resp: any) => {
-                if (!this.node?.isValid) return;
-                if (!resp?.success || !resp.data?.has_room || !resp.data.state) return;
-                // 只有服务器仍在战斗中才恢复；掉线期间战斗已自动结束则不再拉入房间
-                if (resp.data.state.status !== 'in_progress') return;
-                // 立即恢复战斗场景（可能之前被关掉），再应用最新房间状态；置位避免 onEnable 内再次 resume
-                this._restoringFromReconnect = true;
-                this.node.active = true;
-                this.applyServerRoomState(resp.data.state, false);
-                this.log('已恢复战斗连接，状态已同步');
-            },
-            true,
-            6000
-        );
-    };
-
-    private _bindNetworkReconnect(): void {
-        this._unbindNetworkReconnect();
-        const node = (this.ws as any)?.node;
-        if (node && typeof node.on === 'function') {
-            node.on('network_connect', this._onNetworkReconnect, this);
-        }
-    }
-
-    private _unbindNetworkReconnect(): void {
-        const node = (this.ws as any)?.node;
-        if (node && typeof node.off === 'function') {
-            node.off('network_connect', this._onNetworkReconnect, this);
-        }
-    }
-
-    /**
-     * 由 Test 等外部在打开面板前调用：注入已拉取的 resume state，打开后面板 onEnable 内会直接应用该 state，
-     * 不再请求 resume/创建新房间，避免“先空场景再变成新房间”的问题。
-     */
-    public prepareRestoreState(state: any): void {
+    public restoreFromServerState(state: BattleRoomStateLike): void {
         this._pendingRestoreState = state;
         this._restoringFromReconnect = true;
+    }
+
+    /** @deprecated 使用 restoreFromServerState */
+    public prepareRestoreState(state: BattleRoomStateLike): void {
+        this.restoreFromServerState(state);
     }
 
     /**
@@ -628,10 +597,20 @@ export class BattleScene extends Component {
     private applyServerRoomState(state: any, isNewRoom: boolean = false, forRoundAnimation: boolean = false) {
         if (!state) return;
 
+        const incomingRoomId = roomIdOf(state as BattleRoomStateLike);
+        // 同一 room 已恢复过：仅同步数据，不重复入场动画
+        if (!forRoundAnimation && !isNewRoom && incomingRoomId && this._appliedRestoreRoomId === incomingRoomId && this._roomStateApplied) {
+            console.log(`[BattleScene] skip duplicate restore animation room_id=${incomingRoomId}`);
+            return;
+        }
+
         // 根据服务器返回的模式切换：PVP 可能需要更长的 action 等待时间（双方都提交完才结算）
         this.currentBattleMode = state?.mode === 'pvp' ? 'pvp' : 'pve';
 
         this.roomId = state.room_id || state.roomId || null;
+        if (!isNewRoom && incomingRoomId) {
+            this._appliedRestoreRoomId = incomingRoomId;
+        }
 
         // 修复点：应用进行中房间状态前清空战斗日志，避免上一场「玩家胜利/失败」残留导致误以为「直接胜利/击败」
         if (state.status !== 'finished') {

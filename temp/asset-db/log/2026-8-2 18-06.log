@@ -1042,3 +1042,29 @@
 2026-8-2 19:20:13-debug: asset-db:worker-effect-data-processing (4ms)
 2026-8-2 19:20:13-debug: asset-db:refresh-all-database (2352ms)
 2026-8-2 19:20:13-debug: asset-db-hook-engine-extends-afterRefresh (5ms)
+2026-8-2 19:28:51-debug: refresh db internal success
+2026-8-2 19:28:52-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\global\protocolbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:28:52-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\global\protocol\BagProtocol.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:28:52-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\globalbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:28:52-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\global\WebSocketManager.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:28:53-debug: Run asset db hook engine-extends:afterRefresh ...
+2026-8-2 19:28:53-debug: refresh db assets success
+2026-8-2 19:28:53-debug: Run asset db hook engine-extends:afterRefresh success!
+2026-8-2 19:28:53-debug: asset-db:refresh-all-database (1299ms)
+2026-8-2 19:28:53-debug: asset-db:worker-effect-data-processing (3ms)
+2026-8-2 19:28:53-debug: asset-db-hook-engine-extends-afterRefresh (4ms)
+2026-8-2 19:42:25-debug: refresh db internal success
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\Game\battle-resume-gate.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\Game\BattleResumeController.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\Gamebackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\CharacterSelect\CharacterSelect.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\Game\BagItem.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\Game\BattleScene.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\Game\StoryManager.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:26-debug: %cImport%c: D:\jjfbol-cocos\jjfbol-cocos\jjfb\assets\Script\global\protocol\BagProtocol.tsbackground: #aaff85; color: #000;color: #000;
+2026-8-2 19:42:27-debug: refresh db assets success
+2026-8-2 19:42:27-debug: Run asset db hook engine-extends:afterRefresh ...
+2026-8-2 19:42:27-debug: Run asset db hook engine-extends:afterRefresh success!
+2026-8-2 19:42:27-debug: asset-db:refresh-all-database (1392ms)
+2026-8-2 19:42:27-debug: asset-db:worker-effect-data-processing (3ms)
+2026-8-2 19:42:27-debug: asset-db-hook-engine-extends-afterRefresh (5ms)

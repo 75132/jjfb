@@ -1163,7 +1163,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               // 客户端版本
               dict_version: dictVersion
             }
-          }; // 握手消息立即发送，不使用批处理
+          }; // 握手无鉴权直发
 
           this.send(handshakeMsg, false, true); // 设置超时（3秒后如果还没收到握手响应，继续正常流程，向后兼容）
 

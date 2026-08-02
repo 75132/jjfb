@@ -6,6 +6,7 @@ import { GameConfig } from '../global/GameConfig';
 import { GameCommonData } from './GameCommonData';
 import { ResourceManager } from './ResourceManager';
 import { RobotShow } from './RobotShow';
+import { ensureBattleResumeController } from './BattleResumeController';
 
 const { ccclass, property } = _decorator;
 
@@ -61,6 +62,9 @@ export class GameControl extends BaseSceneController {
     start() {
         // 调用父类start方法，启动监控（父类会延迟2秒，不影响场景加载）
         super.start();
+
+        // 生产：战斗自动恢复唯一入口（登录/选角/重连）
+        ensureBattleResumeController();
 
         // 延迟初始化非关键操作，避免阻塞场景加载
         // 先让场景快速显示出来，再初始化其他功能

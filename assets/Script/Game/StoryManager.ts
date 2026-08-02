@@ -33,6 +33,10 @@ import { BattleTriggerOnContact } from './GameArea/BattleTriggerOnContact';
 import { ResourceManager } from './ResourceManager';
 import { StoryUIViewRefs } from './StoryUIViewRefs';
 import { WebSocketManager } from '../global/WebSocketManager';
+import {
+    normalizeBagItemsResponse,
+    ownedItemIdsFromSnapshot,
+} from '../global/protocol/BagProtocol';
 import { BattleScene } from './BattleScene';
 import {
     isBattleInteractAction,
@@ -391,18 +395,20 @@ export class StoryManager extends Component {
     private _refreshOwnedItemsFromWs(): void {
         const ws = this._ws || WebSocketManager.getInstance();
         if (!ws?.getCharacterId?.()) return;
-        ws.request('bag_get', {}, (resp: { success?: boolean; data?: { slots?: Array<{ item_id?: number; itemId?: number; count?: number }> } }) => {
-            if (!resp?.success) return;
-            this._ownedItemIds.clear();
-            const slots = resp.data?.slots ?? [];
-            for (const s of slots) {
-                const iid = Number(s.item_id ?? s.itemId ?? 0);
-                const cnt = Number(s.count ?? 0);
-                if (iid > 0 && cnt > 0) this._ownedItemIds.add(iid);
-            }
-            this._refreshNpcVisibility();
-            this._syncNpcTaskIndicators();
-        });
+        ws.request(
+            'bag_get',
+            { page: 1, page_size: 200 },
+            (resp: unknown) => {
+                const snapshot = normalizeBagItemsResponse(resp);
+                if (!snapshot.success) return;
+                this._ownedItemIds.clear();
+                for (const id of ownedItemIdsFromSnapshot(snapshot)) {
+                    this._ownedItemIds.add(id);
+                }
+                this._refreshNpcVisibility();
+                this._syncNpcTaskIndicators();
+            },
+        );
     }
 
     /** 选角 / 切角后清空本地剧情缓存，等待 story_get_state 重新拉取 */

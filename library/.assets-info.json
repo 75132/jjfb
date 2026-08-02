@@ -86,11 +86,11 @@
       "uuid": "417669d8-a87a-41c9-b258-0fe6dfc4639d"
     },
     "Script\\Game": {
-      "time": 1783155419188.903,
+      "time": 1785670946020.057,
       "uuid": "3bae7031-f184-47c7-9153-defd9af00a25"
     },
     "Script\\global": {
-      "time": 1777830811717.7996,
+      "time": 1785670131974.448,
       "uuid": "26482aef-da31-425c-9354-9a732b60ddca"
     },
     "Script\\login": {
@@ -2446,7 +2446,7 @@
       "uuid": "45b2b286-175a-40ed-bb8b-1a25c314aa7e"
     },
     "Script\\CharacterSelect\\CharacterSelect.ts": {
-      "time": 1777895535837.3325,
+      "time": 1785670709935.63,
       "uuid": "320ada63-38ff-4d0d-8cac-64f3bc1f9bfa"
     },
     "Script\\CharacterSelect\\CharacterSelectControl.ts": {
@@ -2470,11 +2470,11 @@
       "uuid": "48162798-f598-4195-9675-79363e04dff1"
     },
     "Script\\Game\\BagItem.ts": {
-      "time": 1777895535859.3423,
+      "time": 1785670710296.0059,
       "uuid": "a63322a7-0a8f-4979-af8c-fed717835ca6"
     },
     "Script\\Game\\BattleScene.ts": {
-      "time": 1785669316813.6807,
+      "time": 1785670946196.644,
       "uuid": "90ca8aeb-27fd-454f-83d1-e679150a214f"
     },
     "Script\\Game\\CentralMenu.ts": {
@@ -2594,7 +2594,7 @@
       "uuid": "3c67f6fd-9340-42e7-a7c7-1141518ace38"
     },
     "Script\\global\\WebSocketManager.ts": {
-      "time": 1785669335219.8975,
+      "time": 1785669617840.9253,
       "uuid": "9eef60a9-2ca1-438a-a2ca-151a31f66102"
     },
     "Script\\login\\ChangePasswordPanel.ts": {
@@ -10446,7 +10446,7 @@
       "time": 1777837450627.5916
     },
     "Script\\Game\\StoryManager.ts": {
-      "time": 1783174571892.2344,
+      "time": 1785670660632.785,
       "uuid": "c3d8a7f1-4e2b-5c9d-a1b2-3c4d5e6f7081"
     },
     "Script\\Game\\STORY_MIGRATION.md": {
@@ -10557,6 +10557,34 @@
     "Script\\Game\\story-runtime-sanitize.ts": {
       "time": 1783155349133.9407,
       "uuid": "84a49b16-ad25-4422-87e4-b955ce5f74eb"
+    },
+    "Script\\global\\protocol.meta": {
+      "time": 1785670132285.3938
+    },
+    "Script\\global\\protocol\\BagProtocol.ts.meta": {
+      "time": 1785670132287.3923
+    },
+    "Script\\global\\protocol": {
+      "time": 1785670131975.4487,
+      "uuid": "757dccd7-0b1f-48da-9ea4-9bd2fb5bfd82"
+    },
+    "Script\\global\\protocol\\BagProtocol.ts": {
+      "time": 1785670378935.843,
+      "uuid": "43bf5d2e-385e-4f40-b65f-839a17b24058"
+    },
+    "Script\\Game\\battle-resume-gate.ts.meta": {
+      "time": 1785670946378.7566
+    },
+    "Script\\Game\\BattleResumeController.ts.meta": {
+      "time": 1785670946380.7576
+    },
+    "Script\\Game\\battle-resume-gate.ts": {
+      "time": 1785670383909.9175,
+      "uuid": "1acef8c5-9d41-4e46-a8fa-98956fecd4f3"
+    },
+    "Script\\Game\\BattleResumeController.ts": {
+      "time": 1785670443551.3086,
+      "uuid": "f5250bfc-ed9b-4b6f-854a-cdd3a2cc3c7b"
     }
   },
   "missing": {}

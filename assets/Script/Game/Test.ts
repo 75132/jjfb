@@ -1,7 +1,6 @@
 import { _decorator, Component, Node, Button, EventTouch, Vec3, UITransform } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameCommonData } from './GameCommonData';
-import { GameConfig } from '../global/GameConfig';
 import { BattleScene } from './BattleScene';
 
 const { ccclass, property } = _decorator;
@@ -52,33 +51,6 @@ export class Test extends Component {
     private dragOffset: Vec3 = new Vec3();
     private panelVisible: boolean = false;
 
-    /** 修复点：加载/连接后检测是否在战斗中，是则自动打开战斗面板（BattleScene 面板默认隐藏时 schedule 不执行，故由常驻的 Test 负责） */
-    private _checkInBattleAndOpenPanel = (): void => {
-        if (!this.battleScenePanel?.isValid) return;
-        if (this.battleScenePanel.active) return;
-        const ws = WebSocketManager.getInstance();
-        if (!ws.isConnected?.()) return;
-        const characterId = ws.getCharacterId?.();
-        if (!characterId) return;
-        ws.request(
-            GameConfig.MESSAGE_TYPES.BATTLE_ROOM_RESUME,
-            { character_id: characterId },
-            (resp: any) => {
-                if (!this.node?.isValid || !this.battleScenePanel?.isValid) return;
-                if (!resp?.success || !resp.data?.has_room || !resp.data.state) return;
-                // 只有服务器仍在战斗中才恢复；掉线期间战斗已结束则不再拉入房间
-                if (resp.data.state.status !== 'in_progress') return;
-                // 用已拉取的 state 直接恢复，不再让 BattleScene 再发 resume（避免误走创建新房间、界面先空再变新局）
-                const battleScene = this.battleScenePanel.getComponent(BattleScene);
-                if (battleScene) battleScene.prepareRestoreState(resp.data.state);
-                this.battleScenePanel.active = true;
-                console.log('[Test] 检测到战斗中，已用服务器实时数据恢复战斗场景');
-            },
-            true,
-            6000
-        );
-    };
-
     start() {
         console.log('🧪 测试脚本启动');
         
@@ -96,21 +68,7 @@ export class Test extends Component {
         // 监听GameCommonData的数据更新事件
         this.setupDataListener();
 
-        // 修复点：加载游戏时检测是否在战斗中并自动打开战斗面板（服务器显示在房间但客户端未进时必跑）
-        // 1) 若已连接且有 characterId，立即检测一次
-        this._checkInBattleAndOpenPanel();
-        // 2) 多次延迟检测，覆盖 auth/characterId 稍晚就绪的情况（0.5s、1.5s、3s、5s）
-        [0.5, 1.5, 3, 5].forEach((delay) => {
-            this.scheduleOnce(() => {
-                this._checkInBattleAndOpenPanel();
-            }, delay);
-        });
-
-        // 修复点：连接/重连时也检测是否在战斗中，立即打开战斗面板
-        const wsNode = (WebSocketManager.getInstance() as any)?.node;
-        if (wsNode && typeof wsNode.on === 'function') {
-            wsNode.on('network_connect', this._checkInBattleAndOpenPanel, this);
-        }
+        // 战斗自动恢复已迁移至 BattleResumeController（生产入口），Test 不再 resume / 打开战斗面板
     }
 
     /**
@@ -656,12 +614,6 @@ export class Test extends Component {
         // 清理数据监听
         if (GameCommonData.instance && GameCommonData.instance.node?.isValid) {
             GameCommonData.instance.node.off('data_updated', this.onDataUpdated, this);
-        }
-
-        // 修复点：解绑战斗检测
-        const wsNode = (WebSocketManager.getInstance() as any)?.node;
-        if (wsNode && typeof wsNode.off === 'function') {
-            wsNode.off('network_connect', this._checkInBattleAndOpenPanel, this);
         }
 
         console.log('🧪 测试脚本销毁');

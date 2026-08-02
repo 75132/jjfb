@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Button, tween, Tween, Vec3, UITransform, Sprite, SpriteFrame, Color, WebSocketManager, GameConfig, DataCacheManager, RobotShow, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _crd, ccclass, property, BattleState, BattleScene;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Button, tween, Tween, Vec3, UITransform, Sprite, SpriteFrame, Color, WebSocketManager, GameConfig, DataCacheManager, RobotShow, BattleResumeController, ensureBattleResumeController, isActiveRoomConflict, roomIdOf, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _crd, ccclass, property, BattleState, BattleScene;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -23,6 +23,26 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfRobotShow(extras) {
     _reporterNs.report("RobotShow", "./RobotShow", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfBattleResumeController(extras) {
+    _reporterNs.report("BattleResumeController", "./BattleResumeController", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfensureBattleResumeController(extras) {
+    _reporterNs.report("ensureBattleResumeController", "./BattleResumeController", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfisActiveRoomConflict(extras) {
+    _reporterNs.report("isActiveRoomConflict", "./battle-resume-gate", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfroomIdOf(extras) {
+    _reporterNs.report("roomIdOf", "./battle-resume-gate", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfBattleRoomStateLike(extras) {
+    _reporterNs.report("BattleRoomStateLike", "./battle-resume-gate", _context.meta, extras);
   }
 
   return {
@@ -52,6 +72,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       DataCacheManager = _unresolved_4.DataCacheManager;
     }, function (_unresolved_5) {
       RobotShow = _unresolved_5.RobotShow;
+    }, function (_unresolved_6) {
+      BattleResumeController = _unresolved_6.BattleResumeController;
+      ensureBattleResumeController = _unresolved_6.ensureBattleResumeController;
+    }, function (_unresolved_7) {
+      isActiveRoomConflict = _unresolved_7.isActiveRoomConflict;
+      roomIdOf = _unresolved_7.roomIdOf;
     }],
     execute: function () {
       _crd = true;
@@ -272,8 +298,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           /** 修复点：会话标识，异步回调中校验，避免快速开关面板时旧回调覆盖新状态 */
           this._sessionId = 0;
 
-          /** 修复点：重连恢复中置位，避免 onEnable 再次请求 resume 覆盖已拉取的状态 */
+          /** 由 BattleResumeController 注入：onEnable 时直接应用，不再自行 resume */
           this._restoringFromReconnect = false;
+          this._pendingRestoreState = null;
+
+          /** 已应用过的恢复 room_id，避免同房重复入场动画 */
+          this._appliedRestoreRoomId = null;
 
           /** 剧情战斗结束回调 */
           this._storyBattleCallback = null;
@@ -323,46 +353,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.PVP_MATCH_TIMEOUT_SEC = 5;
 
           /**
-           * 修复点：断线重连恢复战斗——重连后若服务器仍在战斗中，立即恢复战斗场景并刷新最新数据。
-           * 不依赖 roomId 与面板是否打开：仅凭 character_id 向服务器 resume，有房间则展示面板并应用 state。
-           */
-          this._onNetworkReconnect = () => {
-            var _this$node2, _this$ws$getCharacter, _this$ws;
-
-            if (!((_this$node2 = this.node) != null && _this$node2.isValid) || !this.ws) return;
-            if (!this.useServerRoomBattle) return;
-            const characterId = (_this$ws$getCharacter = (_this$ws = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter.call(_this$ws);
-            if (!characterId) return;
-            this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
-              error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_RESUME, {
-              character_id: characterId
-            }, resp => {
-              var _this$node3, _resp$data;
-
-              if (!((_this$node3 = this.node) != null && _this$node3.isValid)) return;
-              if (!(resp != null && resp.success) || !((_resp$data = resp.data) != null && _resp$data.has_room) || !resp.data.state) return; // 只有服务器仍在战斗中才恢复；掉线期间战斗已自动结束则不再拉入房间
-
-              if (resp.data.state.status !== 'in_progress') return; // 立即恢复战斗场景（可能之前被关掉），再应用最新房间状态；置位避免 onEnable 内再次 resume
-
-              this._restoringFromReconnect = true;
-              this.node.active = true;
-              this.applyServerRoomState(resp.data.state, false);
-              this.log('已恢复战斗连接，状态已同步');
-            }, true, 6000);
-          };
-
-          /**
            * 机甲列表响应处理（用于战斗场景）
            */
           this.onRobotPetsResponseForBattle = data => {
-            var _this$node4, _this$ws$getCharacter2, _this$ws2;
+            var _this$node2, _this$ws$getCharacter, _this$ws;
 
             // 移除监听（只监听一次）
             this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).MESSAGE_TYPES.ROBOT_PETS_RESPONSE, this.onRobotPetsResponseForBattle, this);
-            if (!((_this$node4 = this.node) != null && _this$node4.isValid)) return;
+            if (!((_this$node2 = this.node) != null && _this$node2.isValid)) return;
             const success = data.success === true || data.success === 'true';
 
             if (!success) {
@@ -373,7 +373,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               return;
             }
 
-            const characterId = (_this$ws$getCharacter2 = (_this$ws2 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter2.call(_this$ws2);
+            const characterId = (_this$ws$getCharacter = (_this$ws = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter.call(_this$ws);
 
             if (characterId) {
               this.cacheManager.setRobotPetsCache(characterId, data);
@@ -395,13 +395,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            * 机甲详情响应处理（用于战斗场景）
            */
           this.onRobotPetInfoResponseForBattle = data => {
-            var _this$node5, _data$pet_id, _data$data3;
+            var _this$node3, _data$pet_id, _data$data3;
 
             // 移除监听（只监听一次）
             this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).MESSAGE_TYPES.ROBOT_PET_INFO_RESPONSE, this.onRobotPetInfoResponseForBattle, this);
-            if (!((_this$node5 = this.node) != null && _this$node5.isValid)) return;
+            if (!((_this$node3 = this.node) != null && _this$node3.isValid)) return;
             const success = data.success === true || data.success === 'true';
 
             if (!success) {
@@ -463,12 +463,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             (_crd && RobotShow === void 0 ? (_reportPossibleCrUseOfRobotShow({
               error: Error()
             }), RobotShow) : RobotShow).preloadResources();
-          } catch {} // 修复点：在 onLoad 绑定重连监听，断线重连后无论面板是否可见都尝试恢复战斗并刷新数据
+          } catch {} // 自动恢复由 BattleResumeController 统一负责（本组件只注册自身供恢复打开面板）
 
 
-          this._bindNetworkReconnect(); // 注：加载时“是否在战斗中”的检测由常驻节点 Test 负责（BattleScene 面板默认隐藏时 schedule 不执行，无法在此处可靠检测）
-          // 绑定按钮事件（使用 Button.EventType.CLICK 与项目其他模块一致）
-
+          (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
+            error: Error()
+          }), ensureBattleResumeController) : ensureBattleResumeController)().registerBattleScene(this); // 绑定按钮事件（使用 Button.EventType.CLICK 与项目其他模块一致）
 
           if (this.attackButton) {
             this.attackButton.node.on(Button.EventType.CLICK, this.onAttackClicked, this);
@@ -511,7 +511,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.clearPlayerInfoListener();
           this.clearEnemyInfoListener();
 
-          this._unbindNetworkReconnect();
+          try {
+            (_crd && BattleResumeController === void 0 ? (_reportPossibleCrUseOfBattleResumeController({
+              error: Error()
+            }), BattleResumeController) : BattleResumeController).getInstance().unregisterBattleScene(this);
+          } catch (_) {}
         }
 
         onEnable() {
@@ -630,9 +634,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         startPvpFlatMatchFlow() {
-          var _this$ws$getCharacter3, _this$ws3;
+          var _this$ws$getCharacter2, _this$ws2;
 
-          const characterId = (_this$ws$getCharacter3 = (_this$ws3 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter3.call(_this$ws3);
+          const characterId = (_this$ws$getCharacter2 = (_this$ws2 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter2.call(_this$ws2);
 
           if (!characterId) {
             console.error('[BattleScene] PVP 匹配：未获取到 characterId');
@@ -651,9 +655,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.setButtonsInteractable(false);
 
           const tryCloseIfStillMatching = () => {
-            var _this$node6;
+            var _this$node4;
 
-            if (!((_this$node6 = this.node) != null && _this$node6.isValid)) return;
+            if (!((_this$node4 = this.node) != null && _this$node4.isValid)) return;
             if (this._sessionId !== sessionId) return;
             if (!this._pvpFlatMatchInProgress) return;
             this._pvpFlatMatchInProgress = false;
@@ -668,13 +672,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), GameConfig) : GameConfig).MESSAGE_TYPES.PVP_FLAT_MATCH, {
             character_id: characterId
           }, resp => {
-            var _this$node7, _resp$data2;
+            var _this$node5, _resp$data;
 
-            if (!((_this$node7 = this.node) != null && _this$node7.isValid) || this._sessionId !== sessionId) return;
+            if (!((_this$node5 = this.node) != null && _this$node5.isValid) || this._sessionId !== sessionId) return;
             this._pvpFlatMatchInProgress = false;
             if (this.matchingLoadingPanel) this.matchingLoadingPanel.active = false;
 
-            if (!(resp != null && resp.success) || !((_resp$data2 = resp.data) != null && _resp$data2.state)) {
+            if (!(resp != null && resp.success) || !((_resp$data = resp.data) != null && _resp$data.state)) {
               this.node.active = false;
               return;
             } // 匹配成功：直接应用房间 state（isNewRoom=false，使用服务器剩余倒计时更精确）
@@ -693,7 +697,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         startStoryBattle(opts) {
-          var _this$ws$getCharacter4, _this$ws4;
+          var _this$ws$getCharacter3, _this$ws3;
 
           this._storyBattleCallback = opts.onFinished;
           this._storyBattleMeta = {
@@ -707,7 +711,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.unschedule(this._onBattleEnterTimeout);
           this.node.active = true;
           this.scheduleOnce(this._onBattleEnterTimeout, this.BATTLE_ENTER_TIMEOUT_SEC);
-          const characterId = (_this$ws$getCharacter4 = (_this$ws4 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter4.call(_this$ws4);
+          const characterId = (_this$ws$getCharacter3 = (_this$ws3 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter3.call(_this$ws3);
 
           if (!characterId) {
             console.error('[BattleScene] 剧情战：未获取 characterId');
@@ -730,9 +734,22 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
           }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_CREATE, createPayload, createResp => {
-            var _this$node8, _createResp$data;
+            var _this$node6, _createResp$data;
 
-            if (!((_this$node8 = this.node) != null && _this$node8.isValid) || this._sessionId !== sessionId) return;
+            if (!((_this$node6 = this.node) != null && _this$node6.isValid) || this._sessionId !== sessionId) return;
+
+            if ((_crd && isActiveRoomConflict === void 0 ? (_reportPossibleCrUseOfisActiveRoomConflict({
+              error: Error()
+            }), isActiveRoomConflict) : isActiveRoomConflict)(createResp)) {
+              console.log('[BattleScene] 剧情 create 冲突：转统一恢复');
+              this._storyBattleCallback = null;
+              this._storyBattleMeta = null;
+              this.node.active = false;
+              (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
+                error: Error()
+              }), ensureBattleResumeController) : ensureBattleResumeController)().checkAndRestore('story_create_conflict');
+              return;
+            }
 
             if (!(createResp != null && createResp.success) || !((_createResp$data = createResp.data) != null && _createResp$data.state)) {
               var _this$_storyBattleCal;
@@ -744,22 +761,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this._storyBattleMeta = null;
               this.node.active = false;
               return;
-            }
+            } // 剧情战必须带 story 上下文创建，成功后按新房间播进入场
+
 
             this.applyServerRoomState(createResp.data.state, true);
           }, true, 12000);
         }
         /**
-         * 进入房间制战斗：
-         * - 先尝试 resume（恢复进行中的战斗）
-         * - 没有房间时再创建一场新的 PVE 房间
+         * 玩家明确发起普通新战斗：直接 battle_room_create。
+         * 自动恢复不走此路径（由 BattleResumeController 负责）。
+         * 若服务端返回已有活动房间冲突 → 转统一恢复，不二次 create。
          */
 
 
         enterBattleRoom() {
-          var _this$ws$getCharacter5, _this$ws5;
+          var _this$ws$getCharacter4, _this$ws4;
 
-          const characterId = (_this$ws$getCharacter5 = (_this$ws5 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter5.call(_this$ws5);
+          const characterId = (_this$ws$getCharacter4 = (_this$ws4 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter4.call(_this$ws4);
 
           if (!characterId) {
             console.error('[BattleScene] 未获取到 characterId，无法进入战斗房间');
@@ -769,79 +787,55 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const sessionId = this._sessionId;
           this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
-          }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_RESUME, {
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_CREATE, {
             character_id: characterId
-          }, resp => {
-            var _this$node9, _resp$data3;
+          }, createResp => {
+            var _this$node7, _createResp$data2;
 
-            if (!((_this$node9 = this.node) != null && _this$node9.isValid) || this._sessionId !== sessionId) return; // 只有服务器仍在战斗中才恢复；掉线期间战斗已结束则不再拉入房间，走创建新局
+            if (!((_this$node7 = this.node) != null && _this$node7.isValid) || this._sessionId !== sessionId) return;
 
-            if (resp != null && resp.success && (_resp$data3 = resp.data) != null && _resp$data3.has_room && resp.data.state && resp.data.state.status === 'in_progress') {
-              // 恢复已有房间：isNewRoom = false，直接设置到战斗位置
-              this.applyServerRoomState(resp.data.state, false);
-              return;
-            } // 没有进行中的房间（或房间已结束），创建一场新的战斗
-
-
-            this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            if ((_crd && isActiveRoomConflict === void 0 ? (_reportPossibleCrUseOfisActiveRoomConflict({
               error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_CREATE, {
-              character_id: characterId
-            }, createResp => {
-              var _this$node10, _createResp$data2;
+            }), isActiveRoomConflict) : isActiveRoomConflict)(createResp)) {
+              console.log('[BattleScene] create 冲突：已有活动房间，转 BattleResumeController');
+              this.node.active = false;
+              (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
+                error: Error()
+              }), ensureBattleResumeController) : ensureBattleResumeController)().checkAndRestore('create_conflict');
+              return;
+            }
 
-              if (!((_this$node10 = this.node) != null && _this$node10.isValid) || this._sessionId !== sessionId) return;
+            if (!(createResp != null && createResp.success) || !((_createResp$data2 = createResp.data) != null && _createResp$data2.state)) {
+              console.error('[BattleScene] 创建战斗房间失败:', (createResp == null ? void 0 : createResp.message) || createResp);
+              this.roomId = null;
+              this.state = BattleState.FINISHED;
+              this.pendingPlayerAction = null;
+              this.pendingEnemyAction = null;
+              this.isAnimating = false;
+              this.isRequestingAction = false;
+              this.setButtonsInteractable(true);
+              this.node.active = false;
+              return;
+            }
 
-              if (!(createResp != null && createResp.success) || !((_createResp$data2 = createResp.data) != null && _createResp$data2.state)) {
-                console.error('[BattleScene] 创建战斗房间失败:', (createResp == null ? void 0 : createResp.message) || createResp); // PvE：数据异常/没有机甲，进入房间不应继续卡在面板里
-
-                this.roomId = null;
-                this.state = BattleState.FINISHED;
-                this.pendingPlayerAction = null;
-                this.pendingEnemyAction = null;
-                this.isAnimating = false;
-                this.isRequestingAction = false;
-                this.setButtonsInteractable(true);
-                this.node.active = false;
-                return;
-              } // 新创建房间：isNewRoom = true，播放入场动画
-
-
-              this.applyServerRoomState(createResp.data.state, true);
-            }, true, 10000);
-          }, true, 8000);
-        }
-
-        _bindNetworkReconnect() {
-          var _this$ws6;
-
-          this._unbindNetworkReconnect();
-
-          const node = (_this$ws6 = this.ws) == null ? void 0 : _this$ws6.node;
-
-          if (node && typeof node.on === 'function') {
-            node.on('network_connect', this._onNetworkReconnect, this);
-          }
-        }
-
-        _unbindNetworkReconnect() {
-          var _this$ws7;
-
-          const node = (_this$ws7 = this.ws) == null ? void 0 : _this$ws7.node;
-
-          if (node && typeof node.off === 'function') {
-            node.off('network_connect', this._onNetworkReconnect, this);
-          }
+            this.applyServerRoomState(createResp.data.state, true);
+          }, true, 10000);
         }
         /**
-         * 由 Test 等外部在打开面板前调用：注入已拉取的 resume state，打开后面板 onEnable 内会直接应用该 state，
-         * 不再请求 resume/创建新房间，避免“先空场景再变成新房间”的问题。
+         * 统一恢复入口：由 BattleResumeController 在打开面板前注入 state。
+         * onEnable 将直接 apply，不会 create 新房间。
          */
 
 
-        prepareRestoreState(state) {
+        restoreFromServerState(state) {
           this._pendingRestoreState = state;
           this._restoringFromReconnect = true;
+        }
+        /** @deprecated 使用 restoreFromServerState */
+
+
+        prepareRestoreState(state) {
+          this.restoreFromServerState(state);
         }
         /**
          * 将服务器房间状态映射到本地 BattleScene（HP/属性/UI）
@@ -854,10 +848,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         applyServerRoomState(state, isNewRoom = false, forRoundAnimation = false) {
           var _ref3, _playerRaw$Class, _playerRaw$data, _ref4, _enemyRaw$Class, _enemyRaw$data;
 
-          if (!state) return; // 根据服务器返回的模式切换：PVP 可能需要更长的 action 等待时间（双方都提交完才结算）
+          if (!state) return;
+          const incomingRoomId = (_crd && roomIdOf === void 0 ? (_reportPossibleCrUseOfroomIdOf({
+            error: Error()
+          }), roomIdOf) : roomIdOf)(state); // 同一 room 已恢复过：仅同步数据，不重复入场动画
+
+          if (!forRoundAnimation && !isNewRoom && incomingRoomId && this._appliedRestoreRoomId === incomingRoomId && this._roomStateApplied) {
+            console.log(`[BattleScene] skip duplicate restore animation room_id=${incomingRoomId}`);
+            return;
+          } // 根据服务器返回的模式切换：PVP 可能需要更长的 action 等待时间（双方都提交完才结算）
+
 
           this.currentBattleMode = (state == null ? void 0 : state.mode) === 'pvp' ? 'pvp' : 'pve';
-          this.roomId = state.room_id || state.roomId || null; // 修复点：应用进行中房间状态前清空战斗日志，避免上一场「玩家胜利/失败」残留导致误以为「直接胜利/击败」
+          this.roomId = state.room_id || state.roomId || null;
+
+          if (!isNewRoom && incomingRoomId) {
+            this._appliedRestoreRoomId = incomingRoomId;
+          } // 修复点：应用进行中房间状态前清空战斗日志，避免上一场「玩家胜利/失败」残留导致误以为「直接胜利/击败」
+
 
           if (state.status !== 'finished') {
             this.logClear();
@@ -1104,9 +1112,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         checkAndStartBattle() {
-          var _this$ws$getCharacter6, _this$ws8;
+          var _this$ws$getCharacter5, _this$ws5;
 
-          const characterId = (_this$ws$getCharacter6 = (_this$ws8 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter6.call(_this$ws8);
+          const characterId = (_this$ws$getCharacter5 = (_this$ws5 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter5.call(_this$ws5);
 
           if (!characterId) {
             this._abortBattleEntry('未选择角色，无法进入战斗');
@@ -1141,9 +1149,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         requestRobotPetsAndStart() {
-          var _this$ws$getCharacter7, _this$ws9;
+          var _this$ws$getCharacter6, _this$ws6;
 
-          const characterId = (_this$ws$getCharacter7 = (_this$ws9 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter7.call(_this$ws9);
+          const characterId = (_this$ws$getCharacter6 = (_this$ws6 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter6.call(_this$ws6);
 
           if (!characterId) {
             this._abortBattleEntry('未选择角色，无法进入战斗');
@@ -1359,9 +1367,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         initPlayerUnit() {
-          var _this$ws$getCharacter8, _this$ws10;
+          var _this$ws$getCharacter7, _this$ws7;
 
-          const characterId = (_this$ws$getCharacter8 = (_this$ws10 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter8.call(_this$ws10);
+          const characterId = (_this$ws$getCharacter7 = (_this$ws7 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter7.call(_this$ws7);
 
           if (!characterId) {
             this._abortBattleEntry('未选择角色，无法进入战斗');
@@ -1384,9 +1392,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const sessionId = this._sessionId;
 
           const finishPick = battleTeam => {
-            var _this$node11;
+            var _this$node8;
 
-            if (!((_this$node11 = this.node) != null && _this$node11.isValid) || this._sessionId !== sessionId) return;
+            if (!((_this$node8 = this.node) != null && _this$node8.isValid) || this._sessionId !== sessionId) return;
 
             const picked = this._pickBattlePet(pets, battleTeam);
 
@@ -1420,9 +1428,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), GameConfig) : GameConfig).MESSAGE_TYPES.GET_BATTLE_TEAM, {
             character_id: characterId
           }, resp => {
-            var _this$node12;
+            var _this$node9;
 
-            if (!((_this$node12 = this.node) != null && _this$node12.isValid) || this._sessionId !== sessionId) return;
+            if (!((_this$node9 = this.node) != null && _this$node9.isValid) || this._sessionId !== sessionId) return;
             let battleTeam = [];
 
             if (resp != null && resp.success && resp.data && Array.isArray(resp.data.battle_team)) {
@@ -1465,9 +1473,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
          * 使用列表中的基础数据初始化玩家单位（备用方案）
          */
         initPlayerUnitWithFallback() {
-          var _this$ws$getCharacter9, _this$ws11, _Class2;
+          var _this$ws$getCharacter8, _this$ws8, _Class2;
 
-          const characterId = (_this$ws$getCharacter9 = (_this$ws11 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter9.call(_this$ws11);
+          const characterId = (_this$ws$getCharacter8 = (_this$ws8 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter8.call(_this$ws8);
 
           if (!characterId) {
             return;
@@ -1531,17 +1539,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_GENERATE_ENEMY, {
             player_pet_id: playerPetId || undefined
           }, resp => {
-            var _this$node13, _resp$data4, _ref9, _enemy$CurrentMelee, _ref10, _enemy$CurrentShootin, _ref11, _enemy$CurrentArmor, _enemy$MaxHP, _enemy$CurrentHP, _ref12, _enemy$CurrentInitiat;
+            var _this$node10, _resp$data2, _ref9, _enemy$CurrentMelee, _ref10, _enemy$CurrentShootin, _ref11, _enemy$CurrentArmor, _enemy$MaxHP, _enemy$CurrentHP, _ref12, _enemy$CurrentInitiat;
 
             this.isEnemyGenerating = false;
-            if (!((_this$node13 = this.node) != null && _this$node13.isValid) || this._sessionId !== sessionId) return;
+            if (!((_this$node10 = this.node) != null && _this$node10.isValid) || this._sessionId !== sessionId) return;
 
             if (!resp || resp.success === false) {
               console.error('[BattleScene] 生成敌人失败:', (resp == null ? void 0 : resp.message) || (resp == null ? void 0 : resp.error) || resp);
               return;
             }
 
-            const enemy = resp.enemy || ((_resp$data4 = resp.data) == null ? void 0 : _resp$data4.enemy) || null;
+            const enemy = resp.enemy || ((_resp$data2 = resp.data) == null ? void 0 : _resp$data2.enemy) || null;
 
             if (!enemy) {
               console.error('[BattleScene] 生成敌人失败：响应缺少 enemy 字段', resp);
@@ -1741,10 +1749,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         sendBattleRoomAction(action) {
-          var _this$ws$getCharacter10, _this$ws12;
+          var _this$ws$getCharacter9, _this$ws9;
 
           if (!this.roomId || this.isRequestingAction) return;
-          const characterId = (_this$ws$getCharacter10 = (_this$ws12 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter10.call(_this$ws12);
+          const characterId = (_this$ws$getCharacter9 = (_this$ws9 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter9.call(_this$ws9);
           if (!characterId) return; // 记录本回合开始前的 HP 快照和玩家动作
 
           if (this.playerUnit && this.enemyUnit) {
@@ -1769,12 +1777,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             action_type: action,
             character_id: characterId
           }, resp => {
-            var _this$node14, _resp$data5, _ref20, _playerActor$hp2, _this$playerUnit, _ref21, _enemyActor$hp2, _this$enemyUnit;
+            var _this$node11, _resp$data3, _ref20, _playerActor$hp2, _this$playerUnit, _ref21, _enemyActor$hp2, _this$enemyUnit;
 
             this.isRequestingAction = false;
-            if (!((_this$node14 = this.node) != null && _this$node14.isValid) || this._sessionId !== sessionId) return;
+            if (!((_this$node11 = this.node) != null && _this$node11.isValid) || this._sessionId !== sessionId) return;
 
-            if (!(resp != null && resp.success) || !((_resp$data5 = resp.data) != null && _resp$data5.state)) {
+            if (!(resp != null && resp.success) || !((_resp$data3 = resp.data) != null && _resp$data3.state)) {
               console.error('[BattleScene] battle_room_action 失败:', (resp == null ? void 0 : resp.message) || resp);
               this.setButtonsInteractable(true); // 修复点：请求失败时恢复操作面板显示，便于玩家重试
 
@@ -2310,7 +2318,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
           try {
-            var _this$playerUnit2, _this$ws$getCharacter11, _this$ws13;
+            var _this$playerUnit2, _this$ws$getCharacter10, _this$ws10;
 
             const petId = ((_this$playerUnit2 = this.playerUnit) == null ? void 0 : _this$playerUnit2.petId) != null ? String(this.playerUnit.petId) : null;
 
@@ -2318,16 +2326,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.cacheManager.clearRobotPetInfoCache(petId);
             }
 
-            const cid = (_this$ws$getCharacter11 = (_this$ws13 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter11.call(_this$ws13);
+            const cid = (_this$ws$getCharacter10 = (_this$ws10 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter10.call(_this$ws10);
 
             if (cid) {
-              var _this$ws$getUserId, _this$ws14;
+              var _this$ws$getUserId, _this$ws11;
 
               const req = {
                 type: 'get_player',
                 character_id: cid
               };
-              const uid = (_this$ws$getUserId = (_this$ws14 = this.ws).getUserId) == null ? void 0 : _this$ws$getUserId.call(_this$ws14);
+              const uid = (_this$ws$getUserId = (_this$ws11 = this.ws).getUserId) == null ? void 0 : _this$ws$getUserId.call(_this$ws11);
               if (uid != null) req.user_id = uid;
               this.ws.send(req, true, true);
             }
@@ -2431,17 +2439,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         refreshPlayerShowFromServer() {
-          var _this$ws$getCharacter12, _this$ws15, _this$ws$getUserId2, _this$ws16;
+          var _this$ws$getCharacter11, _this$ws12, _this$ws$getUserId2, _this$ws13;
 
           if (!this.playerShowRoot) return;
-          const characterId = (_this$ws$getCharacter12 = (_this$ws15 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter12.call(_this$ws15);
+          const characterId = (_this$ws$getCharacter11 = (_this$ws12 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter11.call(_this$ws12);
           if (!characterId) return;
           const requestId = `battle_get_player_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
           const req = {
             character_id: characterId,
             request_id: requestId
           };
-          const userId = (_this$ws$getUserId2 = (_this$ws16 = this.ws).getUserId) == null ? void 0 : _this$ws$getUserId2.call(_this$ws16);
+          const userId = (_this$ws$getUserId2 = (_this$ws13 = this.ws).getUserId) == null ? void 0 : _this$ws$getUserId2.call(_this$ws13);
           if (userId) req.user_id = userId; // 先清掉上一次遗留的监听
 
           this.clearPlayerInfoListener(); // 兼容服务器实际事件：'player_info' / 'player_info_response'
@@ -2494,7 +2502,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         refreshEnemyShowFromCharacterId(characterId) {
-          var _this$ws$getUserId3, _this$ws17;
+          var _this$ws$getUserId3, _this$ws14;
 
           if (!this.enemyPlayerShowRoot || !characterId) {
             this.refreshEnemyShowRandom();
@@ -2506,7 +2514,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             character_id: characterId,
             request_id: requestId
           };
-          const userId = (_this$ws$getUserId3 = (_this$ws17 = this.ws).getUserId) == null ? void 0 : _this$ws$getUserId3.call(_this$ws17);
+          const userId = (_this$ws$getUserId3 = (_this$ws14 = this.ws).getUserId) == null ? void 0 : _this$ws$getUserId3.call(_this$ws14);
           if (userId) req.user_id = userId;
           this.clearEnemyInfoListener();
 

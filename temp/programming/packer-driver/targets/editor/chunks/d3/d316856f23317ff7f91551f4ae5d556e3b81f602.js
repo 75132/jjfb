@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, instantiate, Sprite, UITransform, SpriteAtlas, JsonAsset, assetManager, Color, input, Input, Vec3, Vec2, EditBox, UIOpacity, Graphics, WebSocketManager, GameConfig, RobotList, RobotEvolutionEffect, DataCacheManager, ResourceManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, BagEventHub, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _dec25, _dec26, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _crd, ccclass, property, BagItem;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, instantiate, Sprite, UITransform, SpriteAtlas, JsonAsset, assetManager, Color, input, Input, Vec3, Vec2, EditBox, UIOpacity, Graphics, WebSocketManager, GameConfig, RobotList, RobotEvolutionEffect, DataCacheManager, ResourceManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, BagEventHub, normalizeBagItemsResponse, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _dec25, _dec26, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _crd, ccclass, property, BagItem;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -49,6 +49,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("BagEventHub", "../global/BagEvent", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfnormalizeBagItemsResponse(extras) {
+    _reporterNs.report("normalizeBagItemsResponse", "../global/protocol/BagProtocol", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfBagItemSnapshot(extras) {
+    _reporterNs.report("BagItemSnapshot", "../global/protocol/BagProtocol", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -94,6 +102,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       emitRobotDataUpdated = _unresolved_9.emitRobotDataUpdated;
     }, function (_unresolved_10) {
       BagEventHub = _unresolved_10.BagEventHub;
+    }, function (_unresolved_11) {
+      normalizeBagItemsResponse = _unresolved_11.normalizeBagItemsResponse;
     }],
     execute: function () {
       _crd = true;
@@ -291,102 +301,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           };
 
           /**
-           * 处理服务端返回的当前页物品数据（优化：支持标准格式和直接格式）
-           * data.items 只包含当前页，data.page/total_pages 等为分页信息
-           * MMO最佳实践：服务器是唯一的数据源，客户端必须接受服务器的状态
+           * 兼容旧监听入口：若仍收到 bag_items，统一走 snapshot（正常路径走 request 回调）。
            */
           this.onBagItems = data => {
-            // 兼容标准格式（data字段）和直接格式（字段在根级别）
-            const responseData = data.data || data;
-
-            if (data && data.success) {
-              // 版本号更新（总是更新，不管是否匹配）
-              const serverVersion = data.bag_version || responseData.bag_version || 0; // 新增：检查版本号匹配（但需要考虑分类）
-              // 关键修复：只有当本地有数据、版本匹配、且分类一致时才使用本地缓存
-
-              const serverCategory = data.category !== undefined ? data.category : responseData.category !== undefined ? responseData.category : this.currentCategory;
-
-              if (data.version_match === true && this.items.length > 0 && serverCategory === this.currentCategory && this.localBagVersion === serverVersion) {
-                // 版本匹配且分类一致，使用本地缓存
-                this.localBagVersion = serverVersion;
-                console.log(`✅ [BagItem] 版本匹配（${serverVersion}，分类${serverCategory}），使用本地数据`); // 不更新 items，直接使用现有的 this.items
-
-                this.updatePageNumberUI();
-                this.render();
-                return;
-              } // 如果版本匹配但分类不一致或本地没有数据，继续处理服务器返回的数据
-
-
-              if (data.version_match === true && (this.items.length === 0 || serverCategory !== this.currentCategory)) {
-                console.log(`⚠️ [BagItem] 版本匹配但分类不一致或本地无数据，强制获取服务器数据`);
-              } // 使用服务器返回的数据
-
-
-              this.localBagVersion = serverVersion; // 更新本地版本号
-              // 服务器是权威数据源，直接使用服务器返回的数据（回滚机制）
-
-              const serverItems = Array.isArray(responseData.items || data.items) ? responseData.items || data.items : []; // 同步分页信息（兼容旧服务端：字段不存在时给默认值）
-
-              const serverPage = typeof (responseData.page || data.page) === 'number' && (responseData.page || data.page) > 0 ? responseData.page || data.page : this.currentPage || 1;
-              const serverTotalPages = typeof (responseData.total_pages || data.total_pages) === 'number' && (responseData.total_pages || data.total_pages) > 0 ? responseData.total_pages || data.total_pages : this.totalPages || 1; // 关键修复：如果当前页被删除后变成空页，服务器会返回调整后的页码
-              // 如果返回的页码与请求的页码不一致，说明页面已调整，需要同步
-
-              if (serverPage !== this.currentPage) {
-                console.log(`🔄 [BagItem] 页码已调整：请求 ${this.currentPage}，服务器返回 ${serverPage}（可能因为删除后页面变空）`);
-              }
-
-              this.currentPage = serverPage;
-              this.totalPages = serverTotalPages; // 确保页码有效（兜底逻辑）
-
-              if (this.currentPage > this.totalPages && this.totalPages > 0) {
-                const oldPage = this.currentPage;
-                this.currentPage = this.totalPages;
-                console.log(`⚠️ [BagItem] 页码超出范围，从 ${oldPage} 调整为最后一页: ${this.currentPage}`); // 如果页码被调整，需要重新请求
-
-                this.scheduleOnce(() => {
-                  this.requestFetchBag();
-                }, 0.05);
-                return;
-              } // MMO最佳实践：如果当前页为空且不是最后一页，说明删除后页面被调整，需要重新请求
-
-
-              if (serverItems.length === 0 && this.currentPage < this.totalPages && this.totalPages > 1) {
-                console.log(`🔄 [BagItem] 当前页为空，调整到前一页`);
-                this.currentPage = Math.max(1, this.currentPage - 1);
-                this.scheduleOnce(() => {
-                  this.requestFetchBag();
-                }, 0.05);
-                return;
-              } // 更新物品列表（使用服务器返回的数据）
-              // 注意：服务器返回的items已经是按分类和分页过滤后的数据，直接使用即可
-
-
-              this.items = serverItems;
-              this.updatePageNumberUI();
-              console.log(`📦 [BagItem] 收到服务器数据：${this.items.length} 个物品，页码 ${this.currentPage}/${this.totalPages}`);
-              (_crd && BagEventHub === void 0 ? (_reportPossibleCrUseOfBagEventHub({
-                error: Error()
-              }), BagEventHub) : BagEventHub).emit('bag', {
-                kind: 'refreshed',
-                category: this.currentCategory,
-                page: this.currentPage,
-                itemCount: this.items.length
-              });
-              this.render(); // 渲染后确保按钮在 mask 上方
-
-              this.ensureButtonsAboveMask(); // 关键修复：渲染后确保所有物品格子的按钮是可交互的
-
-              this.ensureAllItemButtonsInteractable();
-            } else {
-              // 修复点：统一处理 BAG_GET 失败/超时，给出明确日志与轻量提示
-              const code = data == null ? void 0 : data.code;
-              const msg = (data == null ? void 0 : data.message) || (responseData == null ? void 0 : responseData.message) || '获取背包数据失败';
-              console.error(`❌ [BagItem] 获取背包物品失败: code=${code}, message=${msg}`); // 仅在面板已打开时给玩家弹出轻量提示，避免后台请求打扰
-
-              if (this.panel && this.panel.active) {
-                this.showErrorTips(msg, false);
-              }
-            }
+            this.applyBagSnapshot((_crd && normalizeBagItemsResponse === void 0 ? (_reportPossibleCrUseOfnormalizeBagItemsResponse({
+              error: Error()
+            }), normalizeBagItemsResponse) : normalizeBagItemsResponse)(data));
           };
 
           /**
@@ -745,10 +665,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.ws) {
             this.ws.on((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_WRITE_RESPONSE, this.onWriteResponse, this);
-            this.ws.on((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
-              error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_ITEMS, this.onBagItems, this); // BAG_ITEMS_UPDATE 只作为「数据有变化，需要重新拉取当前页」的信号
+            }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_WRITE_RESPONSE, this.onWriteResponse, this); // bag_get 响应由 request() 回调处理；此处不再监听 bag_items，避免与推送语义混淆
+            // BAG_ITEMS_UPDATE 只作为「数据有变化，需要重新拉取当前页」的信号
 
             this.ws.on((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
@@ -999,9 +917,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_WRITE_RESPONSE, this.onWriteResponse, this);
             this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_ITEMS, this.onBagItems, this);
-            this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
-              error: Error()
             }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_ITEMS_UPDATE, this.onBagItemsUpdate, this);
             this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
@@ -1076,10 +991,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.ws.send(msg);
         }
         /**
-         * 请求获取背包物品
-         * 修复点：服务端返回 type:'bag_items'，而 request() 监听的是 bag_get_response，
-         * 导致 request 回调永远收不到响应，10 秒后超时误报 408。改用 send() 发送请求，
-         * 由 BAG_ITEMS 事件统一处理响应，消除虚假超时。
+         * 请求获取背包物品（request → bag_items，含超时重试）。
+         * 主动推送仍只走 bag_items_update，不与请求响应混为同一处理路径。
          */
 
 
@@ -1093,16 +1006,79 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          this.ws.send({
-            type: (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
-              error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_GET,
+          this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            error: Error()
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.BAG_GET, {
             character_id: cid,
             category: this.currentCategory,
             page: this.currentPage,
             page_size: this.PAGE_SIZE,
             bag_version: this.localBagVersion
-          }, true);
+          }, resp => {
+            this.applyBagSnapshot((_crd && normalizeBagItemsResponse === void 0 ? (_reportPossibleCrUseOfnormalizeBagItemsResponse({
+              error: Error()
+            }), normalizeBagItemsResponse) : normalizeBagItemsResponse)(resp));
+          }, true, 10000);
+        }
+
+        /** 业务层只读 snapshot.items，不再自行解析响应层级 */
+        applyBagSnapshot(snapshot) {
+          if (!snapshot.success) {
+            const msg = snapshot.message || '获取背包数据失败';
+            console.error(`❌ [BagItem] 获取背包物品失败: ${msg}`);
+
+            if (this.panel && this.panel.active) {
+              this.showErrorTips(msg, false);
+            }
+
+            return;
+          }
+
+          this.localBagVersion = snapshot.bag_version || 0;
+          const serverItems = snapshot.items;
+          const serverPage = snapshot.page > 0 ? snapshot.page : this.currentPage || 1;
+          const serverTotalPages = snapshot.total_pages > 0 ? snapshot.total_pages : this.totalPages || 1;
+
+          if (serverPage !== this.currentPage) {
+            console.log(`🔄 [BagItem] 页码已调整：请求 ${this.currentPage}，服务器返回 ${serverPage}`);
+          }
+
+          this.currentPage = serverPage;
+          this.totalPages = serverTotalPages;
+
+          if (this.currentPage > this.totalPages && this.totalPages > 0) {
+            const oldPage = this.currentPage;
+            this.currentPage = this.totalPages;
+            console.log(`⚠️ [BagItem] 页码超出范围，从 ${oldPage} 调整为最后一页: ${this.currentPage}`);
+            this.scheduleOnce(() => this.requestFetchBag(), 0.05);
+            return;
+          }
+
+          if (serverItems.length === 0 && this.currentPage < this.totalPages && this.totalPages > 1) {
+            console.log(`🔄 [BagItem] 当前页为空，调整到前一页`);
+            this.currentPage = Math.max(1, this.currentPage - 1);
+            this.scheduleOnce(() => this.requestFetchBag(), 0.05);
+            return;
+          }
+
+          this.items = serverItems.map(it => ({
+            item_id: it.item_id,
+            quantity: it.quantity,
+            category: it.category
+          }));
+          this.updatePageNumberUI();
+          console.log(`📦 [BagItem] 收到服务器数据：${this.items.length} 个物品，页码 ${this.currentPage}/${this.totalPages}`);
+          (_crd && BagEventHub === void 0 ? (_reportPossibleCrUseOfBagEventHub({
+            error: Error()
+          }), BagEventHub) : BagEventHub).emit('bag', {
+            kind: 'refreshed',
+            category: this.currentCategory,
+            page: this.currentPage,
+            itemCount: this.items.length
+          });
+          this.render();
+          this.ensureButtonsAboveMask();
+          this.ensureAllItemButtonsInteractable();
         }
 
         /**

@@ -201,6 +201,15 @@ async def _generate_story_enemy(user_id, character_id: str, battle_ref: str, pla
 
 
 async def handle_story_battle_start(websocket, data, current_user_id, current_character_id):
+    """
+    DEPRECATED: 客户端剧情战应走 story_interact → battle_room_create(story_event_id)。
+    本路由保留兼容，内部使用 story_battle_shared 同一套 pending 校验与敌人生成。
+    """
+    import logging
+    logging.getLogger("game_server").warning(
+        "[DEPRECATED] story_battle_start called; prefer battle_room_create with story_event_id"
+    )
+
     user, uid, cid = await _resolve_user_character(websocket, data, current_user_id, current_character_id)
     if not user:
         return current_user_id, current_character_id
@@ -211,21 +220,26 @@ async def handle_story_battle_start(websocket, data, current_user_id, current_ch
         await utils.send_error_response(websocket, "story_battle_start", "缺少 event_id 或 battle_ref", code=400, request_data=data)
         return current_user_id, current_character_id
 
-    progress = await get_or_create_progress(uid, cid, map_code)
-    pending = progress.get("pending_battle") or {}
-    if pending.get("event_id") != event_id or pending.get("battle_ref") != battle_ref:
-        await utils.send_error_response(websocket, "story_battle_start", "战斗未授权，请先 story_interact", code=400, request_data=data)
-        return current_user_id, current_character_id
+    from services.story_battle_shared import consume_or_validate_pending_battle
 
-    enemy, err = await _generate_story_enemy(uid, cid, battle_ref, data.get("player_pet_id"))
+    _pending, enemy, err = await consume_or_validate_pending_battle(
+        uid,
+        cid,
+        map_code,
+        event_id,
+        battle_ref=battle_ref,
+        require_battle_ref_match=True,
+        player_pet_id=data.get("player_pet_id"),
+    )
     if err:
-        await utils.send_error_response(websocket, "story_battle_start", err, code=500, request_data=data)
+        code = 400 if ("未授权" in err or "缺少" in err) else 500
+        await utils.send_error_response(websocket, "story_battle_start", err, code=code, request_data=data)
         return current_user_id, current_character_id
 
     await utils.send_success_response(
         websocket,
         "story_battle_start",
-        data={"enemy": enemy, "event_id": event_id, "battle_ref": battle_ref},
+        data={"enemy": enemy, "event_id": event_id, "battle_ref": battle_ref, "deprecated": True},
         request_data=data,
     )
     return current_user_id, current_character_id

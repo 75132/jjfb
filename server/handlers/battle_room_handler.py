@@ -380,45 +380,42 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
 
     player_snapshot = _build_attrs_from_pet(player_pet)
 
+    # 已有进行中房间：禁止再 create，由客户端走 BattleResumeController 恢复
+    existing = battle_room_service.get_room_for_character(str(cid))
+    if existing and existing.get("status") == "in_progress":
+        await utils.send_error_response(
+            websocket,
+            "battle_room_create",
+            "已有进行中的战斗房间，请先恢复",
+            code=409,
+            request_data=data,
+            error_code="ACTIVE_BATTLE_ROOM",
+        )
+        return
+
     story_event_id = data.get("story_event_id")
     map_code = data.get("map_code") or "test_base"
     if story_event_id:
-        from services.story_service import get_or_create_progress
-        from handlers import story_handler
+        from services.story_battle_shared import consume_or_validate_pending_battle
 
-        progress = await get_or_create_progress(user["_id"], str(cid), map_code)
-        pending = progress.get("pending_battle") or {}
-        if pending.get("event_id") != story_event_id:
-            import logging
-            logging.getLogger("game_server").warning(
-                "剧情战斗未授权 | cid=%s map=%s want=%s pending=%s",
-                cid,
-                map_code,
-                story_event_id,
-                pending,
-            )
-            await utils.send_error_response(
-                websocket,
-                "battle_room_create",
-                "剧情战斗未授权，请重新与 NPC 交互后再试",
-                code=400,
-                request_data=data,
-            )
-            return
-        battle_ref = pending.get("battle_ref")
-        enemy_obj, err = await story_handler._generate_story_enemy(
-            user["_id"], str(cid), battle_ref, data.get("player_pet_id")
+        _pending, enemy_obj, err = await consume_or_validate_pending_battle(
+            user["_id"],
+            str(cid),
+            map_code,
+            story_event_id,
+            player_pet_id=data.get("player_pet_id"),
         )
         if err:
             await utils.send_error_response(
-                websocket, "battle_room_create", err, code=500, request_data=data
+                websocket, "battle_room_create", err, code=400 if "未授权" in err else 500, request_data=data
             )
             return
         enemy_snapshot = _build_attrs_from_pet(enemy_obj)
     elif data.get("battle_ref"):
-        from handlers import story_handler
+        # 本地验收：仅 battle_ref、不校验 pending（skipServerAuth）
+        from services.story_battle_shared import generate_story_enemy
 
-        enemy_obj, err = await story_handler._generate_story_enemy(
+        enemy_obj, err = await generate_story_enemy(
             user["_id"], str(cid), str(data.get("battle_ref")), data.get("player_pet_id")
         )
         if err:
