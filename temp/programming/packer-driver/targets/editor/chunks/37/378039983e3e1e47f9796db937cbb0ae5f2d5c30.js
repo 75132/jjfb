@@ -643,9 +643,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               error: Error()
             }), normalizeBagItemsResponse) : normalizeBagItemsResponse)(resp);
             if (!snapshot.success) return;
-            this._ownedItemIds = (_crd && ownedItemIdsFromSnapshot === void 0 ? (_reportPossibleCrUseOfownedItemIdsFromSnapshot({
+
+            this._ownedItemIds.clear();
+
+            for (const id of (_crd && ownedItemIdsFromSnapshot === void 0 ? (_reportPossibleCrUseOfownedItemIdsFromSnapshot({
               error: Error()
-            }), ownedItemIdsFromSnapshot) : ownedItemIdsFromSnapshot)(snapshot);
+            }), ownedItemIdsFromSnapshot) : ownedItemIdsFromSnapshot)(snapshot)) {
+              this._ownedItemIds.add(id);
+            }
 
             this._refreshNpcVisibility();
 

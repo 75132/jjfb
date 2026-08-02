@@ -2474,7 +2474,7 @@
       "uuid": "a63322a7-0a8f-4979-af8c-fed717835ca6"
     },
     "Script\\Game\\BattleScene.ts": {
-      "time": 1785670946196.644,
+      "time": 1785670953788.448,
       "uuid": "90ca8aeb-27fd-454f-83d1-e679150a214f"
     },
     "Script\\Game\\CentralMenu.ts": {
@@ -2498,7 +2498,7 @@
       "uuid": "a9482551-4ab9-4c31-8296-1ba2b738682a"
     },
     "Script\\Game\\GameControl.ts": {
-      "time": 1775310662000,
+      "time": 1785670962262.6443,
       "uuid": "6cf1d6ae-647a-47b6-846a-bebb1884c97c"
     },
     "Script\\Game\\GameMenu.ts": {
@@ -2546,7 +2546,7 @@
       "uuid": "d4e9b8a2-5f3c-6d0e-b2c3-4d5e6f708192"
     },
     "Script\\Game\\Test.ts": {
-      "time": 1775310662000,
+      "time": 1785670970639.8254,
       "uuid": "e18b47c8-2e08-4b09-9ae4-c7d87f3fa761"
     },
     "Script\\Game\\TopRole.ts": {
@@ -10446,7 +10446,7 @@
       "time": 1777837450627.5916
     },
     "Script\\Game\\StoryManager.ts": {
-      "time": 1785670660632.785,
+      "time": 1785671089401.7388,
       "uuid": "c3d8a7f1-4e2b-5c9d-a1b2-3c4d5e6f7081"
     },
     "Script\\Game\\STORY_MIGRATION.md": {

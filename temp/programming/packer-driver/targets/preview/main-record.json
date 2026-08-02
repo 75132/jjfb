@@ -535,7 +535,7 @@
       ]
     },
     "cce:/internal/x/prerequisite-imports": {
-      "mTimestamp": 5794545.2752,
+      "mTimestamp": 6002739.3685,
       "chunkId": "6d8fd2b0177941b032ddc0733af48a561fb60657",
       "imports": [
         {
@@ -11240,7 +11240,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameControl.ts": {
       "mTimestamp": {
-        "mtime": 1775310662000,
+        "mtime": 1785670962262.6443,
         "uuid": "6cf1d6ae-647a-47b6-846a-bebb1884c97c"
       },
       "chunkId": "97bcfaa97ebac39a52b36922939648693b1b4f71",
@@ -11351,6 +11351,20 @@
               "column": 39
             }
           }
+        },
+        {
+          "value": "./BattleResumeController",
+          "resolved": "__unresolved_7",
+          "loc": {
+            "start": {
+              "line": 9,
+              "column": 45
+            },
+            "end": {
+              "line": 9,
+              "column": 71
+            }
+          }
         }
       ],
       "type": "esm",
@@ -11422,6 +11436,13 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/RobotShow.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleResumeController.ts"
           },
           "messages": []
         }
@@ -12971,7 +12992,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/Test.ts": {
       "mTimestamp": {
-        "mtime": 1775310662000,
+        "mtime": 1785670970639.8254,
         "uuid": "e18b47c8-2e08-4b09-9ae4-c7d87f3fa761"
       },
       "chunkId": "1dcf9022c5a3c4f6d45edb586421e137e829a9b5",
@@ -13028,29 +13049,15 @@
           }
         },
         {
-          "value": "../global/GameConfig",
+          "value": "./BattleScene",
           "resolved": "__unresolved_3",
           "loc": {
             "start": {
               "line": 4,
-              "column": 27
-            },
-            "end": {
-              "line": 4,
-              "column": 49
-            }
-          }
-        },
-        {
-          "value": "./BattleScene",
-          "resolved": "__unresolved_4",
-          "loc": {
-            "start": {
-              "line": 5,
               "column": 28
             },
             "end": {
-              "line": 5,
+              "line": 4,
               "column": 43
             }
           }
@@ -13097,13 +13104,6 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameCommonData.ts"
-          },
-          "messages": []
-        },
-        {
-          "resolved": {
-            "type": "module",
-            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts"
           },
           "messages": []
         },
@@ -14679,7 +14679,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/StoryManager.ts": {
       "mTimestamp": {
-        "mtime": 1785670660632.785,
+        "mtime": 1785671089401.7388,
         "uuid": "c3d8a7f1-4e2b-5c9d-a1b2-3c4d5e6f7081"
       },
       "chunkId": "378039983e3e1e47f9796db937cbb0ae5f2d5c30",

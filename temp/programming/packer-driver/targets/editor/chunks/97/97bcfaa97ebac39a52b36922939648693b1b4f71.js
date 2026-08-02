@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Node, director, Button, WebSocketManager, BaseSceneController, GameConfig, GameCommonData, ResourceManager, RobotShow, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _class3, _crd, ccclass, property, GameControl;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Node, director, Button, WebSocketManager, BaseSceneController, GameConfig, GameCommonData, ResourceManager, RobotShow, ensureBattleResumeController, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _class3, _crd, ccclass, property, GameControl;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -33,6 +33,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("RobotShow", "./RobotShow", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfensureBattleResumeController(extras) {
+    _reporterNs.report("ensureBattleResumeController", "./BattleResumeController", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -56,6 +60,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       ResourceManager = _unresolved_6.ResourceManager;
     }, function (_unresolved_7) {
       RobotShow = _unresolved_7.RobotShow;
+    }, function (_unresolved_8) {
+      ensureBattleResumeController = _unresolved_8.ensureBattleResumeController;
     }],
     execute: function () {
       _crd = true;
@@ -136,7 +142,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         start() {
           // 调用父类start方法，启动监控（父类会延迟2秒，不影响场景加载）
-          super.start(); // 延迟初始化非关键操作，避免阻塞场景加载
+          super.start(); // 生产：战斗自动恢复唯一入口（登录/选角/重连）
+
+          (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
+            error: Error()
+          }), ensureBattleResumeController) : ensureBattleResumeController)(); // 延迟初始化非关键操作，避免阻塞场景加载
           // 先让场景快速显示出来，再初始化其他功能
 
           this.scheduleOnce(() => {

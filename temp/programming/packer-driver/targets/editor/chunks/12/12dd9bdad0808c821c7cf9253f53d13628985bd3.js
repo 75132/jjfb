@@ -616,6 +616,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.pendingEnemyAction = null; // 离开面板时不主动销毁房间，由服务器根据超时自动清理
 
           this.roomId = null;
+          this._appliedRestoreRoomId = null;
+          this._pendingRestoreState = null;
+
+          try {
+            (_crd && BattleResumeController === void 0 ? (_reportPossibleCrUseOfBattleResumeController({
+              error: Error()
+            }), BattleResumeController) : BattleResumeController).getInstance().notifyBattleSessionEnded();
+          } catch (_) {}
+
           this.unschedule(this._onBattleEnterTimeout); // 隐藏匹配 Loading
 
           if (this.matchingLoadingPanel) this.matchingLoadingPanel.active = false;

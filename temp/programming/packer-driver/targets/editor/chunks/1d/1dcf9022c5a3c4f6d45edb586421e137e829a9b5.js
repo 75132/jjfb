@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Vec3, UITransform, WebSocketManager, GameCommonData, GameConfig, BattleScene, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _crd, ccclass, property, Test;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Vec3, UITransform, WebSocketManager, GameCommonData, BattleScene, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _crd, ccclass, property, Test;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -15,10 +15,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfGameCommonData(extras) {
     _reporterNs.report("GameCommonData", "./GameCommonData", _context.meta, extras);
-  }
-
-  function _reportPossibleCrUseOfGameConfig(extras) {
-    _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfBattleScene(extras) {
@@ -43,9 +39,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_3) {
       GameCommonData = _unresolved_3.GameCommonData;
     }, function (_unresolved_4) {
-      GameConfig = _unresolved_4.GameConfig;
-    }, function (_unresolved_5) {
-      BattleScene = _unresolved_5.BattleScene;
+      BattleScene = _unresolved_4.BattleScene;
     }],
     execute: function () {
       _crd = true;
@@ -117,39 +111,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.dragOffset = new Vec3();
           this.panelVisible = false;
 
-          /** 修复点：加载/连接后检测是否在战斗中，是则自动打开战斗面板（BattleScene 面板默认隐藏时 schedule 不执行，故由常驻的 Test 负责） */
-          this._checkInBattleAndOpenPanel = () => {
-            var _this$battleScenePane;
-
-            if (!((_this$battleScenePane = this.battleScenePanel) != null && _this$battleScenePane.isValid)) return;
-            if (this.battleScenePanel.active) return;
-            const ws = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
-              error: Error()
-            }), WebSocketManager) : WebSocketManager).getInstance();
-            if (!(ws.isConnected != null && ws.isConnected())) return;
-            const characterId = ws.getCharacterId == null ? void 0 : ws.getCharacterId();
-            if (!characterId) return;
-            ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
-              error: Error()
-            }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_RESUME, {
-              character_id: characterId
-            }, resp => {
-              var _this$node, _this$battleScenePane2, _resp$data;
-
-              if (!((_this$node = this.node) != null && _this$node.isValid) || !((_this$battleScenePane2 = this.battleScenePanel) != null && _this$battleScenePane2.isValid)) return;
-              if (!(resp != null && resp.success) || !((_resp$data = resp.data) != null && _resp$data.has_room) || !resp.data.state) return; // 只有服务器仍在战斗中才恢复；掉线期间战斗已结束则不再拉入房间
-
-              if (resp.data.state.status !== 'in_progress') return; // 用已拉取的 state 直接恢复，不再让 BattleScene 再发 resume（避免误走创建新房间、界面先空再变新局）
-
-              const battleScene = this.battleScenePanel.getComponent(_crd && BattleScene === void 0 ? (_reportPossibleCrUseOfBattleScene({
-                error: Error()
-              }), BattleScene) : BattleScene);
-              if (battleScene) battleScene.prepareRestoreState(resp.data.state);
-              this.battleScenePanel.active = true;
-              console.log('[Test] 检测到战斗中，已用服务器实时数据恢复战斗场景');
-            }, true, 6000);
-          };
-
           /**
            * 处理数据更新事件
            */
@@ -160,8 +121,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         start() {
-          var _getInstance;
-
           console.log('🧪 测试脚本启动'); // 初始化面板状态
 
           if (this.gameTestPanel) {
@@ -173,25 +132,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.setupDrag(); // 监听GameCommonData的数据更新事件
 
-          this.setupDataListener(); // 修复点：加载游戏时检测是否在战斗中并自动打开战斗面板（服务器显示在房间但客户端未进时必跑）
-          // 1) 若已连接且有 characterId，立即检测一次
-
-          this._checkInBattleAndOpenPanel(); // 2) 多次延迟检测，覆盖 auth/characterId 稍晚就绪的情况（0.5s、1.5s、3s、5s）
-
-
-          [0.5, 1.5, 3, 5].forEach(delay => {
-            this.scheduleOnce(() => {
-              this._checkInBattleAndOpenPanel();
-            }, delay);
-          }); // 修复点：连接/重连时也检测是否在战斗中，立即打开战斗面板
-
-          const wsNode = (_getInstance = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
-            error: Error()
-          }), WebSocketManager) : WebSocketManager).getInstance()) == null ? void 0 : _getInstance.node;
-
-          if (wsNode && typeof wsNode.on === 'function') {
-            wsNode.on('network_connect', this._checkInBattleAndOpenPanel, this);
-          }
+          this.setupDataListener(); // 战斗自动恢复已迁移至 BattleResumeController（生产入口），Test 不再 resume / 打开战斗面板
         }
         /**
          * 设置拖动功能
@@ -757,7 +698,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onDestroy() {
-          var _this$node2, _instance$node, _getInstance2;
+          var _this$node, _instance$node;
 
           // 清理事件监听（节点可能已被销毁，需判空与有效性）
           const safeOffButton = (btn, handler) => {
@@ -783,7 +724,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           } // 清理节点按钮点击事件
 
 
-          const button = (_this$node2 = this.node) == null ? void 0 : _this$node2.getComponent(Button);
+          const button = (_this$node = this.node) == null ? void 0 : _this$node.getComponent(Button);
 
           if (button && button.node && button.node.isValid) {
             button.node.off(Button.EventType.CLICK, this.onNodeButtonClick, this);
@@ -798,15 +739,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             (_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
               error: Error()
             }), GameCommonData) : GameCommonData).instance.node.off('data_updated', this.onDataUpdated, this);
-          } // 修复点：解绑战斗检测
-
-
-          const wsNode = (_getInstance2 = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
-            error: Error()
-          }), WebSocketManager) : WebSocketManager).getInstance()) == null ? void 0 : _getInstance2.node;
-
-          if (wsNode && typeof wsNode.off === 'function') {
-            wsNode.off('network_connect', this._checkInBattleAndOpenPanel, this);
           }
 
           console.log('🧪 测试脚本销毁');
