@@ -370,6 +370,12 @@ ROUTES: Dict[str, RouteHandler] = {
         returns_user_ids=False,
         description='获取背包'
     ),
+    'bag_has_items': RouteHandler(
+        bag_handler.handle_bag_has_items,
+        require_auth=True,
+        returns_user_ids=False,
+        description='按 item_id 查询数量（剧情条件）'
+    ),
     'bag_use_item': RouteHandler(
         bag_handler.handle_bag_use_item,
         require_auth=True,

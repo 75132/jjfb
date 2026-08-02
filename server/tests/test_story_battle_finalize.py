@@ -8,6 +8,8 @@ from unittest.mock import AsyncMock, patch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from tests.settlement_test_utils import install_fake_settlement_ledger
+
 
 def _player_doc():
     return {"RobotName": "P", "MaxHP": 100, "CurrentHP": 100, "Melee": 20, "Armor": 0, "Initiative": 10}
@@ -22,6 +24,7 @@ class TestStoryBattleFinalize(unittest.TestCase):
         from services.story_battle_service import clear_settlement_ledger_for_tests
         from services.battle_room_service import BattleRoomService
 
+        self._settlements, self._effects = install_fake_settlement_ledger()
         clear_settlement_ledger_for_tests()
         self.svc = BattleRoomService()
 

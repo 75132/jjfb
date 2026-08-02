@@ -1,0 +1,90 @@
+{
+  "ok": true,
+  "msg": "",
+  "payload": {
+    "completed_event_ids": [
+      "world_1783106205039_chain_2_enemy_e2"
+    ],
+    "pending_battle": null,
+    "applied_effects": [
+      {
+        "action": "give_item",
+        "itemId": 9001,
+        "value": null
+      },
+      {
+        "action": "add_exp",
+        "itemId": null,
+        "value": 10
+      }
+    ],
+    "npc_uid": "enemy",
+    "choice_id": null,
+    "authoritative_battle_verified": true,
+    "room_id": "570e7808d76b4c9d907aec2c21162542",
+    "idempotent_replay": false,
+    "settlement_status": "completed",
+    "trace_id": "trace-20260802T142147Z-3d5d4694"
+  },
+  "apply_log": [
+    "give_item",
+    "add_exp"
+  ],
+  "replay_ok": true,
+  "replay_idempotent": true,
+  "settlement": {
+    "character_id": "e2e_p3_20260802T142147Z-3d5d4694",
+    "event_id": "world_1783106205039_chain_2_enemy_e2",
+    "room_id": "570e7808d76b4c9d907aec2c21162542",
+    "map_code": "world_1783106205039",
+    "request_id": "finalize-after-restart",
+    "trace_id": "trace-20260802T142147Z-3d5d4694",
+    "status": "completed",
+    "applied_effects": [
+      {
+        "action": "give_item",
+        "itemId": 9001,
+        "value": null
+      },
+      {
+        "action": "add_exp",
+        "itemId": null,
+        "value": 10
+      }
+    ],
+    "error": null,
+    "created_at": 1785680308.3145056,
+    "updated_at": 1785680509.0778432,
+    "completed_at": 1785680509.0778432
+  },
+  "effect_docs": [
+    {
+      "effect_key": "story:e2e_p3_20260802T142147Z-3d5d4694:world_1783106205039_chain_2_enemy_e2:570e7808d76b4c9d907aec2c21162542:0",
+      "character_id": "e2e_p3_20260802T142147Z-3d5d4694",
+      "event_id": "world_1783106205039_chain_2_enemy_e2",
+      "room_id": "570e7808d76b4c9d907aec2c21162542",
+      "effect_index": 0,
+      "result": {
+        "action": "give_item",
+        "itemId": 9001,
+        "value": null
+      },
+      "created_at": 1785680508.8508677,
+      "updated_at": 1785680508.8508677
+    },
+    {
+      "effect_key": "story:e2e_p3_20260802T142147Z-3d5d4694:world_1783106205039_chain_2_enemy_e2:570e7808d76b4c9d907aec2c21162542:1",
+      "character_id": "e2e_p3_20260802T142147Z-3d5d4694",
+      "event_id": "world_1783106205039_chain_2_enemy_e2",
+      "room_id": "570e7808d76b4c9d907aec2c21162542",
+      "effect_index": 1,
+      "result": {
+        "action": "add_exp",
+        "itemId": null,
+        "value": 10
+      },
+      "created_at": 1785680508.9270484,
+      "updated_at": 1785680508.9270484
+    }
+  ]
+}

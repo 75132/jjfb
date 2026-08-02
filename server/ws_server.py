@@ -152,6 +152,8 @@ minigame2_bets_col = db['minigame2_bets']
 story_progress_col = db['story_progress']
 mails_col = db['mails']
 battle_rooms_col = db['battle_rooms']
+story_battle_settlements_col = db['story_battle_settlements']
+story_effect_idempotency_col = db['story_effect_idempotency']
 user_clients = {}
 
 # 索引与一次性数据清理已迁至 migrations + tools/migrate_db.py；普通启动不做库结构变更。
@@ -1089,6 +1091,9 @@ async def main():
         logger.info('📝 剧情：选角时清空进度 STORY_RESET_ON_SELECT=1')
     init_mail_service(mails_col)
     battle_room_service.init_persistence(battle_rooms_col)
+    from services.story_settlement_ledger import init_story_settlement_ledger
+    init_story_settlement_ledger(story_battle_settlements_col, story_effect_idempotency_col)
+    logger.info('📝 剧情结算账本：Mongo story_battle_settlements + story_effect_idempotency')
     character_handler.init_character_handler(create_robot_pet, broadcast_to_user_async)
     admin_handler.init_admin_handler(
         add_exp_to_player, broadcast_to_user_async,

@@ -535,7 +535,7 @@
       ]
     },
     "cce:/internal/x/prerequisite-imports": {
-      "mTimestamp": 1074311.321,
+      "mTimestamp": 8797740.6956,
       "chunkId": "6d8fd2b0177941b032ddc0733af48a561fb60657",
       "imports": [
         {
@@ -1337,7 +1337,7 @@
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-sanitize.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-mode.ts",
           "resolved": "__unresolved_57",
           "loc": {
             "start": {
@@ -1346,12 +1346,12 @@
             },
             "end": {
               "line": 61,
-              "column": 95
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/tilemap-coords.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-sanitize.ts",
           "resolved": "__unresolved_58",
           "loc": {
             "start": {
@@ -1360,12 +1360,12 @@
             },
             "end": {
               "line": 62,
-              "column": 87
+              "column": 95
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BagEvent.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/tilemap-coords.ts",
           "resolved": "__unresolved_59",
           "loc": {
             "start": {
@@ -1374,12 +1374,12 @@
             },
             "end": {
               "line": 63,
-              "column": 83
+              "column": 87
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BaseSceneController.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BagEvent.ts",
           "resolved": "__unresolved_60",
           "loc": {
             "start": {
@@ -1388,12 +1388,12 @@
             },
             "end": {
               "line": 64,
-              "column": 94
+              "column": 83
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/CentralMenu.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BaseSceneController.ts",
           "resolved": "__unresolved_61",
           "loc": {
             "start": {
@@ -1402,12 +1402,12 @@
             },
             "end": {
               "line": 65,
-              "column": 86
+              "column": 94
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/DataCacheManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/CentralMenu.ts",
           "resolved": "__unresolved_62",
           "loc": {
             "start": {
@@ -1416,12 +1416,12 @@
             },
             "end": {
               "line": 66,
-              "column": 91
+              "column": 86
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/DataCacheManager.ts",
           "resolved": "__unresolved_63",
           "loc": {
             "start": {
@@ -1430,12 +1430,12 @@
             },
             "end": {
               "line": 67,
-              "column": 85
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/MessageTypes.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts",
           "resolved": "__unresolved_64",
           "loc": {
             "start": {
@@ -1444,12 +1444,12 @@
             },
             "end": {
               "line": 68,
-              "column": 87
+              "column": 85
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/PerformanceMonitor.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/MessageTypes.ts",
           "resolved": "__unresolved_65",
           "loc": {
             "start": {
@@ -1458,12 +1458,12 @@
             },
             "end": {
               "line": 69,
-              "column": 93
+              "column": 87
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RequestRetryManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/PerformanceMonitor.ts",
           "resolved": "__unresolved_66",
           "loc": {
             "start": {
@@ -1472,12 +1472,12 @@
             },
             "end": {
               "line": 70,
-              "column": 94
+              "column": 93
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RobotGameEvents.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RequestRetryManager.ts",
           "resolved": "__unresolved_67",
           "loc": {
             "start": {
@@ -1486,12 +1486,12 @@
             },
             "end": {
               "line": 71,
-              "column": 90
+              "column": 94
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RouteDictionary.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RobotGameEvents.ts",
           "resolved": "__unresolved_68",
           "loc": {
             "start": {
@@ -1505,7 +1505,7 @@
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/SceneLoadMonitor.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RouteDictionary.ts",
           "resolved": "__unresolved_69",
           "loc": {
             "start": {
@@ -1514,12 +1514,12 @@
             },
             "end": {
               "line": 73,
-              "column": 91
+              "column": 90
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/UILockManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/SceneLoadMonitor.ts",
           "resolved": "__unresolved_70",
           "loc": {
             "start": {
@@ -1528,12 +1528,12 @@
             },
             "end": {
               "line": 74,
-              "column": 88
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/UILockManager.ts",
           "resolved": "__unresolved_71",
           "loc": {
             "start": {
@@ -1542,12 +1542,12 @@
             },
             "end": {
               "line": 75,
-              "column": 91
+              "column": 88
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/log.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts",
           "resolved": "__unresolved_72",
           "loc": {
             "start": {
@@ -1556,12 +1556,12 @@
             },
             "end": {
               "line": 76,
-              "column": 78
+              "column": 91
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/log.ts",
           "resolved": "__unresolved_73",
           "loc": {
             "start": {
@@ -1570,12 +1570,12 @@
             },
             "end": {
               "line": 77,
-              "column": 95
+              "column": 78
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts",
           "resolved": "__unresolved_74",
           "loc": {
             "start": {
@@ -1584,12 +1584,12 @@
             },
             "end": {
               "line": 78,
-              "column": 93
+              "column": 95
             }
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/login.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts",
           "resolved": "__unresolved_75",
           "loc": {
             "start": {
@@ -1598,6 +1598,20 @@
             },
             "end": {
               "line": 79,
+              "column": 93
+            }
+          }
+        },
+        {
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/login.ts",
+          "resolved": "__unresolved_76",
+          "loc": {
+            "start": {
+              "line": 80,
+              "column": 7
+            },
+            "end": {
+              "line": 80,
               "column": 79
             }
           }
@@ -2001,6 +2015,13 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-requirements.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-mode.ts"
           },
           "messages": []
         },
@@ -9624,7 +9645,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleScene.ts": {
       "mTimestamp": {
-        "mtime": 1785672378362.7317,
+        "mtime": 1785677856340.795,
         "uuid": "90ca8aeb-27fd-454f-83d1-e679150a214f"
       },
       "chunkId": "12dd9bdad0808c821c7cf9253f53d13628985bd3",
@@ -13527,7 +13548,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts": {
       "mTimestamp": {
-        "mtime": 1781708530847.1362,
+        "mtime": 1785680214878.7505,
         "uuid": "08c7d6d0-23d4-4a4a-b06d-d46bfa3f564e"
       },
       "chunkId": "286c811006e81d7bd5f4c9aa5b7fd2a983502f20",
@@ -13730,7 +13751,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts": {
       "mTimestamp": {
-        "mtime": 1785669617840.9253,
+        "mtime": 1785680216910.232,
         "uuid": "9eef60a9-2ca1-438a-a2ca-151a31f66102"
       },
       "chunkId": "e09b7bfbdbb72f5c7442f04e0ba1df6717835e84",
@@ -14763,7 +14784,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/StoryManager.ts": {
       "mTimestamp": {
-        "mtime": 1785671089401.7388,
+        "mtime": 1785680235653.166,
         "uuid": "c3d8a7f1-4e2b-5c9d-a1b2-3c4d5e6f7081"
       },
       "chunkId": "378039983e3e1e47f9796db937cbb0ae5f2d5c30",
@@ -14866,11 +14887,11 @@
           "resolved": "__unresolved_6",
           "loc": {
             "start": {
-              "line": 39,
+              "line": 40,
               "column": 7
             },
             "end": {
-              "line": 39,
+              "line": 40,
               "column": 39
             }
           }
@@ -14880,11 +14901,11 @@
           "resolved": "__unresolved_7",
           "loc": {
             "start": {
-              "line": 40,
+              "line": 41,
               "column": 28
             },
             "end": {
-              "line": 40,
+              "line": 41,
               "column": 43
             }
           }
@@ -14894,11 +14915,11 @@
           "resolved": "__unresolved_8",
           "loc": {
             "start": {
-              "line": 48,
+              "line": 49,
               "column": 7
             },
             "end": {
-              "line": 48,
+              "line": 49,
               "column": 27
             }
           }
@@ -14908,11 +14929,11 @@
           "resolved": "__unresolved_9",
           "loc": {
             "start": {
-              "line": 53,
+              "line": 54,
               "column": 7
             },
             "end": {
-              "line": 53,
+              "line": 54,
               "column": 29
             }
           }
@@ -14922,11 +14943,11 @@
           "resolved": "__unresolved_10",
           "loc": {
             "start": {
-              "line": 61,
+              "line": 62,
               "column": 7
             },
             "end": {
-              "line": 61,
+              "line": 62,
               "column": 27
             }
           }
@@ -14936,11 +14957,11 @@
           "resolved": "__unresolved_11",
           "loc": {
             "start": {
-              "line": 62,
+              "line": 63,
               "column": 74
             },
             "end": {
-              "line": 62,
+              "line": 63,
               "column": 100
             }
           }
@@ -14950,39 +14971,67 @@
           "resolved": "__unresolved_12",
           "loc": {
             "start": {
-              "line": 69,
+              "line": 70,
               "column": 7
             },
             "end": {
-              "line": 69,
+              "line": 70,
               "column": 31
             }
           }
         },
         {
-          "value": "./tilemap-coords",
+          "value": "./story-runtime-mode",
           "resolved": "__unresolved_13",
           "loc": {
             "start": {
-              "line": 85,
+              "line": 79,
+              "column": 7
+            },
+            "end": {
+              "line": 79,
+              "column": 29
+            }
+          }
+        },
+        {
+          "value": "../global/GameConfig",
+          "resolved": "__unresolved_14",
+          "loc": {
+            "start": {
+              "line": 80,
+              "column": 27
+            },
+            "end": {
+              "line": 80,
+              "column": 49
+            }
+          }
+        },
+        {
+          "value": "./tilemap-coords",
+          "resolved": "__unresolved_15",
+          "loc": {
+            "start": {
+              "line": 96,
               "column": 79
             },
             "end": {
-              "line": 85,
+              "line": 96,
               "column": 97
             }
           }
         },
         {
           "value": "./npc-task-indicator",
-          "resolved": "__unresolved_14",
+          "resolved": "__unresolved_16",
           "loc": {
             "start": {
-              "line": 91,
+              "line": 102,
               "column": 7
             },
             "end": {
-              "line": 91,
+              "line": 102,
               "column": 29
             }
           }
@@ -15099,6 +15148,20 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-npc-visibility.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-mode.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts"
           },
           "messages": []
         },
@@ -15721,7 +15784,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts": {
       "mTimestamp": {
-        "mtime": 1785670378935.843,
+        "mtime": 1785680208071.0786,
         "uuid": "43bf5d2e-385e-4f40-b65f-839a17b24058"
       },
       "chunkId": "6a8e1d0b09c8076cb34d171fc1f4fe690bafe272",
@@ -15743,7 +15806,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleResumeController.ts": {
       "mTimestamp": {
-        "mtime": 1785672329874.813,
+        "mtime": 1785674839844.5752,
         "uuid": "f5250bfc-ed9b-4b6f-854a-cdd3a2cc3c7b"
       },
       "chunkId": "74d1c767579e919fad5a921cc3b03853bbafdec4",
@@ -15960,6 +16023,28 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts"
+          },
+          "messages": []
+        }
+      ]
+    },
+    "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-mode.ts": {
+      "mTimestamp": {
+        "mtime": 1785677502026.7522,
+        "uuid": "c3e8a71d-5b24-4f9a-9e1c-0a7d6b2f4e91"
+      },
+      "chunkId": "a36fe3a863f0dfadf47a2909f51e8257ed8215ec",
+      "imports": [
+        {
+          "value": "cc"
+        }
+      ],
+      "type": "esm",
+      "resolutions": [
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
           },
           "messages": []
         }

@@ -64,6 +64,31 @@ describe("story-runtime-mode", () => {
     expect(actionsForSettlement).not.toContain("open_battle_scene");
   });
 
+  it("finished battle pending settlement does not open BattleScene", () => {
+    const state = {
+      pending_story_settlement: { required: true, room_id: "fin-1", event_id: "e1" },
+    };
+    expect(shouldAutoFinalizeSettlement(state)).toBe(true);
+    // 契约：走 finalize，而非 resume / BattleScene
+    const gate = shouldAutoFinalizeSettlement(state) ? "finalize_only" : "maybe_resume";
+    expect(gate).toBe("finalize_only");
+  });
+
+  it("finalize recovery with idempotent_replay skips reward playback", () => {
+    expect(shouldPlayRewardAnimation({ idempotent_replay: true })).toBe(false);
+  });
+
+  it("server restart state re-read still triggers auto finalize when pending", () => {
+    const afterRestartState = {
+      pending_story_settlement: {
+        required: true,
+        room_id: "room-after-restart",
+        event_id: "world_1783106205039_chain_2_enemy_e2",
+      },
+    };
+    expect(shouldAutoFinalizeSettlement(afterRestartState)).toBe(true);
+  });
+
   it("client must not treat battle_won as authoritative", () => {
     // 权威证据仅为服务端 finalize；battle_won 仅兼容
     const authoritativeFields = ["room_id", "room.result.winner", "pending.status"];

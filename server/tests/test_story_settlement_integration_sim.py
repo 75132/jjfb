@@ -23,6 +23,13 @@ CHARACTER_ID = "cid-integration-1"
 
 
 class TestRealMapSettlementSimulation(unittest.TestCase):
+    def setUp(self):
+        from tests.settlement_test_utils import install_fake_settlement_ledger
+        from services.story_battle_service import clear_settlement_ledger_for_tests
+
+        self._settlements, self._effects = install_fake_settlement_ledger()
+        clear_settlement_ledger_for_tests()
+
     def test_full_win_finalize_and_reconnect_settlement(self):
         async def run():
             from services.battle_room_service import BattleRoomService

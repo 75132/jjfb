@@ -228,16 +228,54 @@ async def _player_level(user_id: ObjectId, character_id: str) -> int:
 
 
 async def _player_has_item(user_id: ObjectId, character_id: str, item_id: int) -> bool:
+    """按真实背包结构汇总 quantity（含多堆叠）。"""
+    from handlers.bag_handler import merge_inventory_items
+
     inv = await utils.async_mongo_operation(
         lambda: utils.inventory_col.find_one({"user_id": user_id, "character_id": character_id}),
         timeout=2.0,
     )
     if not inv:
         return False
+    items = merge_inventory_items(inv)
+    total = sum(
+        int(it.get("quantity", 0) or 0)
+        for it in items
+        if int(it.get("item_id", 0) or 0) == int(item_id)
+    )
+    if total > 0:
+        return True
+    # 兼容遗留 slots/count
     for slot in inv.get("slots", []) or []:
-        if int(slot.get("item_id", 0) or 0) == item_id and int(slot.get("count", 0) or 0) > 0:
-            return True
+        if int(slot.get("item_id", 0) or slot.get("itemId", 0) or 0) == int(item_id):
+            if int(slot.get("count", 0) or slot.get("quantity", 0) or 0) > 0:
+                return True
     return False
+
+
+async def count_items_by_ids(
+    user_id: ObjectId,
+    character_id: str,
+    item_ids: List[int],
+) -> Dict[str, int]:
+    """汇总指定 item_id 的数量（多堆叠相加）；未拥有为 0。"""
+    from handlers.bag_handler import merge_inventory_items
+
+    wanted = {int(i) for i in (item_ids or []) if int(i) > 0}
+    quantities = {str(i): 0 for i in wanted}
+    if not wanted:
+        return quantities
+    inv = await utils.async_mongo_operation(
+        lambda: utils.inventory_col.find_one({"user_id": user_id, "character_id": character_id}),
+        timeout=2.0,
+    )
+    if not inv:
+        return quantities
+    for it in merge_inventory_items(inv):
+        iid = int(it.get("item_id", 0) or 0)
+        if iid in wanted:
+            quantities[str(iid)] = quantities.get(str(iid), 0) + int(it.get("quantity", 0) or 0)
+    return quantities
 
 
 async def check_requirements(
@@ -286,6 +324,127 @@ def _find_npc_row(map_cfg: dict, npc_uid: str) -> Optional[dict]:
     return None
 
 
+async def _apply_single_effect(
+    user_id: ObjectId,
+    character_id: str,
+    progress: dict,
+    map_cfg: dict,
+    eff: dict,
+    choice_id: Optional[str],
+    task_defs: dict,
+) -> Optional[dict]:
+    """执行单条 effect；不适用（choice 过滤等）返回 None。"""
+    if not isinstance(eff, dict):
+        return None
+    eff_choice = eff.get("choiceId")
+    if eff_choice and eff_choice != choice_id:
+        return None
+    action = eff.get("action")
+    if action == "task_accept":
+        tid = int(eff.get("taskId", 0))
+        if tid <= 0:
+            return None
+        st = _task_status(progress, tid)
+        if st is None or st == "completed":
+            completed = list(progress.get("completed_task_ids") or [])
+            if tid in completed:
+                progress["completed_task_ids"] = [x for x in completed if int(x) != tid]
+            active = [t for t in (progress.get("active_tasks") or []) if int(t.get("taskId", -1)) != tid]
+            active.append({"taskId": tid, "status": "accepted"})
+            progress["active_tasks"] = active
+            tdef = task_defs.get(tid, {})
+            step = int(tdef.get("mainlineStep", 0) or 0)
+            if step > int(progress.get("mainline_step", 0) or 0):
+                progress["mainline_step"] = step
+            return {"action": "task_accept", "taskId": tid}
+        return {"action": "task_accept", "taskId": tid, "skipped": True}
+    if action == "task_complete":
+        tid = int(eff.get("taskId", 0))
+        active = progress.get("active_tasks") or []
+        progress["active_tasks"] = [t for t in active if int(t.get("taskId", -1)) != tid]
+        completed = progress.get("completed_task_ids") or []
+        if tid not in completed:
+            completed.append(tid)
+        progress["completed_task_ids"] = completed
+        return {"action": "task_complete", "taskId": tid}
+    if action == "give_item":
+        from handlers import bag_handler
+
+        iid = int(eff.get("itemId", 0))
+        count = int(eff.get("count", 1))
+        if iid > 0:
+            await bag_handler.add_item_to_bag(user_id, character_id, iid, count)
+            return {"action": "give_item", "itemId": iid, "count": count}
+        return None
+    if action == "add_exp":
+        exp_val = int(eff.get("value", eff.get("exp", 0)))
+        if exp_val > 0:
+            from handlers import item_exp_handler
+
+            await item_exp_handler.add_exp_to_character(user_id, character_id, exp_val)
+            return {"action": "add_exp", "value": exp_val}
+        return None
+    if action == "send_mail":
+        from services import mail_service
+
+        await mail_service.send_mail(
+            user_id,
+            character_id,
+            title=str(eff.get("title", "系统邮件")),
+            body=str(eff.get("body", "")),
+            attachments=eff.get("attachments") or [],
+        )
+        return {"action": "send_mail"}
+    if action == "teleport":
+        return await _apply_teleport(user_id, character_id, eff)
+    if action == "reveal_npc":
+        uid = str(eff.get("npcUid", "")).strip()
+        if not uid:
+            return None
+        row = _find_npc_row(map_cfg, uid)
+        if not row:
+            return None
+        revealed = list(progress.get("revealed_npc_uids") or [])
+        if uid not in revealed:
+            revealed.append(uid)
+        progress["revealed_npc_uids"] = revealed
+        return {"action": "reveal_npc", "npcUid": uid}
+    if action == "spawn_npc":
+        uid = str(eff.get("npcUid", "")).strip()
+        if not uid:
+            return None
+        spawned = list(progress.get("spawned_npc_uids") or [])
+        if uid in spawned:
+            return {"action": "spawn_npc", "npcUid": uid, "already_spawned": True}
+        existing = _find_npc_row(map_cfg, uid)
+        if existing and not existing.get("initialHidden"):
+            return None
+        x = eff.get("x")
+        y = eff.get("y")
+        if x is not None and y is not None:
+            try:
+                x_f, y_f = float(x), float(y)
+                if x_f < 0 or y_f < 0:
+                    return None
+            except (TypeError, ValueError):
+                return None
+        spawned.append(uid)
+        progress["spawned_npc_uids"] = spawned
+        dyn = {
+            "npcUid": uid,
+            "npcName": eff.get("npcName") or existing.get("npcName") if existing else eff.get("npcName"),
+            "prefabKey": eff.get("prefabKey") or (existing.get("prefabKey") if existing else None),
+            "x": eff.get("x") if eff.get("x") is not None else (existing.get("x") if existing else None),
+            "y": eff.get("y") if eff.get("y") is not None else (existing.get("y") if existing else None),
+        }
+        dynamic = list(progress.get("dynamic_npcs") or [])
+        if not any(str(d.get("npcUid", "")) == uid for d in dynamic):
+            dynamic.append(dyn)
+        progress["dynamic_npcs"] = dynamic
+        return {"action": "spawn_npc", "npcUid": uid, **{k: v for k, v in dyn.items() if v is not None}}
+    return None
+
+
 async def apply_effects(
     user_id: ObjectId,
     character_id: str,
@@ -293,117 +452,79 @@ async def apply_effects(
     map_cfg: dict,
     effects: List[dict],
     choice_id: Optional[str] = None,
+    *,
+    effect_idempotency: Optional[Dict[str, Any]] = None,
 ) -> List[dict]:
+    """
+    执行 effects。
+
+    effect_idempotency（可选）:
+      {
+        "character_id", "event_id", "room_id",
+        # 启用持久幂等键 story:{cid}:{eid}:{rid}:{index}
+      }
+    已执行的 effect 直接复用结果，不重复写库。
+    """
     applied: List[dict] = []
     task_defs = _task_defs(map_cfg)
-    for eff in effects or []:
-        if not isinstance(eff, dict):
-            continue
-        eff_choice = eff.get("choiceId")
-        if eff_choice and eff_choice != choice_id:
-            continue
-        action = eff.get("action")
-        if action == "task_accept":
-            tid = int(eff.get("taskId", 0))
-            if tid <= 0:
-                continue
-            st = _task_status(progress, tid)
-            if st is None or st == "completed":
-                completed = list(progress.get("completed_task_ids") or [])
-                if tid in completed:
-                    progress["completed_task_ids"] = [x for x in completed if int(x) != tid]
-                active = [t for t in (progress.get("active_tasks") or []) if int(t.get("taskId", -1)) != tid]
-                active.append({"taskId": tid, "status": "accepted"})
-                progress["active_tasks"] = active
-                tdef = task_defs.get(tid, {})
-                step = int(tdef.get("mainlineStep", 0) or 0)
-                if step > int(progress.get("mainline_step", 0) or 0):
-                    progress["mainline_step"] = step
-                applied.append({"action": "task_accept", "taskId": tid})
-        elif action == "task_complete":
-            tid = int(eff.get("taskId", 0))
-            active = progress.get("active_tasks") or []
-            progress["active_tasks"] = [t for t in active if int(t.get("taskId", -1)) != tid]
-            completed = progress.get("completed_task_ids") or []
-            if tid not in completed:
-                completed.append(tid)
-            progress["completed_task_ids"] = completed
-            applied.append({"action": "task_complete", "taskId": tid})
-        elif action == "give_item":
-            from handlers import bag_handler
-
-            iid = int(eff.get("itemId", 0))
-            count = int(eff.get("count", 1))
-            if iid > 0:
-                await bag_handler.add_item_to_bag(user_id, character_id, iid, count)
-                applied.append({"action": "give_item", "itemId": iid, "count": count})
-        elif action == "add_exp":
-            exp_val = int(eff.get("value", eff.get("exp", 0)))
-            if exp_val > 0:
-                from handlers import item_exp_handler
-
-                await item_exp_handler.add_exp_to_character(user_id, character_id, exp_val)
-                applied.append({"action": "add_exp", "value": exp_val})
-        elif action == "send_mail":
-            from services import mail_service
-
-            await mail_service.send_mail(
-                user_id,
-                character_id,
-                title=str(eff.get("title", "系统邮件")),
-                body=str(eff.get("body", "")),
-                attachments=eff.get("attachments") or [],
+    use_idem = isinstance(effect_idempotency, dict) and effect_idempotency.get("event_id")
+    for idx, eff in enumerate(effects or []):
+        if use_idem:
+            from services.story_settlement_ledger import (
+                get_effect_record,
+                make_effect_key,
+                save_effect_record,
             )
-            applied.append({"action": "send_mail"})
-        elif action == "teleport":
-            tp = await _apply_teleport(user_id, character_id, eff)
-            applied.append(tp)
-        elif action == "reveal_npc":
-            uid = str(eff.get("npcUid", "")).strip()
-            if not uid:
+
+            ekey = make_effect_key(
+                str(effect_idempotency["character_id"]),
+                str(effect_idempotency["event_id"]),
+                str(effect_idempotency["room_id"]),
+                idx,
+            )
+            cached = await get_effect_record(ekey)
+            if cached and isinstance(cached.get("result"), dict):
+                applied.append(dict(cached["result"]))
                 continue
-            row = _find_npc_row(map_cfg, uid)
-            if not row:
+            # choice 过滤：不适用也记一条 skipped，避免重试时索引错位
+            if not isinstance(eff, dict):
                 continue
-            revealed = list(progress.get("revealed_npc_uids") or [])
-            if uid not in revealed:
-                revealed.append(uid)
-            progress["revealed_npc_uids"] = revealed
-            applied.append({"action": "reveal_npc", "npcUid": uid})
-        elif action == "spawn_npc":
-            uid = str(eff.get("npcUid", "")).strip()
-            if not uid:
+            eff_choice = eff.get("choiceId")
+            if eff_choice and eff_choice != choice_id:
+                skip_res = {"action": "skipped_choice", "effect_index": idx}
+                await save_effect_record(
+                    ekey,
+                    character_id=str(effect_idempotency["character_id"]),
+                    event_id=str(effect_idempotency["event_id"]),
+                    room_id=str(effect_idempotency["room_id"]),
+                    effect_index=idx,
+                    result=skip_res,
+                )
                 continue
-            spawned = list(progress.get("spawned_npc_uids") or [])
-            if uid in spawned:
-                applied.append({"action": "spawn_npc", "npcUid": uid, "already_spawned": True})
+            result = await _apply_single_effect(
+                user_id, character_id, progress, map_cfg, eff, choice_id, task_defs
+            )
+            if result is None:
+                result = {"action": "noop", "effect_index": idx}
+            await save_effect_record(
+                ekey,
+                character_id=str(effect_idempotency["character_id"]),
+                event_id=str(effect_idempotency["event_id"]),
+                room_id=str(effect_idempotency["room_id"]),
+                effect_index=idx,
+                result=result,
+            )
+            if result.get("action") not in ("skipped_choice", "noop"):
+                applied.append(result)
+            continue
+
+        result = await _apply_single_effect(
+            user_id, character_id, progress, map_cfg, eff, choice_id, task_defs
+        )
+        if result is not None and result.get("action") not in ("noop",):
+            if result.get("skipped"):
                 continue
-            existing = _find_npc_row(map_cfg, uid)
-            if existing and not existing.get("initialHidden"):
-                continue
-            x = eff.get("x")
-            y = eff.get("y")
-            if x is not None and y is not None:
-                try:
-                    x_f, y_f = float(x), float(y)
-                    if x_f < 0 or y_f < 0:
-                        continue
-                except (TypeError, ValueError):
-                    continue
-            spawned.append(uid)
-            progress["spawned_npc_uids"] = spawned
-            dyn = {
-                "npcUid": uid,
-                "npcName": eff.get("npcName") or existing.get("npcName") if existing else eff.get("npcName"),
-                "prefabKey": eff.get("prefabKey") or (existing.get("prefabKey") if existing else None),
-                "x": eff.get("x") if eff.get("x") is not None else (existing.get("x") if existing else None),
-                "y": eff.get("y") if eff.get("y") is not None else (existing.get("y") if existing else None),
-            }
-            dynamic = list(progress.get("dynamic_npcs") or [])
-            if not any(str(d.get("npcUid", "")) == uid for d in dynamic):
-                dynamic.append(dyn)
-            progress["dynamic_npcs"] = dynamic
-            applied.append({"action": "spawn_npc", "npcUid": uid, **{k: v for k, v in dyn.items() if v is not None}})
+            applied.append(result)
     return applied
 
 

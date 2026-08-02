@@ -1,0 +1,26 @@
+{
+  "ok": false,
+  "msg": "maximum recursion depth exceeded",
+  "payload": {
+    "settlement_status": "processing",
+    "trace_id": "trace-20260802T142052Z-c2deefb7"
+  },
+  "apply_log": [],
+  "replay_ok": false,
+  "replay_idempotent": null,
+  "settlement": {
+    "character_id": "e2e_p3_20260802T142052Z-c2deefb7",
+    "event_id": "world_1783106205039_chain_2_enemy_e2",
+    "room_id": "f3b982cbca6b4c8e81b7afbecdb9ba79",
+    "map_code": "world_1783106205039",
+    "request_id": "finalize-replay",
+    "trace_id": "trace-20260802T142052Z-c2deefb7",
+    "status": "failed",
+    "applied_effects": [],
+    "error": "maximum recursion depth exceeded",
+    "created_at": 1785680253.1327336,
+    "updated_at": 1785680453.9314196,
+    "completed_at": null
+  },
+  "effect_docs": []
+}

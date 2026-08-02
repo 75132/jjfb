@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Callable, List, Sequence, Tuple
 
 from . import m001_core_indexes
+from . import m002_story_settlement_indexes
 
 MigrationFn = Callable[[object, bool], List[str]]
 
@@ -19,6 +20,11 @@ MIGRATIONS: Sequence[Tuple[str, str, MigrationFn]] = (
         "m001_core_indexes",
         "核心集合索引与 players 无效文档清理（原 ws_server 导入时副作用）",
         m001_core_indexes.run,
+    ),
+    (
+        "m002_story_settlement_indexes",
+        "剧情战斗结算账本与 effect 幂等唯一索引",
+        m002_story_settlement_indexes.run,
     ),
 )
 

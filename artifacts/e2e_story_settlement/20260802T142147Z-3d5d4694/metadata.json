@@ -1,0 +1,33 @@
+{
+  "run_id": "20260802T142147Z-3d5d4694",
+  "baseline_commit_sha": "b39126665520155020fc105fb7b123fd38ed1460",
+  "working_tree": "P3 changes uncommitted on main (see git status)",
+  "character_id": "e2e_p3_20260802T142147Z-3d5d4694",
+  "map_code": "world_1783106205039",
+  "event_id": "world_1783106205039_chain_2_enemy_e2",
+  "battle_ref": "battle_1-50",
+  "room_id": "570e7808d76b4c9d907aec2c21162542",
+  "trace_id": "trace-20260802T142147Z-3d5d4694",
+  "settlement_key": "e2e_p3_20260802T142147Z-3d5d4694|world_1783106205039_chain_2_enemy_e2|570e7808d76b4c9d907aec2c21162542",
+  "server_restart_at": "2026-08-02T14:21:49.749112+00:00",
+  "tests": {
+    "server_unittest": "65 passed",
+    "runtime_vitest": "39 passed",
+    "juben_vitest": "264 passed",
+    "mongo_e2e_restart": "passed"
+  },
+  "conclusion": {
+    "processing_resume_ok": true,
+    "completed_replay_ok": true,
+    "effects_applied_resume_ok": true,
+    "finished_room_reload_ok": true,
+    "finished_not_in_resume": true
+  },
+  "final_pass": true,
+  "cocos_editor": {
+    "automated": false,
+    "checklist_file": "COCOS_MANUAL_CHECKLIST.md",
+    "status": "pending_manual"
+  },
+  "note": "Real MongoDB settlement restart evidence (new BattleRoomService + ledger re-init reading same collections). Cocos editor UI loop still needs manual run per checklist."
+}

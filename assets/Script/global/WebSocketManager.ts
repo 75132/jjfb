@@ -272,6 +272,7 @@ export class WebSocketManager extends Component {
         // 超时重试（针对只读查询，避免偶发 408 直接失败）
         const RETRY_ON_TIMEOUT_ROUTES: Set<string> = new Set([
             'bag_get',
+            'bag_has_items',
             'get_robot_pets',
             'get_character_info',
             'get_player',
@@ -312,6 +313,9 @@ export class WebSocketManager extends Component {
                     break;
                 case 'bag_get':
                     responseType = 'bag_items';
+                    break;
+                case 'bag_has_items':
+                    responseType = 'bag_has_items_response';
                     break;
                 case 'get_robot_pets':
                     responseType = 'robot_pets_response';

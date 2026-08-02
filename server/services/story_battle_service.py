@@ -23,9 +23,6 @@ STATUS_COMPLETING = "completing"
 STATUS_COMPLETED = "completed"
 STATUS_CANCELLED = "cancelled"
 
-# (character_id, event_id, room_id) -> settlement ledger entry
-_settlement_ledger: Dict[Tuple[str, str, str], Dict[str, Any]] = {}
-
 
 @dataclass
 class StoryBattlePreparation:
@@ -295,11 +292,17 @@ def _settlement_key(character_id: str, event_id: str, room_id: str) -> Tuple[str
 
 
 def get_settlement_ledger_entry(character_id: str, event_id: str, room_id: str) -> Optional[Dict[str, Any]]:
-    return _settlement_ledger.get(_settlement_key(character_id, event_id, room_id))
+    """同步读短时缓存；权威读取请用 story_settlement_ledger.find_settlement。"""
+    from services.story_settlement_ledger import _cache_get
+
+    return _cache_get(str(character_id), str(event_id), str(room_id))
 
 
 def clear_settlement_ledger_for_tests() -> None:
-    _settlement_ledger.clear()
+    """兼容旧测试名：仅清内存缓存。权威 FakeCollection 由测试自行重置。"""
+    from services.story_settlement_ledger import clear_settlement_cache_for_tests
+
+    clear_settlement_cache_for_tests()
 
 
 def build_pending_story_settlement(progress: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -420,10 +423,19 @@ async def finalize_story_battle(
     room_id: str,
     request_id: Optional[str] = None,
     choice_id: Optional[str] = None,
+    trace_id: Optional[str] = None,
 ) -> Tuple[bool, str, dict]:
     """
-    权威剧情战斗结算。
-    不接受客户端 battle_won。
+    权威剧情战斗结算（MongoDB 账本）。
+
+    顺序：
+      验证 room/pending
+      → 原子创建或读取 settlement
+      → processing
+      → 逐条带幂等键的 effects
+      → effects_applied
+      → completed_event_ids + 清 pending + save_progress
+      → completed
     """
     from services.battle_room_service import battle_room_service
     from services.story_service import (
@@ -437,26 +449,26 @@ async def finalize_story_battle(
         load_map_config,
         save_progress,
     )
+    from services import story_settlement_ledger as ledger
 
     cid = str(character_id)
     map_code = map_code or "test_base"
     event_id = str(event_id)
     room_id = str(room_id)
-    ledger_key = _settlement_key(cid, event_id, room_id)
+    tid = str(trace_id or request_id or f"finalize:{cid}:{event_id}:{room_id}")
 
-    # 已完成结算：幂等回放
-    cached = _settlement_ledger.get(ledger_key)
-    if cached and cached.get("status") == "completed":
-        map_cfg = load_map_config(map_code) or {}
-        progress = await get_or_create_progress(user_id, cid, map_code)
-        payload = {
-            **build_state_payload(progress, map_cfg),
-            "applied_effects": list(cached.get("applied_effects") or []),
-            "authoritative_battle_verified": True,
-            "room_id": room_id,
-            "idempotent_replay": True,
-        }
-        return True, "idempotent_replay", payload
+    def _log(msg: str, **extra):
+        logger.info(
+            "story_battle_finalize | %s | trace=%s req=%s cid=%s map=%s event=%s room=%s %s",
+            msg,
+            tid,
+            request_id,
+            cid,
+            map_code,
+            event_id,
+            room_id,
+            " ".join(f"{k}={v}" for k, v in extra.items()),
+        )
 
     map_cfg = load_map_config(map_code)
     if not map_cfg:
@@ -468,13 +480,36 @@ async def finalize_story_battle(
     if ev.get("eventType") != "battle":
         return False, "非战斗事件请使用 story_event_complete", {}
 
+    # 已有 completed 账本：幂等回放（跨重启）
+    existing = await ledger.find_settlement(cid, event_id, room_id)
+    if existing and existing.get("status") == ledger.STATUS_COMPLETED:
+        progress = await get_or_create_progress(user_id, cid, map_code)
+        _log("idempotent_replay", settlement_status="completed", idempotent_replay=True)
+        payload = {
+            **build_state_payload(progress, map_cfg),
+            "applied_effects": list(existing.get("applied_effects") or []),
+            "authoritative_battle_verified": True,
+            "room_id": room_id,
+            "idempotent_replay": True,
+            "settlement_status": ledger.STATUS_COMPLETED,
+            "trace_id": tid,
+        }
+        return True, "idempotent_replay", payload
+
     progress = await get_or_create_progress(user_id, cid, map_code)
     if _event_completed(progress, event_id):
+        # 进度已完成但账本可能未写 completed：尽量补齐
+        if existing and existing.get("status") == ledger.STATUS_EFFECTS_APPLIED:
+            await ledger.mark_completed(
+                cid, event_id, room_id, existing.get("applied_effects") or []
+            )
         payload = {
             **build_state_payload(progress, map_cfg),
             "authoritative_battle_verified": True,
             "room_id": room_id,
             "idempotent_replay": True,
+            "settlement_status": (existing or {}).get("status") or "already_completed",
+            "trace_id": tid,
         }
         return True, "already_completed", payload
 
@@ -492,6 +527,7 @@ async def finalize_story_battle(
             return False, "战斗失败，不可结算奖励", {}
         return False, f"pending 状态不可结算: {status}", {}
 
+    battle_ref = pending.get("battle_ref") or ""
     room = battle_room_service.get_room_by_id(room_id)
     if not room:
         return False, "找不到战斗房间", {}
@@ -512,6 +548,7 @@ async def finalize_story_battle(
         return False, "event_id 与房间不一致", {}
     if pending.get("battle_ref") and ctx.get("battle_ref") and str(pending.get("battle_ref")) != str(ctx.get("battle_ref")):
         return False, "battle_ref 与房间不一致", {}
+    battle_ref = battle_ref or ctx.get("battle_ref") or ""
 
     # battle_finished → completing
     if pending.get("status") == STATUS_BATTLE_FINISHED:
@@ -522,57 +559,117 @@ async def finalize_story_battle(
         progress["pending_battle"] = pending
         await save_progress(progress)
 
-    _settlement_ledger[ledger_key] = {
-        "character_id": cid,
-        "event_id": event_id,
-        "room_id": room_id,
-        "status": "processing",
-        "applied_effects": [],
-        "created_at": time.time(),
-        "updated_at": time.time(),
-    }
-
     server = ev.get("server") or {}
-    try:
-        ok, msg = await check_requirements(user_id, cid, progress, server.get("requirements") or [])
+    # 先做可重复的前置校验，避免 choice_blocked 留下 processing 账本
+    existing_for_skip = await ledger.find_settlement(cid, event_id, room_id)
+    already_effects = existing_for_skip and existing_for_skip.get("status") in (
+        ledger.STATUS_EFFECTS_APPLIED,
+        ledger.STATUS_COMPLETED,
+    )
+    if not already_effects:
+        ok, msg = await check_requirements(
+            user_id, cid, progress, server.get("requirements") or []
+        )
         if not ok:
-            raise StoryBattleError(msg, code=400)
+            # 回滚 completing
+            try:
+                progress = await get_or_create_progress(user_id, cid, map_code)
+                pending = progress.get("pending_battle") or {}
+                if isinstance(pending, dict) and pending.get("status") == STATUS_COMPLETING:
+                    pending["status"] = STATUS_BATTLE_FINISHED
+                    pending["updated_at"] = time.time()
+                    progress["pending_battle"] = pending
+                    await save_progress(progress)
+            except Exception:
+                pass
+            return False, msg, {}
 
         can_complete, choice_msg = _choice_completes_event(map_cfg, ev, choice_id)
         if not can_complete:
-            if choice_msg:
-                raise StoryBattleError(choice_msg, code=400)
-            # choice_blocked：回滚 completing
             pending["status"] = STATUS_BATTLE_FINISHED
             pending["updated_at"] = time.time()
             progress["pending_battle"] = pending
             await save_progress(progress)
-            _settlement_ledger.pop(ledger_key, None)
-            return True, "choice_blocked", build_state_payload(progress, map_cfg)
+            if choice_msg:
+                return False, choice_msg, {}
+            return True, "choice_blocked", {
+                **build_state_payload(progress, map_cfg),
+                "trace_id": tid,
+            }
 
-        completed = progress.get("completed_event_ids") or []
-        # 先发奖，成功后再写入 completed，避免发奖失败却留下已完成标记
-        applied = await apply_effects(
-            user_id, cid, progress, map_cfg, server.get("effects") or [], choice_id=choice_id
-        )
+    settlement, action = await ledger.claim_or_get_settlement(
+        character_id=cid,
+        event_id=event_id,
+        room_id=room_id,
+        map_code=map_code,
+        request_id=request_id,
+        trace_id=tid,
+    )
+    _log(
+        "settlement_claim",
+        settlement_status=settlement.get("status"),
+        action=action,
+        battle_ref=battle_ref,
+    )
 
+    if action == "replay_completed":
+        progress = await get_or_create_progress(user_id, cid, map_code)
+        payload = {
+            **build_state_payload(progress, map_cfg),
+            "applied_effects": list(settlement.get("applied_effects") or []),
+            "authoritative_battle_verified": True,
+            "room_id": room_id,
+            "idempotent_replay": True,
+            "settlement_status": ledger.STATUS_COMPLETED,
+            "trace_id": tid,
+        }
+        return True, "idempotent_replay", payload
+
+    if action == "processing_in_flight":
+        return False, "结算处理中，请稍候重试", {
+            "settlement_status": ledger.STATUS_PROCESSING,
+            "room_id": room_id,
+            "trace_id": tid,
+        }
+
+    skip_effects = action == "resume_effects_applied" or settlement.get("status") == ledger.STATUS_EFFECTS_APPLIED
+    applied: list = list(settlement.get("applied_effects") or [])
+
+    try:
+        if not skip_effects:
+            applied = await apply_effects(
+                user_id,
+                cid,
+                progress,
+                map_cfg,
+                server.get("effects") or [],
+                choice_id=choice_id,
+                effect_idempotency={
+                    "character_id": cid,
+                    "event_id": event_id,
+                    "room_id": room_id,
+                },
+            )
+            await ledger.mark_effects_applied(cid, event_id, room_id, applied)
+            settlement = await ledger.find_settlement(cid, event_id, room_id) or settlement
+            _log("effects_applied", effects=len(applied), idempotent_replay=False)
+        else:
+            # effects 已执行：复用结果，不再 apply
+            if not applied:
+                applied = await ledger.list_applied_effects_for_settlement(cid, event_id, room_id)
+            _log("skip_effects_resume", effects=len(applied), settlement_status="effects_applied")
+
+        # 写 completed_event_ids + 清 pending + 保存剧情进度
+        progress = await get_or_create_progress(user_id, cid, map_code)
+        completed = list(progress.get("completed_event_ids") or [])
         if event_id not in completed:
             completed.append(event_id)
         progress["completed_event_ids"] = completed
-
-        # 先写入结算账本，再存进度：即使后续 save 失败，重试也不会重复发奖
-        _settlement_ledger[ledger_key] = {
-            "character_id": cid,
-            "event_id": event_id,
-            "room_id": room_id,
-            "status": "completed",
-            "applied_effects": list(applied or []),
-            "created_at": (_settlement_ledger.get(ledger_key) or {}).get("created_at", time.time()),
-            "updated_at": time.time(),
-        }
-
         progress["pending_battle"] = None
+
         await save_progress(progress)
+        await ledger.mark_completed(cid, event_id, room_id, applied)
+        _log("completed", effects=len(applied), idempotent_replay=False)
 
         payload = {
             **build_state_payload(progress, map_cfg),
@@ -582,15 +679,20 @@ async def finalize_story_battle(
             "authoritative_battle_verified": True,
             "room_id": room_id,
             "idempotent_replay": False,
+            "settlement_status": ledger.STATUS_COMPLETED,
+            "trace_id": tid,
         }
         return True, "", payload
     except Exception as e:
-        # completing → battle_finished，允许安全重试
-        logger.exception("finalize_story_battle failed | cid=%s room=%s err=%s", cid, room_id, e)
-        # 若账本已 completed（奖励已发），不得回滚为可重复发奖
-        entry = _settlement_ledger.get(ledger_key)
-        if entry and entry.get("status") == "completed":
-            map_cfg2 = load_map_config(map_code) or {}
+        logger.exception(
+            "finalize_story_battle failed | trace=%s cid=%s room=%s err=%s",
+            tid,
+            cid,
+            room_id,
+            e,
+        )
+        entry = await ledger.find_settlement(cid, event_id, room_id)
+        if entry and entry.get("status") == ledger.STATUS_COMPLETED:
             progress2 = await get_or_create_progress(user_id, cid, map_code)
             progress2["pending_battle"] = None
             try:
@@ -598,24 +700,38 @@ async def finalize_story_battle(
             except Exception:
                 pass
             return True, "idempotent_replay", {
-                **build_state_payload(progress2, map_cfg2),
+                **build_state_payload(progress2, map_cfg),
                 "applied_effects": list(entry.get("applied_effects") or []),
                 "authoritative_battle_verified": True,
                 "room_id": room_id,
                 "idempotent_replay": True,
+                "settlement_status": ledger.STATUS_COMPLETED,
+                "trace_id": tid,
             }
+        if entry and entry.get("status") == ledger.STATUS_EFFECTS_APPLIED:
+            # 进度保存失败：保持 effects_applied，不回滚奖励
+            msg = e.message if isinstance(e, StoryBattleError) else str(e) or "剧情进度保存失败"
+            return False, msg, {
+                "settlement_status": ledger.STATUS_EFFECTS_APPLIED,
+                "room_id": room_id,
+                "trace_id": tid,
+            }
+        # processing 中失败：记录 error，不删除账本；回滚 pending 允许重试
+        try:
+            await ledger.mark_failed(
+                cid, event_id, room_id, e.message if isinstance(e, StoryBattleError) else str(e)
+            )
+        except Exception:
+            pass
         try:
             progress = await get_or_create_progress(user_id, cid, map_code)
             pending = progress.get("pending_battle") or {}
             if isinstance(pending, dict) and pending.get("status") == STATUS_COMPLETING:
-                # 发奖失败：回滚 pending，允许安全重试（账本未 completed 时）
                 pending["status"] = STATUS_BATTLE_FINISHED
                 pending["updated_at"] = time.time()
                 progress["pending_battle"] = pending
                 await save_progress(progress)
-            if entry and entry.get("status") != "completed":
-                _settlement_ledger.pop(ledger_key, None)
         except Exception:
-            logger.exception("finalize rollback failed | cid=%s room=%s", cid, room_id)
+            logger.exception("finalize rollback pending failed | cid=%s room=%s", cid, room_id)
         msg = e.message if isinstance(e, StoryBattleError) else str(e) or "剧情结算失败"
-        return False, msg, {}
+        return False, msg, {"settlement_status": (entry or {}).get("status"), "trace_id": tid}

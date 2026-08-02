@@ -168,3 +168,108 @@ export function ownedItemIdsFromSnapshot(snapshot: BagItemSnapshot): Set<number>
     }
     return ids;
 }
+
+export type BagHasItemsResponse = {
+    type?: string;
+    success?: boolean;
+    message?: string;
+    request_id?: string;
+    quantities?: Record<string, number> | null;
+    data?: {
+        quantities?: Record<string, number> | null;
+        message?: string;
+        request_id?: string;
+        [key: string]: unknown;
+    };
+    [key: string]: unknown;
+};
+
+/**
+ * 解析 bag_has_items_response → item_id 数量映射（字符串 key）。
+ * success=false 时返回空对象。
+ */
+export function normalizeBagHasItemsResponse(response: unknown): {
+    success: boolean;
+    quantities: Record<string, number>;
+    message: string;
+    request_id?: string;
+} {
+    const resp = asRecord(response) as BagHasItemsResponse | null;
+    if (!resp) {
+        return { success: false, quantities: {}, message: 'invalid bag_has_items response' };
+    }
+    const data = asRecord(resp.data) || {};
+    const success = resp.success === true;
+    const message = String(resp.message ?? data.message ?? (success ? '' : 'bag_has_items failed'));
+    const requestId =
+        resp.request_id !== undefined && resp.request_id !== null
+            ? String(resp.request_id)
+            : data.request_id !== undefined && data.request_id !== null
+              ? String(data.request_id)
+              : undefined;
+    const rawQty = success
+        ? ((resp.quantities as Record<string, number> | null | undefined) ??
+          (data.quantities as Record<string, number> | null | undefined) ??
+          {})
+        : {};
+    const quantities: Record<string, number> = {};
+    if (rawQty && typeof rawQty === 'object') {
+        for (const [k, v] of Object.entries(rawQty)) {
+            const iid = Number(k);
+            const q = Number(v);
+            if (Number.isFinite(iid) && iid > 0 && Number.isFinite(q)) {
+                quantities[String(iid)] = Math.max(0, q);
+            }
+        }
+    }
+    return { success, quantities, message, request_id: requestId };
+}
+
+/** quantities > 0 的 item_id 集合 */
+export function ownedItemIdsFromQuantities(quantities: Record<string, number> | null | undefined): Set<number> {
+    const ids = new Set<number>();
+    if (!quantities) return ids;
+    for (const [k, v] of Object.entries(quantities)) {
+        const iid = Number(k);
+        const q = Number(v);
+        if (Number.isFinite(iid) && iid > 0 && Number.isFinite(q) && q > 0) ids.add(iid);
+    }
+    return ids;
+}
+
+/** 从地图 JSON 收集 requirements 引用的 itemId（含 appear / server.requirements） */
+export function collectRequirementItemIdsFromMap(mapJson: unknown): number[] {
+    const ids = new Set<number>();
+    const visitReqs = (reqs: unknown) => {
+        if (!Array.isArray(reqs)) return;
+        for (const raw of reqs) {
+            if (!raw || typeof raw !== 'object') continue;
+            const r = raw as Record<string, unknown>;
+            const t = String(r.type ?? r.action ?? '');
+            if (t === 'item_owned') {
+                const iid = Number(r.itemId ?? r.item_id ?? 0);
+                if (Number.isFinite(iid) && iid > 0) ids.add(iid);
+            }
+        }
+    };
+    const root = asRecord(mapJson);
+    if (!root) return [];
+    const npcs = root.npcs;
+    if (Array.isArray(npcs)) {
+        for (const npc of npcs) {
+            const row = asRecord(npc);
+            if (!row) continue;
+            const appear = asRecord(row.appear);
+            if (appear) visitReqs(appear.requirements);
+            const events = row.events;
+            if (Array.isArray(events)) {
+                for (const ev of events) {
+                    const e = asRecord(ev);
+                    const server = e ? asRecord(e.server) : null;
+                    if (server) visitReqs(server.requirements);
+                }
+            }
+        }
+    }
+    return Array.from(ids).sort((a, b) => a - b);
+}

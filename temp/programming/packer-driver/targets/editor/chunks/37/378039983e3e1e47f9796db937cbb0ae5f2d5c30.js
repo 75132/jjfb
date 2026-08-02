@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13", "__unresolved_14"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13", "__unresolved_14", "__unresolved_15", "__unresolved_16"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, assetManager, BoxCollider2D, Button, Collider2D, Component, director, input, Input, instantiate, JsonAsset, KeyCode, Label, Node, Color, Sprite, SpriteFrame, UITransform, v3, PlayerGridMove, BattleTriggerOnContact, ResourceManager, StoryUIViewRefs, WebSocketManager, normalizeBagItemsResponse, ownedItemIdsFromSnapshot, BattleScene, isBattleInteractAction, isChoiceBlockedMessage, promisifyWsRequest, shouldCompleteChoice, shouldStartBattleFromChoice, evaluateAppearRequirements, evaluateRequirements, buildLocalCompletePayload, clearLocalStoryPersist, loadLocalStoryPersist, localStoryStorageKey, saveLocalStoryPersist, sanitizeBattlePseudoChoicesInRuntime, decideNpcVisibility, isHiddenByMainlineStep, visibilityHiddenUntilReveal, isStaleMainlineGiver, parseEnemyGiverUid, logicalToParentLocal, mapContentBoundsInParentSpace, TILE_CELL, getNpcTaskStatusFrameUuids, npcTaskIndicatorKindToIndex, resolveNpcTaskIndicatorKind, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _class3, _crd, ccclass, property, executionOrder, PREFIX, StoryManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, assetManager, BoxCollider2D, Button, Collider2D, Component, director, input, Input, instantiate, JsonAsset, KeyCode, Label, Node, Color, Sprite, SpriteFrame, UITransform, v3, PlayerGridMove, BattleTriggerOnContact, ResourceManager, StoryUIViewRefs, WebSocketManager, normalizeBagHasItemsResponse, ownedItemIdsFromQuantities, collectRequirementItemIdsFromMap, BattleScene, isBattleInteractAction, isChoiceBlockedMessage, promisifyWsRequest, shouldCompleteChoice, shouldStartBattleFromChoice, evaluateAppearRequirements, evaluateRequirements, buildLocalCompletePayload, clearLocalStoryPersist, loadLocalStoryPersist, localStoryStorageKey, saveLocalStoryPersist, sanitizeBattlePseudoChoicesInRuntime, decideNpcVisibility, isHiddenByMainlineStep, visibilityHiddenUntilReveal, isStaleMainlineGiver, parseEnemyGiverUid, allowsSkipServerStoryApis, DEFAULT_STORY_RUNTIME_MODE, normalizeStoryRuntimeMode, shouldAutoFinalizeSettlement, shouldPlayRewardAnimation, GameConfig, logicalToParentLocal, mapContentBoundsInParentSpace, TILE_CELL, getNpcTaskStatusFrameUuids, npcTaskIndicatorKindToIndex, resolveNpcTaskIndicatorKind, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _class3, _crd, ccclass, property, executionOrder, PREFIX, StoryManager;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -58,12 +58,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
   }
 
-  function _reportPossibleCrUseOfnormalizeBagItemsResponse(extras) {
-    _reporterNs.report("normalizeBagItemsResponse", "../global/protocol/BagProtocol", _context.meta, extras);
+  function _reportPossibleCrUseOfnormalizeBagHasItemsResponse(extras) {
+    _reporterNs.report("normalizeBagHasItemsResponse", "../global/protocol/BagProtocol", _context.meta, extras);
   }
 
-  function _reportPossibleCrUseOfownedItemIdsFromSnapshot(extras) {
-    _reporterNs.report("ownedItemIdsFromSnapshot", "../global/protocol/BagProtocol", _context.meta, extras);
+  function _reportPossibleCrUseOfownedItemIdsFromQuantities(extras) {
+    _reporterNs.report("ownedItemIdsFromQuantities", "../global/protocol/BagProtocol", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfcollectRequirementItemIdsFromMap(extras) {
+    _reporterNs.report("collectRequirementItemIdsFromMap", "../global/protocol/BagProtocol", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfBattleScene(extras) {
@@ -158,6 +162,38 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("parseEnemyGiverUid", "./story-npc-visibility", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfallowsSkipServerStoryApis(extras) {
+    _reporterNs.report("allowsSkipServerStoryApis", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfDEFAULT_STORY_RUNTIME_MODE(extras) {
+    _reporterNs.report("DEFAULT_STORY_RUNTIME_MODE", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfnormalizeStoryRuntimeMode(extras) {
+    _reporterNs.report("normalizeStoryRuntimeMode", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfshouldAutoFinalizeSettlement(extras) {
+    _reporterNs.report("shouldAutoFinalizeSettlement", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfshouldPlayRewardAnimation(extras) {
+    _reporterNs.report("shouldPlayRewardAnimation", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfStoryBattleFinishedResult(extras) {
+    _reporterNs.report("StoryBattleFinishedResult", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfStoryRuntimeMode(extras) {
+    _reporterNs.report("StoryRuntimeMode", "./story-runtime-mode", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfGameConfig(extras) {
+    _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
+  }
+
   function _reportPossibleCrUseOflogicalToParentLocal(extras) {
     _reporterNs.report("logicalToParentLocal", "./tilemap-coords", _context.meta, extras);
   }
@@ -225,8 +261,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_6) {
       WebSocketManager = _unresolved_6.WebSocketManager;
     }, function (_unresolved_7) {
-      normalizeBagItemsResponse = _unresolved_7.normalizeBagItemsResponse;
-      ownedItemIdsFromSnapshot = _unresolved_7.ownedItemIdsFromSnapshot;
+      normalizeBagHasItemsResponse = _unresolved_7.normalizeBagHasItemsResponse;
+      ownedItemIdsFromQuantities = _unresolved_7.ownedItemIdsFromQuantities;
+      collectRequirementItemIdsFromMap = _unresolved_7.collectRequirementItemIdsFromMap;
     }, function (_unresolved_8) {
       BattleScene = _unresolved_8.BattleScene;
     }, function (_unresolved_9) {
@@ -253,13 +290,21 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       isStaleMainlineGiver = _unresolved_13.isStaleMainlineGiver;
       parseEnemyGiverUid = _unresolved_13.parseEnemyGiverUid;
     }, function (_unresolved_14) {
-      logicalToParentLocal = _unresolved_14.logicalToParentLocal;
-      mapContentBoundsInParentSpace = _unresolved_14.mapContentBoundsInParentSpace;
-      TILE_CELL = _unresolved_14.TILE_CELL;
+      allowsSkipServerStoryApis = _unresolved_14.allowsSkipServerStoryApis;
+      DEFAULT_STORY_RUNTIME_MODE = _unresolved_14.DEFAULT_STORY_RUNTIME_MODE;
+      normalizeStoryRuntimeMode = _unresolved_14.normalizeStoryRuntimeMode;
+      shouldAutoFinalizeSettlement = _unresolved_14.shouldAutoFinalizeSettlement;
+      shouldPlayRewardAnimation = _unresolved_14.shouldPlayRewardAnimation;
     }, function (_unresolved_15) {
-      getNpcTaskStatusFrameUuids = _unresolved_15.getNpcTaskStatusFrameUuids;
-      npcTaskIndicatorKindToIndex = _unresolved_15.npcTaskIndicatorKindToIndex;
-      resolveNpcTaskIndicatorKind = _unresolved_15.resolveNpcTaskIndicatorKind;
+      GameConfig = _unresolved_15.GameConfig;
+    }, function (_unresolved_16) {
+      logicalToParentLocal = _unresolved_16.logicalToParentLocal;
+      mapContentBoundsInParentSpace = _unresolved_16.mapContentBoundsInParentSpace;
+      TILE_CELL = _unresolved_16.TILE_CELL;
+    }, function (_unresolved_17) {
+      getNpcTaskStatusFrameUuids = _unresolved_17.getNpcTaskStatusFrameUuids;
+      npcTaskIndicatorKindToIndex = _unresolved_17.npcTaskIndicatorKindToIndex;
+      resolveNpcTaskIndicatorKind = _unresolved_17.resolveNpcTaskIndicatorKind;
     }],
     execute: function () {
       _crd = true;
@@ -283,9 +328,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       PREFIX = '[Story]';
 
       _export("StoryManager", StoryManager = (_dec = ccclass('StoryManager'), _dec2 = executionOrder(-50), _dec3 = property(JsonAsset), _dec4 = property({
-        tooltip: '本地剧情模式（默认开启）：不请求 story_get_state / story_interact / story_event_complete；战斗仍走 WS 房间。接回服务端时取消勾选。'
+        tooltip: '剧情运行模式：server-development=联调/正式（走服务端）；local-preview=制作预览（可跳过 get_state/interact/complete）。'
       }), _dec5 = property({
-        tooltip: '本地模式下每次进入场景从头跑主线（清 localStorage、不存档）。关则可跨次保留进度。'
+        tooltip: '仅 local-preview 有效：每次进入场景从头跑主线（清 localStorage、不存档）。'
       }), _dec6 = property({
         tooltip: '与 NPC 范围内触发交互的额外键（另固定支持 E、回车、空格）'
       }), _dec7 = property({
@@ -323,7 +368,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           _initializerDefineProperty(this, "mapConfig", _descriptor, this);
 
-          _initializerDefineProperty(this, "skipServerRequirements", _descriptor2, this);
+          _initializerDefineProperty(this, "storyRuntimeMode", _descriptor2, this);
 
           _initializerDefineProperty(this, "resetLocalStoryOnEnter", _descriptor3, this);
 
@@ -456,7 +501,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._onCharacterSelected = data => {
             if (!(data != null && data.success)) return;
 
-            if (this.skipServerRequirements) {
+            if (this._isLocalPreview()) {
               if (!this._storyStateLoaded) {
                 this._loadLocalStoryState();
               }
@@ -577,7 +622,21 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           };
         }
 
+        _isLocalPreview() {
+          return (_crd && allowsSkipServerStoryApis === void 0 ? (_reportPossibleCrUseOfallowsSkipServerStoryApis({
+            error: Error()
+          }), allowsSkipServerStoryApis) : allowsSkipServerStoryApis)(this.storyRuntimeMode);
+        }
+
+        _runtimeMode() {
+          return (_crd && normalizeStoryRuntimeMode === void 0 ? (_reportPossibleCrUseOfnormalizeStoryRuntimeMode({
+            error: Error()
+          }), normalizeStoryRuntimeMode) : normalizeStoryRuntimeMode)(this.storyRuntimeMode);
+        }
+
         onLoad() {
+          var _configVersion, _this$mapConfig, _ws$getCharacterId;
+
           this._resolveRefs();
 
           input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
@@ -590,13 +649,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this._ensureTaskStatusFramesLoaded();
 
+          const ws = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
+            error: Error()
+          }), WebSocketManager) : WebSocketManager).getInstance();
+          storyLog('info', 'story_runtime_mode', {
+            story_runtime_mode: this._runtimeMode(),
+            map_code: this.mapCode,
+            config_version: String((_configVersion = (_this$mapConfig = this.mapConfig) == null || (_this$mapConfig = _this$mapConfig.json) == null ? void 0 : _this$mapConfig.configVersion) != null ? _configVersion : ''),
+            character_id: (_ws$getCharacterId = ws == null || ws.getCharacterId == null ? void 0 : ws.getCharacterId()) != null ? _ws$getCharacterId : null
+          });
+
           if (this.debugLog) {
-            var _this$node, _this$mapConfig;
+            var _this$node, _this$mapConfig2;
 
             storyLog('info', 'StoryManager.onLoad', {
               host: (_this$node = this.node) == null ? void 0 : _this$node.name,
               npcResolved: this._resolved.length,
-              hasMap: Boolean((_this$mapConfig = this.mapConfig) == null ? void 0 : _this$mapConfig.json)
+              hasMap: Boolean((_this$mapConfig2 = this.mapConfig) == null ? void 0 : _this$mapConfig2.json)
             });
           }
 
@@ -622,7 +691,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             this._resolveNpcs();
 
-            if (this.skipServerRequirements) {
+            if (this._isLocalPreview()) {
               this._loadLocalStoryState();
             } else {
               this._fetchStoryStateFromServer();
@@ -631,24 +700,39 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _refreshOwnedItemsFromWs() {
+          var _this$mapConfig$json, _this$mapConfig3;
+
           const ws = this._ws || (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
             error: Error()
           }), WebSocketManager) : WebSocketManager).getInstance();
           if (!(ws != null && ws.getCharacterId != null && ws.getCharacterId())) return;
-          ws.request('bag_get', {
-            page: 1,
-            page_size: 200
+          const itemIds = (_crd && collectRequirementItemIdsFromMap === void 0 ? (_reportPossibleCrUseOfcollectRequirementItemIdsFromMap({
+            error: Error()
+          }), collectRequirementItemIdsFromMap) : collectRequirementItemIdsFromMap)((_this$mapConfig$json = (_this$mapConfig3 = this.mapConfig) == null ? void 0 : _this$mapConfig3.json) != null ? _this$mapConfig$json : null); // 无物品条件时仍清空本地集合，避免脏数据
+
+          if (!itemIds.length) {
+            this._ownedItemIds.clear();
+
+            this._refreshNpcVisibility();
+
+            this._syncNpcTaskIndicators();
+
+            return;
+          }
+
+          ws.request('bag_has_items', {
+            item_ids: itemIds
           }, resp => {
-            const snapshot = (_crd && normalizeBagItemsResponse === void 0 ? (_reportPossibleCrUseOfnormalizeBagItemsResponse({
+            const parsed = (_crd && normalizeBagHasItemsResponse === void 0 ? (_reportPossibleCrUseOfnormalizeBagHasItemsResponse({
               error: Error()
-            }), normalizeBagItemsResponse) : normalizeBagItemsResponse)(resp);
-            if (!snapshot.success) return;
+            }), normalizeBagHasItemsResponse) : normalizeBagHasItemsResponse)(resp);
+            if (!parsed.success) return;
 
             this._ownedItemIds.clear();
 
-            for (const id of (_crd && ownedItemIdsFromSnapshot === void 0 ? (_reportPossibleCrUseOfownedItemIdsFromSnapshot({
+            for (const id of (_crd && ownedItemIdsFromQuantities === void 0 ? (_reportPossibleCrUseOfownedItemIdsFromQuantities({
               error: Error()
-            }), ownedItemIdsFromSnapshot) : ownedItemIdsFromSnapshot)(snapshot)) {
+            }), ownedItemIdsFromQuantities) : ownedItemIdsFromQuantities)(parsed.quantities)) {
               this._ownedItemIds.add(id);
             }
 
@@ -1357,12 +1441,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _runStartupSelfCheck() {
-          var _this$mapConfig2;
+          var _this$mapConfig4;
 
           if (this._startupSelfCheckDone) return;
           this._startupSelfCheckDone = true;
           const issues = [];
-          if (!((_this$mapConfig2 = this.mapConfig) != null && _this$mapConfig2.json)) issues.push('mapConfig');
+          if (!((_this$mapConfig4 = this.mapConfig) != null && _this$mapConfig4.json)) issues.push('mapConfig');
           if (!this._refs) issues.push('StoryUIViewRefs');
           if (!this.battleRoot) issues.push('battleRoot');
 
@@ -1379,13 +1463,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         _fetchStoryStateFromServer() {
           var _this$_ws;
 
-          if (this.skipServerRequirements) return;
+          if (this._isLocalPreview()) return;
           this._ws = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
             error: Error()
           }), WebSocketManager) : WebSocketManager).getInstance();
           if (!((_this$_ws = this._ws) != null && _this$_ws.getCharacterId != null && _this$_ws.getCharacterId())) return;
 
-          this._ws.request('story_get_state', {
+          this._ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            error: Error()
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.STORY_GET_STATE, {
             map_code: this.mapCode
           }, resp => {
             var _resp$data;
@@ -1407,16 +1493,90 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this._refreshNpcVisibility();
 
             this._refreshOwnedItemsFromWs();
+
+            void this._maybeAutoFinalizePendingSettlement(d);
           }, true, 8000);
+        }
+        /** 断线窗口：服务端已判胜但未 finalize → 自动结算，不打开战斗、不 resume */
+
+
+        async _maybeAutoFinalizePendingSettlement(d) {
+          if (!(_crd && shouldAutoFinalizeSettlement === void 0 ? (_reportPossibleCrUseOfshouldAutoFinalizeSettlement({
+            error: Error()
+          }), shouldAutoFinalizeSettlement) : shouldAutoFinalizeSettlement)(d)) return;
+          const settlement = d.pending_story_settlement;
+          storyLog('info', 'StoryManager: pending settlement → auto finalize', {
+            room_id: settlement.room_id,
+            event_id: settlement.event_id
+          });
+
+          try {
+            const data = await this._promiseBattleFinalize(settlement.event_id, settlement.room_id);
+
+            if ((_crd && shouldPlayRewardAnimation === void 0 ? (_reportPossibleCrUseOfshouldPlayRewardAnimation({
+              error: Error()
+            }), shouldPlayRewardAnimation) : shouldPlayRewardAnimation)(data)) {
+              this._applyEffectsFromResponse(data);
+            } else {
+              this._syncProgressFromPayload(data);
+            }
+
+            this._refreshNpcVisibility();
+
+            this._syncNpcTaskIndicators();
+
+            this._refreshOwnedItemsFromWs(); // 再拉一次状态确认
+
+
+            this.scheduleOnce(() => this._fetchStoryStateFromServer(), 0.2);
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : '剧情结算待恢复';
+            this.showToast(`战斗已完成，剧情结算待恢复：${msg}`, 4000);
+          }
+        }
+
+        async _promiseBattleFinalize(eventId, roomId, choiceId) {
+          if (this._isLocalPreview()) {
+            return {};
+          }
+
+          this._showFlowWaiting(true);
+
+          try {
+            const ws = this._ws || (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
+              error: Error()
+            }), WebSocketManager) : WebSocketManager).getInstance();
+            const resp = await (_crd && promisifyWsRequest === void 0 ? (_reportPossibleCrUseOfpromisifyWsRequest({
+              error: Error()
+            }), promisifyWsRequest) : promisifyWsRequest)((route, payload, cb, useRid, timeout) => ws.request(route, payload, cb, useRid, timeout), (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+              error: Error()
+            }), GameConfig) : GameConfig).MESSAGE_TYPES.STORY_BATTLE_FINALIZE, {
+              map_code: this.mapCode,
+              event_id: eventId,
+              room_id: roomId,
+              choice_id: choiceId
+            }, 12000);
+            const d = resp.data || resp;
+
+            this._syncProgressFromPayload(d);
+
+            return d;
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : '剧情结算失败';
+            this.showToast(msg, 2800);
+            throw err;
+          } finally {
+            this._showFlowWaiting(false);
+          }
         }
 
         _localStoryStorageKey() {
-          var _ws$getCharacterId;
+          var _ws$getCharacterId2;
 
           const ws = this._ws || (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
             error: Error()
           }), WebSocketManager) : WebSocketManager).getInstance();
-          const cid = (_ws$getCharacterId = ws == null || ws.getCharacterId == null ? void 0 : ws.getCharacterId()) != null ? _ws$getCharacterId : null;
+          const cid = (_ws$getCharacterId2 = ws == null || ws.getCharacterId == null ? void 0 : ws.getCharacterId()) != null ? _ws$getCharacterId2 : null;
           return (_crd && localStoryStorageKey === void 0 ? (_reportPossibleCrUseOflocalStoryStorageKey({
             error: Error()
           }), localStoryStorageKey) : localStoryStorageKey)(this.mapCode, cid);
@@ -1425,7 +1585,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         _loadLocalStoryState() {
           var _saved$completed_even, _saved$battle_cleared, _saved$revealed_npc_u, _saved$mainline_step, _saved$completed_task;
 
-          if (!this.skipServerRequirements) return;
+          if (!this._isLocalPreview()) return;
 
           if (this.resetLocalStoryOnEnter) {
             (_crd && clearLocalStoryPersist === void 0 ? (_reportPossibleCrUseOfclearLocalStoryPersist({
@@ -1499,7 +1659,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _persistLocalStoryState() {
-          if (!this.skipServerRequirements || this.resetLocalStoryOnEnter) return;
+          if (!this._isLocalPreview() || this.resetLocalStoryOnEnter) return;
           const data = {
             completed_event_ids: [...this._localCompletedEventIds],
             battle_cleared_event_ids: [...this._battleClearedEventIds],
@@ -1516,7 +1676,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         clearLocalStoryProgress() {
-          if (!this.skipServerRequirements) return;
+          if (!this._isLocalPreview()) return;
           (_crd && clearLocalStoryPersist === void 0 ? (_reportPossibleCrUseOfclearLocalStoryPersist({
             error: Error()
           }), clearLocalStoryPersist) : clearLocalStoryPersist)(this._localStoryStorageKey());
@@ -1559,7 +1719,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         async _promiseInteract(npcUid, ev, choiceId) {
-          if (this.skipServerRequirements) {
+          if (this._isLocalPreview()) {
             var _ev$client2;
 
             const client = (_ev$client2 = ev.client) != null ? _ev$client2 : {};
@@ -1599,8 +1759,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         async _promiseComplete(npcUid, ev, opts) {
-          if (this.skipServerRequirements) {
-            if ((opts == null ? void 0 : opts.battleWon) === false) return {};
+          if (this._isLocalPreview()) {
             const data = (_crd && buildLocalCompletePayload === void 0 ? (_reportPossibleCrUseOfbuildLocalCompletePayload({
               error: Error()
             }), buildLocalCompletePayload) : buildLocalCompletePayload)(ev, opts == null ? void 0 : opts.choiceId);
@@ -1622,10 +1781,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance();
             const resp = await (_crd && promisifyWsRequest === void 0 ? (_reportPossibleCrUseOfpromisifyWsRequest({
               error: Error()
-            }), promisifyWsRequest) : promisifyWsRequest)((route, payload, cb, useRid, timeout) => ws.request(route, payload, cb, useRid, timeout), 'story_event_complete', {
+            }), promisifyWsRequest) : promisifyWsRequest)((route, payload, cb, useRid, timeout) => ws.request(route, payload, cb, useRid, timeout), (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+              error: Error()
+            }), GameConfig) : GameConfig).MESSAGE_TYPES.STORY_EVENT_COMPLETE, {
               map_code: this.mapCode,
               event_id: eventId,
-              battle_won: (opts == null ? void 0 : opts.battleWon) !== false,
+              // DEPRECATED: battle_won 不再作为权威字段；非战斗事件可忽略
               choice_id: opts == null ? void 0 : opts.choiceId
             }, 10000);
 
@@ -1667,8 +1828,56 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         _promiseStoryBattle(npcUid, ev, choiceId, alreadyAuthorized = false) {
           return new Promise(resolve => {
-            this._startStoryBattle(npcUid, ev, choiceId, alreadyAuthorized, won => resolve(won));
+            this._startStoryBattle(npcUid, ev, choiceId, alreadyAuthorized, result => resolve(result));
           });
+        }
+
+        async _finalizeAfterStoryBattleWin(npcUid, ev, battleResult, choiceId) {
+          if (this._isLocalPreview()) {
+            const data = await this._promiseComplete(npcUid, ev, {
+              choiceId
+            });
+
+            this._applyEffectsFromResponse(data);
+
+            this._markEventDone(npcUid, ev, choiceId ? {
+              choiceId
+            } : {});
+
+            return;
+          }
+
+          if (!battleResult.roomId) {
+            this.showToast('战斗已完成，缺少 roomId，剧情结算待恢复', 4000);
+
+            this._endActivation();
+
+            return;
+          }
+
+          try {
+            const eventId = this._stableEventId(npcUid, ev);
+
+            const data = await this._promiseBattleFinalize(eventId, battleResult.roomId, choiceId);
+
+            if ((_crd && shouldPlayRewardAnimation === void 0 ? (_reportPossibleCrUseOfshouldPlayRewardAnimation({
+              error: Error()
+            }), shouldPlayRewardAnimation) : shouldPlayRewardAnimation)(data)) {
+              this._applyEffectsFromResponse(data);
+            } else {
+              this._syncProgressFromPayload(data);
+            }
+
+            this._markEventDone(npcUid, ev, choiceId ? {
+              choiceId
+            } : {});
+          } catch {
+            this.showToast('战斗已完成，剧情结算待恢复', 4000);
+
+            this._endActivation();
+
+            this._syncNpcTaskIndicators();
+          }
         }
 
         _showChoiceFeedback(opt) {
@@ -1731,30 +1940,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
                 this._activationPausedForBattle = true;
                 await this._promiseInteract(npcUid, ev, opt.id);
-                const won = await this._promiseStoryBattle(npcUid, ev, opt.id, true);
-                if (!won) return;
-                const data = await this._promiseComplete(npcUid, ev, {
-                  battleWon: true
-                });
-
-                this._applyEffectsFromResponse(data);
-
-                this._markEventDone(npcUid, ev, {});
-
+                const battleResult = await this._promiseStoryBattle(npcUid, ev, opt.id, true);
+                if (!battleResult.won) return;
+                await this._finalizeAfterStoryBattleWin(npcUid, ev, battleResult, opt.id);
                 return;
               }
 
               this._activationPausedForBattle = true;
-              const won = await this._promiseStoryBattle(npcUid, ev, undefined, true);
-              if (!won) return;
-              const data = await this._promiseComplete(npcUid, ev, {
-                battleWon: true
-              });
-
-              this._applyEffectsFromResponse(data);
-
-              this._markEventDone(npcUid, ev, {});
-
+              const battleResult = await this._promiseStoryBattle(npcUid, ev, undefined, true);
+              if (!battleResult.won) return;
+              await this._finalizeAfterStoryBattleWin(npcUid, ev, battleResult);
               return;
             }
 
@@ -1814,7 +2009,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               const data = await this._promiseComplete(npcUid, ev, {
                 choiceId: opt.id
               });
-              if (!this.skipServerRequirements && (!data || Object.keys(data).length === 0)) return;
+              if (!this._isLocalPreview() && (!data || Object.keys(data).length === 0)) return;
 
               this._applyEffectsFromResponse(data);
 
@@ -2065,7 +2260,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
         }
         /**
-         * @param onFinished 战斗结束回调（剧情流 Promise 用）
+         * @param onFinished 战斗结束回调（含 roomId，供权威 finalize）
          */
 
 
@@ -2083,7 +2278,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!battle) {
             this._activationPausedForBattle = false;
             this.showToast('未配置 BattleScene，无法进入剧情战', 3000);
-            onFinished == null || onFinished(false);
+            onFinished == null || onFinished({
+              won: false,
+              roomId: '',
+              winner: 'enemy',
+              reason: 'no_battle_scene'
+            });
             return;
           }
 
@@ -2093,29 +2293,29 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               mapCode: this.mapCode,
               eventId,
               battleRef,
-              skipServerAuth: this.skipServerRequirements,
-              onFinished: (won, errMsg) => {
+              skipServerAuth: this._isLocalPreview(),
+              onFinished: result => {
                 this._activationPausedForBattle = false;
 
-                if (!won) {
+                if (!result.won) {
                   this._clearBattleProgress(npcUid, ev);
 
                   this._endActivation();
 
-                  this.showToast(errMsg || '战斗失败', 3200);
+                  this.showToast(result.errMsg || '战斗失败', 3200);
 
                   this._syncNpcTaskIndicators();
 
-                  onFinished == null || onFinished(false);
+                  onFinished == null || onFinished(result);
                   return;
                 }
 
-                onFinished == null || onFinished(true);
+                onFinished == null || onFinished(result);
               }
             });
           };
 
-          if (this.skipServerRequirements || alreadyAuthorized) {
+          if (this._isLocalPreview() || alreadyAuthorized) {
             launchBattle();
             return;
           }
@@ -2126,7 +2326,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           const eid = this._stableEventId(npcUid, ev);
 
-          ws.request('story_interact', {
+          ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            error: Error()
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.STORY_INTERACT, {
             map_code: this.mapCode,
             event_id: eid,
             npc_uid: npcUid,
@@ -2140,7 +2342,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               this._endActivation();
 
-              onFinished == null || onFinished(false);
+              onFinished == null || onFinished({
+                won: false,
+                roomId: '',
+                winner: 'enemy',
+                reason: 'unauthorized',
+                errMsg: resp == null ? void 0 : resp.message
+              });
               return;
             }
 
@@ -2203,9 +2411,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _parseMap() {
-          var _this$mapConfig3, _ref3, _raw$mapCode, _raw$client, _client$dialogueScrip, _client$choiceScripts, _raw$npcs, _ref4, _raw$tasks, _raw$mapWidth, _raw$mapHeight, _raw$server, _server$antiCheat;
+          var _this$mapConfig5, _ref3, _raw$mapCode, _raw$client, _client$dialogueScrip, _client$choiceScripts, _raw$npcs, _ref4, _raw$tasks, _raw$mapWidth, _raw$mapHeight, _raw$server, _server$antiCheat;
 
-          const raw = (_this$mapConfig3 = this.mapConfig) == null ? void 0 : _this$mapConfig3.json;
+          const raw = (_this$mapConfig5 = this.mapConfig) == null ? void 0 : _this$mapConfig5.json;
 
           if (!raw) {
             if (this.debugLog) storyLog('warn', 'StoryManager._parseMap: mapConfig 为空', {});
@@ -3923,12 +4131,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         initializer: function () {
           return null;
         }
-      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, "skipServerRequirements", [_dec4], {
+      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, "storyRuntimeMode", [_dec4], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
-          return true;
+          return _crd && DEFAULT_STORY_RUNTIME_MODE === void 0 ? (_reportPossibleCrUseOfDEFAULT_STORY_RUNTIME_MODE({
+            error: Error()
+          }), DEFAULT_STORY_RUNTIME_MODE) : DEFAULT_STORY_RUNTIME_MODE;
         }
       }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, "resetLocalStoryOnEnter", [_dec5], {
         configurable: true,

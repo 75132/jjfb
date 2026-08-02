@@ -63,6 +63,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("validateBattleRestoreState", "./battle-restore", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfStoryBattleFinishedResult(extras) {
+    _reporterNs.report("StoryBattleFinishedResult", "./story-runtime-mode", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -355,7 +359,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (storyCb) {
               this._storyBattleCallback = null;
               this._storyContext = null;
-              storyCb(false, '进入战斗超时，请重试');
+              storyCb({
+                won: false,
+                roomId: this.roomId || '',
+                winner: 'enemy',
+                reason: 'timeout',
+                errMsg: '进入战斗超时，请重试'
+              });
             }
 
             this.state = BattleState.FINISHED;
@@ -731,9 +741,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             skipServerAuth: opts.skipServerAuth
           });
 
-          if (!validated.ok) {
+          if (validated.ok === false) {
             console.error('[BattleScene] 剧情战拒绝创建:', validated.reason);
-            opts.onFinished(false, validated.reason === 'missing_event_id' ? '缺少 event_id' : validated.reason === 'missing_map_code' ? '缺少 map_code' : '剧情战斗参数不完整');
+            opts.onFinished({
+              won: false,
+              roomId: '',
+              winner: 'enemy',
+              reason: validated.reason,
+              errMsg: validated.reason === 'missing_event_id' ? '缺少 event_id' : validated.reason === 'missing_map_code' ? '缺少 map_code' : '剧情战斗参数不完整'
+            });
             return;
           }
 
@@ -754,7 +770,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (!characterId) {
             console.error('[BattleScene] 剧情战：未获取 characterId');
-            opts.onFinished(false, '未选择角色，无法进入战斗');
+            opts.onFinished({
+              won: false,
+              roomId: '',
+              winner: 'enemy',
+              reason: 'no_character',
+              errMsg: '未选择角色，无法进入战斗'
+            });
             return;
           }
 
@@ -797,7 +819,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               var msg = (createResp == null ? void 0 : createResp.message) || '剧情战斗房间创建失败';
               console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
-              (_this$_storyBattleCal = this._storyBattleCallback) == null || _this$_storyBattleCal.call(this, false, msg);
+              (_this$_storyBattleCal = this._storyBattleCallback) == null || _this$_storyBattleCal.call(this, {
+                won: false,
+                roomId: '',
+                winner: 'enemy',
+                reason: 'create_failed',
+                errMsg: msg
+              });
               this._storyBattleCallback = null;
               this._storyContext = null;
               this._entryIntent = null;
@@ -877,8 +905,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             error: Error()
           }), validateBattleRestoreState) : validateBattleRestoreState)(state, characterId);
 
-          if (!validated.ok) {
-            console.error("[BattleScene] restore rejected: " + validated.reason);
+          if (validated.ok === false) {
+            var rejectReason = validated.reason;
+            console.error("[BattleScene] restore rejected: " + rejectReason);
             return false;
           }
 
@@ -2399,11 +2428,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var result = {
             type: winner === 'player' ? 'win' : 'lose',
             reason
-          }; // 通知服务器战斗结果（当前仅用于记录日志）
+          }; // 通知服务器战斗结果（仅日志，无胜负权威意义；剧情结算走 story_battle_finalize）
 
           try {
             this.ws.send({
               type: 'battle_result',
+              // DEPRECATED: 客户端 battle_result / battle_won 不得作为剧情权威证据
               winner: winner === 'player' ? 'player' : 'enemy',
               reason,
               player: this.playerUnit ? this.buildUnitSummary(this.playerUnit) : null,
@@ -2441,7 +2471,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           this.log("\u6218\u6597\u7ED3\u675F\uFF1A" + (result.type === 'win' ? '玩家胜利' : '玩家失败') + "\uFF08\u539F\u56E0\uFF1A" + (reason === 'ko' ? '击倒' : '逃跑') + "\uFF09");
-          var finishedRoomId = this.roomId;
+          var finishedRoomId = this.roomId || '';
 
           if (finishedRoomId) {
             try {
@@ -2460,7 +2490,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (storyCb) {
             this._storyBattleCallback = null;
             this._storyContext = null;
-            storyCb(won);
+            storyCb({
+              won,
+              roomId: finishedRoomId,
+              winner,
+              reason
+            });
           } // 关闭 BattleScene 面板（上层可选择重新激活）
 
 

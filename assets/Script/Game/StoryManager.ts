@@ -34,8 +34,9 @@ import { ResourceManager } from './ResourceManager';
 import { StoryUIViewRefs } from './StoryUIViewRefs';
 import { WebSocketManager } from '../global/WebSocketManager';
 import {
-    normalizeBagItemsResponse,
-    ownedItemIdsFromSnapshot,
+    normalizeBagHasItemsResponse,
+    ownedItemIdsFromQuantities,
+    collectRequirementItemIdsFromMap,
 } from '../global/protocol/BagProtocol';
 import { BattleScene } from './BattleScene';
 import {
@@ -420,14 +421,22 @@ export class StoryManager extends Component {
     private _refreshOwnedItemsFromWs(): void {
         const ws = this._ws || WebSocketManager.getInstance();
         if (!ws?.getCharacterId?.()) return;
+        const itemIds = collectRequirementItemIdsFromMap(this.mapConfig?.json ?? null);
+        // 无物品条件时仍清空本地集合，避免脏数据
+        if (!itemIds.length) {
+            this._ownedItemIds.clear();
+            this._refreshNpcVisibility();
+            this._syncNpcTaskIndicators();
+            return;
+        }
         ws.request(
-            'bag_get',
-            { page: 1, page_size: 200 },
+            'bag_has_items',
+            { item_ids: itemIds },
             (resp: unknown) => {
-                const snapshot = normalizeBagItemsResponse(resp);
-                if (!snapshot.success) return;
+                const parsed = normalizeBagHasItemsResponse(resp);
+                if (!parsed.success) return;
                 this._ownedItemIds.clear();
-                for (const id of ownedItemIdsFromSnapshot(snapshot)) {
+                for (const id of ownedItemIdsFromQuantities(parsed.quantities)) {
                     this._ownedItemIds.add(id);
                 }
                 this._refreshNpcVisibility();

@@ -17,6 +17,7 @@ THROTTLE_CONFIG = {
     'get_character_info': 0.2,  # 200ms
     'get_player': 0.1,  # 100ms
     'bag_get': 0.1,  # 100ms
+    'bag_has_items': 0.1,
     'bag_use_item': 0.25,
     'bag_discard_item': 0.25,
     'bag_move_item': 0.2,

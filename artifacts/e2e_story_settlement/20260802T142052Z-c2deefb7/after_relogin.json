@@ -1,0 +1,37 @@
+{
+  "progress_cid": {
+    "character_id": "e2e_p3_20260802T142052Z-c2deefb7",
+    "user_id": "uid_20260802T142052Z-c2deefb7",
+    "map_code": "world_1783106205039",
+    "completed_event_ids": [],
+    "active_tasks": [],
+    "completed_task_ids": [],
+    "mainline_step": 0,
+    "pending_battle": {
+      "event_id": "world_1783106205039_chain_2_enemy_e2",
+      "battle_ref": "battle_1-50",
+      "map_code": "world_1783106205039",
+      "status": "battle_finished",
+      "room_id": "f3b982cbca6b4c8e81b7afbecdb9ba79",
+      "battle_result": {
+        "winner": "player",
+        "reason": "ko"
+      },
+      "updated_at": 1785680454.007515,
+      "request_id": "finalize-replay"
+    }
+  },
+  "progress_cid2": {
+    "character_id": "e2e_p3_20260802T142052Z-c2deefb7_ea",
+    "user_id": "uid_20260802T142052Z-c2deefb7",
+    "map_code": "world_1783106205039",
+    "completed_event_ids": [
+      "world_1783106205039_chain_2_enemy_e2"
+    ],
+    "active_tasks": [],
+    "completed_task_ids": [],
+    "mainline_step": 0,
+    "pending_battle": null
+  },
+  "settlement_status": "failed"
+}

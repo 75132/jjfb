@@ -1,0 +1,14 @@
+{
+  "character_id": "e2e_p3_20260802T142137Z-5e29c35d",
+  "event_id": "world_1783106205039_chain_2_enemy_e2",
+  "room_id": "1d7651c34a964dcb8070b9a29a542033",
+  "map_code": "world_1783106205039",
+  "request_id": "pre-restart",
+  "trace_id": "trace-20260802T142137Z-5e29c35d",
+  "status": "processing",
+  "applied_effects": [],
+  "error": null,
+  "created_at": 1785680297.9742424,
+  "updated_at": 1785680297.9742424,
+  "completed_at": null
+}

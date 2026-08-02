@@ -137,6 +137,7 @@ async def handle_story_battle_finalize(websocket, data, current_user_id, current
         room_id=str(room_id),
         request_id=str(request_id) if request_id else None,
         choice_id=data.get("choice_id"),
+        trace_id=str(data.get("trace_id") or request_id or ""),
     )
     if not ok:
         await utils.send_error_response(websocket, "story_battle_finalize", msg, code=400, request_data=data)

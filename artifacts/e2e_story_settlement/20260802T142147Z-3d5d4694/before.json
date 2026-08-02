@@ -1,0 +1,16 @@
+{
+  "character_id": "e2e_p3_20260802T142147Z-3d5d4694",
+  "room_id": "570e7808d76b4c9d907aec2c21162542",
+  "pending": {
+    "event_id": "world_1783106205039_chain_2_enemy_e2",
+    "battle_ref": "battle_1-50",
+    "map_code": "world_1783106205039",
+    "status": "battle_finished",
+    "room_id": "570e7808d76b4c9d907aec2c21162542",
+    "battle_result": {
+      "winner": "player",
+      "reason": "ko"
+    }
+  },
+  "trace_id": "trace-20260802T142147Z-3d5d4694"
+}

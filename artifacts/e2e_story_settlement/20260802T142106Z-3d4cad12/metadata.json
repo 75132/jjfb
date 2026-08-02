@@ -1,0 +1,21 @@
+{
+  "run_id": "20260802T142106Z-3d4cad12",
+  "commit_sha": "b39126665520155020fc105fb7b123fd38ed1460",
+  "character_id": "e2e_p3_20260802T142106Z-3d4cad12",
+  "map_code": "world_1783106205039",
+  "event_id": "world_1783106205039_chain_2_enemy_e2",
+  "battle_ref": "battle_1-50",
+  "room_id": "5c4f083e5b0e42fcab0fc5e7be6830a4",
+  "trace_id": "trace-20260802T142106Z-3d4cad12",
+  "settlement_key": "e2e_p3_20260802T142106Z-3d4cad12|world_1783106205039_chain_2_enemy_e2|5c4f083e5b0e42fcab0fc5e7be6830a4",
+  "server_restart_at": "2026-08-02T14:21:08.539916+00:00",
+  "conclusion": {
+    "processing_resume_ok": false,
+    "completed_replay_ok": false,
+    "effects_applied_resume_ok": true,
+    "finished_room_reload_ok": true,
+    "finished_not_in_resume": true
+  },
+  "final_pass": false,
+  "note": "Server-side Mongo restart evidence. Cocos editor manual steps still required for full UI closed-loop."
+}

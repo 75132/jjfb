@@ -880,6 +880,77 @@ async def handle_bag_get(websocket, data, current_character_id):
         }, request_data=data)
 
 
+async def handle_bag_has_items(websocket, data, current_character_id):
+    """
+    轻量查询：仅返回请求的 item_id 数量汇总（多堆叠相加）。
+    供剧情 requirement / NPC 显隐，避免 bag_get 分页 200 截断。
+    """
+    token = data.get('token')
+    user_id = data.get('user_id')
+    user = utils.get_user_by_id_or_token(user_id=user_id, token=token)
+    if not user:
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_has_items_response',
+            'success': False,
+            'code': 401,
+            'message': '用户不存在或未登录',
+            'quantities': {},
+        }, request_data=data)
+        return
+
+    cid = data.get('character_id') or current_character_id
+    if not cid:
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_has_items_response',
+            'success': False,
+            'code': 400,
+            'message': '角色ID不能为空',
+            'quantities': {},
+        }, request_data=data)
+        return
+
+    raw_ids = data.get('item_ids') or data.get('itemIds') or []
+    if not isinstance(raw_ids, list):
+        raw_ids = []
+    item_ids = []
+    for x in raw_ids:
+        try:
+            iid = int(x)
+            if iid > 0:
+                item_ids.append(iid)
+        except (TypeError, ValueError):
+            continue
+    # 去重保序
+    seen = set()
+    uniq = []
+    for iid in item_ids:
+        if iid not in seen:
+            seen.add(iid)
+            uniq.append(iid)
+
+    try:
+        from services.story_service import count_items_by_ids
+
+        quantities = await count_items_by_ids(user['_id'], cid, uniq)
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_has_items_response',
+            'success': True,
+            'quantities': quantities,
+            'request_id': data.get('request_id'),
+        }, request_data=data)
+    except Exception as e:
+        print(f'❌ [BagHandler] bag_has_items 失败: {e}')
+        import traceback
+        traceback.print_exc()
+        await utils.send_direct_response(websocket, {
+            'type': 'bag_has_items_response',
+            'success': False,
+            'code': 500,
+            'message': f'查询失败: {str(e)}',
+            'quantities': {},
+        }, request_data=data)
+
+
 async def _pet_owned_by_character(user, character_id, pet_id) -> bool:
     """校验机甲属于当前登录用户与角色（防越权 pet_id）。"""
     if pet_id is None:

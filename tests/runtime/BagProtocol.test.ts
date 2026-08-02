@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   normalizeBagItemsResponse,
   ownedItemIdsFromSnapshot,
+  normalizeBagHasItemsResponse,
+  ownedItemIdsFromQuantities,
+  collectRequirementItemIdsFromMap,
 } from "../../assets/Script/global/protocol/BagProtocol.ts";
 
 describe("normalizeBagItemsResponse", () => {
@@ -83,5 +86,52 @@ describe("normalizeBagItemsResponse", () => {
     });
     const owned = ownedItemIdsFromSnapshot(snap);
     expect(owned.has(9001)).toBe(true);
+  });
+});
+
+describe("bag_has_items for StoryManager", () => {
+  it("StoryManager uses bag_has_items quantities (not bag_get page 200)", () => {
+    const parsed = normalizeBagHasItemsResponse({
+      type: "bag_has_items_response",
+      success: true,
+      request_id: "bh-1",
+      quantities: { "9001": 1, "1002": 0 },
+    });
+    expect(parsed.success).toBe(true);
+    expect(parsed.quantities["9001"]).toBe(1);
+    expect(parsed.quantities["1002"]).toBe(0);
+    const owned = ownedItemIdsFromQuantities(parsed.quantities);
+    expect(owned.has(9001)).toBe(true);
+    expect(owned.has(1002)).toBe(false);
+  });
+
+  it("quest item beyond bag page 200 still recognized via quantities", () => {
+    // bag_get page_size=200 会漏掉第 201 条；bag_has_items 直接按 id 汇总
+    const parsed = normalizeBagHasItemsResponse({
+      success: true,
+      quantities: { "4242": 2 },
+    });
+    expect(ownedItemIdsFromQuantities(parsed.quantities).has(4242)).toBe(true);
+  });
+
+  it("collectRequirementItemIdsFromMap reads appear and server requirements", () => {
+    const ids = collectRequirementItemIdsFromMap({
+      npcs: [
+        {
+          npcUid: "a",
+          appear: { requirements: [{ type: "item_owned", itemId: 11 }] },
+          events: [
+            { server: { requirements: [{ type: "item_owned", itemId: 22 }, { type: "level", value: 1 }] } },
+          ],
+        },
+      ],
+    });
+    expect(ids).toEqual([11, 22]);
+  });
+
+  it("multi-stack quantities aggregate for ownership", () => {
+    const owned = ownedItemIdsFromQuantities({ "7": 0, "8": 5 });
+    expect(owned.has(7)).toBe(false);
+    expect(owned.has(8)).toBe(true);
   });
 });

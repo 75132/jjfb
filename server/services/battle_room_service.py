@@ -69,8 +69,10 @@ class BattleRoomService:
         # (character_id, request_id) -> (room_id, created_at)
         self._pve_create_idempotency: Dict[Tuple[str, str], Tuple[str, float]] = {}
 
-        # 房间空闲超时时间（秒），超过则自动清理
+        # 房间空闲超时时间（秒），超过则自动清理（仅 in_progress）
         self.ROOM_IDLE_TIMEOUT = 10 * 60  # 10 分钟
+        # finished 剧情房间保留期（秒），供 finalize 跨重启回读；不沿用 10 分钟空闲清理
+        self.FINISHED_ROOM_RETENTION_SECONDS = 48 * 3600  # 48 小时
 
     def _get_pve_create_lock(self, character_id: str) -> asyncio.Lock:
         cid = str(character_id)
@@ -426,19 +428,76 @@ class BattleRoomService:
             pass
         return None
 
+    def _delete_room_from_db(self, room_id: str) -> None:
+        if self._persist_col is None or not room_id:
+            return
+        try:
+            from handlers import utils as handler_utils
+
+            handler_utils.safe_mongo_operation(
+                lambda: self._persist_col.delete_one({"room_id": room_id})
+            )
+        except Exception as e:
+            print(f"⚠️ [BattleRoom] delete persist failed: {e}")
+
+    def _story_settlement_pending(self, room: Dict[str, Any]) -> bool:
+        """finished 剧情房若结算未完成，不得删除持久化数据。"""
+        ctx = room.get("story_context")
+        if not isinstance(ctx, dict) or not ctx.get("event_id"):
+            return False
+        try:
+            from services.story_settlement_ledger import get_settlements_col, STATUS_COMPLETED
+            from handlers import utils as handler_utils
+
+            cid = str(room.get("character_id") or "")
+            eid = str(ctx.get("event_id") or "")
+            rid = str(room.get("room_id") or "")
+            if not (cid and eid and rid):
+                return True
+            col = get_settlements_col()
+            if col is None:
+                return True
+            doc = handler_utils.safe_mongo_operation(
+                lambda: col.find_one(
+                    {"character_id": cid, "event_id": eid, "room_id": rid}
+                )
+            )
+            if not doc:
+                return True
+            return doc.get("status") != STATUS_COMPLETED
+        except Exception:
+            return True
+
     def get_room_by_id(self, room_id: str) -> Optional[Dict[str, Any]]:
         room = self.rooms.get(room_id)
         if not room:
             room = self._load_room_from_db(room_id)
             if room:
                 self.rooms[room_id] = room
-                cid = str(room.get('character_id') or room.get('player_character_id') or '')
-                if cid and room.get('status') == 'in_progress':
+                cid = str(room.get("character_id") or room.get("player_character_id") or "")
+                # finished 房间不得重新加入 char_room_index（避免 resume）
+                if cid and room.get("status") == "in_progress":
                     self.char_room_index[cid] = room_id
         if not room:
             return None
-        # 检查超时
-        if self._now() - room.get("last_action_ts", room.get("created_at", 0)) > self.ROOM_IDLE_TIMEOUT:
+
+        status = room.get("status")
+        now = self._now()
+        if status == "finished":
+            finished_at = float(
+                room.get("updated_at")
+                or room.get("last_action_ts")
+                or room.get("created_at")
+                or 0
+            )
+            if now - finished_at > self.FINISHED_ROOM_RETENTION_SECONDS:
+                if self._story_settlement_pending(room):
+                    return room
+                self._destroy_room(room_id, delete_db=True)
+                return None
+            return room
+
+        if now - room.get("last_action_ts", room.get("created_at", 0)) > self.ROOM_IDLE_TIMEOUT:
             self._destroy_room(room_id)
             return None
         return room
@@ -465,10 +524,12 @@ class BattleRoomService:
             out.append(r)
         return out
 
-    def _destroy_room(self, room_id: str) -> None:
+    def _destroy_room(self, room_id: str, *, delete_db: bool = False) -> None:
         room = self.rooms.pop(room_id, None)
         if not room:
             self._clear_idempotency_for_room(room_id)
+            if delete_db:
+                self._delete_room_from_db(room_id)
             return
         if room.get("mode") == "pvp":
             for cid_raw in [room.get("player_character_id"), room.get("enemy_character_id")]:
@@ -480,6 +541,8 @@ class BattleRoomService:
             if cid and self.char_room_index.get(cid) == room_id:
                 self.char_room_index.pop(cid, None)
         self._clear_idempotency_for_room(room_id)
+        if delete_db:
+            self._delete_room_from_db(room_id)
 
     # ----------------------
     # 战斗指令与结算

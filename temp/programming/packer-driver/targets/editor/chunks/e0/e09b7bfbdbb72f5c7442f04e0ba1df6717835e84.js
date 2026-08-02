@@ -348,7 +348,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         request(route, data = {}, callback, requireAuth = true, timeout = 10000) {
           // 超时重试（针对只读查询，避免偶发 408 直接失败）
-          const RETRY_ON_TIMEOUT_ROUTES = new Set(['bag_get', 'get_robot_pets', 'get_character_info', 'get_player', 'get_chat_history', 'get_announcements_history', 'battle_room_resume', 'world_enter']); // 生成 request_id（如果消息中没有）
+          const RETRY_ON_TIMEOUT_ROUTES = new Set(['bag_get', 'bag_has_items', 'get_robot_pets', 'get_character_info', 'get_player', 'get_chat_history', 'get_announcements_history', 'battle_room_resume', 'world_enter']); // 生成 request_id（如果消息中没有）
 
           if (!data.request_id) {
             data.request_id = (_crd && RequestRetryManager === void 0 ? (_reportPossibleCrUseOfRequestRetryManager({
@@ -384,6 +384,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               case 'bag_get':
                 responseType = 'bag_items';
+                break;
+
+              case 'bag_has_items':
+                responseType = 'bag_has_items_response';
                 break;
 
               case 'get_robot_pets':

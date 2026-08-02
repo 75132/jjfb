@@ -1,0 +1,16 @@
+{
+  "room": {
+    "room_id": "570e7808d76b4c9d907aec2c21162542",
+    "status": "finished",
+    "result": {
+      "winner": "player",
+      "reason": "ko"
+    },
+    "story_context": {
+      "map_code": "world_1783106205039",
+      "event_id": "world_1783106205039_chain_2_enemy_e2",
+      "battle_ref": "battle_1-50"
+    },
+    "character_id": "e2e_p3_20260802T142147Z-3d5d4694"
+  }
+}

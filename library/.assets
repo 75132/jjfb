@@ -1513,7 +1513,8 @@
             "UI\\Game\\MiniGame\\Daletou\\ui_modal_dialog.png",
             "UI\\Game\\MiniGame\\Daletou\\ui_modal_dim.png",
             "Script\\Game\\battle-entry-intent.ts",
-            "Script\\Game\\battle-restore.ts"
+            "Script\\Game\\battle-restore.ts",
+            "Script\\Game\\story-runtime-mode.ts"
         ]
     }
 }
