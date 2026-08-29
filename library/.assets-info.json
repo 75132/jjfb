@@ -86,7 +86,7 @@
       "uuid": "417669d8-a87a-41c9-b258-0fe6dfc4639d"
     },
     "Script\\Game": {
-      "time": 1785680792654.5908,
+      "time": 1785677909627.944,
       "uuid": "3bae7031-f184-47c7-9153-defd9af00a25"
     },
     "Script\\global": {
@@ -10446,7 +10446,7 @@
       "time": 1777837450627.5916
     },
     "Script\\Game\\StoryManager.ts": {
-      "time": 1785680792654.5908,
+      "time": 1785680235653.166,
       "uuid": "c3d8a7f1-4e2b-5c9d-a1b2-3c4d5e6f7081"
     },
     "Script\\Game\\STORY_MIGRATION.md": {
