@@ -1,0 +1,845 @@
+[09:28:34:672] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@4728e788
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:28:34:673] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$95/89496540@36ee01c1
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.activityService.lambda$commonAc$40(activityService.java:705) ~[classes/:?]
+	at my.service.activityService.lambda$null$1(activityService.java:265) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:28:34:706] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$95/89496540@5cc4c722
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.activityService.lambda$commonAc$40(activityService.java:719) ~[classes/:?]
+	at my.service.activityService.lambda$null$1(activityService.java:265) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:28:36:663] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@bcde34a
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:28:44:897] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=9h40m36s614ms753µs700ns).
+[09:31:48:025] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@215c867f ((conn=2591) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:33:38:029] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@28dc02b7
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:33:40:037] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@27e9347d
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:33:58:029] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5de2435f ((conn=2594) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:33:58:031] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@51581810 ((conn=2595) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:33:58:037] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@43590747 ((conn=2596) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:36:58:027] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5bc86424 ((conn=2601) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:38:48:023] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@793012a0
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:38:50:027] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@6ccd63fa
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:39:28:029] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5d9fdfba ((conn=2604) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:39:28:030] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7a5b6a9b ((conn=2605) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:42:28:014] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@615edae9 ((conn=2610) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:42:28:015] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6f9928b2 ((conn=2611) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:43:48:025] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@5149f06b
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:43:50:033] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@1fedc259
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:45:08:021] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5bc99f51 ((conn=2614) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:47:28:020] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1e5a9b60 ((conn=2619) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:48:18:015] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@68ab2a0d ((conn=2620) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:48:18:017] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6253417d ((conn=2621) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:48:58:018] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@694041b6
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:49:00:020] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@59080ee3
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:50:48:023] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3fd5ea7a ((conn=2624) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:50:48:026] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@352d810a ((conn=2625) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:50:48:026] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@702f09cb ((conn=2626) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:53:58:018] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@743ba7bc
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:54:00:023] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@377f9a13
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:56:38:018] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5131f421 ((conn=2634) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:58:58:018] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@12c96bb0
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:59:00:025] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@5599f7d4
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[09:59:48:026] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@e373b5b ((conn=2640) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[09:59:48:028] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@aa0cc47 ((conn=2641) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:04:08:021] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@f8f3d3f
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:04:10:022] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@5f697edd
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:05:18:028] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6b0e67a0 ((conn=2649) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:05:18:029] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2e0ce4a5 ((conn=2650) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:05:18:030] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7fcdfd38 ((conn=2651) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:09:08:022] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@5b051b7d
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:09:10:023] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@7454ff01
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:14:08:028] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@7bf47846
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:14:10:038] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@61368c29
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:19:18:029] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@dc427c
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:19:20:030] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@78fbd2c2
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:23:08:028] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@19036e08 ((conn=2680) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:23:08:028] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@a2093be ((conn=2681) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:24:28:020] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@430adb48
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:24:30:028] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@4db1e06d
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:29:28:025] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@295b3771
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:29:30:032] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@19b359ff
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:34:38:013] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@16fd5cea
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:34:40:025] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@67422e8d
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:34:58:015] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6d6b09e2 ((conn=2700) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:34:58:015] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@31c3927a ((conn=2701) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:39:38:015] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@38ad7978
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:39:40:024] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@37d90a31
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:44:38:024] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@2bc67263
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:44:40:029] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@6bf04fa3
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:49:38:025] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@82a007b
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeDapanRes(investService.java:647) ~[classes/:?]
+	at my.service.investService.createDpResult(investService.java:535) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$7(activityService.java:321) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:49:40:036] [WARN] - io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:169) - A task raised an exception. Task: my.service.activityService$$Lambda$97/1857847620@ee3be79
+java.lang.NoClassDefFoundError: my/model/ChannelSupervise
+	at my.service.chatService.send(chatService.java:182) ~[classes/:?]
+	at my.service.chatService.putSysMsg(chatService.java:325) ~[classes/:?]
+	at my.service.investService.noticeQHRes(investService.java:275) ~[classes/:?]
+	at my.service.investService.createQhResult(investService.java:161) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$11(activityService.java:372) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$39(activityService.java:674) ~[classes/:?]
+	at my.service.activityService.lambda$null$2(activityService.java:274) ~[classes/:?]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+[10:52:53:346] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[10:56:23:673] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@28724ceb ((conn=2742) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:58:53:677] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@48d84609 ((conn=2747) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[10:59:03:546] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[11:01:24:437] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@37ddd802 ((conn=2754) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:01:24:441] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@78272ab2 ((conn=2755) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:01:24:441] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21e3e07c ((conn=2756) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:01:24:442] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@499592a1 ((conn=2757) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:03:40:697] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[11:06:01:671] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5e10dbfd ((conn=2764) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:09:21:664] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@ad5a788 ((conn=2769) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:09:21:668] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2dccf8 ((conn=2770) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:09:21:670] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@452f5299 ((conn=2771) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:09:21:685] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@62614453 ((conn=2772) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:12:01:676] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5eeb15c ((conn=2775) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:12:01:678] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1d8f6311 ((conn=2774) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:12:01:686] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@19b0f478 ((conn=2777) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:12:01:689] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@b294f91 ((conn=2776) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:15:25:478] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[11:17:56:423] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2a46b561 ((conn=2790) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:21:06:430] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@40b26907 ((conn=2795) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:21:06:433] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@18f633c ((conn=2796) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:21:06:435] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@63eda5e2 ((conn=2797) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:27:16:432] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4dbc2227 ((conn=2807) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:33:06:424] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4c566bed ((conn=2817) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:35:06:432] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@311518cf ((conn=2821) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:35:06:432] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@34ba326 ((conn=2820) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:38:36:427] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@215e2d1b ((conn=2827) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:40:56:422] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76172d38 ((conn=2831) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:40:56:422] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1dfbe5dd ((conn=2830) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:40:56:430] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@133c1812 ((conn=2832) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:44:06:424] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@409f8d7b ((conn=2838) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:49:26:427] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2042b800 ((conn=2847) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:49:26:427] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@173d8904 ((conn=2846) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:49:26:428] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2abad370 ((conn=2848) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[13:58:32:503] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=2h9m6s225ms377µs500ns).
+[14:01:36:311] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6b3c1786 ((conn=2858) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:13:26:317] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7ee22257 ((conn=2878) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:18:56:306] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2ff78f9a ((conn=2886) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:22:16:308] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2349b81d ((conn=2892) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:22:16:309] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6fb84843 ((conn=2893) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:24:26:308] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@53593b00 ((conn=2896) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:27:36:306] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2b50bf78 ((conn=2901) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:27:36:307] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21a8d408 ((conn=2902) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:27:36:308] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@64aa4e59 ((conn=2903) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:27:36:309] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4aaf86cb ((conn=2904) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:33:26:305] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1581dee6 ((conn=2912) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:33:26:308] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@11be588e ((conn=2913) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:33:26:312] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@54bcd4dd ((conn=2914) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:33:36:314] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76893b3a ((conn=2915) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:45:26:317] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7e0caab1 ((conn=2935) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:50:56:312] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7005b63e ((conn=2943) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:54:16:318] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1141d5f8 ((conn=2949) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:54:16:318] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@185cea71 ((conn=2950) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:54:16:319] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1f8629a0 ((conn=2951) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:42:54:141] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=3h46m7s449ms118µs500ns).
+[18:51:46:241] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6e44c110 ((conn=2969) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:51:46:242] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3ea138f5 ((conn=2970) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:56:56:243] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@55046fa8 ((conn=2979) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:00:26:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1f05e161 ((conn=2986) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:03:46:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@af9bb81 ((conn=2992) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:05:56:240] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@38afa37e ((conn=2995) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:05:56:242] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3257c80e ((conn=2996) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:05:56:242] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@77555020 ((conn=2997) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:09:16:233] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4b4e7d57 ((conn=3002) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:12:06:249] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@dbdff95 ((conn=3007) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:14:36:243] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@bbb1eb ((conn=3010) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:14:36:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@55db9d37 ((conn=3011) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:14:36:245] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@303b9976 ((conn=3012) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:26:26:238] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@d1b2f96 ((conn=3030) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:26:26:240] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@412a187f ((conn=3031) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:26:26:240] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3c5c46ba ((conn=3032) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:34:26:247] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@871756f ((conn=3044) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:37:46:236] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5f4465df ((conn=3051) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:40:56:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5a0f6f0c ((conn=3055) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:40:56:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2db4927a ((conn=3056) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:40:56:247] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@fa3bd13 ((conn=3057) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:43:06:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4a67e60b ((conn=3060) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:43:06:245] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@33adc1e1 ((conn=3061) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:36:232] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@329a1216 ((conn=3067) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:26:237] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3928c4ea ((conn=3071) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:26:239] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@33d0af9a ((conn=3072) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:52:06:233] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@65a243a6 ((conn=3075) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:52:06:234] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@19bb7c40 ((conn=3076) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:52:06:235] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@63b0db4 ((conn=3077) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:54:06:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@614efc21 ((conn=3080) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:57:26:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2721f93b ((conn=3085) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:57:26:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5a4b6eee ((conn=3086) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:57:26:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@45cdf16b ((conn=3087) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:00:06:233] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@e6b3e5f ((conn=3090) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:00:06:235] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@62e58e0d ((conn=3091) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:00:06:236] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5d6b80a1 ((conn=3092) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:14:46:245] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4248838b ((conn=3115) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:16:56:243] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3e206c27 ((conn=3120) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:16:56:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6f4a9e6c ((conn=3121) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:20:06:245] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7afddd4e ((conn=3126) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:23:16:232] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@269dc93a ((conn=3132) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:23:16:232] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@32b5e8ad ((conn=3131) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:28:46:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@e53ed14 ((conn=3140) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:29:06:236] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@77989a21 ((conn=3141) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:29:06:239] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@46a50a34 ((conn=3142) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:34:56:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@66bee300 ((conn=3151) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:34:56:249] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@25fc164e ((conn=3152) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:37:36:245] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76d23784 ((conn=3155) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:37:36:245] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@9a2b220 ((conn=3156) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:37:36:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@476e646e ((conn=3157) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:01:16:241] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@101d8b8f ((conn=3195) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:01:16:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1e44f6df ((conn=3196) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:18:46:240] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@244dba54 ((conn=3225) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:18:46:240] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@17b7656e ((conn=3226) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:18:46:242] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1885d6f9 ((conn=3227) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:21:56:242] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7cbabb22 ((conn=3232) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:27:36:242] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@763f2872 ((conn=3240) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:27:36:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@47031e72 ((conn=3241) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:27:36:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@19e310cb ((conn=3242) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:48:26:246] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@54b96673 ((conn=3276) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:48:26:247] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5f096ce8 ((conn=3277) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:56:36:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@30b7cc7e ((conn=3290) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[21:59:56:233] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@669004bd ((conn=3295) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:03:06:238] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@659e3785 ((conn=3300) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:03:06:238] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@31a23d5e ((conn=3301) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:03:06:239] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4f1cf5c5 ((conn=3302) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:05:56:236] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@d5083ae ((conn=3305) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:05:56:238] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@aade5ef ((conn=3306) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:05:56:239] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3247685f ((conn=3307) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:11:46:232] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@39872fe0 ((conn=3317) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:20:36:244] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3cb8301e ((conn=3331) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:37:00:156] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[22:39:20:495] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@8eb5a08 ((conn=3366) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:39:20:495] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@57a3598 ((conn=3365) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:39:20:500] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@f825ee8 ((conn=3367) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:39:20:502] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4a80d17c ((conn=3368) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:42:40:495] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@570c30a3 ((conn=3373) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:45:20:487] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7b038385 ((conn=3378) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:51:12:180] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@a33e78e ((conn=3386) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:51:12:185] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@72c1f4f ((conn=3387) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:51:12:187] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3bf3295a ((conn=3388) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:02:20:490] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7d449cc5 ((conn=3407) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:02:20:495] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@77bcf7b5 ((conn=3408) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:05:30:487] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@31d1a310 ((conn=3413) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.

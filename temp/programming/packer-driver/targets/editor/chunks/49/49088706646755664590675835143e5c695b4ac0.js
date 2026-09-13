@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, ScrollView, instantiate, UITransform, Color, Sprite, SpriteFrame, WebSocketManager, GameConfig, DataCacheManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, robotGameEvents, RobotGameEvent, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _class3, _crd, ccclass, property, RobotList;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, ScrollView, instantiate, UITransform, Color, Sprite, SpriteFrame, WebSocketManager, GameConfig, DataCacheManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, robotGameEvents, RobotGameEvent, TipWindows, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _class3, _crd, ccclass, property, RobotList;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -41,6 +41,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("RobotGameEvent", "../global/RobotGameEvents", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfTipWindows(extras) {
+    _reporterNs.report("TipWindows", "../global/TipWindows", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -72,6 +76,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       emitRobotDataUpdated = _unresolved_6.emitRobotDataUpdated;
       robotGameEvents = _unresolved_6.robotGameEvents;
       RobotGameEvent = _unresolved_6.RobotGameEvent;
+    }, function (_unresolved_7) {
+      TipWindows = _unresolved_7.TipWindows;
     }],
     execute: function () {
       _crd = true;
@@ -155,6 +161,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._confirming = false;
           this._submittingBattleTeam = false;
           this._releasing = false;
+
+          /** 服务端返回的机甲总数（用于最后一台保护） */
+          this._robotCount = 0;
 
           /** 出战/下场入口防抖（毫秒），与 UILockManager 互补 */
           this._lastDeployClickMs = 0;
@@ -448,6 +457,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return this.normPetId(String((_ref2 = (_ref3 = (_p$pet_id = p.pet_id) != null ? _p$pet_id : p._id) != null ? _ref3 : p.id) != null ? _ref2 : '')) === n;
           });
         }
+        /** 是否只剩最后一台机甲（放生/分解前客户端预检） */
+
+
+        isLastRobot() {
+          return this.getRobotCount() <= 1;
+        }
+
+        getRobotCount() {
+          return Math.max(this._robotCount, this.currentPets.length);
+        }
         /**
          * 出战与列表都就绪时只渲染一次，避免「先错后对」和重复渲染。
          * 由 GET_BATTLE_TEAM 回调和 onPetsResponse 在收到数据后调用。
@@ -560,7 +579,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onPetsResponse(data) {
-          var _data$data2, _data$battle_team2, _data$data3, _data$pagination, _data$data4, _pagination$page;
+          var _data$data2, _data$battle_team2, _data$data3, _data$pagination, _data$data4, _pagination$page, _ref4, _ref5, _ref6, _data$robotcount, _data$data5;
 
           const isUpdate = (data == null ? void 0 : data.type) === (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
@@ -645,6 +664,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.applyServerTeamVersion(data);
           const pagination = (_data$pagination = data.pagination) != null ? _data$pagination : (_data$data4 = data.data) == null ? void 0 : _data$data4.pagination;
           const page = (_pagination$page = pagination == null ? void 0 : pagination.page) != null ? _pagination$page : 0;
+          this._robotCount = Number((_ref4 = (_ref5 = (_ref6 = (_data$robotcount = data.robotcount) != null ? _data$robotcount : (_data$data5 = data.data) == null ? void 0 : _data$data5.robotcount) != null ? _ref6 : pagination == null ? void 0 : pagination.total) != null ? _ref5 : this.currentPets.length) != null ? _ref4 : 0);
 
           if (page === 0 && !Array.isArray(bt) && this.ws && !this._fallbackBattleTeamRequested) {
             this._fallbackBattleTeamRequested = true;
@@ -717,9 +737,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const rest = []; // 分离出战和非出战机甲（用规范化 id 比较，与 battleTeam 小写存储一致）
 
           for (const p of this.currentPets) {
-            var _ref4, _ref5, _p$pet_id2;
+            var _ref7, _ref8, _p$pet_id2;
 
-            const id = this.normPetId(String((_ref4 = (_ref5 = (_p$pet_id2 = p.pet_id) != null ? _p$pet_id2 : p._id) != null ? _ref5 : p.id) != null ? _ref4 : ''));
+            const id = this.normPetId(String((_ref7 = (_ref8 = (_p$pet_id2 = p.pet_id) != null ? _p$pet_id2 : p._id) != null ? _ref8 : p.id) != null ? _ref7 : ''));
             const battleIndex = this.battleTeam.findIndex(bid => this.normPetId(bid) === id);
 
             if (battleIndex >= 0) {
@@ -742,18 +762,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         refreshListUI() {
-          var _ref6, _ref7, _this$selectedPet$pet;
+          var _ref9, _ref10, _this$selectedPet$pet;
 
-          const sid = this.selectedPet ? this.normPetId(String((_ref6 = (_ref7 = (_this$selectedPet$pet = this.selectedPet.pet_id) != null ? _this$selectedPet$pet : this.selectedPet._id) != null ? _ref7 : this.selectedPet.id) != null ? _ref6 : '')) : '';
+          const sid = this.selectedPet ? this.normPetId(String((_ref9 = (_ref10 = (_this$selectedPet$pet = this.selectedPet.pet_id) != null ? _this$selectedPet$pet : this.selectedPet._id) != null ? _ref10 : this.selectedPet.id) != null ? _ref9 : '')) : '';
           this.sortByBattleTeam();
           this.bgColorMap.clear();
           this.renderList(this.currentPets);
 
           if (sid) {
             const idx = this.currentPets.findIndex(p => {
-              var _ref8, _ref9, _p$pet_id3;
+              var _ref11, _ref12, _p$pet_id3;
 
-              return this.normPetId(String((_ref8 = (_ref9 = (_p$pet_id3 = p.pet_id) != null ? _p$pet_id3 : p._id) != null ? _ref9 : p.id) != null ? _ref8 : '')) === sid;
+              return this.normPetId(String((_ref11 = (_ref12 = (_p$pet_id3 = p.pet_id) != null ? _p$pet_id3 : p._id) != null ? _ref12 : p.id) != null ? _ref11 : '')) === sid;
             });
 
             if (idx >= 0) {
@@ -843,10 +863,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         fillRow(node, pet, _index) {
-          var _ref10, _ref11, _pet$pet_id, _ref12, _pet$Form, _pet$Level, _pet$Class;
+          var _ref13, _ref14, _pet$pet_id, _ref15, _pet$Form, _pet$Level, _pet$Class;
 
-          const id = String((_ref10 = (_ref11 = (_pet$pet_id = pet.pet_id) != null ? _pet$pet_id : pet._id) != null ? _ref11 : pet.id) != null ? _ref10 : '');
-          const form = Number((_ref12 = (_pet$Form = pet.Form) != null ? _pet$Form : pet.Fo) != null ? _ref12 : 0);
+          const id = String((_ref13 = (_ref14 = (_pet$pet_id = pet.pet_id) != null ? _pet$pet_id : pet._id) != null ? _ref14 : pet.id) != null ? _ref13 : '');
+          const form = Number((_ref15 = (_pet$Form = pet.Form) != null ? _pet$Form : pet.Fo) != null ? _ref15 : 0);
           const name = (pet.RobotName || '') + (form === 1 ? '|初' : form === 2 ? '|中' : form === 3 ? '|终' : '');
           const level = String((_pet$Level = pet.Level) != null ? _pet$Level : 1);
           const cls = Number((_pet$Class = pet.Class) != null ? _pet$Class : 1); // MechaClass 图标键：兼容两种常见命名方式
@@ -877,9 +897,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             const tl = tagN.getComponent(Label);
 
             if (tl) {
-              var _ref13, _ref14, _pet$pet_id2;
+              var _ref16, _ref17, _pet$pet_id2;
 
-              const pid = String((_ref13 = (_ref14 = (_pet$pet_id2 = pet.pet_id) != null ? _pet$pet_id2 : pet._id) != null ? _ref14 : pet.id) != null ? _ref13 : '');
+              const pid = String((_ref16 = (_ref17 = (_pet$pet_id2 = pet.pet_id) != null ? _pet$pet_id2 : pet._id) != null ? _ref17 : pet.id) != null ? _ref16 : '');
               const inTeam = !!pid && this.battleTeam.some(bid => this.normPetId(bid) === this.normPetId(pid));
               tl.string = inTeam ? '出战' : '';
             }
@@ -1008,11 +1028,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         updateRowBattleFilter(node, pet) {
-          var _ref15, _ref16, _pet$pet_id3, _bg$getComponent2;
+          var _ref18, _ref19, _pet$pet_id3, _bg$getComponent2;
 
           // 关键修复：如果当前行被选中，不覆盖选中效果（黄色优先）
           if (this.selectedNode === node) return;
-          const id = this.normPetId(String((_ref15 = (_ref16 = (_pet$pet_id3 = pet.pet_id) != null ? _pet$pet_id3 : pet._id) != null ? _ref16 : pet.id) != null ? _ref15 : ''));
+          const id = this.normPetId(String((_ref18 = (_ref19 = (_pet$pet_id3 = pet.pet_id) != null ? _pet$pet_id3 : pet._id) != null ? _ref19 : pet.id) != null ? _ref18 : ''));
           const inTeam = this.battleTeam.some(bid => this.normPetId(bid) === id);
           const bg = this.findChild(node, 'BG1') || this.findChild(node, 'BG2') || this.findChild(node, 'BG') || this.findChild(node, 'Background');
           const sprite = (_bg$getComponent2 = bg == null ? void 0 : bg.getComponent(Sprite)) != null ? _bg$getComponent2 : node.getComponent(Sprite);
@@ -1031,7 +1051,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         bindSetAndActions(node, pet, index) {
-          var _ref17, _ref18, _pet$pet_id4;
+          var _ref20, _ref21, _pet$pet_id4;
 
           const setN = this.findChild(node, 'Set');
           if (!setN) return;
@@ -1039,7 +1059,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!panel) return;
           panel.active = false; // 关键修复：确保使用正确的 petId（服务器返回的是 pet_id 字段，对应数据库的 _id）
 
-          const petId = String((_ref17 = (_ref18 = (_pet$pet_id4 = pet.pet_id) != null ? _pet$pet_id4 : pet._id) != null ? _ref18 : pet.id) != null ? _ref17 : ''); // 将 pet 数据绑定到节点，方便后续使用
+          const petId = String((_ref20 = (_ref21 = (_pet$pet_id4 = pet.pet_id) != null ? _pet$pet_id4 : pet._id) != null ? _ref21 : pet.id) != null ? _ref20 : ''); // 将 pet 数据绑定到节点，方便后续使用
 
           node._pet = pet;
           node._petId = petId;
@@ -1235,10 +1255,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const nodePet = row._pet;
 
           if (nodePet) {
-            var _ref19, _ref20, _nodePet$pet_id;
+            var _ref22, _ref23, _nodePet$pet_id;
 
             // 从 pet 数据中获取正确的 pet_id（服务器返回的 pet_id 对应数据库的 _id）
-            const correctId = String((_ref19 = (_ref20 = (_nodePet$pet_id = nodePet.pet_id) != null ? _nodePet$pet_id : nodePet._id) != null ? _ref20 : nodePet.id) != null ? _ref19 : '');
+            const correctId = String((_ref22 = (_ref23 = (_nodePet$pet_id = nodePet.pet_id) != null ? _nodePet$pet_id : nodePet._id) != null ? _ref23 : nodePet.id) != null ? _ref22 : '');
 
             if (correctId && correctId.length === 24) {
               finalPetId = correctId;
@@ -1342,9 +1362,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             const pet = this.currentPets.find(p => {
-              var _ref21, _ref22, _p$pet_id4;
+              var _ref24, _ref25, _p$pet_id4;
 
-              const pid = this.normPetId(String((_ref21 = (_ref22 = (_p$pet_id4 = p.pet_id) != null ? _p$pet_id4 : p._id) != null ? _ref22 : p.id) != null ? _ref21 : ''));
+              const pid = this.normPetId(String((_ref24 = (_ref25 = (_p$pet_id4 = p.pet_id) != null ? _p$pet_id4 : p._id) != null ? _ref25 : p.id) != null ? _ref24 : ''));
               return pid === this.normPetId(str);
             });
 
@@ -1370,9 +1390,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const validPets = normalizedTeam.filter(pid => {
             const pn = this.normPetId(pid);
             const pet = this.currentPets.find(p => {
-              var _ref23, _ref24, _p$pet_id5;
+              var _ref26, _ref27, _p$pet_id5;
 
-              return this.normPetId(String((_ref23 = (_ref24 = (_p$pet_id5 = p.pet_id) != null ? _p$pet_id5 : p._id) != null ? _ref24 : p.id) != null ? _ref23 : '')) === pn;
+              return this.normPetId(String((_ref26 = (_ref27 = (_p$pet_id5 = p.pet_id) != null ? _p$pet_id5 : p._id) != null ? _ref27 : p.id) != null ? _ref26 : '')) === pn;
             });
 
             if (!pet) {
@@ -1405,9 +1425,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           console.log('[RobotList] 设置出战队伍:', validPets, '当前角色ID:', cid);
           console.log('[RobotList] 当前机甲列表 petIds:', this.currentPets.map(p => {
-            var _ref25, _ref26, _p$pet_id6;
+            var _ref28, _ref29, _p$pet_id6;
 
-            return String((_ref25 = (_ref26 = (_p$pet_id6 = p.pet_id) != null ? _p$pet_id6 : p._id) != null ? _ref26 : p.id) != null ? _ref25 : '');
+            return String((_ref28 = (_ref29 = (_p$pet_id6 = p.pet_id) != null ? _p$pet_id6 : p._id) != null ? _ref29 : p.id) != null ? _ref28 : '');
           }));
           const setReq = {
             character_id: cid,
@@ -1514,8 +1534,42 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onRelease(petId, row, panel) {
+          var _ref32, _pet$Form2;
+
           this.clearSelection();
           this.closeSetForRow(row);
+
+          if (this.isLastRobot()) {
+            var _getInstance;
+
+            (_getInstance = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
+              error: Error()
+            }), TipWindows) : TipWindows).getInstance()) == null || _getInstance.showAlert('至少保留一台机甲，无法放生', undefined, {
+              autoCloseMs: 2500
+            });
+            return;
+          }
+
+          const pet = this.currentPets.find(p => {
+            var _ref30, _ref31, _p$pet_id7;
+
+            return this.normPetId(String((_ref30 = (_ref31 = (_p$pet_id7 = p.pet_id) != null ? _p$pet_id7 : p._id) != null ? _ref31 : p.id) != null ? _ref30 : '')) === this.normPetId(petId);
+          });
+          const form = Number((_ref32 = (_pet$Form2 = pet == null ? void 0 : pet.Form) != null ? _pet$Form2 : pet == null ? void 0 : pet.Fo) != null ? _ref32 : 0);
+          const formSuffix = form === 1 ? '|初' : form === 2 ? '|中' : form === 3 ? '|终' : '';
+          const petName = ((pet == null ? void 0 : pet.RobotName) || '该机甲') + formSuffix;
+          const tip = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
+            error: Error()
+          }), TipWindows) : TipWindows).getInstance();
+
+          if (tip) {
+            tip.showConfirm(`确定放生「${petName}」吗？\n放生后无法找回。`, () => this.releasePet(petId), undefined, {
+              confirmText: '确定',
+              cancelText: '取消'
+            });
+            return;
+          }
+
           this.releasePet(petId);
         }
 
@@ -1533,8 +1587,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             pet_id: petId,
             character_id: this.ws.getCharacterId()
           }, r => {
-            var _r$message3;
-
             this._releasing = false;
             this.setDeployReleaseButtonsInteractable(true);
             (_crd && UILockManager === void 0 ? (_reportPossibleCrUseOfUILockManager({
@@ -1555,7 +1607,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 character_id: (_this$ws$getCharacter2 = this.ws.getCharacterId()) != null ? _this$ws$getCharacter2 : undefined
               });
               this.forceRefresh();
-            } else console.error('[RobotList] 放生失败:', (_r$message3 = r == null ? void 0 : r.message) != null ? _r$message3 : '未知错误');
+            } else {
+              var _r$message3, _getInstance2;
+
+              const msg = (_r$message3 = r == null ? void 0 : r.message) != null ? _r$message3 : '放生失败';
+              console.error('[RobotList] 放生失败:', msg);
+              (_getInstance2 = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
+                error: Error()
+              }), TipWindows) : TipWindows).getInstance()) == null || _getInstance2.showAlert(msg, undefined, {
+                autoCloseMs: 2500
+              });
+            }
           }, true, 10000);
         }
 
@@ -1570,11 +1632,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onConfirm() {
-          var _ref27, _ref28, _this$selectedPet$pet2;
+          var _ref33, _ref34, _this$selectedPet$pet2;
 
           if (this._confirming) return;
           if (this.selectedIndex < 0 || !this.selectedPet) return;
-          const petId = String((_ref27 = (_ref28 = (_this$selectedPet$pet2 = this.selectedPet.pet_id) != null ? _this$selectedPet$pet2 : this.selectedPet._id) != null ? _ref28 : this.selectedPet.id) != null ? _ref27 : '');
+          const petId = String((_ref33 = (_ref34 = (_this$selectedPet$pet2 = this.selectedPet.pet_id) != null ? _this$selectedPet$pet2 : this.selectedPet._id) != null ? _ref34 : this.selectedPet.id) != null ? _ref33 : '');
 
           if (this.confirmCb) {
             var _this$confirmButton4;

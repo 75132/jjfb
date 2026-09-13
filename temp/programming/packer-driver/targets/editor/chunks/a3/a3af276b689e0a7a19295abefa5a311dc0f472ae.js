@@ -1,7 +1,7 @@
 System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, UITransform, input, Input, KeyCode, misc, Animation, v3, TiledLayer, UIOpacity, Sprite, PlayerAnimRuntime, PlayerStateSync, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _crd, ccclass, property, CELL, MV_BASE_FPS, PlayerGridMove;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, UITransform, input, Input, KeyCode, misc, Animation, v3, Vec2, TiledLayer, UIOpacity, Sprite, PlayerAnimRuntime, PlayerStateSync, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _crd, ccclass, property, CELL, MV_BASE_FPS, CLICK_NAV_MAX_SLIDE_PX, PlayerGridMove;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -34,6 +34,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       misc = _cc.misc;
       Animation = _cc.Animation;
       v3 = _cc.v3;
+      Vec2 = _cc.Vec2;
       TiledLayer = _cc.TiledLayer;
       UIOpacity = _cc.UIOpacity;
       Sprite = _cc.Sprite;
@@ -47,7 +48,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
       _cclegacy._RF.push({}, "7d7beIW2gtIoZPG3uCetU+g", "PlayerGridMove", undefined);
 
-      __checkObsolete__(['_decorator', 'Component', 'Node', 'UITransform', 'input', 'Input', 'EventKeyboard', 'KeyCode', 'misc', 'Animation', 'v3', 'TiledLayer', 'UIOpacity', 'Sprite']);
+      __checkObsolete__(['_decorator', 'Component', 'Node', 'UITransform', 'input', 'Input', 'EventKeyboard', 'EventTouch', 'KeyCode', 'misc', 'Animation', 'v3', 'Vec2', 'TiledLayer', 'UIOpacity', 'Sprite']);
 
       ({
         ccclass,
@@ -59,43 +60,51 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       /** RPG Maker MV 的速度基准帧率（引擎内部默认按 60fps 公式定义） */
 
       MV_BASE_FPS = 60;
+      /** 触控滑动超过该像素则不当作寻路点击 */
+
+      CLICK_NAV_MAX_SLIDE_PX = 24;
 
       _export("PlayerGridMove", PlayerGridMove = (_dec = ccclass('PlayerGridMove'), _dec2 = property({
         type: Node,
         tooltip: '地图瓦片父节点（MapRoot / TiledMap），用于边界与格子原点'
       }), _dec3 = property({
-        tooltip: 'RPG Maker MV：moveSpeed 1～6（默认 4），对应 Game_CharacterBase.prototype.moveSpeed'
+        tooltip: '点击/触控地图格子寻路（与键盘兼容；按方向键会取消当前寻路）'
       }), _dec4 = property({
-        tooltip: '启用后按住 Shift 等同 MV 奔跑：realMoveSpeed = moveSpeed + 1（不超过 7）'
+        type: Node,
+        tooltip: '接收点击的节点（默认向上查找名为 GameArea 的节点，找不到则用 mapRoot）'
       }), _dec5 = property({
-        tooltip: '动画名前缀（例如 player1）。将自动播放：${prefix}_walk_right/left/up/down 与 ${prefix}_idle_...；idle 缺失时回退用 walk'
+        tooltip: 'RPG Maker MV：moveSpeed 1～6（默认 4），对应 Game_CharacterBase.prototype.moveSpeed'
       }), _dec6 = property({
-        tooltip: '严格按 animPrefix 播放。开启后不会回退到 walk_right/idle_right 这类通用名，避免串到别的角色动画。'
+        tooltip: '启用后按住 Shift 等同 MV 奔跑：realMoveSpeed = moveSpeed + 1（不超过 7）'
       }), _dec7 = property({
-        tooltip: '地图锚点作为格子坐标原点(0,0)。左上锚点(0,1)时，首格中心位于锚点右下半格。'
+        tooltip: '动画名前缀（例如 player1）。将自动播放：${prefix}_walk_right/left/up/down 与 ${prefix}_idle_...；idle 缺失时回退用 walk'
       }), _dec8 = property({
-        tooltip: '初始格子列（默认 0）'
+        tooltip: '严格按 animPrefix 播放。开启后不会回退到 walk_right/idle_right 这类通用名，避免串到别的角色动画。'
       }), _dec9 = property({
-        tooltip: '初始格子行（默认 0，左上锚点模式下向下递增）'
+        tooltip: '地图锚点作为格子坐标原点(0,0)。左上锚点(0,1)时，首格中心位于锚点右下半格。'
       }), _dec10 = property({
-        tooltip: '若节点上挂了 PlayerStateSync（服务器权威坐标恢复），则 start() 阶段不强制 placeAtGrid(startGridCol/startGridRow)，避免偶发拿不到 player_info 时被丢到(0,0)看起来像左上角。'
+        tooltip: '初始格子列（默认 0）'
       }), _dec11 = property({
-        tooltip: '等待服务器坐标恢复的超时（秒）。超时仍未恢复时，将使用 fallbackSpawnX/Y 作为兜底，避免角色卡在(0,0)。'
+        tooltip: '初始格子行（默认 0，左上锚点模式下向下递增）'
       }), _dec12 = property({
-        tooltip: '服务器坐标恢复超时后的兜底出生点 X（像素）'
+        tooltip: '若节点上挂了 PlayerStateSync（服务器权威坐标恢复），则 start() 阶段不强制 placeAtGrid(startGridCol/startGridRow)，避免偶发拿不到 player_info 时被丢到(0,0)看起来像左上角。'
       }), _dec13 = property({
-        tooltip: '服务器坐标恢复超时后的兜底出生点 Y（像素）'
+        tooltip: '等待服务器坐标恢复的超时（秒）。超时仍未恢复时，将使用 fallbackSpawnX/Y 作为兜底，避免角色卡在(0,0)。'
       }), _dec14 = property({
-        tooltip: '不可通行图层名（逗号分隔，默认 Wall,items）'
+        tooltip: '服务器坐标恢复超时后的兜底出生点 X（像素）'
       }), _dec15 = property({
-        tooltip: '可通行但可触发效果图层名（逗号分隔，默认 plant）'
+        tooltip: '服务器坐标恢复超时后的兜底出生点 Y（像素）'
       }), _dec16 = property({
-        tooltip: 'Tiled 行号是否以上方为 0（默认 true，Tiled 编辑器常用）'
+        tooltip: '不可通行图层名（逗号分隔，默认 Wall,items）'
       }), _dec17 = property({
-        tooltip: '处于 plant 草丛时角色透明度（0-255）'
+        tooltip: '可通行但可触发效果图层名（逗号分隔，默认 plant）'
       }), _dec18 = property({
-        tooltip: '透明度过渡速度（每秒变化量）'
+        tooltip: 'Tiled 行号是否以上方为 0（默认 true，Tiled 编辑器常用）'
       }), _dec19 = property({
+        tooltip: '处于 plant 草丛时角色透明度（0-255）'
+      }), _dec20 = property({
+        tooltip: '透明度过渡速度（每秒变化量）'
+      }), _dec21 = property({
         tooltip: '关闭 Sprite 逐帧裁剪框、使用 RAW 尺寸，避免行走帧切换时 UITransform/锚点随 trim 变化造成的像素抖动与形变（像素风推荐开启）'
       }), _dec(_class = (_class2 = class PlayerGridMove extends Component {
         constructor(...args) {
@@ -103,39 +112,43 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           _initializerDefineProperty(this, "mapRoot", _descriptor, this);
 
-          _initializerDefineProperty(this, "moveSpeed", _descriptor2, this);
+          _initializerDefineProperty(this, "enableClickNavigate", _descriptor2, this);
 
-          _initializerDefineProperty(this, "dashLikeMV", _descriptor3, this);
+          _initializerDefineProperty(this, "clickInputRoot", _descriptor3, this);
 
-          _initializerDefineProperty(this, "animPrefix", _descriptor4, this);
+          _initializerDefineProperty(this, "moveSpeed", _descriptor4, this);
 
-          _initializerDefineProperty(this, "strictAnimPrefix", _descriptor5, this);
+          _initializerDefineProperty(this, "dashLikeMV", _descriptor5, this);
 
-          _initializerDefineProperty(this, "useAnchorAsGridOrigin", _descriptor6, this);
+          _initializerDefineProperty(this, "animPrefix", _descriptor6, this);
 
-          _initializerDefineProperty(this, "startGridCol", _descriptor7, this);
+          _initializerDefineProperty(this, "strictAnimPrefix", _descriptor7, this);
 
-          _initializerDefineProperty(this, "startGridRow", _descriptor8, this);
+          _initializerDefineProperty(this, "useAnchorAsGridOrigin", _descriptor8, this);
 
-          _initializerDefineProperty(this, "deferInitialPlaceToServerRestore", _descriptor9, this);
+          _initializerDefineProperty(this, "startGridCol", _descriptor9, this);
 
-          _initializerDefineProperty(this, "serverRestoreTimeoutSec", _descriptor10, this);
+          _initializerDefineProperty(this, "startGridRow", _descriptor10, this);
 
-          _initializerDefineProperty(this, "fallbackSpawnX", _descriptor11, this);
+          _initializerDefineProperty(this, "deferInitialPlaceToServerRestore", _descriptor11, this);
 
-          _initializerDefineProperty(this, "fallbackSpawnY", _descriptor12, this);
+          _initializerDefineProperty(this, "serverRestoreTimeoutSec", _descriptor12, this);
 
-          _initializerDefineProperty(this, "blockedLayerNames", _descriptor13, this);
+          _initializerDefineProperty(this, "fallbackSpawnX", _descriptor13, this);
 
-          _initializerDefineProperty(this, "passableEffectLayerNames", _descriptor14, this);
+          _initializerDefineProperty(this, "fallbackSpawnY", _descriptor14, this);
 
-          _initializerDefineProperty(this, "tiledRowFromTop", _descriptor15, this);
+          _initializerDefineProperty(this, "blockedLayerNames", _descriptor15, this);
 
-          _initializerDefineProperty(this, "grassOpacity", _descriptor16, this);
+          _initializerDefineProperty(this, "passableEffectLayerNames", _descriptor16, this);
 
-          _initializerDefineProperty(this, "grassOpacityLerpSpeed", _descriptor17, this);
+          _initializerDefineProperty(this, "tiledRowFromTop", _descriptor17, this);
 
-          _initializerDefineProperty(this, "pixelPerfectSprite", _descriptor18, this);
+          _initializerDefineProperty(this, "grassOpacity", _descriptor18, this);
+
+          _initializerDefineProperty(this, "grassOpacityLerpSpeed", _descriptor19, this);
+
+          _initializerDefineProperty(this, "pixelPerfectSprite", _descriptor20, this);
 
           this._ut = null;
           this._anim = null;
@@ -162,7 +175,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           /** 剧情对白/选项/战斗等由 StoryManager 锁定，对齐 RMV $gamePlayer._locked */
           this._inputLocked = false;
+
+          /** 触控/点击寻路的逐步队列（每项一格） */
+          this._pathQueue = [];
+          this._clickBoundRoot = null;
+          this._touchStartUI = new Vec2();
+          this._touchTracking = false;
           this._tmpV3 = v3();
+          this._tmpV3b = v3();
+          this._tmpUI = new Vec2();
           this._blockedNameSet = new Set();
           this._effectNameSet = new Set();
           this._inPlant = false;
@@ -193,6 +214,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         onDestroy() {
           input.off(Input.EventType.KEY_DOWN, this._onKeyDown, this);
           input.off(Input.EventType.KEY_UP, this._onKeyUp, this);
+
+          this._unbindClickNavigate();
         }
 
         start() {
@@ -213,6 +236,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           }
 
           this._playIdleAnim(this._facing);
+
+          this._bindClickNavigate();
         }
         /** PlayerStateSync 可能挂在 GameArea 等父节点，而非 Player 自身。 */
 
@@ -283,6 +308,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (locked) {
             this._heldCodes.clear();
 
+            this.clearNavigatePath();
             this._moving = false;
             this._axis = null;
 
@@ -292,6 +318,50 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
         get inputLocked() {
           return this._inputLocked;
+        }
+        /** 取消触控寻路队列（不打断当前这一格的平滑移动） */
+
+
+        clearNavigatePath() {
+          this._pathQueue.length = 0;
+        }
+        /**
+         * 寻路到目标格并排队逐步行走。键盘方向键优先；成功返回 true。
+         */
+
+
+        navigateToGrid(col, row) {
+          var _this$_pixelToGridCel;
+
+          if (this._inputLocked || !this.enableClickNavigate) return false;
+          const map = this.mapRoot;
+          const ut = this._ut;
+          if (!map || !ut) return false;
+          const mapUt = map.getComponent(UITransform);
+          if (!mapUt) return false;
+
+          const m = this._mapGridMetrics(map, mapUt);
+
+          if (m.cols <= 0 || m.rows <= 0) return false;
+          const tc = Math.min(m.cols - 1, Math.max(0, Math.floor(col)));
+          const tr = Math.min(m.rows - 1, Math.max(0, Math.floor(row))); // 正在走格时，从本格终点开始规划，避免半格坐标导致路径错位
+
+          const cur = this._moving ? (_this$_pixelToGridCel = this._pixelToGridCell(this._destCx, this._destCy)) != null ? _this$_pixelToGridCel : this._currentGridCell(m) : this._currentGridCell(m);
+
+          if (cur.col === tc && cur.row === tr) {
+            this.clearNavigatePath();
+            return true;
+          }
+
+          const path = this._findPathBfs(cur.col, cur.row, tc, tr, m);
+
+          if (!path || path.length === 0) {
+            this.clearNavigatePath();
+            return false;
+          }
+
+          this._pathQueue = path;
+          return true;
         }
 
         update(dt) {
@@ -316,7 +386,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             const dir = this._readDesiredDir();
 
             if (dir) {
+              this.clearNavigatePath();
+
               this._tryBeginStep(dir.dc, dir.dr);
+            } else {
+              this._consumePathStep();
             }
           }
 
@@ -326,11 +400,35 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         _onKeyDown(e) {
           if (this._inputLocked) return;
 
+          if (this._isMoveKey(e.keyCode)) {
+            this.clearNavigatePath();
+          }
+
           this._heldCodes.add(e.keyCode);
         }
 
         _onKeyUp(e) {
           this._heldCodes.delete(e.keyCode);
+        }
+
+        _isMoveKey(code) {
+          return code === KeyCode.KEY_W || code === KeyCode.KEY_A || code === KeyCode.KEY_S || code === KeyCode.KEY_D || code === KeyCode.ARROW_UP || code === KeyCode.ARROW_DOWN || code === KeyCode.ARROW_LEFT || code === KeyCode.ARROW_RIGHT;
+        }
+
+        _consumePathStep() {
+          while (this._pathQueue.length > 0) {
+            const next = this._pathQueue[0];
+
+            if (this._tryBeginStep(next.dc, next.dr)) {
+              this._pathQueue.shift();
+
+              return;
+            } // 前方被挡则整段取消，避免卡死空转
+
+
+            this.clearNavigatePath();
+            return;
+          }
         }
 
         _readDesiredDir() {
@@ -499,6 +597,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
         snapToGrid() {
+          this.clearNavigatePath();
           this._moving = false;
           this._axis = null;
 
@@ -510,6 +609,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
         placeAtGrid(col, row) {
+          this.clearNavigatePath();
           const map = this.mapRoot;
           const ut = this._ut;
           if (!map || !ut) return;
@@ -620,6 +720,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
         setPixelPosition(x, y, snapToGrid = false) {
+          this.clearNavigatePath();
           const z = this.node.position.z;
 
           this._setPos(x, y, z);
@@ -815,6 +916,261 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this._effectNameSet = toSet(this.passableEffectLayerNames);
         }
 
+        _resolveClickInputRoot() {
+          var _this$clickInputRoot, _this$mapRoot, _this$mapRoot2;
+
+          if ((_this$clickInputRoot = this.clickInputRoot) != null && _this$clickInputRoot.isValid) return this.clickInputRoot;
+          let n = (_this$mapRoot = this.mapRoot) != null ? _this$mapRoot : this.node;
+
+          while (n) {
+            if (n.name === 'GameArea') return n;
+            n = n.parent;
+          }
+
+          return (_this$mapRoot2 = this.mapRoot) != null && _this$mapRoot2.isValid ? this.mapRoot : null;
+        }
+
+        _bindClickNavigate() {
+          this._unbindClickNavigate();
+
+          if (!this.enableClickNavigate) return;
+
+          const root = this._resolveClickInputRoot();
+
+          if (!(root != null && root.isValid)) return;
+          this._clickBoundRoot = root;
+          root.on(Node.EventType.TOUCH_START, this._onNavTouchStart, this);
+          root.on(Node.EventType.TOUCH_END, this._onNavTouchEnd, this);
+          root.on(Node.EventType.TOUCH_CANCEL, this._onNavTouchCancel, this);
+        }
+
+        _unbindClickNavigate() {
+          const root = this._clickBoundRoot;
+
+          if (root != null && root.isValid) {
+            root.off(Node.EventType.TOUCH_START, this._onNavTouchStart, this);
+            root.off(Node.EventType.TOUCH_END, this._onNavTouchEnd, this);
+            root.off(Node.EventType.TOUCH_CANCEL, this._onNavTouchCancel, this);
+          }
+
+          this._clickBoundRoot = null;
+          this._touchTracking = false;
+        }
+
+        _onNavTouchStart(e) {
+          if (this._inputLocked || !this.enableClickNavigate) return;
+          e.getUILocation(this._touchStartUI);
+          this._touchTracking = true;
+        }
+
+        _onNavTouchCancel() {
+          this._touchTracking = false;
+        }
+
+        _onNavTouchEnd(e) {
+          if (!this._touchTracking) return;
+          this._touchTracking = false;
+          if (this._inputLocked || !this.enableClickNavigate) return; // NPC 交互会 stopPropagation；若仍冒泡到此则可能是地图点击
+
+          if (e.propagationStopped) return;
+          const end = e.getUILocation(this._tmpUI);
+          const dx = end.x - this._touchStartUI.x;
+          const dy = end.y - this._touchStartUI.y;
+
+          if (dx * dx + dy * dy > CLICK_NAV_MAX_SLIDE_PX * CLICK_NAV_MAX_SLIDE_PX) {
+            return;
+          }
+
+          const parentLocal = this._uiLocationToPlayerParentLocal(end.x, end.y);
+
+          if (!parentLocal) return;
+
+          const cell = this._pixelToGridCell(parentLocal.x, parentLocal.y);
+
+          if (!cell) return;
+          this.navigateToGrid(cell.col, cell.row);
+        }
+
+        _uiLocationToPlayerParentLocal(uiX, uiY) {
+          const parent = this.node.parent;
+          const parentUt = parent == null ? void 0 : parent.getComponent(UITransform);
+          const root = this._clickBoundRoot;
+          const rootUt = root == null ? void 0 : root.getComponent(UITransform);
+          if (!parent || !parentUt || !root || !rootUt) return null;
+          const uiPos = this._tmpV3;
+          uiPos.set(uiX, uiY, 0);
+          const localInRoot = this._tmpV3b;
+          rootUt.convertToNodeSpaceAR(uiPos, localInRoot);
+          rootUt.convertToWorldSpaceAR(localInRoot, localInRoot);
+          parentUt.convertToNodeSpaceAR(localInRoot, localInRoot);
+          return {
+            x: localInRoot.x,
+            y: localInRoot.y
+          };
+        }
+
+        _pixelToGridCell(px, py) {
+          const map = this.mapRoot;
+          if (!map) return null;
+          const mapUt = map.getComponent(UITransform);
+          if (!mapUt) return null;
+
+          const m = this._mapGridMetrics(map, mapUt);
+
+          if (m.cols <= 0 || m.rows <= 0) return null;
+          let col = Math.floor((px - m.originX) / CELL);
+          let row = this.useAnchorAsGridOrigin ? Math.floor((m.originY - py) / CELL) : Math.floor((py - m.originY) / CELL);
+          if (col < 0 || col > m.cols - 1 || row < 0 || row > m.rows - 1) return null;
+          return {
+            col,
+            row
+          };
+        }
+
+        _currentGridCell(m) {
+          const cur = this.node.position;
+          let col = Math.floor((cur.x - m.originX) / CELL);
+          let row = this.useAnchorAsGridOrigin ? Math.floor((m.originY - cur.y) / CELL) : Math.floor((cur.y - m.originY) / CELL);
+          col = Math.min(m.cols - 1, Math.max(0, col));
+          row = Math.min(m.rows - 1, Math.max(0, row));
+          return {
+            col,
+            row
+          };
+        }
+
+        _gridCenterPixel(col, row, m) {
+          return {
+            x: m.originX + (col + 0.5) * CELL,
+            y: this.useAnchorAsGridOrigin ? m.originY - (row + 0.5) * CELL : m.originY + (row + 0.5) * CELL
+          };
+        }
+
+        _canPassGrid(col, row, m) {
+          if (col < 0 || col > m.cols - 1 || row < 0 || row > m.rows - 1) return false;
+
+          const p = this._gridCenterPixel(col, row, m);
+
+          return this._canPassByTiledLayers(p.x, p.y);
+        }
+        /** 四向 BFS；目标不可走时退化为「最接近目标的可达格」 */
+
+
+        _findPathBfs(sc, sr, tc, tr, m) {
+          const cols = m.cols;
+          const rows = m.rows;
+          const total = cols * rows;
+          if (total <= 0) return null;
+          let goalC = tc;
+          let goalR = tr;
+
+          if (!this._canPassGrid(goalC, goalR, m)) {
+            const nearest = this._nearestWalkable(tc, tr, m);
+
+            if (!nearest) return null;
+            goalC = nearest.col;
+            goalR = nearest.row;
+            if (goalC === sc && goalR === sr) return [];
+          }
+
+          const key = (c, r) => r * cols + c;
+
+          const visited = new Uint8Array(total);
+          const parent = new Int32Array(total);
+          parent.fill(-1);
+          const qC = new Int16Array(total);
+          const qR = new Int16Array(total);
+          let qh = 0;
+          let qt = 0;
+          qC[qt] = sc;
+          qR[qt] = sr;
+          qt++;
+          visited[key(sc, sr)] = 1;
+          const dirs = [{
+            dc: 1,
+            dr: 0
+          }, {
+            dc: -1,
+            dr: 0
+          }, {
+            dc: 0,
+            dr: 1
+          }, {
+            dc: 0,
+            dr: -1
+          }];
+          let found = false;
+
+          while (qh < qt) {
+            const c = qC[qh];
+            const r = qR[qh];
+            qh++;
+
+            if (c === goalC && r === goalR) {
+              found = true;
+              break;
+            }
+
+            for (let i = 0; i < 4; i++) {
+              const nc = c + dirs[i].dc;
+              const nr = r + dirs[i].dr;
+              if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue;
+              const k = key(nc, nr);
+              if (visited[k]) continue;
+              if (!this._canPassGrid(nc, nr, m)) continue;
+              visited[k] = 1;
+              parent[k] = key(c, r);
+              qC[qt] = nc;
+              qR[qt] = nr;
+              qt++;
+            }
+          }
+
+          if (!found) return null;
+          const steps = [];
+          let ck = key(goalC, goalR);
+          const startK = key(sc, sr);
+
+          while (ck !== startK) {
+            const pk = parent[ck];
+            if (pk < 0) return null;
+            const c = ck % cols;
+            const r = ck / cols | 0;
+            const pc = pk % cols;
+            const pr = pk / cols | 0;
+            steps.push({
+              dc: c - pc,
+              dr: r - pr
+            });
+            ck = pk;
+          }
+
+          steps.reverse();
+          return steps;
+        }
+
+        _nearestWalkable(tc, tr, m) {
+          const cols = m.cols;
+          const rows = m.rows;
+          const maxR = Math.max(cols, rows);
+
+          for (let rad = 0; rad <= maxR; rad++) {
+            for (let dr = -rad; dr <= rad; dr++) {
+              for (let dc = -rad; dc <= rad; dc++) {
+                if (Math.max(Math.abs(dc), Math.abs(dr)) !== rad) continue;
+                const c = tc + dc;
+                const r = tr + dr;
+                if (this._canPassGrid(c, r, m)) return {
+                  col: c,
+                  row: r
+                };
+              }
+            }
+          }
+
+          return null;
+        }
+
         _canPassByTiledLayers(targetX, targetY) {
           const flags = this._queryTileFlagsAtPoint(targetX, targetY);
 
@@ -880,9 +1236,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         }
 
         _getLayerGidAtPoint(layer, parentX, parentY) {
-          var _this$mapRoot;
+          var _this$mapRoot3;
 
-          const mapParentUt = (_this$mapRoot = this.mapRoot) == null || (_this$mapRoot = _this$mapRoot.parent) == null ? void 0 : _this$mapRoot.getComponent(UITransform);
+          const mapParentUt = (_this$mapRoot3 = this.mapRoot) == null || (_this$mapRoot3 = _this$mapRoot3.parent) == null ? void 0 : _this$mapRoot3.getComponent(UITransform);
           const ut = layer.getComponent(UITransform);
           if (!mapParentUt || !ut) return 0;
           const tileSize = layer.getMapTileSize();
@@ -1017,119 +1373,133 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         initializer: function () {
           return null;
         }
-      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, "moveSpeed", [_dec3], {
+      }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, "enableClickNavigate", [_dec3], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return true;
+        }
+      }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, "clickInputRoot", [_dec4], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return null;
+        }
+      }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, "moveSpeed", [_dec5], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 4;
         }
-      }), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, "dashLikeMV", [_dec4], {
+      }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, "dashLikeMV", [_dec6], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, "animPrefix", [_dec5], {
+      }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, "animPrefix", [_dec7], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 'player1';
         }
-      }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, "strictAnimPrefix", [_dec6], {
+      }), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, "strictAnimPrefix", [_dec8], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, "useAnchorAsGridOrigin", [_dec7], {
+      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "useAnchorAsGridOrigin", [_dec9], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, "startGridCol", [_dec8], {
+      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "startGridCol", [_dec10], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 0;
         }
-      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "startGridRow", [_dec9], {
+      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "startGridRow", [_dec11], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 0;
         }
-      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "deferInitialPlaceToServerRestore", [_dec10], {
+      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "deferInitialPlaceToServerRestore", [_dec12], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "serverRestoreTimeoutSec", [_dec11], {
+      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "serverRestoreTimeoutSec", [_dec13], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 0.8;
         }
-      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnX", [_dec12], {
+      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnX", [_dec14], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 120.0;
         }
-      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnY", [_dec13], {
+      }), _descriptor14 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnY", [_dec15], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return -24.0;
         }
-      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "blockedLayerNames", [_dec14], {
+      }), _descriptor15 = _applyDecoratedDescriptor(_class2.prototype, "blockedLayerNames", [_dec16], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 'Wall,items';
         }
-      }), _descriptor14 = _applyDecoratedDescriptor(_class2.prototype, "passableEffectLayerNames", [_dec15], {
+      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "passableEffectLayerNames", [_dec17], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 'plant';
         }
-      }), _descriptor15 = _applyDecoratedDescriptor(_class2.prototype, "tiledRowFromTop", [_dec16], {
+      }), _descriptor17 = _applyDecoratedDescriptor(_class2.prototype, "tiledRowFromTop", [_dec18], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacity", [_dec17], {
+      }), _descriptor18 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacity", [_dec19], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 170;
         }
-      }), _descriptor17 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacityLerpSpeed", [_dec18], {
+      }), _descriptor19 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacityLerpSpeed", [_dec20], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 720;
         }
-      }), _descriptor18 = _applyDecoratedDescriptor(_class2.prototype, "pixelPerfectSprite", [_dec19], {
+      }), _descriptor20 = _applyDecoratedDescriptor(_class2.prototype, "pixelPerfectSprite", [_dec21], {
         configurable: true,
         enumerable: true,
         writable: true,

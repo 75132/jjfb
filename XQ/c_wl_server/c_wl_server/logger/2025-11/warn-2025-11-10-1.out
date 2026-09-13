@@ -1,0 +1,53 @@
+[00:33:27:578] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:35:59:434] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@227a7a55 ((conn=1212) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[00:36:18:177] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:38:03:441] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:38:46:064] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:46:04:169] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=7m17s927ms8µs600ns).
+[00:46:04:170] [WARN] - com.zaxxer.hikari.pool.ProxyConnection.checkException(ProxyConnection.java:182) - data-pool- - Connection org.mariadb.jdbc.Connection@17ae7628 marked as broken because of SQLSTATE(08000), ErrorCode(-1)
+java.sql.SQLNonTransientConnectionException: (conn=1226) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:494) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:623) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:95) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.ClientPreparedStatement.execute(ClientPreparedStatement.java:265) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.execute(HikariProxyPreparedStatement.java) ~[HikariCP-4.0.3.jar:?]
+	at org.apache.ibatis.executor.statement.PreparedStatementHandler.query(PreparedStatementHandler.java:64) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.statement.RoutingStatementHandler.query(RoutingStatementHandler.java:79) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:63) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:325) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:156) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:109) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:89) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:151) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:145) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:140) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.binding.MapperMethod.executeForMany(MapperMethod.java:147) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.binding.MapperMethod.execute(MapperMethod.java:80) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.binding.MapperProxy$PlainMethodInvoker.invoke(MapperProxy.java:145) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.binding.MapperProxy.invoke(MapperProxy.java:86) ~[mybatis-3.5.10.jar:3.5.10]
+	at com.sun.proxy.$Proxy26.getManView(Unknown Source) ~[?:?]
+	at my.service.orderService.createOrder(orderService.java:616) ~[classes/:?]
+	at my.startBef.init(startBef.java:126) ~[classes/:?]
+	at my.start.app(start.java:44) ~[classes/:?]
+	at my.start.main(start.java:177) ~[classes/:?]
+Caused by: java.net.SocketException: Software caused connection abort: socket write error
+	at java.net.SocketOutputStream.socketWrite0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:111) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:155) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.writeSocket(PacketWriter.java:834) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.flush(PacketWriter.java:704) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.client.QueryWithParametersPacket.encode(QueryWithParametersPacket.java:74) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:474) ~[mariadb-java-client-3.0.6.jar:?]
+	... 24 more
+[00:46:07:621] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:48:29:415] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4a17581 ((conn=1237) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[00:48:29:416] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4b5b915e ((conn=1238) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[00:51:49:795] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:54:12:701] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76acfa0c ((conn=1250) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[00:55:17:585] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[00:58:03:692] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@46657ee7 ((conn=1260) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[01:04:23:683] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@162a922b ((conn=1273) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[01:07:15:139] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@395a3120 ((conn=1278) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.

@@ -95,13 +95,12 @@ async def transition_pending_to_creating(
     event_id: str,
     request_id: Optional[str] = None,
 ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    """
-    authorized → creating（角色锁内调用）。
-    TODO(db-atomic): 升级为 Mongo find_one_and_update 条件更新，跨进程安全。
-    """
-    from services.story_service import get_or_create_progress, save_progress
+    """authorized → creating（Mongo 条件更新，跨进程安全）。"""
+    from services.story_service import atomic_pending_battle_to_creating, get_or_create_progress
 
-    progress = await get_or_create_progress(user_id, str(character_id), map_code or "test_base")
+    mc = map_code or "test_base"
+    cid = str(character_id)
+    progress = await get_or_create_progress(user_id, cid, mc)
     pending, err = validate_pending_story_battle(
         progress, event_id, allow_statuses=(STATUS_AUTHORIZED, STATUS_CREATING)
     )
@@ -112,14 +111,31 @@ async def transition_pending_to_creating(
         if request_id and pending.get("request_id") and pending.get("request_id") != request_id:
             return None, "剧情战斗创建中，请勿重复请求"
         return pending, None
-    pending["status"] = STATUS_CREATING
-    pending["request_id"] = request_id
-    pending["updated_at"] = time.time()
-    if not pending.get("map_code"):
-        pending["map_code"] = map_code
-    progress["pending_battle"] = pending
-    await save_progress(progress)
-    return pending, None
+
+    atomic_pending, outcome = await atomic_pending_battle_to_creating(
+        cid,
+        mc,
+        event_id,
+        authorized_status=STATUS_AUTHORIZED,
+        creating_status=STATUS_CREATING,
+        request_id=request_id,
+    )
+    if outcome == "conflict":
+        return None, "剧情战斗创建中，请勿重复请求"
+    if atomic_pending:
+        return atomic_pending, None
+
+    progress = await get_or_create_progress(user_id, cid, mc)
+    pending, err = validate_pending_story_battle(
+        progress, event_id, allow_statuses=(STATUS_AUTHORIZED, STATUS_CREATING)
+    )
+    if err:
+        return None, err
+    if pending and pending.get("status") == STATUS_CREATING:
+        if request_id and pending.get("request_id") and pending.get("request_id") != request_id:
+            return None, "剧情战斗创建中，请勿重复请求"
+        return pending, None
+    return None, err or "剧情战斗状态不可用"
 
 
 async def transition_pending_to_in_room(

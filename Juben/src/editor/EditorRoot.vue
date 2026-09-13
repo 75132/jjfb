@@ -55,7 +55,7 @@ import {
   type ZoneDragMode,
 } from "./zone-selection";
 import { MAP_FRAME_EDITOR_KEY } from "./mapInjection";
-import { STORY_EDITOR_ACTIONS_KEY } from "./editorInjection";
+import { AI_ASSISTANT_KEY, STORY_EDITOR_ACTIONS_KEY, type AiPendingCommand } from "./editorInjection";
 import {
   clearStorage,
   loadFromStorage,
@@ -76,9 +76,10 @@ import {
 import { fetchRuntimeMapTarget, publishMapJsonToRuntime } from "./cocos-map-publish";
 import { DEFAULT_COCOS_GAME_MAP_IMAGE } from "./map-slice-layout";
 import type { RuntimeMapConfig } from "./map-runtime";
+import { clampStoryTitle } from "./story-title-limit";
 
 import LeftPanel from "./components/LeftPanel.vue";
-import Canvas from "./components/Canvas.vue";
+import StoryOpsPanel from "./components/StoryOpsPanel.vue";
 import Inspector from "./components/Inspector.vue";
 import ResourceLibrary from "./components/ResourceLibrary.vue";
 import MapRuntimePanel from "./components/MapRuntimePanel.vue";
@@ -86,10 +87,11 @@ import AiAssistantFloating from "./components/AiAssistantFloating.vue";
 import MapEditorView from "./components/MapEditorView.vue";
 import AddNpcDialog from "./components/AddNpcDialog.vue";
 import GlobalCheckRepairModal from "./components/GlobalCheckRepairModal.vue";
+import { insertNodeAfter, deleteNodeRewire } from "./chain-ops";
+import { applyStorySettingsToPlacement } from "./apply-story-placement";
 import { useGlobalRepair } from "./composables/useGlobalRepair";
 import { createExportPublishActions } from "./composables/useExportPublish";
 import { createMapEditingActions } from "./composables/useMapEditing";
-import { useWorkspacePersistence } from "./composables/useWorkspace";
 import { useGraphEditingStub } from "./composables/useGraphEditing";
 useGraphEditingStub();
 import {
@@ -154,10 +156,11 @@ function emptyProject(): ProjectData {
 const project = ref<ProjectData>(emptyProject());
 const projects = ref<PersistedWorkspaceProject[]>([]);
 const currentProjectId = ref<string | null>(null);
-const isHome = ref(true);
 const isResourceLibraryOpen = ref(false);
 const isMapRuntimeOpen = ref(false);
 const isAiAssistantOpen = ref(false);
+const aiPendingCommand = ref<AiPendingCommand | null>(null);
+let aiCommandSeq = 0;
 type EditorNavFrame = { level: "timeline" } | { level: "map"; gameMapId: string; viewMode: "map" | "story" };
 
 const navigationStack = ref<EditorNavFrame[]>([{ level: "timeline" }]);
@@ -225,12 +228,13 @@ const selectedGameMapId = ref<string | null>(null);
 const focusedNpcUid = ref<string | null>(null);
 const selectedBattleGiverUid = ref<string | null>(null);
 const selectedBattleSpawnUid = ref<string | null>(null);
-const projectSearchKeyword = ref("");
 let autosaveTimer: ReturnType<typeof setTimeout> | null = null;
 const autosaveSuspended = ref(false);
 /** 持久化进行中：抑制 project 深监听触发连环保存 */
 let persistAutosaveSuppress = 0;
 let dirtyWhilePersisting = false;
+/** AI 流式写入：抑制 deep watch 触发的全量 flow 重建 */
+let flowRebuildSuppress = 0;
 /** 上次成功写入磁盘的项目内容摘要（避免 sanitize 假修复导致无限保存） */
 let lastPersistedProjectDigest = "";
 const FLUSH_THROTTLE_MS = 150;
@@ -259,34 +263,35 @@ const saveStatusLabel = computed(() => {
 });
 /** 未完成从本地/服务端恢复前，禁止自动保存（避免默认样例覆盖用户数据） */
 const workspaceHydrated = ref(false);
-const EDITOR_LAYOUT_PREFS_KEY = "story-editor:layout-prefs:v1";
-const LEFT_PANEL_MIN = 220;
-const LEFT_PANEL_MAX = 460;
+const EDITOR_LAYOUT_PREFS_KEY = "story-editor:layout-prefs:v3";
+const LEFT_PANEL_MIN = 200;
+const LEFT_PANEL_MAX = 380;
 const RIGHT_PANEL_MIN = 280;
-const RIGHT_PANEL_MAX = 560;
-const CENTER_MIN = 420;
+const RIGHT_PANEL_MAX = 520;
+const CENTER_MIN = 480;
 
 const layoutEl = ref<HTMLElement | null>(null);
-const leftPanelWidth = ref(280);
+const leftPanelWidth = ref(260);
 const rightPanelWidth = ref(340);
 const leftPanelOpen = ref(true);
 const rightPanelOpen = ref(true);
-const exportMenuOpen = ref(false);
-const importMenuOpen = ref(false);
+const fileMenuOpen = ref(false);
 const moreMenuOpen = ref(false);
 const mapEditorViewRef = ref<InstanceType<typeof MapEditorView> | null>(null);
-const canvasRef = ref<InstanceType<typeof Canvas> | null>(null);
+const canvasRef = ref<{ refreshFlowDimensions?: () => void; applyEditorSelection?: (ids: string[]) => void } | null>(
+  null,
+);
 
 function closeToolbarMenus() {
-  exportMenuOpen.value = false;
-  importMenuOpen.value = false;
+  fileMenuOpen.value = false;
   moreMenuOpen.value = false;
 }
 
-function toggleToolbarMenu(menu: "export" | "import" | "more") {
-  const next = menu === "export" ? exportMenuOpen : menu === "import" ? importMenuOpen : moreMenuOpen;
+function toggleToolbarMenu(menu: "file" | "more") {
+  const next = menu === "file" ? fileMenuOpen : moreMenuOpen;
+  const wasOpen = next.value;
   closeToolbarMenus();
-  next.value = !next.value;
+  next.value = !wasOpen;
 }
 
 function onFitView() {
@@ -294,7 +299,7 @@ function onFitView() {
     mapEditorViewRef.value?.fitMapInView?.();
     return;
   }
-  fitView({ padding: 0.2 });
+  fitView({ padding: 0.2, duration: 220 });
 }
 const focusMode = ref(false);
 
@@ -636,11 +641,23 @@ function sanitizeProjectData(input: ProjectData, report?: IntegrityReport): Proj
 }
 
 function buildWorkspacePayload() {
+  const meta = projects.value[0];
+  const id = currentProjectId.value ?? meta?.id ?? `proj_${crypto.randomUUID()}`;
+  const now = Date.now();
+  const entry: PersistedWorkspaceProject = {
+    id,
+    name: meta?.name ?? "未命名",
+    createdAt: meta?.createdAt ?? now,
+    updatedAt: now,
+    data: cloneProject(project.value),
+  };
+  projects.value = [entry];
+  currentProjectId.value = id;
   return {
     version: 1 as const,
-    savedAt: Date.now(),
-    currentProjectId: currentProjectId.value,
-    projects: projects.value,
+    savedAt: now,
+    currentProjectId: id,
+    projects: [entry],
   };
 }
 
@@ -649,9 +666,7 @@ function projectContentDigest(data: ProjectData): string {
 }
 
 function prepareCurrentProjectForSave(): PersistedWorkspace | null {
-  if (!currentProjectId.value) return null;
-  const idx = projects.value.findIndex((p) => p.id === currentProjectId.value);
-  if (idx < 0) return null;
+  if (!currentProjectId.value && projects.value.length === 0) return null;
   const beforeDigest = projectContentDigest(project.value);
   const report = createIntegrityReport();
   const safeProject = sanitizeProjectData(project.value, report);
@@ -660,12 +675,11 @@ function prepareCurrentProjectForSave(): PersistedWorkspace | null {
     project.value = safeProject;
   }
   refreshProjectExportHealth(safeProject);
-  projects.value[idx] = {
-    ...projects.value[idx],
-    updatedAt: Date.now(),
-    data: cloneProject(safeProject),
-  };
-  return buildWorkspacePayload();
+  const payload = buildWorkspacePayload();
+  // buildWorkspacePayload clones project.value; ensure sanitized data is what we persist
+  payload.projects[0]!.data = cloneProject(safeProject);
+  projects.value = [payload.projects[0]!];
+  return payload;
 }
 
 function beginPersistAutosaveSuppress(): void {
@@ -684,16 +698,24 @@ function endPersistAutosaveSuppress(): void {
 }
 
 function applyLoadedWorkspace(restoredWorkspace: PersistedWorkspace, _source?: string) {
-  projects.value = restoredWorkspace.projects.map((p) => ({
-    ...p,
-    createdAt: p.createdAt ?? p.updatedAt,
-    data: sanitizeProjectData(p.data),
-  }));
-  const targetId =
-    restoredWorkspace.currentProjectId && projects.value.some((p) => p.id === restoredWorkspace.currentProjectId)
-      ? restoredWorkspace.currentProjectId
-      : projects.value[0]?.id;
-  if (targetId) activateProjectById(targetId);
+  const normalized = {
+    ...restoredWorkspace,
+    projects: restoredWorkspace.projects.map((p) => ({
+      ...p,
+      createdAt: p.createdAt ?? p.updatedAt,
+      data: sanitizeProjectData(p.data),
+    })),
+  };
+  const single =
+    (normalized.currentProjectId && normalized.projects.find((p) => p.id === normalized.currentProjectId)) ||
+    normalized.projects[0] ||
+    null;
+  if (!single) {
+    ensureDefaultProject();
+    return;
+  }
+  projects.value = [single];
+  activateProject(single);
   setLastKnownRemoteSavedAt(restoredWorkspace.savedAt ?? 0);
   lastPersistedProjectDigest = projectContentDigest(project.value);
   resetEditorHistory();
@@ -725,15 +747,19 @@ async function persistWorkspaceAsync(forceOverwrite = false): Promise<void> {
         saveStatusDetail.value = workspaceFilePath.value || "Juben/data/workspace.json";
         bootRecoveryMessage.value = "";
       } else if (result.errorCode === "CONFLICT") {
-        if (!forceOverwrite) {
-          if (result.diskSavedAt != null) setLastKnownRemoteSavedAt(result.diskSavedAt);
-          await persistWorkspaceAsync(true);
-          return;
-        }
+        if (result.diskSavedAt != null) setLastKnownRemoteSavedAt(result.diskSavedAt);
         saveStatus.value = "error";
         saveStatusDetail.value = "远端 workspace 已更新（双标签页冲突）";
+        if (forceOverwrite) {
+          // force 仍 CONFLICT（极少见）：不再静默重试，避免覆盖循环
+          void appAlert(
+            `无法覆盖远端 workspace（savedAt=${result.diskSavedAt ?? "?"}）。请刷新页面后重试。`,
+            "保存冲突",
+          );
+          return;
+        }
         const reload = await appConfirm(
-          `磁盘 workspace 已被其他标签页更新（savedAt=${result.diskSavedAt ?? "?"}）。\n\n重新加载远端数据？（取消则强制覆盖）`,
+          `磁盘 workspace 已被其他标签页更新（savedAt=${result.diskSavedAt ?? "?"}）。\n\n重新加载远端数据？（取消则强制覆盖本机编辑）`,
           "保存冲突",
         );
         if (reload) {
@@ -819,6 +845,7 @@ function scheduleCurrentProjectSave() {
 
 function onAiSuspendAutosave() {
   autosaveSuspended.value = true;
+  flowRebuildSuppress += 1;
   if (autosaveTimer) {
     clearTimeout(autosaveTimer);
     autosaveTimer = null;
@@ -827,6 +854,7 @@ function onAiSuspendAutosave() {
 
 function onAiResumeAutosave() {
   autosaveSuspended.value = false;
+  flowRebuildSuppress = Math.max(0, flowRebuildSuppress - 1);
   flushCurrentProjectSave();
 }
 
@@ -838,13 +866,8 @@ function scheduleResourceSave() {
   scheduleCurrentProjectSave();
 }
 
-function activateProjectById(id: string) {
-  const item = projects.value.find((p) => p.id === id);
-  if (!item) return;
-  if (currentProjectId.value && currentProjectId.value !== id) {
-    flushCurrentProjectSave();
-  }
-  currentProjectId.value = id;
+function activateProject(item: PersistedWorkspaceProject) {
+  currentProjectId.value = item.id;
   project.value = sanitizeProjectData(item.data);
   lastPersistedProjectDigest = projectContentDigest(project.value);
   project.value.graphs.forEach(ensureGraphBoundaryNodes);
@@ -860,75 +883,34 @@ function activateProjectById(id: string) {
   isResourceLibraryOpen.value = false;
   isMapRuntimeOpen.value = false;
   isAiAssistantOpen.value = false;
-  isHome.value = false;
   rebuildFlowDeferred();
   resetEditorHistory();
   refreshProjectExportHealth(project.value);
-  persistWorkspace();
 }
 
-function createNewProject() {
+function ensureDefaultProject() {
   const id = `proj_${crypto.randomUUID()}`;
   const now = Date.now();
-  projects.value.unshift({
+  const item: PersistedWorkspaceProject = {
     id,
-    name: nextUntitledName(),
+    name: "未命名",
     createdAt: now,
     updatedAt: now,
     data: emptyProject(),
-  });
-  activateProjectById(id);
-  isResourceLibraryOpen.value = false;
-  isMapRuntimeOpen.value = false;
-  isAiAssistantOpen.value = false;
+  };
+  projects.value = [item];
+  activateProject(item);
+  persistWorkspace();
 }
 
-function goHome() {
-  flushCurrentProjectSave();
-  isResourceLibraryOpen.value = false;
-  isMapRuntimeOpen.value = false;
-  isAiAssistantOpen.value = false;
-  isHome.value = true;
-}
-
-async function renameProject(id: string) {
-  const item = projects.value.find((p) => p.id === id);
+async function renameCurrentProject() {
+  const item = projects.value[0];
   if (!item) return;
   const nextName = (await appPrompt("请输入项目名称", item.name, "重命名项目"))?.trim();
   if (!nextName) return;
   item.name = nextName;
   item.updatedAt = Date.now();
   persistWorkspace();
-}
-
-async function deleteProjectEntry(id: string) {
-  const item = projects.value.find((p) => p.id === id);
-  if (!item) return;
-  const ok = await appConfirm(`确认删除项目「${item.name}」吗？此操作不可撤销。`, "删除项目");
-  if (!ok) return;
-  projects.value = projects.value.filter((p) => p.id !== id);
-  if (currentProjectId.value === id) {
-    currentProjectId.value = null;
-    isHome.value = true;
-  }
-  if (projects.value.length === 0) {
-    createNewProject();
-  } else {
-    persistWorkspace();
-  }
-}
-
-function nextUntitledName(): string {
-  const used = new Set<number>();
-  for (const p of projects.value) {
-    const match = p.name.trim().match(/^未命名(?:\s+(\d+))?$/);
-    if (!match) continue;
-    const index = match[1] ? Number(match[1]) : 1;
-    if (Number.isFinite(index) && index >= 1) used.add(index);
-  }
-  let next = 1;
-  while (used.has(next)) next += 1;
-  return next === 1 ? "未命名" : `未命名 ${next}`;
 }
 const selectedGraphId = ref<string>(project.value.graphs[0]?.id ?? "");
 const selectedMapId = ref<string | null>(null);
@@ -980,6 +962,7 @@ const nodeContextMenu = ref<{
 });
 const suppressNextContextMenu = ref(false);
 const quickCreateKinds = computed(() => quickCreateForGraph(currentGraph.value?.kind));
+const shortcutsOpen = ref(false);
 const layoutStyle = computed(() => ({
   "--left-panel-width": `${leftPanelWidth.value}px`,
   "--right-panel-width": `${rightPanelWidth.value}px`,
@@ -1147,7 +1130,7 @@ provide(STORY_EDITOR_ACTIONS_KEY, {
     deleteFlowElements(flowNodeIds, []);
   },
   openNodeContextMenu(payload: { x: number; y: number; flowNodeId: string }) {
-    closeContextMenu();
+    contextMenu.value.open = false;
     const pane = canvasPaneEl.value;
     const rect = pane?.getBoundingClientRect();
     nodeContextMenu.value = {
@@ -1165,13 +1148,6 @@ const hasDeletableSelection = computed(() => {
   const nodeIds = collectSelectedFlowNodeIds();
   if (nodeIds.length === 0) return !!selectedMapId.value;
   return nodeIds.some((id) => canDeleteFlowNode(id));
-});
-const filteredProjects = computed(() => {
-  const keyword = projectSearchKeyword.value.trim().toLowerCase();
-  return projects.value
-    .slice()
-    .sort((a, b) => b.createdAt - a.createdAt)
-    .filter((item) => (keyword ? item.name.toLowerCase().includes(keyword) : true));
 });
 
 // Flow state for current graph
@@ -1331,9 +1307,11 @@ watch(
   () => {
     // 资源库/模拟器/JSON 面板中编辑项目元数据时，不要重建画布（会触发重渲染导致输入框回滚）
     if (persistAutosaveSuppress > 0) return;
+    if (flowRebuildSuppress > 0) return;
     if (isResourceLibraryOpen.value || isMapRuntimeOpen.value) return;
-    if (flowReady.value) rebuildFlowDeferred();
-    else rebuildFlowFromGraph();
+    // 剧情路径已改用操作面板，不再依赖 Vue Flow；仅在 flow 仍挂载时重建
+    if (!flowReady.value) return;
+    rebuildFlowDeferred();
   },
   { deep: true },
 );
@@ -1527,6 +1505,27 @@ function openAiAssistant() {
   isAiAssistantOpen.value = true;
 }
 
+function queueAiCommand(text: string, options?: { nodeIds?: string[]; npcUid?: string }) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+  if (options?.npcUid) {
+    focusedNpcUid.value = options.npcUid;
+    const gm = currentGameMap.value;
+    const npc = gm?.npcs.find((n) => n.npcUid === options.npcUid);
+    if (npc?.zoneId) selectedMapId.value = npc.zoneId;
+    if (editorViewMode.value !== "story" && gm) editorViewMode.value = "story";
+  }
+  if (options?.nodeIds?.length) {
+    selectedNodeIds.value = [...options.nodeIds];
+    selectedNodeId.value = options.nodeIds[0] ?? null;
+    if (flowReady.value) rebuildFlowFromGraph();
+  }
+  aiPendingCommand.value = { id: ++aiCommandSeq, text: trimmed };
+  openAiAssistant();
+}
+
+provide(AI_ASSISTANT_KEY, { runCommand: queueAiCommand });
+
 function closeAiAssistant() {
   isAiAssistantOpen.value = false;
 }
@@ -1547,7 +1546,8 @@ function onGlobalCheckNavigateNpc(payload: { gameMapId: string; npcUid: string }
 }
 
 function onAiRebuild() {
-  rebuildFlowFromGraph();
+  // 无画布时无需 rebuild flow；选中态由 focusNode / 操作面板自行刷新
+  if (flowReady.value) rebuildFlowFromGraph();
 }
 
 function onAiPauseHistory() {
@@ -1584,10 +1584,12 @@ function navigateToAiTarget(target: AiTarget) {
 function onAiFocusNode(nodeId: string) {
   selectedNodeId.value = nodeId;
   selectedNodeIds.value = [nodeId];
-  rebuildFlowFromGraph();
-  void nextTick(() => {
-    fitView({ nodes: [nodeId], padding: 0.4, duration: 200 });
-  });
+  if (flowReady.value) {
+    rebuildFlowFromGraph();
+    void nextTick(() => {
+      fitView({ nodes: [nodeId], padding: 0.4, duration: 200 });
+    });
+  }
 }
 
 function switchEditorViewMode(mode: "map" | "story") {
@@ -1749,12 +1751,31 @@ async function deleteGameMapNpcEntry(npcUid: string) {
   rebuildFlowFromGraph();
 }
 
+function reorderGameMapNpcs(payload: { fromIndex: number; toIndex: number }) {
+  const gm = currentGameMap.value;
+  if (!gm) return;
+  const { fromIndex, toIndex } = payload;
+  if (
+    fromIndex < 0 ||
+    toIndex < 0 ||
+    fromIndex >= gm.npcs.length ||
+    toIndex >= gm.npcs.length ||
+    fromIndex === toIndex
+  ) {
+    return;
+  }
+  const [item] = gm.npcs.splice(fromIndex, 1);
+  if (!item) return;
+  gm.npcs.splice(toIndex, 0, item);
+  flushCurrentProjectSave();
+}
+
 function patchTaskEntryTitle(npcUid: string, title: string) {
   const gm = currentGameMap.value;
   if (!gm) return;
   const npc = gm.npcs.find((n) => n.npcUid === npcUid);
   if (!npc) return;
-  const trimmed = title.trim();
+  const trimmed = clampStoryTitle(title.trim());
   if (!trimmed) return;
   const graph = project.value.graphs.find((g) => g.id === gm.graphId);
   const entry = graph?.nodes.find((n) => n.id === npc.entryNodeId);
@@ -1776,7 +1797,7 @@ function patchGameMapNpc(npcUid: string, patch: Partial<GameMapNpcDef>) {
     if (npc.initialHidden !== undefined) delete npc.initialHidden;
   }
   if (patch.npcName !== undefined) {
-    Object.assign(npc, { npcName: patch.npcName });
+    Object.assign(npc, { npcName: clampStoryTitle(String(patch.npcName)) });
     ensureNpcZonesAndEntries(project.value, gm);
     rebuildFlowFromGraph();
     return;
@@ -1845,14 +1866,22 @@ function focusNpcStory(npcUid: string) {
   const gm = currentGameMap.value;
   if (gm) {
     const npc = gm.npcs.find((n) => n.npcUid === npcUid);
-    if (npc) selectedMapId.value = npc.zoneId;
+    if (npc) {
+      selectedMapId.value = npc.zoneId;
+      if (npc.entryNodeId) {
+        selectedNodeId.value = npc.entryNodeId;
+        selectedNodeIds.value = [npc.entryNodeId];
+      }
+    }
   }
   editorViewMode.value = "story";
-  rebuildFlowFromGraph();
-  nextTick(() => {
-    const zone = currentGraph.value.maps?.find((m) => m.npcUid === npcUid);
-    if (zone) fitView({ nodes: [`__map__${zone.id}`], padding: 0.3, duration: 200 });
-  });
+  if (flowReady.value) {
+    rebuildFlowFromGraph();
+    nextTick(() => {
+      const zone = currentGraph.value.maps?.find((m) => m.npcUid === npcUid);
+      if (zone) fitView({ nodes: [`__map__${zone.id}`], padding: 0.3, duration: 200 });
+    });
+  }
 }
 
 function clearNpcFocus() {
@@ -1860,7 +1889,7 @@ function clearNpcFocus() {
   selectedBattleGiverUid.value = null;
   selectedBattleSpawnUid.value = null;
   selectedMapId.value = null;
-  rebuildFlowFromGraph();
+  if (flowReady.value) rebuildFlowFromGraph();
 }
 
 function onSelectBattleEnemy(payload: string | { giverNpcUid: string; spawnUid?: string }) {
@@ -2307,7 +2336,8 @@ function addNode(kind: NodeKind, customPos?: { x: number; y: number }) {
   if (kind === "mapPortal" && currentGraph.value.kind === "timeline") {
     const { portal } = createMapPortalWithGameMap(project.value, { position: center });
     selectedNodeId.value = portal.id;
-    rebuildFlowFromGraph();
+    selectedNodeIds.value = [portal.id];
+    if (flowReady.value) rebuildFlowFromGraph();
     return;
   }
   let gid = selectedMapId.value;
@@ -2340,7 +2370,94 @@ function addNode(kind: NodeKind, customPos?: { x: number; y: number }) {
   }
   currentGraph.value.nodes.push(n);
   selectedNodeId.value = n.id;
-  rebuildFlowFromGraph();
+  selectedNodeIds.value = [n.id];
+  if (flowReady.value) rebuildFlowFromGraph();
+}
+
+function onStoryOpsSelectNode(nodeId: string) {
+  selectedNodeId.value = nodeId;
+  selectedNodeIds.value = [nodeId];
+  selectedEdgeId.value = null;
+  selectedEdgeIds.value = [];
+}
+
+function onStoryOpsInsertAfter(payload: { afterNodeId: string; kind: NodeKind }) {
+  const zoneId = selectedMapId.value ?? focusedNpcZoneId.value ?? undefined;
+  const zoneNpcUid =
+    currentGraph.value.maps?.find((m) => m.id === zoneId)?.npcUid ?? focusedNpcUid.value ?? undefined;
+  const guard = assertNodeKindAllowedForNpc(
+    project.value,
+    currentGraph.value,
+    currentGameMap.value,
+    zoneNpcUid,
+    payload.kind,
+  );
+  if (!guard.ok) {
+    void appAlert(guard.hint ? `${guard.reason}\n\n${guard.hint}` : guard.reason, "无法添加节点");
+    return;
+  }
+  const node = insertNodeAfter(currentGraph.value, payload.afterNodeId, payload.kind, {
+    mapId: zoneId,
+    npcUid: zoneNpcUid,
+  });
+  if (!node) {
+    addNode(payload.kind);
+    return;
+  }
+  if (payload.kind === "questUpdate" && currentGraph.value.kind === "map") {
+    const q = project.value.quests.find((x) => x.graphId === currentGraph.value.id);
+    if (q) {
+      node.questId = q.id;
+      if (!node.questStatus) node.questStatus = "Completed";
+    }
+  }
+  selectedNodeId.value = node.id;
+  selectedNodeIds.value = [node.id];
+  flushCurrentProjectSave();
+}
+
+function onStoryOpsDeleteNode(nodeId: string) {
+  const result = deleteNodeRewire(currentGraph.value, nodeId);
+  if (!result.ok) {
+    void appAlert(result.reason, "无法删除");
+    return;
+  }
+  if (selectedNodeId.value === nodeId) {
+    selectedNodeId.value = focusedNpcUid.value
+      ? currentGameMap.value?.npcs.find((n) => n.npcUid === focusedNpcUid.value)?.entryNodeId ?? null
+      : null;
+    selectedNodeIds.value = selectedNodeId.value ? [selectedNodeId.value] : [];
+  }
+  flushCurrentProjectSave();
+}
+
+function onSelectChainStep(payload: { npcUid: string; nodeId: string }) {
+  if (editorViewMode.value !== "story") editorViewMode.value = "story";
+  focusedNpcUid.value = payload.npcUid;
+  const gm = currentGameMap.value;
+  const npc = gm?.npcs.find((n) => n.npcUid === payload.npcUid);
+  if (npc?.zoneId) selectedMapId.value = npc.zoneId;
+  onStoryOpsSelectNode(payload.nodeId);
+}
+
+function onInsertChainStep(payload: { npcUid: string; afterNodeId: string; kind: NodeKind }) {
+  if (editorViewMode.value !== "story") editorViewMode.value = "story";
+  focusedNpcUid.value = payload.npcUid;
+  const gm = currentGameMap.value;
+  const npc = gm?.npcs.find((n) => n.npcUid === payload.npcUid);
+  if (npc?.zoneId) selectedMapId.value = npc.zoneId;
+  onStoryOpsInsertAfter({ afterNodeId: payload.afterNodeId, kind: payload.kind });
+}
+
+function applyStoryToPlacement() {
+  const gm = currentGameMap.value;
+  if (!gm) return;
+  const result = applyStorySettingsToPlacement(project.value, gm);
+  flushCurrentProjectSave();
+  void appAlert(
+    `已套用剧情到摆点：补坐标 ${result.coordsFilled} · 补形象 ${result.prefabsFilled} · 物化敌人 ${result.enemiesMaterialized}`,
+    "套用完成",
+  );
 }
 
 function closeContextMenu() {
@@ -2389,6 +2506,9 @@ function onCanvasContextMenu(e: MouseEvent) {
   }
   const target = e.target as HTMLElement | null;
   if (target?.closest(".context-menu")) return;
+  // 节点右键由节点自身处理（删除 / 进入地图）
+  if (target?.closest(".vue-flow__node")) return;
+  if (target?.closest(".canvas-hud, .shortcuts-panel, .focus-exit-bar, .npc-focus-chip")) return;
   if (selectedMapId.value) {
     selectMapId(null);
     closeContextMenu();
@@ -2894,6 +3014,25 @@ function onKeyDown(ev: KeyboardEvent) {
   const tag = active?.tagName?.toLowerCase();
   const isTyping = !!active?.isContentEditable || tag === "input" || tag === "textarea" || tag === "select";
 
+  if (ev.code === "Escape") {
+    if (contextMenu.value.open || nodeContextMenu.value.open) {
+      ev.preventDefault();
+      closeContextMenu();
+      closeNodeContextMenu();
+      return;
+    }
+    if (shortcutsOpen.value) {
+      ev.preventDefault();
+      shortcutsOpen.value = false;
+      return;
+    }
+    if (focusMode.value) {
+      ev.preventDefault();
+      focusMode.value = false;
+      return;
+    }
+  }
+
   if (!isTyping && ev.code === "BracketLeft") {
     ev.preventDefault();
     toggleLeftPanel();
@@ -2934,7 +3073,7 @@ function onKeyDown(ev: KeyboardEvent) {
   }
   if ((ev.ctrlKey || ev.metaKey) && ev.code === "KeyF") {
     ev.preventDefault();
-    fitView({ padding: 0.2 });
+    fitView({ padding: 0.2, duration: 220 });
     return;
   }
   if (!isTyping && (ev.ctrlKey || ev.metaKey) && ev.code === "KeyL") {
@@ -2942,6 +3081,14 @@ function onKeyDown(ev: KeyboardEvent) {
     isResourceLibraryOpen.value = !isResourceLibraryOpen.value;
     return;
   }
+  if (!isTyping && (ev.ctrlKey || ev.metaKey) && ev.code === "Slash") {
+    ev.preventDefault();
+    shortcutsOpen.value = !shortcutsOpen.value;
+  }
+}
+
+function exitFocusMode() {
+  focusMode.value = false;
 }
 
 function saveLayoutPrefs() {
@@ -3076,7 +3223,7 @@ onMounted(() => {
             : "workspace.json 为空或落后，已从浏览器缓存恢复数据，正在回写磁盘…";
       }
     } else {
-      createNewProject();
+      ensureDefaultProject();
     }
     if (loadResult.storageOnline) {
       saveStatus.value = loadResult.shouldSyncDisk ? "saving" : "synced";
@@ -3281,28 +3428,14 @@ function onImportFileChange(e: Event) {
     const parsed = tryParseProject(raw);
     const runtime = parseRuntimeMapJson(raw);
     if (parsed) {
-      const mode = await appPrompt("输入 1=覆盖当前项目，2=另存为新项目", "2", "导入 story_project");
-      if (mode === "1") {
-        project.value = sanitizeProjectData(parsed);
-        project.value.graphs.forEach(ensureGraphBoundaryNodes);
-        syncQuestDefsWithGraphs();
-        selectedGraphId.value = project.value.graphs[0]?.id ?? "";
-        selectedMapId.value = null;
-        selectedNodeId.value = project.value.graphs[0]?.nodes[0]?.id ?? null;
-        rebuildFlowFromGraph();
-        flushCurrentProjectSave();
-      } else if (mode === "2") {
-        const id = `proj_${crypto.randomUUID()}`;
-        const now = Date.now();
-        projects.value.unshift({
-          id,
-          name: parsed.quests?.[0]?.name ? `导入：${parsed.quests[0].name}` : `导入 ${new Date().toLocaleString()}`,
-          createdAt: now,
-          updatedAt: now,
-          data: sanitizeProjectData(parsed),
-        });
-        activateProjectById(id);
-      }
+      project.value = sanitizeProjectData(parsed);
+      project.value.graphs.forEach(ensureGraphBoundaryNodes);
+      syncQuestDefsWithGraphs();
+      selectedGraphId.value = project.value.graphs[0]?.id ?? "";
+      selectedMapId.value = null;
+      selectedNodeId.value = project.value.graphs[0]?.nodes[0]?.id ?? null;
+      rebuildFlowFromGraph();
+      flushCurrentProjectSave();
     } else if (runtime && currentGameMap.value) {
       onImportRuntimeMap({ gameMapId: currentGameMap.value.id, raw });
     } else {
@@ -3314,13 +3447,12 @@ function onImportFileChange(e: Event) {
 }
 
 function clearDraft() {
-  void appConfirm("确认清空全部本地项目草稿吗？此操作不可撤销。").then((ok) => {
+  void appConfirm("确认清空当前项目草稿吗？此操作不可撤销。").then((ok) => {
     if (!ok) return;
     void clearStorage();
     projects.value = [];
     currentProjectId.value = null;
-    createNewProject();
-    isHome.value = true;
+    ensureDefaultProject();
   });
 }
 
@@ -3388,7 +3520,7 @@ function onCanvasUnready() {
 </script>
 
 <template>
-  <div class="root" :class="{ 'home-mode': isHome }">
+  <div class="root">
     <div v-if="bootRecoveryBanner" class="storage-offline-banner recovery-banner">
       {{ bootRecoveryMessage }}
     </div>
@@ -3402,32 +3534,19 @@ function onCanvasUnready() {
       存储服务未连接，改动仅保存在浏览器。请运行 <code>npm run dev</code> 以实时写入 workspace.json
       <span v-if="saveStatusDetail" class="banner-detail">（{{ saveStatusDetail }}）</span>
     </div>
-    <header v-if="!isHome" class="toolbar">
+    <header class="toolbar">
       <div class="left toolbar-main">
-        <div class="brand">{{ currentProjectMeta?.name ?? "剧情项目" }}</div>
+        <button type="button" class="brand brand-btn" title="点击重命名" @click="renameCurrentProject">
+          {{ currentProjectMeta?.name ?? "剧情项目" }}
+        </button>
         <NavBreadcrumb :items="breadcrumbItems" @navigate="onBreadcrumbNavigate" />
-        <div class="subtitle muted-small">
-          <template v-if="isTimelineView">游戏时间线 · 双击大剧情进入地图</template>
-          <template v-else-if="isMapGraphActive">
-            <template v-if="focusedNpcUid && editorViewMode === 'story'">
-              正在编辑任务：{{ focusedTaskLabel }}
-            </template>
-            <template v-else-if="editorViewMode === 'map'">地图摆点</template>
-            <template v-else>地图剧情</template>
-          </template>
-          <template v-else>
-            {{ currentGraph.name }}
-            <span class="muted"
-              >（{{
-                currentGraph.kind === "timeline"
-                  ? "时间线"
-                  : currentGraph.kind === "map"
-                    ? "地图剧情"
-                    : currentGraph.kind
-              }}）</span
-            >
-          </template>
-        </div>
+        <span
+          v-if="isMapGraphActive"
+          class="mode-pill"
+          :class="editorViewMode === 'map' ? 'map' : 'story'"
+        >
+          {{ editorViewMode === "map" ? "摆点" : "剧情" }}
+        </span>
       </div>
       <div class="right toolbar-main">
         <span
@@ -3439,35 +3558,12 @@ function onCanvasUnready() {
           @click="retrySave"
           >{{ saveStatusLabel }}</span
         >
-        <button
-          v-if="isMapGraphActive && focusedNpcUid && editorViewMode === 'story'"
-          class="btn btn-soft"
-          @click="clearNpcFocus"
-        >
-          显示全部任务链
-        </button>
-        <button class="btn" @click="goHome">返回</button>
-        <button class="btn btn-soft" @click="openResourceLibrary">资源</button>
-        <button
-          class="btn btn-soft"
-          title="检查全项目任务链对接并自动修复"
-          @click="openGlobalCheckRepair"
-        >
-          全局检查修复
-        </button>
-        <button
-          class="btn btn-soft"
-          :class="{ 'btn-warn': !projectExportHealthOk }"
-          title="模拟导出并检查战斗分支/任务官链是否与 runtime JSON 一致"
-          @click="runManualExportHealthCheck"
-        >
-          导出自检{{ projectExportBlockers.length ? ` (${projectExportBlockers.length})` : "" }}
-        </button>
-        <button class="btn btn-soft" @click="openAiAssistant">AI 助手</button>
+        <button class="btn btn-ai" type="button" @click="openAiAssistant">AI 助手</button>
+        <button class="btn btn-soft" type="button" @click="openResourceLibrary">资源</button>
 
         <div class="toolbar-dropdown">
-          <button class="btn btn-soft" type="button" @click="toggleToolbarMenu('export')">导出 ▾</button>
-          <div v-if="exportMenuOpen" class="toolbar-dropdown-menu">
+          <button class="btn btn-soft" type="button" @click="toggleToolbarMenu('file')">文件 ▾</button>
+          <div v-if="fileMenuOpen" class="toolbar-dropdown-menu">
             <button
               v-if="isMapGraphActive && currentGameMap"
               class="btn btn-soft"
@@ -3477,15 +3573,6 @@ function onCanvasUnready() {
               导出运行时 map
             </button>
             <button class="btn btn-soft" type="button" @click="(exportJson(), closeToolbarMenus())">导出项目</button>
-            <button class="btn btn-soft" type="button" @click="(triggerExportMergeFile(), closeToolbarMenus())">
-              加载 merge 壳
-            </button>
-          </div>
-        </div>
-
-        <div class="toolbar-dropdown">
-          <button class="btn btn-soft" type="button" @click="toggleToolbarMenu('import')">导入 ▾</button>
-          <div v-if="importMenuOpen" class="toolbar-dropdown-menu">
             <button class="btn btn-soft" type="button" @click="(triggerImport(), closeToolbarMenus())">导入项目</button>
             <button
               v-if="currentGameMap"
@@ -3495,10 +3582,14 @@ function onCanvasUnready() {
             >
               导入 map
             </button>
+            <button class="btn btn-soft" type="button" @click="(triggerExportMergeFile(), closeToolbarMenus())">
+              加载 merge 壳
+            </button>
+            <button class="btn btn-soft" type="button" @click="(openMapRuntime(), closeToolbarMenus())">
+              运行时 JSON
+            </button>
           </div>
         </div>
-
-        <button class="btn btn-soft" type="button" @click="onFitView">适配</button>
 
         <div class="toolbar-dropdown">
           <button class="btn btn-soft" type="button" @click="toggleToolbarMenu('more')">更多 ▾</button>
@@ -3519,11 +3610,36 @@ function onCanvasUnready() {
             >
               重做
             </button>
+            <button
+              class="btn btn-soft"
+              type="button"
+              title="检查全项目任务链对接并自动修复"
+              @click="(openGlobalCheckRepair(), closeToolbarMenus())"
+            >
+              全局检查修复
+            </button>
+            <button
+              class="btn btn-soft"
+              type="button"
+              :class="{ 'btn-warn': !projectExportHealthOk }"
+              title="模拟导出并检查战斗分支/任务官链是否与 runtime JSON 一致"
+              @click="(runManualExportHealthCheck(), closeToolbarMenus())"
+            >
+              导出自检{{ projectExportBlockers.length ? ` (${projectExportBlockers.length})` : "" }}
+            </button>
             <button class="btn btn-soft" type="button" @click="(onCleanupOrphanData(), closeToolbarMenus())">
               清理孤立数据
             </button>
-            <button class="btn btn-soft" type="button" @click="(openMapRuntime(), closeToolbarMenus())">
-              运行时 JSON
+            <button
+              class="btn btn-soft"
+              type="button"
+              title="画布快捷键 (Ctrl+/)"
+              @click="((shortcutsOpen = !shortcutsOpen), closeToolbarMenus())"
+            >
+              快捷键
+            </button>
+            <button class="btn btn-soft" type="button" title="适应画布 (Ctrl+F)" @click="(onFitView(), closeToolbarMenus())">
+              适应画布
             </button>
           </div>
         </div>
@@ -3550,13 +3666,28 @@ function onCanvasUnready() {
           @change="onExportMergeFileChange"
         />
       </div>
-      <div v-if="editorViewMode === 'story' || !isMapGraphActive || editorViewMode === 'map'" class="toolbar-subline">
-        <span class="status-chip">{{ selectionSummary }}</span>
+      <div v-if="isMapGraphActive || hasDeletableSelection" class="toolbar-subline">
         <template v-if="isMapGraphActive && editorViewMode === 'map'">
           <button class="btn btn-soft btn-sm" type="button" @click="onFitView">适应地图</button>
           <button class="btn btn-accent btn-sm" type="button" @click="openAddNpcDialog">+ NPC</button>
+          <button
+            class="btn btn-primary btn-sm"
+            type="button"
+            title="按剧情任务链补缺省坐标/形象，并物化战斗敌人摆点"
+            @click="applyStoryToPlacement"
+          >
+            从剧情套用摆点
+          </button>
         </template>
         <template v-else-if="isMapGraphActive && editorViewMode === 'story'">
+          <button
+            v-if="focusedNpcUid"
+            class="btn btn-soft btn-sm"
+            type="button"
+            @click="clearNpcFocus"
+          >
+            全部任务
+          </button>
           <button
             class="btn btn-soft btn-sm"
             type="button"
@@ -3564,35 +3695,18 @@ function onCanvasUnready() {
             title="检测并修复任务链连线、任务节点与出现条件"
             @click="detectAndRepairMapChains"
           >
-            {{ layoutInProgress ? "修复中…" : "检测修复链" }}
+            {{ layoutInProgress ? "修复中…" : "修复链条" }}
           </button>
-          <button
-            class="btn btn-soft btn-sm"
-            type="button"
-            :disabled="layoutInProgress || !layoutZoneId"
-            title="整理当前 NPC 区域内部节点"
-            @click="autoLayoutCurrentZone"
-          >
-            {{ layoutInProgress ? "整理中…" : "整理本组" }}
-          </button>
-          <button
-            class="btn btn-soft btn-sm"
-            type="button"
-            :disabled="layoutInProgress"
-            title="整理全图各区域内部节点"
-            @click="autoLayoutWholeMap"
-          >
-            {{ layoutInProgress ? "整理中…" : "整理全图" }}
-          </button>
+          <button class="btn btn-soft btn-sm" type="button" @click="switchEditorViewMode('map')">去摆点</button>
         </template>
+        <span class="subline-spacer" />
         <button v-if="hasDeletableSelection" class="btn btn-danger btn-sm" type="button" @click="deleteSelection">
           删除
         </button>
-        <span class="muted toolbar-hint">Del / Backspace · 框选整区=整组移动</span>
       </div>
     </header>
 
-    <main v-if="!isHome && isMapRuntimeOpen" class="library-layout">
+    <main v-if="isMapRuntimeOpen" class="library-layout">
       <MapRuntimePanel
         :project="project"
         :game-map-id="selectedGameMapId ?? currentGameMap?.id ?? null"
@@ -3601,7 +3715,7 @@ function onCanvasUnready() {
       />
     </main>
 
-    <main v-if="!isHome && isResourceLibraryOpen" class="library-layout">
+    <main v-if="isResourceLibraryOpen" class="library-layout">
       <ResourceLibrary
         :project="project"
         :selected-graph-id="selectedGraphId"
@@ -3625,7 +3739,7 @@ function onCanvasUnready() {
       />
     </main>
 
-    <main v-if="!isHome && editorViewMode === 'map' && currentGameMap" ref="layoutEl" class="layout map-layout">
+    <main v-if="editorViewMode === 'map' && currentGameMap" ref="layoutEl" class="layout map-layout">
       <aside v-if="!focusMode && leftPanelOpen" class="pane pane-left">
         <LeftPanel
           :project="project"
@@ -3636,6 +3750,7 @@ function onCanvasUnready() {
           :selected-battle-giver-uid="selectedBattleGiverUid"
           :selected-battle-spawn-uid="selectedBattleSpawnUid"
           :editor-view-mode="editorViewMode"
+          :selected-node-id="selectedNodeId"
           @select-graph="selectGraph"
           @add-graph="addGraph"
           @add-node="addNode"
@@ -3659,6 +3774,7 @@ function onCanvasUnready() {
           @delete-battle-branch="onDeleteBattleBranch"
           @patch-battle-enemy="onPatchBattleEnemy"
           @switch-view="onLeftPanelSwitchView"
+          @apply-story-placement="applyStoryToPlacement"
           @add-npc="promptAddGameMapNpc"
           @delete-npc="deleteGameMapNpcEntry"
           @patch-npc="patchGameMapNpc($event.npcUid, $event.patch as Partial<GameMapNpcDef>)"
@@ -3669,6 +3785,9 @@ function onCanvasUnready() {
           @open-quest-detail="openQuestDetail"
           @add-global-quest="addGlobalQuest"
           @reorder-global-quest="onReorderGlobalQuest"
+          @reorder-npc="reorderGameMapNpcs"
+          @insert-chain-step="onInsertChainStep"
+          @select-chain-step="onSelectChainStep"
           @add-child-map="addChildGameMapEntry"
           @navigate-timeline="navigateToTimeline"
           @patch-portal-node="patchTimelinePortalNode($event.nodeId, $event.title)"
@@ -3698,7 +3817,6 @@ function onCanvasUnready() {
 
     <main
       v-if="
-        !isHome &&
         !isMapRuntimeOpen &&
         !isResourceLibraryOpen &&
         !(editorViewMode === 'map' && currentGameMap)
@@ -3717,6 +3835,7 @@ function onCanvasUnready() {
           :selected-battle-giver-uid="selectedBattleGiverUid"
           :selected-battle-spawn-uid="selectedBattleSpawnUid"
           :editor-view-mode="editorViewMode"
+          :selected-node-id="selectedNodeId"
           @select-graph="selectGraph"
           @add-graph="addGraph"
           @add-node="addNode"
@@ -3740,6 +3859,7 @@ function onCanvasUnready() {
           @delete-battle-branch="onDeleteBattleBranch"
           @patch-battle-enemy="onPatchBattleEnemy"
           @switch-view="onLeftPanelSwitchView"
+          @apply-story-placement="applyStoryToPlacement"
           @add-npc="promptAddGameMapNpc"
           @delete-npc="deleteGameMapNpcEntry"
           @patch-npc="patchGameMapNpc($event.npcUid, $event.patch as Partial<GameMapNpcDef>)"
@@ -3750,6 +3870,9 @@ function onCanvasUnready() {
           @open-quest-detail="openQuestDetail"
           @add-global-quest="addGlobalQuest"
           @reorder-global-quest="onReorderGlobalQuest"
+          @reorder-npc="reorderGameMapNpcs"
+          @insert-chain-step="onInsertChainStep"
+          @select-chain-step="onSelectChainStep"
           @add-child-map="addChildGameMapEntry"
           @navigate-timeline="navigateToTimeline"
           @patch-portal-node="patchTimelinePortalNode($event.nodeId, $event.title)"
@@ -3771,63 +3894,22 @@ function onCanvasUnready() {
       ></div>
 
       <section class="pane-canvas">
-        <div
-          ref="canvasPaneEl"
-          class="canvas-shell"
-          @click="closeContextMenu"
-          @pointerdown.capture="onCanvasPointerDownCapture"
-          @contextmenu.capture.prevent="onCanvasContextMenu"
-        >
-          <Canvas
-            ref="canvasRef"
-            :nodes="nodes"
-            :edges="edges"
-            @connect="onConnect"
-            @nodes-change="onNodesChange"
-            @edges-change="onEdgesChange"
-            @node-drag-start="onNodeDragStart"
-            @node-drag="onNodeDrag"
-            @node-drag-stop="onNodeDragStop"
-            @node-click="onNodeClick"
-            @edge-click="onEdgeClick"
-            @selection-change="onSelectionChange"
-            @selection-box="onSelectionBox($event.rect, $event.additive)"
-            @pane-click="onPaneClick"
-            @update:nodes="onNodesUpdated"
-            @update:edges="onEdgesUpdated"
-            @ready="onCanvasReady"
-            @unready="onCanvasUnready"
+        <div ref="canvasPaneEl" class="canvas-shell ops-shell">
+          <StoryOpsPanel
+            :project="project"
+            :graph="currentGraph"
+            :game-map="currentGameMap"
+            :focused-npc-uid="focusedNpcUid"
+            :selected-node-id="selectedNodeId"
+            @select-node="onStoryOpsSelectNode"
+            @add-node="addNode"
+            @insert-after="onStoryOpsInsertAfter"
+            @delete-node="onStoryOpsDeleteNode"
+            @enter-map="(id) => drillDownToMap(id, 'story')"
+            @focus-npc="focusNpcStory"
+            @add-global-quest="addGlobalQuest"
+            @unlock-targets-changed="flushCurrentProjectSave"
           />
-          <div
-            v-if="contextMenu.open"
-            class="context-menu"
-            :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y}px` }"
-          >
-            <button
-              v-for="item in quickCreateKinds"
-              :key="item.kind"
-              class="context-item"
-              @click.stop="createNodeFromContextMenu(item.kind)"
-            >
-              新建{{ item.label }}节点
-            </button>
-          </div>
-          <div
-            v-if="nodeContextMenu.open"
-            class="context-menu"
-            :style="{ left: `${nodeContextMenu.x}px`, top: `${nodeContextMenu.y}px` }"
-          >
-            <button
-              class="context-item"
-              :disabled="!canDeleteFlowNode(nodeContextMenu.flowNodeId)"
-              @click.stop="deleteNodeContextMenuTarget"
-            >
-              删除节点
-            </button>
-            <div v-if="!canDeleteFlowNode(nodeContextMenu.flowNodeId)" class="context-hint">
-              {{ getDeleteNodeBlockReason(currentGraph, nodeContextMenu.flowNodeId) || "该节点不能删除" }}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -3866,42 +3948,12 @@ function onCanvasUnready() {
       </aside>
     </main>
 
-    <main v-if="isHome" class="home">
-      <div class="home-header">
-        <div>
-          <h1>项目主页</h1>
-          <p class="home-subtitle">每个项目是独立画布编辑器，支持自动保存（约 0.6 秒）与按创建时间排序。</p>
-        </div>
-        <button class="btn btn-primary" @click="createNewProject">新建项目</button>
-      </div>
-
-      <div class="search-row">
-        <input v-model="projectSearchKeyword" class="search-input" type="text" placeholder="搜索项目名..." />
-      </div>
-
-      <div class="project-list">
-        <div v-for="item in filteredProjects" :key="item.id" class="project-item">
-          <div class="project-main">
-            <div class="project-name">{{ item.name || "未命名" }}</div>
-            <div class="project-time">创建时间：{{ new Date(item.createdAt).toLocaleString() }}</div>
-            <div class="project-time">最近保存：{{ new Date(item.updatedAt).toLocaleString() }}</div>
-          </div>
-          <div class="project-actions">
-            <button class="btn" @click="activateProjectById(item.id)">进入</button>
-            <button class="btn" @click="renameProject(item.id)">改名</button>
-            <button class="btn danger" @click="deleteProjectEntry(item.id)">删除</button>
-          </div>
-        </div>
-      </div>
-      <div v-if="filteredProjects.length === 0" class="empty-tip">没有匹配的项目。</div>
-    </main>
-
     <AiAssistantFloating
-      v-if="!isHome"
       :visible="isAiAssistantOpen"
       :project="project"
       :nav-context="aiNavContext"
       :selected-node-ids="aiSelectedNodeIds"
+      :pending-command="aiPendingCommand"
       @close="closeAiAssistant"
       @rebuild="onAiRebuild"
       @save="flushCurrentProjectSave"
@@ -3944,31 +3996,73 @@ function onCanvasUnready() {
   min-height: 100dvh;
   overflow: hidden;
 }
-.root.home-mode {
-  /* home 视图占满剩余空间 */
-}
 .toolbar {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 8px 10px;
-  padding: 0 12px;
-  min-height: 62px;
+  gap: 0;
+  padding: 0;
+  min-height: 0;
   flex: 0 0 auto;
-  border-bottom: 1px solid var(--border-strong);
-  background: var(--bg-app);
+  border-bottom: 1px solid var(--border-default);
+  background: linear-gradient(180deg, #121a23 0%, var(--bg-app) 100%);
 }
 .toolbar-main {
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  min-height: var(--toolbar-h);
+}
+.toolbar-main.right {
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 .left {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 .brand {
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  font-size: 14px;
+}
+.brand-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+}
+.brand-btn:hover {
+  color: var(--accent);
+}
+.mode-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--border-default);
+}
+.mode-pill.story {
+  background: var(--accent-soft);
+  color: #9adcf5;
+  border-color: rgba(94, 200, 240, 0.28);
+}
+.mode-pill.map {
+  background: rgba(107, 207, 142, 0.12);
+  color: #86efac;
+  border-color: rgba(107, 207, 142, 0.28);
 }
 .subtitle {
   font-size: 12px;
@@ -3976,6 +4070,17 @@ function onCanvasUnready() {
 }
 .muted {
   color: var(--fg-tertiary);
+}
+.toolbar-subline {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px 8px;
+  flex-wrap: wrap;
+}
+.subline-spacer {
+  flex: 1;
 }
 .layout {
   display: flex;
@@ -4001,10 +4106,14 @@ function onCanvasUnready() {
 .pane-left {
   width: var(--left-panel-width);
   min-width: 0;
+  background: var(--bg-panel);
+  box-shadow: inset -1px 0 0 rgba(148, 163, 184, 0.06);
 }
 .pane-right-wrap {
   width: var(--right-panel-width);
   min-width: 0;
+  background: var(--bg-panel);
+  box-shadow: inset 1px 0 0 rgba(148, 163, 184, 0.06);
 }
 .pane-canvas {
   flex: 1 1 auto;
@@ -4023,23 +4132,26 @@ function onCanvasUnready() {
   flex-direction: column;
   position: relative;
 }
+.ops-shell {
+  overflow: hidden;
+}
 .context-menu {
   position: absolute;
   z-index: 30;
-  min-width: 168px;
-  max-height: min(420px, 70vh);
+  min-width: 132px;
+  max-height: min(280px, 50vh);
   overflow: auto;
-  padding: 6px;
+  padding: 4px;
   border: 1px solid var(--border-strong);
   border-radius: 8px;
-  background: rgba(2, 6, 23, 0.95);
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
 }
 .context-item {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 7px 9px;
+  padding: 7px 10px;
   margin: 0;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -4049,42 +4161,108 @@ function onCanvasUnready() {
   cursor: pointer;
 }
 .context-item:hover {
-  border-color: var(--accent);
-  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(30, 41, 59, 0.7);
+}
+.context-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.focus-exit-bar {
+  position: absolute;
+  z-index: 25;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.92);
+  color: #cbd5e1;
+  font-size: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+.shortcuts-panel {
+  position: absolute;
+  z-index: 28;
+  top: 10px;
+  right: 10px;
+  width: 220px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+  color: #e2e8f0;
+}
+.shortcuts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+.shortcuts-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.shortcuts-list kbd {
+  display: inline-block;
+  padding: 0 4px;
+  border-radius: 3px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(30, 41, 59, 0.9);
+  color: #e2e8f0;
+  font-size: 10px;
+  font-family: inherit;
 }
 .resizer {
-  width: 6px;
+  width: 10px;
   cursor: col-resize;
   background: transparent;
   position: relative;
   flex: 0 0 auto;
+  z-index: 2;
 }
-.resizer:hover::before {
-  background: rgba(56, 189, 248, 0.35);
+.resizer:hover::before,
+.resizer:active::before {
+  background: rgba(56, 189, 248, 0.65);
+  width: 3px;
+  left: 3.5px;
 }
 .resizer::before {
   content: "";
   position: absolute;
-  left: 2px;
-  top: 0;
-  bottom: 0;
+  left: 4px;
+  top: 12%;
+  bottom: 12%;
   width: 2px;
-  background: rgba(148, 163, 184, 0.2);
+  border-radius: 2px;
+  background: rgba(148, 163, 184, 0.35);
+  transition: background 0.12s ease, width 0.12s ease, left 0.12s ease;
 }
 .panel-toggle {
-  width: 18px;
+  width: 22px;
   border: none;
   border-left: 1px solid var(--border-default);
   border-right: 1px solid var(--border-default);
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(15, 23, 42, 0.88);
   color: var(--fg-secondary);
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
   padding: 0;
+  transition: color 0.12s ease, background 0.12s ease;
 }
 .panel-toggle:hover {
   color: var(--fg-main);
-  background: rgba(30, 41, 59, 0.85);
+  background: rgba(30, 41, 59, 0.95);
 }
 .panel-toggle-left {
   border-right: none;
@@ -4127,23 +4305,12 @@ function onCanvasUnready() {
   padding: 4px 10px;
   font-size: 12px;
 }
-.toolbar-hint {
-  font-size: 12px;
-}
 .context-hint {
-  padding: 6px 10px;
+  padding: 4px 10px 6px;
   font-size: 11px;
-  color: var(--fg-tertiary);
-  max-width: 220px;
+  color: #fca5a5;
+  max-width: 200px;
   line-height: 1.35;
-}
-.toolbar-subline {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  overflow-x: auto;
-  padding-bottom: 6px;
 }
 .status-chip {
   flex: 0 0 auto;
@@ -4238,77 +4405,6 @@ function onCanvasUnready() {
 .btn.danger {
   border-color: #7f1d1d;
   background: #3f1111;
-}
-.home {
-  flex: 1 1 auto;
-  min-height: 0;
-  padding: 24px;
-  overflow: auto;
-}
-.home-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-.home-header h1 {
-  margin: 0 0 6px;
-  font-size: 24px;
-}
-.home-subtitle {
-  margin: 0;
-  color: var(--fg-secondary);
-  font-size: 13px;
-}
-.project-list {
-  display: grid;
-  gap: 10px;
-}
-.search-row {
-  margin-bottom: 12px;
-}
-.search-input {
-  width: 100%;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--border-default);
-  background: rgba(2, 6, 23, 0.25);
-  color: var(--fg-main);
-  padding: 0 10px;
-  outline: none;
-}
-.search-input:focus {
-  border-color: var(--accent);
-}
-.project-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  background: rgba(2, 6, 23, 0.35);
-}
-.project-main {
-  display: grid;
-  gap: 4px;
-}
-.project-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-.project-time {
-  font-size: 12px;
-  color: var(--fg-secondary);
-}
-.project-actions {
-  display: flex;
-  gap: 8px;
-}
-.empty-tip {
-  margin-top: 14px;
-  color: var(--fg-secondary);
-  font-size: 13px;
 }
 .map-layout {
   grid-template-columns: minmax(220px, 280px) 1fr;

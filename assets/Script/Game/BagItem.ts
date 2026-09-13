@@ -6,6 +6,7 @@ import { RobotEvolutionEffect } from './RobotEvolutionEffect';
 import { DataCacheManager } from '../global/DataCacheManager';
 import { ResourceManager } from './ResourceManager';
 import { UILockManager } from '../global/UILockManager';
+import { TipWindows } from '../global/TipWindows';
 import { emitBattleTeamUpdated, emitRobotDataUpdated } from '../global/RobotGameEvents';
 import { BagEventHub } from '../global/BagEvent';
 import { normalizeBagItemsResponse, type BagItemSnapshot } from '../global/protocol/BagProtocol';
@@ -54,8 +55,6 @@ export class BagItem extends Component {
     @property(Button) useBtn: Button = null!; // 使用窗口内的"使用"按钮
     @property(Button) discardBtn: Button = null!; // 使用窗口内的"丢弃"按钮
     @property(RobotList) robotList: RobotList = null!; // 机甲列表面板（用于选择机甲使用物品）
-    @property(Node) errorTipsPanel: Node = null!; // ErrorTips 面板节点（BagPanel下的ErrorTips）
-    @property(Label) errorTipsLabel: Label = null!; // ErrorTips 下的 Label 组件
 
     private ws: WebSocketManager = null!;
     private items: Array<{ item_id: number; quantity: number; category: number }> = [];
@@ -105,8 +104,6 @@ export class BagItem extends Component {
     private _dragging = false;
     private _dragStartUIPos: Vec2 = new Vec2();
     private _bagNameFilter = '';
-    private _discardArmed = false;
-    private _discardArmTimer: ReturnType<typeof setTimeout> | null = null;
     private _lastUiThrottleTs = 0;
 
     // 详情面板相对于模板格子（第一个格子）的固定偏移（世界坐标下）
@@ -1625,11 +1622,6 @@ export class BagItem extends Component {
         this.selectedItemId = null;
         this.selectedItemSlotIndex = -1;
         this.hoveredItemNode = null;
-        this._discardArmed = false;
-        if (this._discardArmTimer) {
-            clearTimeout(this._discardArmTimer);
-            this._discardArmTimer = null;
-        }
     }
 
     /**
@@ -2015,6 +2007,11 @@ export class BagItem extends Component {
         if (this.robotList && !this.robotList.isPetInCurrentList(pid)) {
             console.warn(`⚠️ [BagItem] petId 不在当前已加载列表，仍交由服务端校验: ${pid}`);
         }
+        if (this.isPetRemovalItem(itemData) && this.robotList?.isLastRobot()) {
+            this.isProcessingUseItem = false;
+            this.showErrorTips('至少保留一台机甲，无法分解', false);
+            return;
+        }
 
         const cid = this.ws.getCharacterId?.() || undefined;
         if (!cid) {
@@ -2105,23 +2102,26 @@ export class BagItem extends Component {
 
         console.log(`🗑️ [BagItem] 丢弃物品: ${itemName} (ID: ${itemId})，数量: ${quantity}（删除整个格子）`);
 
-        if (!this._discardArmed) {
-            this._discardArmed = true;
-            if (this._discardArmTimer) clearTimeout(this._discardArmTimer);
-            this._discardArmTimer = setTimeout(() => {
-                this._discardArmed = false;
-                this._discardArmTimer = null;
-            }, 5000);
-            this.showErrorTips('请再次点击「丢弃」确认', false);
+        const tip = TipWindows.getInstance();
+        if (tip) {
+            tip.showConfirm(
+                `确定丢弃「${itemName}」×${quantity} 吗？\n此操作不可撤销。`,
+                () => this.executeDiscardItem(itemId),
+                undefined,
+                { confirmText: '确定', cancelText: '取消' },
+            );
             return;
         }
-        this._discardArmed = false;
-        if (this._discardArmTimer) {
-            clearTimeout(this._discardArmTimer);
-            this._discardArmTimer = null;
+
+        this.executeDiscardItem(itemId);
+    }
+
+    private executeDiscardItem(itemId: number) {
+        if (this.isProcessingDiscardItem) {
+            return;
         }
         if (!this.canActThrottle(320)) return;
-        
+
         const cid = this.ws.getCharacterId?.() || undefined;
         if (!cid) {
             console.error('❌ [BagItem] 无法获取角色ID，无法丢弃物品');
@@ -2557,68 +2557,28 @@ export class BagItem extends Component {
         }
     }
 
+    private isPetRemovalItem(itemData: ItemData): boolean {
+        const effect = String(itemData.effect ?? '').trim();
+        return effect === 'PET_DISASSEMBLE_PARTS' || effect === 'PET_DISASSEMBLE_EXP';
+    }
+
     /**
-     * 显示错误/成功提示（简单版本）
-     * @param message 提示消息
-     * @param isSuccess 是否成功（true=成功，false=失败）
+     * 显示错误/成功提示（全局 TipWindows）
      */
     private showErrorTips(message: string, isSuccess: boolean) {
-        // 如果没有绑定 ErrorTips 面板或 Label，尝试自动查找
-        if (!this.errorTipsPanel && this.panel) {
-            this.errorTipsPanel = this.findNodeByName(this.panel, 'ErrorTips');
-        }
-        
-        if (!this.errorTipsPanel) {
-            console.warn('⚠️ [BagItem] ErrorTips 面板未找到，无法显示提示');
+        const tip = TipWindows.getInstance();
+        if (!tip) {
+            console.warn('⚠️ [BagItem] TipWindows 未找到，无法显示提示:', message);
             return;
         }
-
-        // 如果没有绑定 Label，尝试从 ErrorTips 面板下查找
-        if (!this.errorTipsLabel && this.errorTipsPanel) {
-            const labelNode = this.errorTipsPanel.getChildByName('Label');
-            if (labelNode) {
-                this.errorTipsLabel = labelNode.getComponent(Label);
-            }
-        }
-
-        if (!this.errorTipsLabel) {
-            console.warn('⚠️ [BagItem] ErrorTips Label 未找到，无法显示提示');
-            return;
-        }
-
-        // 取消之前的隐藏定时器
-        this.unschedule(this.hideErrorTips);
-
-        // 设置提示文本
-        this.errorTipsLabel.string = message;
-
-        // 设置颜色：成功=FFFF00（黄色），失败=FF3F3F（红色）
-        const successColor = new Color(255, 255, 0, 255); // FFFF00
-        const failColor = new Color(255, 63, 63, 255); // FF3F3F
-        this.errorTipsLabel.color = isSuccess ? successColor : failColor;
-
-        // 显示面板（确保正常显示）
-        this.errorTipsPanel.active = true;
-        this.errorTipsPanel.setScale(1, 1, 1);
-
-        // 确保背景正常显示
-        const sprite = this.errorTipsPanel.getComponent(Sprite);
-        if (sprite) {
-            sprite.color = new Color(255, 255, 255, 255);
-        }
-
-        // 2秒后自动隐藏
-        this.scheduleOnce(this.hideErrorTips, 2.0);
+        const successColor = new Color(255, 255, 0, 255);
+        const failColor = new Color(255, 63, 63, 255);
+        tip.showAlert(message, undefined, {
+            messageColor: isSuccess ? successColor : failColor,
+            autoCloseMs: 2000,
+        });
     }
 
-    /**
-     * 隐藏错误提示面板
-     */
-    private hideErrorTips = () => {
-        if (this.errorTipsPanel) {
-            this.errorTipsPanel.active = false;
-        }
-    }
     
     /**
      * 确保所有物品格子的按钮是可交互的

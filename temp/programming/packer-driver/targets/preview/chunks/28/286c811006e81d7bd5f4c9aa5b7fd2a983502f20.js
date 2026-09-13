@@ -131,6 +131,8 @@ System.register(["cc"], function (_export, _context) {
         GET_BATTLE_TEAM_RESPONSE: 'get_battle_team_response',
         SET_BATTLE_TEAM: 'set_battle_team',
         SET_BATTLE_TEAM_RESPONSE: 'set_battle_team_response',
+        CHOOSE_STARTER_MECH: 'choose_starter_mech',
+        CHOOSE_STARTER_MECH_RESPONSE: 'choose_starter_mech_response',
         BATTLE_TEAM_UPDATE: 'battle_team_update',
         // 战斗相关（第一版：敌人生成 + 房间制 PVE）
         BATTLE_GENERATE_ENEMY: 'battle_generate_enemy',

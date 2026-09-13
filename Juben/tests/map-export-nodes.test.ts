@@ -86,9 +86,9 @@ describe("map-export-nodes", () => {
     expect(reqs.some((r) => (r as { type?: string }).type === "task_completed")).toBe(true);
   });
 
-  it("pipeline warns on give_item without blocking", () => {
+  it("pipeline allows serverOnly give_item without warn", () => {
     const result = exportProjectMapPipeline(gameMap, graph, project);
     expect(result.ok).toBe(true);
-    expect(result.manifestIssues.some((i) => i.message.includes("give_item"))).toBe(true);
+    expect(result.manifestIssues.some((i) => i.message.includes("give_item"))).toBe(false);
   });
 });

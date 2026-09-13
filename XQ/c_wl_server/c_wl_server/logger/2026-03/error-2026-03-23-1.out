@@ -1,0 +1,13 @@
+[00:00:02:695] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - saveMoney 值为0
+[00:00:02:710] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - saveMoney 值为0
+[00:00:02:711] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - saveMoney 值为0
+[00:26:14:145] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=23058) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=23058) Socket error
+[01:32:28:728] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null
+[01:33:10:607] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null
+[01:33:50:975] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null

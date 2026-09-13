@@ -113,11 +113,8 @@ export function createExportPublishActions(deps: ExportPublishDeps) {
     const shell = buildMergeShellFromGameMap(gm);
     const result = exportProjectMapPipeline(gm, graphReady, pd, { mergeFrom: shell });
     if (!result.ok) {
-      const go = await appConfirm(`${formatPipelineReport(result)}\n\n校验未通过，仍要发布到游戏？`, "发布校验");
-      if (!go) {
-        void showExportFailed(flattenProjectExportBlockers(auditProjectExportHealth(pd)));
-        return;
-      }
+      await showExportFailed([formatPipelineReport(result), ...flattenProjectExportBlockers(auditProjectExportHealth(pd))]);
+      return;
     }
 
     let target;

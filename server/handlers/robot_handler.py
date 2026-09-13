@@ -15,12 +15,130 @@ _create_robot_pet = None
 _upgrade_request_locks = None
 _broadcast_to_user_async = None
 
+# 初始机甲三选一（RobotID → 展示名；库内实际名称见 STARTER_MECH_NAME_ALIASES）
+STARTER_MECH_OPTIONS = {
+    0: '铁壁',
+    3: '鹰眼',
+    6: '钢板',
+}
+# UI 展示名与 RobotBase.RobotName 可能不一致（如铁壁 vs 铁臂|初）
+STARTER_MECH_NAME_ALIASES = {
+    0: ('铁壁', '铁臂'),
+    3: ('鹰眼',),
+    6: ('钢板',),
+}
+STARTER_MECH_GRANT_LEVEL = 15
+LAST_ROBOT_GUARD_MSG = '至少保留一台机甲，无法放生或分解'
+
+
+async def resolve_starter_mech_chosen(user_id, character_id: str, total_count: int, player) -> bool:
+    """
+    是否已完成初始机甲选择（服务端权威）。
+    旧账号若已有机甲但未写标记，自动补写 starter_mech_chosen=True。
+    """
+    if player and player.get('starter_mech_chosen') is True:
+        return True
+    if int(total_count or 0) > 0:
+        await utils.async_mongo_operation(
+            lambda: utils.players_col.update_one(
+                {'user_id': user_id, 'character_id': character_id},
+                {'$set': {'starter_mech_chosen': True}},
+                upsert=True,
+            ),
+            timeout=3.0,
+        )
+        return True
+    return False
+
+
+async def assert_can_remove_robot_pet(user_id, character_id: str):
+    """删除机甲前校验：至少保留一台。"""
+    count = await utils.async_mongo_operation(
+        lambda: utils.robotpet_col.count_documents({'user_id': user_id, 'character_id': character_id}),
+        timeout=3.0,
+    )
+    if int(count or 0) <= 1:
+        return False, LAST_ROBOT_GUARD_MSG
+    return True, ''
+
+
 def init_robot_handler(create_robot_pet_func, upgrade_locks_dict, broadcast_func=None):
     """初始化机甲处理器需要的函数和变量"""
     global _create_robot_pet, _upgrade_request_locks, _broadcast_to_user_async
     _create_robot_pet = create_robot_pet_func
     _upgrade_request_locks = upgrade_locks_dict
     _broadcast_to_user_async = broadcast_func
+
+
+def _find_robot_base_by_robot_id(robot_id: int):
+    """从 RobotBase 按 RobotID 查找初阶机甲模板。"""
+    candidates = [robot_id, str(robot_id)]
+    for rid in candidates:
+        doc = utils.safe_mongo_operation(lambda r=rid: utils.robotbase_col.find_one({'RobotID': r}))
+        if doc:
+            return doc
+
+    # 初始机甲兜底：库内 RobotID 可能与配置不一致，按展示名/别名查找
+    import re
+
+    aliases = STARTER_MECH_NAME_ALIASES.get(robot_id) or ()
+    if not aliases:
+        display = STARTER_MECH_OPTIONS.get(robot_id)
+        aliases = (display,) if display else ()
+
+    seen = set()
+    for starter_name in aliases:
+        if not starter_name or starter_name in seen:
+            continue
+        seen.add(starter_name)
+
+        for name_key in (starter_name, f'{starter_name}|初'):
+            doc = utils.safe_mongo_operation(
+                lambda nk=name_key: utils.robotbase_col.find_one({'RobotName': nk})
+            )
+            if doc:
+                return doc
+
+        doc = utils.safe_mongo_operation(
+            lambda sn=starter_name: utils.robotbase_col.find_one({
+                'RobotName': {'$regex': f'^{re.escape(sn)}\\|'},
+                'Form': 1,
+            })
+        )
+        if doc:
+            return doc
+
+        doc = utils.safe_mongo_operation(
+            lambda sn=starter_name: utils.robotbase_col.find_one({
+                'RobotName': {'$regex': f'^{re.escape(sn)}'},
+            })
+        )
+        if doc:
+            return doc
+
+    return None
+
+
+def _build_level_upgrade_patch(pet: dict, target_level: int) -> dict:
+    """将机甲升到目标等级并重算战斗属性。"""
+    from .robot_upgrade import ROBOT_LEVEL_TOTAL_EXP
+
+    upgrade_manager = get_upgrade_manager()
+    calc_source = pet.get('RobotPet_backup') or pet
+    calc_pet = dict(calc_source)
+    calc_pet['Level'] = target_level
+    target_attrs = upgrade_manager.calculate_attributes(calc_pet, robot_id=calc_pet.get('RobotID', ''))
+    target_attrs = upgrade_manager.add_star_bonus(calc_pet, target_attrs)
+    target_attrs = upgrade_manager.apply_unique_growth(calc_pet, target_attrs)
+    update_data = dict(target_attrs or {})
+    update_data['Level'] = target_level
+    if 1 <= target_level <= len(ROBOT_LEVEL_TOTAL_EXP):
+        update_data['EXP'] = ROBOT_LEVEL_TOTAL_EXP[target_level - 1]
+    if 'MaxHP' in update_data:
+        update_data['CurrentHP'] = update_data['MaxHP']
+    if 'MaxMP' in update_data:
+        update_data['CurrentMP'] = update_data['MaxMP']
+    return update_data
 
 
 # get_robot_pets 列表字段（与 find projection 一致，供 aggregate $project）
@@ -509,6 +627,11 @@ async def handle_robot_release_pet(websocket, data, current_character_id):
             await utils.send_error_response(websocket, 'robot_release_pet', '机甲不存在或不属于该角色', code=404, request_data=data)
             return
 
+        can_remove, guard_msg = await assert_can_remove_robot_pet(user['_id'], cid)
+        if not can_remove:
+            await utils.send_error_response(websocket, 'robot_release_pet', guard_msg, code=409, request_data=data)
+            return
+
         # 放生前先将所有装备卸下并放回背包，避免删宠导致装备丢失
         from . import bag_handler
         from .equipment_handler import strip_all_equipment_to_bag
@@ -653,7 +776,7 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
             utils.async_mongo_operation_read(
                 lambda: utils.players_col.find_one(
                     {'user_id': user['_id'], 'character_id': cid},
-                    {'battle_team': 1, 'battle_team_version': 1},
+                    {'battle_team': 1, 'battle_team_version': 1, 'starter_mech_chosen': 1},
                 ),
                 max_retries=3,
                 timeout=4.0,
@@ -670,6 +793,8 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
             battle_team = [str(x) for x in player.get('battle_team', []) if x]
             team_version = int(player.get('battle_team_version', 0) or 0)
         has_more = (skip + len(pets)) < total_count
+        starter_mech_chosen = await resolve_starter_mech_chosen(user['_id'], cid, total_count, player)
+        robotcount = int(total_count or 0)
         pets_list = []
         upgrade_manager = get_upgrade_manager()
         # 收集需要修正等级的机甲（先返回数据，后台批量更新，避免阻塞）
@@ -762,6 +887,8 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
             'pets': pets_list,
             'battle_team': battle_team,
             'team_version': team_version,
+            'starter_mech_chosen': starter_mech_chosen,
+            'robotcount': robotcount,
             'pagination': {
                 'page': page,
                 'page_size': page_size,
@@ -1006,6 +1133,163 @@ async def handle_get_robot_pet_info(websocket, data):
         print(f'❌ 获取机甲详情失败: {e}')
         print(f'详细错误: {traceback.format_exc()}')
         await utils.send_error_response(websocket, 'robot_pet_info', f'获取机甲详情失败: {str(e)}', code=500, request_data=data)
+
+
+async def handle_choose_starter_mech(websocket, data, current_character_id):
+    """
+    新角色首次进游戏：三选一初始机甲（鹰眼 / 铁壁 / 钢板），默认 15 级并自动出战。
+    请求: { robot_id: 0|3|6, character_id?: ... }
+    """
+    token = data.get('token')
+    user_id = data.get('user_id')
+    user = utils.get_user_by_id_or_token(user_id=user_id, token=token)
+    if not user:
+        await utils.send_error_response(websocket, 'choose_starter_mech', '用户不存在或未登录', code=401, request_data=data)
+        return
+
+    cid = data.get('character_id') or current_character_id
+    if cid is not None:
+        cid = str(cid).strip() or None
+    if not cid:
+        await utils.send_error_response(websocket, 'choose_starter_mech', '未选择角色', code=400, request_data=data)
+        return
+
+    try:
+        robot_id = int(data.get('robot_id'))
+    except (TypeError, ValueError):
+        await utils.send_error_response(websocket, 'choose_starter_mech', '无效的机甲类型', code=400, request_data=data)
+        return
+
+    if robot_id not in STARTER_MECH_OPTIONS:
+        await utils.send_error_response(
+            websocket,
+            'choose_starter_mech',
+            f'仅可选择初始机甲：{", ".join(STARTER_MECH_OPTIONS.values())}',
+            code=400,
+            request_data=data,
+        )
+        return
+
+    if not _create_robot_pet:
+        await utils.send_error_response(websocket, 'choose_starter_mech', '创建机甲功能未初始化', code=500, request_data=data)
+        return
+
+    try:
+        player_doc = await utils.async_mongo_operation(
+            lambda: utils.players_col.find_one(
+                {'user_id': user['_id'], 'character_id': cid},
+                {'starter_mech_chosen': 1},
+            ),
+            timeout=3.0,
+        )
+        if player_doc and player_doc.get('starter_mech_chosen') is True:
+            await utils.send_error_response(websocket, 'choose_starter_mech', '已选择过初始机甲，无法更改', code=409, request_data=data)
+            return
+
+        existing_count = await utils.async_mongo_operation(
+            lambda: utils.robotpet_col.count_documents({'user_id': user['_id'], 'character_id': cid}),
+            timeout=3.0,
+        )
+        if existing_count and int(existing_count) > 0:
+            await utils.send_error_response(websocket, 'choose_starter_mech', '该角色已有机甲，无法重复领取初始机甲', code=409, request_data=data)
+            return
+
+        base_robot = _find_robot_base_by_robot_id(robot_id)
+        if not base_robot:
+            await utils.send_error_response(websocket, 'choose_starter_mech', f'未找到机甲模板 RobotID={robot_id}', code=404, request_data=data)
+            return
+
+        robot_pet = _create_robot_pet(user['_id'], cid, base_robot)
+        pet_oid = robot_pet.get('_id')
+        if not pet_oid:
+            await utils.send_error_response(websocket, 'choose_starter_mech', '创建机甲失败', code=500, request_data=data)
+            return
+
+        level_patch = _build_level_upgrade_patch(robot_pet, STARTER_MECH_GRANT_LEVEL)
+        level_patch['is_in_battle_team'] = True
+        level_patch['battle_team_position'] = 1
+        await utils.async_mongo_operation(
+            lambda: utils.robotpet_col.update_one({'_id': pet_oid}, {'$set': level_patch}),
+            timeout=3.0,
+        )
+        robot_pet.update(level_patch)
+
+        pet_id = str(pet_oid)
+        battle_team = [pet_id]
+        await utils.async_mongo_operation(
+            lambda: utils.players_col.update_one(
+                {'user_id': user['_id'], 'character_id': cid},
+                {
+                    '$set': {
+                        'battle_team': battle_team,
+                        'starter_mech_chosen': True,
+                        'robotcount': 1,
+                    },
+                    '$inc': {'battle_team_version': 1},
+                },
+                upsert=True,
+            ),
+            timeout=3.0,
+        )
+
+        player_after = await utils.async_mongo_operation(
+            lambda: utils.players_col.find_one({'user_id': user['_id'], 'character_id': cid}, {'battle_team_version': 1}),
+            timeout=3.0,
+        )
+        team_version = int((player_after or {}).get('battle_team_version', 1) or 1)
+        rc = utils.compute_robot_count(user['_id'], cid)
+
+        if _broadcast_to_user_async:
+            pets_list = [{
+                'pet_id': pet_id,
+                'RobotID': robot_pet.get('RobotID', ''),
+                'RobotName': robot_pet.get('RobotName', ''),
+                'Level': robot_pet.get('Level', STARTER_MECH_GRANT_LEVEL),
+                'StarLevel': robot_pet.get('StarLevel', 1),
+                'Form': robot_pet.get('Form', 1),
+                'Class': robot_pet.get('Class', 1),
+                'AniID': robot_pet.get('AniID', '') or '',
+                'slot_index': robot_pet.get('slot_index'),
+            }]
+            asyncio.create_task(_broadcast_to_user_async(user['_id'], {
+                'type': 'robotcount_update',
+                'success': True,
+                'character_id': cid,
+                'robotcount': rc,
+            }))
+            asyncio.create_task(_broadcast_to_user_async(user['_id'], {
+                'type': 'robot_pets_update',
+                'success': True,
+                'character_id': cid,
+                'pets': pets_list,
+            }))
+            asyncio.create_task(_broadcast_to_user_async(user['_id'], {
+                'type': 'battle_team_update',
+                'success': True,
+                'character_id': cid,
+                'battle_team': battle_team,
+            }))
+
+        await utils.send_success_response(
+            websocket,
+            'choose_starter_mech',
+            {
+                'character_id': cid,
+                'pet_id': pet_id,
+                'robot_id': robot_id,
+                'robot_name': robot_pet.get('RobotName', STARTER_MECH_OPTIONS.get(robot_id, '')),
+                'level': robot_pet.get('Level', STARTER_MECH_GRANT_LEVEL),
+                'battle_team': battle_team,
+                'team_version': team_version,
+                'robotcount': rc,
+            },
+            request_data=data,
+        )
+        print(f'✅ [choose_starter_mech] cid={cid} robot_id={robot_id} pet={pet_id} Lv{STARTER_MECH_GRANT_LEVEL}')
+    except Exception as e:
+        import traceback
+        print(f'❌ choose_starter_mech 失败: {e}\n{traceback.format_exc()}')
+        await utils.send_error_response(websocket, 'choose_starter_mech', f'领取初始机甲失败: {str(e)}', code=500, request_data=data)
 
 
 async def handle_create_initial_pet(websocket, data):

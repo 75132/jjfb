@@ -95,6 +95,38 @@ describe("map-import", () => {
     expect(res.message).toContain("摆点坐标未回写");
   });
 
+  it("syncs quests from timeline after import", () => {
+    const timelineGraph = createGraph({
+      id: "g_tl",
+      kind: "timeline",
+      name: "时间线",
+      nodes: [
+        createNode({
+          id: "portal_imp",
+          kind: "mapPortal",
+          title: "导入地图",
+          gameMapId: "gm_imp",
+          portalTaskId: 100001,
+          position: { x: 0, y: 0 },
+        }),
+      ],
+    });
+    const withTimeline = {
+      ...project,
+      timelineGraphId: timelineGraph.id,
+      graphs: [timelineGraph, graph],
+      quests: [{ id: "stale_q", name: "过期任务", initialStatus: "NotStarted" as const, graphId: "g_imp", taskId: 999999 }],
+    };
+
+    const runtime = exportGameMapToRuntime(withTimeline.gameMaps![0]!, graph, withTimeline);
+    const res = importRuntimeMapIntoProject(withTimeline, "gm_imp", runtime);
+    expect(res.ok).toBe(true);
+    expect(withTimeline.quests.length).toBe(1);
+    expect(withTimeline.quests[0]?.id).toBe("qp_portal_imp");
+    expect(withTimeline.quests[0]?.taskId).toBe(100001);
+    expect(withTimeline.quests[0]?.graphId).toBe(graph.id);
+  });
+
   it("applyRuntimeShellFromMergeJson round-trips via buildMergeShellFromGameMap", () => {
     const gm = project.gameMaps![0]!;
     const ok = applyRuntimeShellFromMergeJson(gm, {

@@ -315,6 +315,7 @@ export class BattleScene extends Component {
 
         // story：CREATE 由 startStoryBattle 发起，此处不得退化随机 PVE
         if (action === 'story-wait') {
+            this.prepareRobotShowsForNewBattle();
             this._syncBattlePortraitVisibility();
             return;
         }
@@ -335,8 +336,7 @@ export class BattleScene extends Component {
         if (this.battleSelectPanel) this.battleSelectPanel.active = false;
         if (this.timerRoot) this.timerRoot.active = false;
 
-        this.resetRobotShowOpacity(this.playerRobotShow);
-        this.resetRobotShowOpacity(this.enemyRobotShow);
+        this.prepareRobotShowsForNewBattle();
         this._syncBattlePortraitVisibility();
 
         if (action === 'pvp-match') {
@@ -512,6 +512,7 @@ export class BattleScene extends Component {
         this._sessionId += 1;
         this._roomStateApplied = false;
         this.unschedule(this._onBattleEnterTimeout);
+        this.prepareRobotShowsForNewBattle();
 
         this.node.active = true;
         this.scheduleOnce(this._onBattleEnterTimeout, this.BATTLE_ENTER_TIMEOUT_SEC);
@@ -670,6 +671,10 @@ export class BattleScene extends Component {
         if (!forRoundAnimation && !isNewRoom && incomingRoomId && this._appliedRestoreRoomId === incomingRoomId && this._roomStateApplied) {
             console.log(`[BattleScene] skip duplicate restore animation room_id=${incomingRoomId}`);
             return;
+        }
+
+        if (isNewRoom && !forRoundAnimation) {
+            this.prepareRobotShowsForNewBattle();
         }
 
         // 根据服务器返回的模式切换：PVP 可能需要更长的 action 等待时间（双方都提交完才结算）
@@ -2025,6 +2030,17 @@ export class BattleScene extends Component {
                 onTweenDone();
             })
             .start();
+    }
+
+    /** 新一场战斗开始前：恢复击破动画后的透明度，并清理上一场 schedule/tween */
+    private prepareRobotShowsForNewBattle(): void {
+        this.unscheduleAllCallbacks();
+        if (this.playerRobotShow?.node) Tween.stopAllByTarget(this.playerRobotShow.node);
+        if (this.enemyRobotShow?.node) Tween.stopAllByTarget(this.enemyRobotShow.node);
+        this.resetRobotShowOpacity(this.playerRobotShow);
+        this.resetRobotShowOpacity(this.enemyRobotShow);
+        if (this.playerRobotShow) this.playerRobotShow.resetVisualState();
+        if (this.enemyRobotShow) this.enemyRobotShow.resetVisualState();
     }
 
     /** 将 RobotShow 下所有 Sprite 的透明度恢复为 255，避免击破动画后下次战斗不显示 */

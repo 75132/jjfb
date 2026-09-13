@@ -31,6 +31,7 @@ import {
   resolveNpcBattleChains,
 } from "./battle-enemy-bind";
 import { parseNumericTaskId } from "./constants";
+import { clampStoryTitle } from "./story-title-limit";
 
 export type MapExportFoldWarning = {
   level: "warn" | "info";
@@ -131,19 +132,24 @@ export function collectNpcEventChain(graph: GraphData, entryNodeId: string): Sto
   return chain;
 }
 
-/** 与导出管线一致的链上 eventId 列表（跳过折叠节点与无效 callQuest） */
+/** 与导出管线一致的链上 eventId 列表（跳过折叠节点、战斗分支与无效 callQuest） */
 export function collectNpcChainEventIds(
   graph: GraphData,
   npc: Pick<GameMapNpcDef, "entryNodeId" | "npcUid">,
   project?: ProjectData,
+  gameMap?: GameMapDef,
 ): string[] {
   const chain = collectNpcEventChain(graph, npc.entryNodeId);
+  const battleBind =
+    project && gameMap ? resolveNpcBattleChain(project, gameMap, npc.npcUid, graph) : null;
   const ids: string[] = [];
   let order = 1;
 
   for (let i = 0; i < chain.length; i++) {
     const node = chain[i]!;
     if (isFoldOnlyNode(node)) continue;
+    if (battleBind?.enemyAppearNodeId && isBattleBranchEditorNode(node)) continue;
+    if (node.kind === "choice" && node.title === "战斗结果") continue;
 
     if (node.kind === "callQuest") {
       const effects = exportCallQuestEffects(node, project);
@@ -167,15 +173,20 @@ export function resolveNodeEventId(
   npc: GameMapNpcDef,
   nodeId: string,
   project?: ProjectData,
+  gameMap?: GameMapDef,
 ): string | null {
   const chain = collectNpcEventChain(graph, npc.entryNodeId);
   const nodeIndex = chain.findIndex((n) => n.id === nodeId);
   if (nodeIndex < 0) return null;
 
+  const battleBind =
+    project && gameMap ? resolveNpcBattleChain(project, gameMap, npc.npcUid, graph) : null;
   let order = 0;
   for (let i = 0; i <= nodeIndex; i++) {
     const node = chain[i]!;
     if (isFoldOnlyNode(node)) continue;
+    if (battleBind?.enemyAppearNodeId && isBattleBranchEditorNode(node)) continue;
+    if (node.kind === "choice" && node.title === "战斗结果") continue;
     if (node.kind === "callQuest") {
       if (exportCallQuestEffects(node, project).length === 0) continue;
       order++;
@@ -244,7 +255,7 @@ function exportDialogueScript(node: StoryNode, pool: Record<string, RuntimeDialo
   const lines = (node.dialogLines ?? []).map((l) => l.text).filter(Boolean);
   if (lines.length === 0 && node.text) lines.push(node.text);
   pool[id] = {
-    speaker: node.speaker ?? node.title ?? "",
+    speaker: clampStoryTitle(node.speaker ?? node.title ?? "") || "NPC",
     lines: lines.length ? lines : ["（空对白）"],
   };
   return id;
@@ -699,7 +710,7 @@ export function exportGameMapToRuntimeWithMeta(
 
     const runtimeNpc: RuntimeMapNpc = {
       npcUid: npc.npcUid,
-      npcName: npc.npcName,
+      npcName: clampStoryTitle(npc.npcName) || npc.npcUid,
       characterName: resolveNpcCharacterName(graph, npc, project),
       prefabKey: resolveNpcPrefabKey(project, npc),
       x: npc.x,

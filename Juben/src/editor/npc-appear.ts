@@ -1,5 +1,5 @@
 import type { GameMapDef, GameMapNpcDef, GraphData, NpcAppearConfig, ProjectData, Requirement } from "../types";
-import { isBattleOnlyNpc } from "./battle-npc-utils";
+import { isBattleOnlyNpc, isBattleEnemyMapNpc } from "./battle-npc-utils";
 import { editorRequirementToRuntime } from "./requirement-bridge";
 import { collectNpcChainEventIds } from "./map-export";
 import { findQuestForMapGraph } from "./quest-logic";
@@ -80,18 +80,23 @@ export type NpcAppearProvisionResult = {
 
 function findPrevChainCompleteRequirement(
   project: ProjectData,
-  graphId: string,
-  prevNpc: GameMapNpcDef,
+  gameMap: GameMapDef,
+  index: number,
 ): Requirement | null {
-  const graph = project.graphs.find((g) => g.id === graphId);
+  const graph = project.graphs.find((g) => g.id === gameMap.graphId);
   if (!graph) return null;
 
-  const eventIds = collectNpcChainEventIds(graph, prevNpc, project);
-  if (eventIds.length > 0) {
-    return { kind: "eventDone", eventId: eventIds[eventIds.length - 1]! };
+  for (let i = index - 1; i >= 0; i--) {
+    const prevNpc = gameMap.npcs[i]!;
+    if (isBattleOnlyNpc(prevNpc, graph) || isBattleEnemyMapNpc(prevNpc)) continue;
+
+    const eventIds = collectNpcChainEventIds(graph, prevNpc, project, gameMap);
+    if (eventIds.length > 0) {
+      return { kind: "eventDone", eventId: eventIds[eventIds.length - 1]! };
+    }
   }
 
-  const chapterQuest = findQuestForMapGraph(project, graphId);
+  const chapterQuest = findQuestForMapGraph(project, gameMap.graphId);
   if (chapterQuest?.id) {
     return { kind: "questStatus", questId: chapterQuest.id, status: "Completed" };
   }
@@ -109,9 +114,7 @@ export function expectedAppearRequirementForBundle(
   index: number,
 ): Requirement | null {
   if (index <= 0) return null;
-  const prev = gameMap.npcs[index - 1];
-  if (!prev) return null;
-  return findPrevChainCompleteRequirement(project, gameMap.graphId, prev);
+  return findPrevChainCompleteRequirement(project, gameMap, index);
 }
 
 export function isStaleChainedAppear(
@@ -175,8 +178,7 @@ export function provisionNpcAppearFromChainOrder(
       provisioned += 1;
       continue;
     } else {
-      const prev = gameMap.npcs[i - 1]!;
-      req = findPrevChainCompleteRequirement(project, gameMap.graphId, prev);
+      req = findPrevChainCompleteRequirement(project, gameMap, i);
       if (!req) {
         warnings.push(`任务束 #${i + 1}「${npc.npcName}」：前序链无完成节点，无法自动补出现条件`);
         continue;
@@ -193,4 +195,95 @@ export function provisionNpcAppearFromChainOrder(
   }
 
   return { provisioned, warnings };
+}
+
+/** 本任务链完成后写入的 Self Switch（最后一节 eventId） */
+export function resolveChainCompleteEventId(
+  project: ProjectData,
+  gameMap: GameMapDef,
+  npc: GameMapNpcDef,
+): string | null {
+  const graph = project.graphs.find((g) => g.id === gameMap.graphId);
+  if (!graph || !npc.entryNodeId) return null;
+  const ids = collectNpcChainEventIds(graph, npc, project, gameMap);
+  return ids.length ? ids[ids.length - 1]! : null;
+}
+
+/** 当前因某 event_done 而可出现的任务链 npcUid 列表 */
+export function listNpcUidsUnlockedByEvent(gameMap: GameMapDef, eventId: string): string[] {
+  return gameMap.npcs
+    .filter((npc) => {
+      const appear = normalizeNpcAppear(npc);
+      if (appear.mode !== "conditional") return false;
+      return (appear.requirements ?? []).some((r) => r.kind === "eventDone" && r.eventId === eventId);
+    })
+    .map((n) => n.npcUid);
+}
+
+/**
+ * 从「完成源任务链」视角配置：完成后开启哪些已有任务链（多选）。
+ * 写入目标 NPC 的 appear.event_done，不改导出字段语义。
+ */
+export function setUnlockTargetsAfterChainComplete(
+  project: ProjectData,
+  gameMap: GameMapDef,
+  sourceNpcUid: string,
+  targetNpcUids: string[],
+): { updated: number; eventId: string | null; error?: string } {
+  const source = gameMap.npcs.find((n) => n.npcUid === sourceNpcUid);
+  if (!source) return { updated: 0, eventId: null, error: "找不到当前任务链" };
+  const graph = project.graphs.find((g) => g.id === gameMap.graphId);
+  const eventId = resolveChainCompleteEventId(project, gameMap, source);
+  if (!eventId) {
+    return { updated: 0, eventId: null, error: "当前链尚无导出事件，请先添加对话/任务等步骤" };
+  }
+
+  const want = new Set(
+    targetNpcUids.filter((uid) => {
+      if (uid === sourceNpcUid) return false;
+      const npc = gameMap.npcs.find((n) => n.npcUid === uid);
+      if (!npc) return false;
+      if (isBattleEnemyMapNpc(npc) || isBattleOnlyNpc(npc, graph)) return false;
+      return true;
+    }),
+  );
+
+  let updated = 0;
+  for (const npc of gameMap.npcs) {
+    if (npc.npcUid === sourceNpcUid) continue;
+    if (isBattleEnemyMapNpc(npc) || isBattleOnlyNpc(npc, graph)) continue;
+
+    const appear = ensureNpcAppear(npc);
+    const reqs = [...(appear.requirements ?? [])];
+    const has = reqs.some((r) => r.kind === "eventDone" && r.eventId === eventId);
+    const should = want.has(npc.npcUid);
+
+    if (should && !has) {
+      const otherEventDones = reqs.filter((r) => r.kind === "eventDone");
+      const nonEvent = reqs.filter((r) => r.kind !== "eventDone");
+      const nextEventDones = [...otherEventDones, { kind: "eventDone" as const, eventId }];
+      const useAny = nextEventDones.length > 1;
+      npc.appear = {
+        mode: "conditional",
+        matchMode: useAny ? "ANY" : nonEvent.length ? (appear.matchMode ?? "ALL") : "ALL",
+        requirements: [...nonEvent, ...nextEventDones],
+      };
+      updated += 1;
+    } else if (!should && has) {
+      const next = reqs.filter((r) => !(r.kind === "eventDone" && r.eventId === eventId));
+      const remainingEvents = next.filter((r) => r.kind === "eventDone");
+      if (next.length === 0) {
+        npc.appear = { mode: "conditional", matchMode: "ALL", requirements: [] };
+      } else {
+        npc.appear = {
+          mode: "conditional",
+          matchMode: remainingEvents.length > 1 ? "ANY" : (appear.matchMode ?? "ALL"),
+          requirements: next,
+        };
+      }
+      updated += 1;
+    }
+  }
+
+  return { updated, eventId };
 }

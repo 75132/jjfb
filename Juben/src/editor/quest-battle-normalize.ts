@@ -477,7 +477,7 @@ function resolveBattleEventIdForNpc(
   const chain = collectNpcEventChain(graph, npc.entryNodeId);
   const battleNode = chain.find((n) => n.kind === "battle");
   if (!battleNode) return null;
-  return resolveNodeEventId(graph, npc, battleNode.id, project);
+  return resolveNodeEventId(graph, npc, battleNode.id, project, gameMap);
 }
 
 /** 为任务链上交任务节点补 event_done（指向同链 battle 环） */

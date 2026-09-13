@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Node, director, Button, WebSocketManager, BaseSceneController, GameConfig, GameCommonData, ResourceManager, RobotShow, ensureBattleResumeController, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _class3, _crd, ccclass, property, GameControl;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Node, director, Button, WebSocketManager, BaseSceneController, GameConfig, GameCommonData, ResourceManager, RobotShow, ensureBattleResumeController, ensureStarterMechPicker, TipWindows, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _class3, _crd, ccclass, property, GameControl;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -37,6 +37,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("ensureBattleResumeController", "./BattleResumeController", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfensureStarterMechPicker(extras) {
+    _reporterNs.report("ensureStarterMechPicker", "./StarterMechPicker", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfTipWindows(extras) {
+    _reporterNs.report("TipWindows", "../global/TipWindows", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -62,6 +70,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       RobotShow = _unresolved_7.RobotShow;
     }, function (_unresolved_8) {
       ensureBattleResumeController = _unresolved_8.ensureBattleResumeController;
+    }, function (_unresolved_9) {
+      ensureStarterMechPicker = _unresolved_9.ensureStarterMechPicker;
+    }, function (_unresolved_10) {
+      TipWindows = _unresolved_10.TipWindows;
     }],
     execute: function () {
       _crd = true;
@@ -146,7 +158,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
             error: Error()
-          }), ensureBattleResumeController) : ensureBattleResumeController)(); // 延迟初始化非关键操作，避免阻塞场景加载
+          }), ensureBattleResumeController) : ensureBattleResumeController)(); // 无机甲时弹出初始三选一（先预热 TipWindows，避免首次确认弹窗被 onLoad 关掉）
+
+          (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
+            error: Error()
+          }), TipWindows) : TipWindows).warmup();
+          (_crd && ensureStarterMechPicker === void 0 ? (_reportPossibleCrUseOfensureStarterMechPicker({
+            error: Error()
+          }), ensureStarterMechPicker) : ensureStarterMechPicker)().checkAndPrompt(); // 延迟初始化非关键操作，避免阻塞场景加载
           // 先让场景快速显示出来，再初始化其他功能
 
           this.scheduleOnce(() => {

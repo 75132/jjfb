@@ -56,6 +56,35 @@ describe("workspace api", () => {
     expect(afterClear.body.workspace).toBeNull();
   });
 
+  it("collapses multi-project workspace to a single project on save", async () => {
+    const payload = {
+      version: 1 as const,
+      savedAt: Date.now(),
+      currentProjectId: "p2",
+      projects: [
+        {
+          id: "p1",
+          name: "旧项目",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          data: validProjectData,
+        },
+        {
+          id: "p2",
+          name: "当前项目",
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          data: validProjectData,
+        },
+      ],
+    };
+    await request(app).put("/api/workspace").send({ workspace: payload }).expect(200);
+    const loaded = await request(app).get("/api/workspace").expect(200);
+    expect(loaded.body.workspace.projects).toHaveLength(1);
+    expect(loaded.body.workspace.currentProjectId).toBe("p2");
+    expect(loaded.body.workspace.projects[0].id).toBe("p2");
+  });
+
   it("rejects invalid project.data", async () => {
     const payload = {
       version: 1 as const,

@@ -1,6 +1,12 @@
 # jjfb
 机甲风暴
 
+## 剧情系统（排期与规范）
+
+- **主计划表**（后续开发按任务 ID 推进）：[`docs/story-system-plan.md`](docs/story-system-plan.md)
+- **技术规范**：[`docs/story-system-spec.md`](docs/story-system-spec.md)
+- **策划发布手册**：[`assets/Script/Game/STORY_MIGRATION.md`](assets/Script/Game/STORY_MIGRATION.md)
+
 ## 开发控制台
 
 基于 **CustomTkinter** 的本地开发控制台：左侧六页导航（总览 / 服务 / 文件夹 / 工具 / 端口 / 设置），底部固定日志坞，管理 Juben 与 ws_server。

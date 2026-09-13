@@ -1,0 +1,9 @@
+[
+    {
+        "driver": "org.mariadb.jdbc.Driver",
+        "dbname": "myxq3d1",
+        "port": "3306",
+        "username": "myxq",
+        "password": "xunqin2015"
+    }
+]

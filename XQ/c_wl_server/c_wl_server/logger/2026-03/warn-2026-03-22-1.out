@@ -1,0 +1,457 @@
+[18:28:55:973] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[18:39:15:313] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:354] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:369] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:385] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:401] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:414] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:431] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:444] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:456] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:470] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:488] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:502] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:522] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:537] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:552] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:564] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:581] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:595] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:39:15:610] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:296] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:314] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:329] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:342] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:354] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:367] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:381] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:395] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:408] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:420] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:429] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:438] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:445] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:452] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:461] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:467] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:475] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:482] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:17:492] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:49:37:287] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5419f0ed ((conn=22307) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:49:37:288] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2972adf5 ((conn=22308) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:49:37:289] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@56ff9efa ((conn=22310) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:49:37:295] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3a202ff3 ((conn=22311) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:49:37:296] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21a52ec2 ((conn=22312) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:49:37:300] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1d043206 ((conn=22313) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:58:06:326] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@14803c9b ((conn=22335) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:58:06:329] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2b20737c ((conn=22336) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[18:59:19:280] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:285] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:289] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:294] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:299] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:303] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:308] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:311] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:316] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:320] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:325] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:329] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:333] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:337] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:341] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:344] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:349] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:352] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[18:59:19:359] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:287] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:294] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:297] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:300] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:304] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:307] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:311] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:317] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:322] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:328] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:333] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:339] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:344] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:353] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:359] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:363] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:369] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:373] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:09:19:377] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:13:01:275] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6890c30c ((conn=22386) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:279] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1402d467 ((conn=22387) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:280] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@75cea8b8 ((conn=22388) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:283] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@8447605 ((conn=22389) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:291] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@66a24ca2 ((conn=22390) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:293] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@64011dfd ((conn=22391) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:294] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@640ae2ad ((conn=22392) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:13:01:295] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4f554477 ((conn=22393) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:11:036] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@df71fba ((conn=22405) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:11:041] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@49ab317b ((conn=22406) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:14:920] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6630c421 ((conn=22407) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:29:888] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4c16e280 ((conn=22409) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:29:888] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@dae844 ((conn=22408) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:29:894] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5dc2c8ec ((conn=22410) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:29:898] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@39b3ba98 ((conn=22411) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:36:457] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3a3d262f ((conn=22412) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:18:36:463] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@56d64882 ((conn=22413) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:19:21:296] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:311] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:324] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:338] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:354] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:369] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:385] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:400] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:414] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:429] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:442] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:457] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:471] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:484] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:497] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:510] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:526] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:539] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:19:21:553] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:20:28:670] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3a1256d ((conn=22415) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:284] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2035de8f ((conn=22417) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:288] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7b356d7c ((conn=22418) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:296] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@bcd46dc ((conn=22419) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:306] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3884db7f ((conn=22420) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:315] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@36cbbb46 ((conn=22421) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:321] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@66457e6e ((conn=22422) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:21:13:328] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@75f2fdc ((conn=22423) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:284] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7ecad433 ((conn=22445) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:286] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3af495e7 ((conn=22446) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:287] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7f5bb52d ((conn=22447) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:289] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@213397dc ((conn=22448) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:290] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@970a485 ((conn=22449) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:291] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@173543e1 ((conn=22450) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:292] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@35e57ef7 ((conn=22451) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:296] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@85592e0 ((conn=22452) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:297] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@40d5be3 ((conn=22453) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:29:21:305] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:318] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:326] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:335] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:344] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:353] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:361] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:370] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:380] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:387] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:396] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:403] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:413] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:421] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:429] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:437] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:445] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:454] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:29:21:479] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:295] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:304] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:312] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:319] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:326] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:335] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:344] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:353] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:364] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:372] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:382] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:391] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:399] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:407] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:417] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:424] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:432] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:440] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:39:21:449] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:43:41:981] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6eba0b5d ((conn=22496) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:43:41:984] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5eb0dc55 ((conn=22497) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:43:41:985] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@73027a71 ((conn=22498) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:43:41:986] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4d5c77af ((conn=22499) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:44:04:935] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1e6195b7 ((conn=22500) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:44:04:940] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6269eed4 ((conn=22501) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:44:04:943] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@25df7115 ((conn=22502) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:44:04:948] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4614981d ((conn=22503) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:01:559] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3203549a ((conn=22506) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:01:562] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1e0a66d8 ((conn=22507) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:26:896] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@47e40bd5 ((conn=22508) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:26:896] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@33905e71 ((conn=22509) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:26:898] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5ba17127 ((conn=22510) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:26:901] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@777eab37 ((conn=22511) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:26:906] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1023acae ((conn=22512) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:26:909] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4f5ab422 ((conn=22513) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:46:41:288] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6e482bf5 ((conn=22514) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:48:48:310] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2582c1e2 ((conn=22516) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:48:48:311] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@a85e7ea ((conn=22517) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:48:48:313] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76ed571d ((conn=22518) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:18:714] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@50980dc4 ((conn=22519) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:18:719] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7826fef2 ((conn=22520) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:18:721] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@612c3694 ((conn=22521) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:18:724] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@714af158 ((conn=22522) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:18:726] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1c103b42 ((conn=22523) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:18:728] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@530e975c ((conn=22524) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:49:21:301] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:316] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:324] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:330] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:337] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:347] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:359] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:370] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:380] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:391] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:403] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:412] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:424] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:436] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:446] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:458] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:470] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:480] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:49:21:492] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:51:51:289] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6cb06f1b ((conn=22528) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:51:51:292] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5e739128 ((conn=22529) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:51:51:295] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2b7698c9 ((conn=22530) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:51:51:296] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6d94ba3 ((conn=22531) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:51:51:297] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@697e24d4 ((conn=22532) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:51:51:298] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2b461202 ((conn=22533) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:51:51:303] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@34697773 ((conn=22534) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[19:59:21:301] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:313] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:326] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:339] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:350] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:363] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:373] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:385] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:399] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:410] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:420] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:433] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:444] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:453] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:467] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:479] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:492] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:501] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[19:59:21:513] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:287] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:303] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:313] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:325] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:335] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:344] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:354] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:365] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:376] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:389] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:399] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:409] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:420] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:429] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:440] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:450] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:460] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:469] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:09:23:479] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:10:19:290] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[20:20:40:433] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:462] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:484] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:505] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:522] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:540] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:556] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:572] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:588] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:603] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:615] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:630] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:647] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:666] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:681] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:697] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:710] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:724] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:20:40:737] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:24:58:172] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@44ba97ae ((conn=22647) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:24:58:173] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@58c5b9b8 ((conn=22648) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:24:58:176] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@30f3d7ed ((conn=22649) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:390] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2bebab56 ((conn=22658) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:391] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1214d6d7 ((conn=22659) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:392] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@45f11397 ((conn=22660) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:393] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2e7889b8 ((conn=22661) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:394] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@583f363a ((conn=22662) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:395] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6ca9f184 ((conn=22663) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:395] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21093a2d ((conn=22664) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:27:56:395] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4b5652fd ((conn=22665) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[20:30:40:397] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:404] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:408] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:412] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:416] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:420] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:424] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:427] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:431] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:434] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:438] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:441] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:445] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:448] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:451] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:455] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:458] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:463] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[20:30:40:466] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[22:41:56:850] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[22:51:14:115] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[22:56:14:004] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7231b6d2 ((conn=22737) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:56:14:011] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@78c9dda2 ((conn=22738) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:57:00:503] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2b22e5de ((conn=22739) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:57:00:507] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21da8eae ((conn=22740) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:57:00:550] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@64d804f1 ((conn=22741) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:946] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@67a1536e ((conn=22748) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:948] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@46dbf7fb ((conn=22749) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:954] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6fae5449 ((conn=22750) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:957] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@27950f1 ((conn=22751) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:960] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@30eaf0dd ((conn=22752) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:964] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2917bd14 ((conn=22753) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:967] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3486b863 ((conn=22754) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[22:59:37:971] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7cb098da ((conn=22755) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:01:31:967] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:31:990] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:006] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:022] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:037] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:052] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:066] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:081] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:095] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:106] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:120] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:131] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:145] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:160] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:175] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:188] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:201] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:217] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:01:32:229] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:07:52:823] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[23:08:20:737] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[23:11:43:922] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@29f9a18e ((conn=22806) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:18:41:928] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:947] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:954] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:959] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:964] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:969] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:974] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:978] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:981] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:986] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:990] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:994] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:41:998] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:42:003] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:42:007] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:42:011] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:42:014] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:42:019] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:18:42:023] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:932] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:941] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:944] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:949] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:953] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:958] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:963] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:968] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:971] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:976] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:980] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:984] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:988] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:991] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:995] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:43:999] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:44:003] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:44:007] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:28:44:010] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:29:03:928] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4cbe2c23 ((conn=22859) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:928] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@d4dc227 ((conn=22860) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:929] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5375e896 ((conn=22861) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:929] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@166993cc ((conn=22862) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:930] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2b0b7a16 ((conn=22863) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:931] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@48b4c9aa ((conn=22864) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:932] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3479a972 ((conn=22865) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:29:03:933] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6ed4bbc2 ((conn=22866) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:38:43:934] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:941] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:945] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:949] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:953] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:956] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:960] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:963] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:968] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:971] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:975] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:978] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:983] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:988] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:991] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:995] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:43:998] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:44:001] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:38:44:005] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:928] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:936] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:940] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:946] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:951] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:956] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:960] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:966] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:970] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:977] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:982] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:986] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:992] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:45:996] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:46:001] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:46:006] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:46:012] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:46:018] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:48:46:023] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:928] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@373e43b ((conn=22966) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:58:45:933] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:940] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:945] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:947] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:952] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:955] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:960] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:963] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:966] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:970] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:973] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:977] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:980] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:986] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:989] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:992] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:996] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:45:999] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1
+[23:58:46:003] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1406-22001: Data too long for column 'email' at row 1

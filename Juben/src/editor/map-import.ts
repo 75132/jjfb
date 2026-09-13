@@ -10,6 +10,7 @@ import { runtimeRequirementToEditor, type RuntimeRequirement } from "./requireme
 import { resolveQuestNumericTaskId } from "./quest-logic";
 import type { RuntimeMapConfig, RuntimeMapEvent, RuntimeServerEffect } from "./map-runtime";
 import { runtimeChoiceToEditorOption } from "./map-runtime";
+import { syncQuestsFromTimeline } from "./timeline-logic";
 
 export type MapImportResult = {
   ok: boolean;
@@ -281,7 +282,6 @@ export function importRuntimeMapIntoProject(
       taskName: t.taskName,
       mainlineStep: t.mainlineStep,
     }));
-    syncQuestNamesFromTasks(project, runtime);
   }
 
   const client = runtime.client ?? {};
@@ -316,6 +316,11 @@ export function importRuntimeMapIntoProject(
       updatedNpcs++;
       updatedNodes += n;
     }
+  }
+
+  syncQuestsFromTimeline(project);
+  if (runtime.tasks?.length) {
+    syncQuestNamesFromTasks(project, runtime);
   }
 
   return {

@@ -1,5 +1,14 @@
 """
 剧情/任务服务 - 服务端权威进度与事件校验
+
+契约对齐（manifest v2，权威源 Juben/data/client-runtime-manifest.json）：
+  requirements.supported : event_done, task_*, level, mainline_step, item_owned
+  requirements.planned   : story_var_equals, has_pet, ...（check_requirements 未实现 → 导出禁止）
+  effects.supported      : task_accept, task_complete, teleport, spawn_npc, reveal_npc
+  effects.serverOnly     : give_item, add_exp, send_mail（服务端执行，客户端仅 Tips）
+  effects.planned        : take_item, set_story_var
+
+扩展能力请走 docs/story-system-plan.md §7 五步法。
 """
 from __future__ import annotations
 
@@ -526,6 +535,105 @@ async def apply_effects(
                 continue
             applied.append(result)
     return applied
+
+
+async def atomic_pending_battle_to_creating(
+    character_id: str,
+    map_code: str,
+    event_id: str,
+    *,
+    authorized_status: str,
+    creating_status: str,
+    request_id: Optional[str] = None,
+) -> Tuple[Optional[dict], str]:
+    """
+    pending_battle: authorized → creating 条件更新（跨进程安全）。
+
+    返回 (pending, outcome)：
+      - transitioned / already_creating：成功，pending 为当前文档
+      - conflict：creating 中且 request_id 不一致
+      - not_found：无匹配 pending 或状态不可转换
+    """
+    cid = str(character_id)
+    mc = map_code or "test_base"
+    eid = str(event_id)
+    now = time.time()
+
+    if STORY_LOCAL_TEST:
+        key = _progress_key(cid, mc)
+        progress = _local_progress.get(key)
+        if not progress:
+            return None, "not_found"
+        pending = progress.get("pending_battle") or {}
+        if not isinstance(pending, dict) or pending.get("event_id") != eid:
+            return None, "not_found"
+        status = pending.get("status") or authorized_status
+        if status == creating_status:
+            existing_rid = pending.get("request_id")
+            if request_id and existing_rid and existing_rid != request_id:
+                return None, "conflict"
+            return dict(pending), "already_creating"
+        if status != authorized_status:
+            return None, "not_found"
+        pending = {
+            **pending,
+            "status": creating_status,
+            "request_id": request_id,
+            "updated_at": now,
+            "map_code": pending.get("map_code") or mc,
+        }
+        progress["pending_battle"] = pending
+        _local_progress[key] = progress
+        return dict(pending), "transitioned"
+
+    if _story_progress_col is None:
+        raise RuntimeError("story_progress_col not initialized")
+
+    from pymongo import ReturnDocument
+
+    set_fields: Dict[str, Any] = {
+        "pending_battle.status": creating_status,
+        "pending_battle.updated_at": now,
+        "pending_battle.map_code": mc,
+        "updated_at": datetime.datetime.utcnow(),
+    }
+    if request_id is not None:
+        set_fields["pending_battle.request_id"] = request_id
+
+    doc = await utils.async_mongo_operation(
+        lambda: _story_progress_col.find_one_and_update(
+            {
+                "character_id": cid,
+                "map_code": mc,
+                "pending_battle.event_id": eid,
+                "pending_battle.status": authorized_status,
+            },
+            {"$set": set_fields},
+            return_document=ReturnDocument.AFTER,
+        ),
+        timeout=2.0,
+    )
+    if doc:
+        pending = doc.get("pending_battle")
+        if isinstance(pending, dict):
+            return dict(pending), "transitioned"
+
+    existing = await utils.async_mongo_operation(
+        lambda: _story_progress_col.find_one({"character_id": cid, "map_code": mc}),
+        timeout=2.0,
+    )
+    if not existing:
+        return None, "not_found"
+    pending = existing.get("pending_battle") or {}
+    if not isinstance(pending, dict) or pending.get("event_id") != eid:
+        return None, "not_found"
+    status = pending.get("status")
+    if status == creating_status:
+        existing_rid = pending.get("request_id")
+        if request_id and existing_rid and existing_rid != request_id:
+            return None, "conflict"
+        return dict(pending), "already_creating"
+    return None, "not_found"
 
 
 async def save_progress(progress: dict) -> None:

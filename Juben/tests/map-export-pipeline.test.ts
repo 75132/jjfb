@@ -160,4 +160,38 @@ describe("map-export-pipeline", () => {
     patchSequentialNpcAppear(runtime);
     expect(runtime.npcs[1]?.appear?.requirements?.[0]).toEqual({ type: "event_done", eventId: "a_e1" });
   });
+
+  it("patchSequentialNpcAppear repairs stale event_done after battle enemy row", () => {
+    const runtime = {
+      mapCode: "t",
+      npcs: [
+        {
+          npcUid: "giver_a",
+          events: [
+            { eventType: "dialog", eventId: "giver_a_e1", server: { effects: [] } },
+            { eventType: "dialog", eventId: "giver_a_e4", server: { effects: [] } },
+          ],
+          appear: { mode: "always" as const },
+        },
+        {
+          npcUid: "giver_a_enemy",
+          events: [{ eventType: "battle", eventId: "giver_a_enemy_e2", server: { effects: [] } }],
+          appear: { mode: "conditional" as const, requirements: [{ type: "event_done", eventId: "giver_a_e1" }] },
+        },
+        {
+          npcUid: "giver_b",
+          events: [{ eventType: "dialog", eventId: "giver_b_e1", server: { effects: [] } }],
+          appear: {
+            mode: "conditional" as const,
+            requirements: [{ type: "event_done", eventId: "giver_a_e6" }],
+          },
+        },
+      ],
+    };
+    patchSequentialNpcAppear(runtime);
+    expect(runtime.npcs[2]?.appear?.requirements?.[0]).toEqual({
+      type: "event_done",
+      eventId: "giver_a_e4",
+    });
+  });
 });

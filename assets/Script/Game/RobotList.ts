@@ -17,6 +17,7 @@ import { GameConfig } from '../global/GameConfig';
 import { DataCacheManager } from '../global/DataCacheManager';
 import { UILockManager } from '../global/UILockManager';
 import { emitBattleTeamUpdated, emitRobotDataUpdated, robotGameEvents, RobotGameEvent } from '../global/RobotGameEvents';
+import { TipWindows } from '../global/TipWindows';
 
 const { ccclass, property } = _decorator;
 
@@ -86,6 +87,8 @@ export class RobotList extends Component {
     private _confirming = false;
     private _submittingBattleTeam = false;
     private _releasing = false;
+    /** 服务端返回的机甲总数（用于最后一台保护） */
+    private _robotCount = 0;
     /** 出战/下场入口防抖（毫秒），与 UILockManager 互补 */
     private _lastDeployClickMs = 0;
     /** 旧服未带 battle_team 时仅补拉一次 get_battle_team */
@@ -316,6 +319,15 @@ export class RobotList extends Component {
         return this.currentPets.some((p) => this.normPetId(String(p.pet_id ?? p._id ?? p.id ?? '')) === n);
     }
 
+    /** 是否只剩最后一台机甲（放生/分解前客户端预检） */
+    public isLastRobot(): boolean {
+        return this.getRobotCount() <= 1;
+    }
+
+    public getRobotCount(): number {
+        return Math.max(this._robotCount, this.currentPets.length);
+    }
+
     /**
      * 出战与列表都就绪时只渲染一次，避免「先错后对」和重复渲染。
      * 由 GET_BATTLE_TEAM 回调和 onPetsResponse 在收到数据后调用。
@@ -494,6 +506,9 @@ export class RobotList extends Component {
 
         const pagination = data.pagination ?? data.data?.pagination;
         const page = pagination?.page ?? 0;
+        this._robotCount = Number(
+            data.robotcount ?? data.data?.robotcount ?? pagination?.total ?? this.currentPets.length ?? 0,
+        );
 
         if (page === 0 && !Array.isArray(bt) && this.ws && !this._fallbackBattleTeamRequested) {
             this._fallbackBattleTeamRequested = true;
@@ -1248,8 +1263,29 @@ export class RobotList extends Component {
     }
 
     private onRelease(petId: string, row: Node, panel: Node) {
-                this.clearSelection();
+        this.clearSelection();
         this.closeSetForRow(row);
+
+        if (this.isLastRobot()) {
+            TipWindows.getInstance()?.showAlert('至少保留一台机甲，无法放生', undefined, { autoCloseMs: 2500 });
+            return;
+        }
+
+        const pet = this.currentPets.find((p) => this.normPetId(String(p.pet_id ?? p._id ?? p.id ?? '')) === this.normPetId(petId));
+        const form = Number(pet?.Form ?? pet?.Fo ?? 0);
+        const formSuffix = form === 1 ? '|初' : form === 2 ? '|中' : form === 3 ? '|终' : '';
+        const petName = (pet?.RobotName || '该机甲') + formSuffix;
+
+        const tip = TipWindows.getInstance();
+        if (tip) {
+            tip.showConfirm(
+                `确定放生「${petName}」吗？\n放生后无法找回。`,
+                () => this.releasePet(petId),
+                undefined,
+                { confirmText: '确定', cancelText: '取消' },
+            );
+            return;
+        }
         this.releasePet(petId);
     }
 
@@ -1270,7 +1306,11 @@ export class RobotList extends Component {
                     emitRobotDataUpdated({ character_id: this.ws.getCharacterId() ?? undefined });
                     emitBattleTeamUpdated({ character_id: this.ws.getCharacterId() ?? undefined });
                     this.forceRefresh();
-                } else console.error('[RobotList] 放生失败:', r?.message ?? '未知错误');
+                } else {
+                    const msg = r?.message ?? '放生失败';
+                    console.error('[RobotList] 放生失败:', msg);
+                    TipWindows.getInstance()?.showAlert(msg, undefined, { autoCloseMs: 2500 });
+                }
             },
             true,
             10000

@@ -1,0 +1,143 @@
+[14:08:54:799] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4781) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4781) Socket error
+[14:13:30:380] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4796) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4796) Socket error
+[14:18:22:803] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4816) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4816) Socket error
+[14:50:17:169] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4836) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4836) Socket error
+[15:35:08:954] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4908) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4908) Socket error
+[15:38:51:399] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4928) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4928) Socket error
+[15:49:50:303] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null
+[16:07:14:370] [ERROR] - com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:498) - data-pool- - Error thrown while acquiring connection from data source
+java.sql.SQLNonTransientConnectionException: (conn=4972) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:494) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:623) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.setupConnection(PoolBase.java:413) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:369) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.access$100(HikariPool.java:71) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:726) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:712) ~[HikariCP-4.0.3.jar:?]
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266) ~[?:1.8.0_192]
+	at java.util.concurrent.FutureTask.run(FutureTask.java) ~[?:1.8.0_192]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) ~[?:1.8.0_192]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) ~[?:1.8.0_192]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: socket write error
+	at java.net.SocketOutputStream.socketWrite0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:111) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:155) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.writeSocket(PacketWriter.java:834) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.flush(PacketWriter.java:704) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.client.QueryPacket.encode(QueryPacket.java:35) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:474) ~[mariadb-java-client-3.0.6.jar:?]
+	... 15 more
+[16:07:14:416] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4962) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4962) Socket error
+[16:11:34:520] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=4973) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=4973) Socket error
+[16:17:12:294] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=5002) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=5002) Socket error
+[17:18:05:166] [ERROR] - com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:498) - data-pool- - Error thrown while acquiring connection from data source
+java.sql.SQLNonTransientConnectionException: (conn=5073) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:494) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:623) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.setupConnection(PoolBase.java:413) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:369) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.access$100(HikariPool.java:71) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:726) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:712) ~[HikariCP-4.0.3.jar:?]
+	at java.util.concurrent.FutureTask.run$$$capture(FutureTask.java:266) ~[?:1.8.0_192]
+	at java.util.concurrent.FutureTask.run(FutureTask.java) ~[?:1.8.0_192]
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149) ~[?:1.8.0_192]
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624) ~[?:1.8.0_192]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: socket write error
+	at java.net.SocketOutputStream.socketWrite0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:111) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:155) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.writeSocket(PacketWriter.java:834) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.flush(PacketWriter.java:704) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.client.QueryPacket.encode(QueryPacket.java:35) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:474) ~[mariadb-java-client-3.0.6.jar:?]
+	... 15 more
+[17:18:05:200] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=5064) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=5064) Socket error
+[19:03:56:744] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=5364) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=5364) Socket error
+[19:12:55:391] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=5406) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectShiFaWayView-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_shifa_way_view where name=?
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=5406) Socket error

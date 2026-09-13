@@ -2,6 +2,7 @@ import { addNpcToGameMap, ensureNpcZonesAndEntries } from "../game-map-logic";
 import { provisionNpcAppearFromChainOrder } from "../npc-appear";
 import { syncChainTaskConstraints } from "../chain-slot-kind";
 import { parseMultiEnemyBattleFromBrief, wireMultiEnemyBattleChain } from "../npc-chain-presets";
+import { clampStoryTitle } from "../story-title-limit";
 import type { GameMapDef, ProjectData } from "../../types";
 import type { RequirementsBrief, TaskBrief } from "./types";
 
@@ -38,8 +39,8 @@ export function createTaskChain(project: ProjectData, gameMap: GameMapDef, param
   if (existing) {
     const graph = project.graphs.find((g) => g.id === gameMap.graphId);
     const entry = graph?.nodes.find((n) => n.id === existing.entryNodeId);
-    if (entry && params.title.trim()) entry.title = params.title.trim();
-    if (params.npcName?.trim()) existing.npcName = params.npcName.trim();
+    if (entry && params.title.trim()) entry.title = clampStoryTitle(params.title.trim());
+    if (params.npcName?.trim()) existing.npcName = clampStoryTitle(params.npcName.trim());
     if (params.x != null) existing.x = params.x;
     if (params.y != null) existing.y = params.y;
     if (params.chainSlotKind) existing.chainSlotKind = params.chainSlotKind;
@@ -50,8 +51,8 @@ export function createTaskChain(project: ProjectData, gameMap: GameMapDef, param
 
   const pos =
     params.x != null && params.y != null ? { x: params.x, y: params.y } : defaultNpcGridPosition(gameMap);
-  const title = params.title.trim() || params.npcUid;
-  const npcName = params.npcName?.trim() || title;
+  const title = clampStoryTitle(params.title.trim() || params.npcUid);
+  const npcName = clampStoryTitle(params.npcName?.trim() || title);
 
   const def = addNpcToGameMap(project, gameMap, {
     npcUid: params.npcUid,
@@ -74,8 +75,8 @@ export function createTaskChain(project: ProjectData, gameMap: GameMapDef, param
 function taskToParams(task: TaskBrief): CreateTaskChainParams {
   return {
     npcUid: task.taskKey,
-    title: task.title,
-    npcName: task.npcName,
+    title: clampStoryTitle(task.title),
+    npcName: task.npcName ? clampStoryTitle(task.npcName) : undefined,
     npcResourceId: task.npcResourceId,
     x: task.x,
     y: task.y,

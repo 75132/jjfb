@@ -46,6 +46,7 @@ describe("ai api", () => {
     const prev = process.env.DEEPSEEK_API_KEY;
     delete process.env.DEEPSEEK_API_KEY;
     vi.resetModules();
+    vi.doMock("../server/load-env", () => ({ loadDotEnv: () => {} }));
     const mod = await import("../server/index");
     const res = await request(mod.app)
       .post("/api/ai/story/stream")
@@ -55,6 +56,7 @@ describe("ai api", () => {
         messages: [{ role: "user", content: "hi" }],
         context: { mapCode: "test" },
       });
+    vi.doUnmock("../server/load-env");
     if (prev !== undefined) process.env.DEEPSEEK_API_KEY = prev;
     expect(res.status).toBe(503);
     expect(res.body.error.code).toBe("AI_NOT_CONFIGURED");

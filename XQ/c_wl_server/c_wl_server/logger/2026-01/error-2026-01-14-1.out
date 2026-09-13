@@ -1,0 +1,8 @@
+[11:18:21:079] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：
+### Error querying database.  Cause: java.sql.SQLNonTransientConnectionException: (conn=3839) Socket error
+### The error may exist in my/dao/jsonMapper.xml
+### The error may involve my.dao.jsonMapper.selectPetByName-Inline
+### The error occurred while setting parameters
+### SQL: select * from xq_man_pet where name=? for update
+### Cause: java.sql.SQLNonTransientConnectionException: (conn=3839) Socket error
+[15:45:27:606] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：Can not cast 'class com.alibaba.fastjson2.JSONObject' to Float

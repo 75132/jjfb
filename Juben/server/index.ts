@@ -1,8 +1,12 @@
 import express, { type Request, type Response } from "express";
+import { loadDotEnv } from "./load-env";
+
+loadDotEnv();
+
 import { streamDeepSeekToResponse } from "./ai-service";
 import type { StoryStreamRequest } from "./ai-types";
 import { clearWorkspace, getStorageInfo, readWorkspace, writeWorkspace } from "./workspace-store";
-import { isWorkspacePayload } from "./workspace-schema";
+import { isWorkspacePayload, normalizeWorkspaceToSingleProject } from "./workspace-schema";
 import { validateWorkspaceProjects } from "./project-schema";
 import {
   getCocosMapTargetInfo,
@@ -51,7 +55,8 @@ app.put("/api/workspace", async (req: Request, res: Response) => {
     if (!isWorkspacePayload(workspace)) {
       return sendError(res, 422, "INVALID_WORKSPACE", "workspace payload schema validation failed.");
     }
-    const projectValidation = validateWorkspaceProjects(workspace);
+    const normalizedWorkspace = normalizeWorkspaceToSingleProject(workspace);
+    const projectValidation = validateWorkspaceProjects(normalizedWorkspace);
     if (!projectValidation.ok) {
       return res.status(422).json({
         error: {
@@ -63,7 +68,7 @@ app.put("/api/workspace", async (req: Request, res: Response) => {
     }
     const expectedSavedAt =
       typeof req.body?.expectedSavedAt === "number" ? req.body.expectedSavedAt : undefined;
-    const result = await writeWorkspace(workspace, { expectedSavedAt });
+    const result = await writeWorkspace(normalizedWorkspace, { expectedSavedAt });
     if (!result.ok) {
       return res.status(409).json({
         error: {

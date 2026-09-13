@@ -1,11 +1,10 @@
 import type { ProjectData } from "../../types";
 import type { RequirementsBrief } from "./types";
-import { extractPlanStep, extractRequirementsBrief, isValidBrief } from "./story-stream-parser";
-import { synthesizeBriefFromPlanAnswers, type PlanAnswers } from "./plan-flow";
+import { extractRequirementsBrief, isValidBrief } from "./story-stream-parser";
 import { getTimelineGraph } from "../map-tree";
 import { getOptionTargets } from "../../types";
 
-export type ConsultPhase = "discuss" | "plan" | "planReady" | "briefReady" | "generating" | "done";
+export type ConsultPhase = "idle" | "discuss" | "briefReady" | "generating" | "done";
 
 export function inferMode(isTimeline: boolean) {
   return isTimeline ? ("timeline_outline" as const) : ("map_npc_chain" as const);
@@ -19,31 +18,27 @@ export function canStartGenerate(brief: RequirementsBrief | null): boolean {
   return isValidBrief(brief);
 }
 
-export function getInitialAssistantTrigger(isTimeline: boolean, focusNpcUid?: string | null): string {
+export function getInitialAssistantTrigger(
+  isTimeline: boolean,
+  focusNpcUid?: string | null,
+  options?: { hasExistingChain?: boolean },
+): string {
   if (isTimeline) {
-    return "请根据我提供的章节大纲帮我细化时间线 portal 结构。";
+    return "请根据章节大纲生成时间线 portal 结构。";
   }
-  if (focusNpcUid) {
-    return `请根据右侧「剧情蓝图」摘要，为 NPC「${focusNpcUid}」润色对白与节点细节（不要逐步提问，直接按蓝图生成）。`;
+  if (options?.hasExistingChain) {
+    return focusNpcUid
+      ? `NPC「${focusNpcUid}」已有剧情链。请保留现有节点，只润色对白与选项。`
+      : "当前地图已有剧情链。请保留现有节点，只润色对白与衔接。";
   }
-  return "请根据右侧「剧情蓝图」摘要润色对白与节点细节（不要逐步提问，直接按蓝图生成）。";
+  return "请根据剧情蓝图润色对白与节点细节，不要提问，直接给建议。";
 }
 
-export function nextPhaseAfterDiscuss(
-  content: string,
-  current: ConsultPhase,
-  planAnswers?: PlanAnswers,
-): ConsultPhase {
-  if (current !== "discuss" && current !== "plan") return current;
+export function nextPhaseAfterDiscuss(content: string, current: ConsultPhase): ConsultPhase {
+  if (current !== "discuss" && current !== "idle") return current;
   const brief = extractRequirementsBrief(content);
   if (isValidBrief(brief)) return "briefReady";
-  const planStep = extractPlanStep(content);
-  if (planStep) return "plan";
-  if (planAnswers && Object.keys(planAnswers).length > 0) {
-    const synthesized = synthesizeBriefFromPlanAnswers(planAnswers, brief);
-    if (synthesized) return "briefReady";
-  }
-  return current === "plan" ? "plan" : "discuss";
+  return "discuss";
 }
 
 /** 时间线 portal 连线顺序（用于 addPortal after） */

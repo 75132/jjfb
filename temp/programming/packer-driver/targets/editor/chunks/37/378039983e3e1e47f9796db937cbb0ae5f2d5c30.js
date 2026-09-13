@@ -876,10 +876,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             ownedItemIds: this._ownedItemIds,
             isEventQuestStepComplete: eventId => this._isAppearEventDone(eventId),
             debugLog: this.debugLog,
+            unknownRequirementPasses: (_crd && allowsSkipServerStoryApis === void 0 ? (_reportPossibleCrUseOfallowsSkipServerStoryApis({
+              error: Error()
+            }), allowsSkipServerStoryApis) : allowsSkipServerStoryApis)(this.storyRuntimeMode),
             onUnknownRequirement: type => {
-              if (this.debugLog) storyLog('warn', 'StoryManager: 未实现 requirement type，已跳过', {
-                type
-              });
+              if (this.debugLog) {
+                storyLog('warn', 'StoryManager: requirement 未实现或 planned，strict 下不满足', {
+                  type
+                });
+              }
             }
           };
         }
@@ -1193,6 +1198,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _rebuildQuestPhaseFromState() {
+          const pendingLocalBattleWins = new Set(this._localBattleWonEventIds);
+
           this._battleClearedEventIds.clear();
 
           this._localBattleWonEventIds.clear();
@@ -1230,20 +1237,58 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   this._acceptedTaskIds.add(tid);
                 }
               }
+            }
+          }
 
+          for (const row of this._npcRows) {
+            var _row$npcUid5;
+
+            const uid = (_row$npcUid5 = row.npcUid) != null ? _row$npcUid5 : '';
+            if (!uid) continue;
+
+            for (const ev of (_row$events6 = row.events) != null ? _row$events6 : []) {
+              var _row$events6;
+
+              const cast = ev;
               if (cast.eventType !== 'battle') continue;
 
-              if (this._serverCompletedEventIds.has(eid) || this._localBattleWonEventIds.has(eid)) {
+              const eid = this._stableEventId(uid, cast);
+
+              if (this._serverCompletedEventIds.has(eid)) {
                 this._battleClearedEventIds.add(eid);
 
-                if (this._serverCompletedEventIds.has(eid)) {
-                  this._localBattleWonEventIds.add(eid);
-                }
+                this._localBattleWonEventIds.add(eid);
               }
             }
           }
 
+          for (const eid of pendingLocalBattleWins) {
+            if (this._serverCompletedEventIds.has(eid)) continue;
+
+            this._battleClearedEventIds.add(eid);
+
+            this._localBattleWonEventIds.add(eid);
+          }
+
           this._syncNpcTaskIndicators();
+        }
+        /** 战斗胜利后先记本地进度，避免 finalize / 状态同步把胜利清掉 */
+
+
+        _markBattleWonLocally(npcUid, ev) {
+          if (ev.eventType !== 'battle') return;
+
+          const eid = this._stableEventId(npcUid, ev);
+
+          this._battleClearedEventIds.add(eid);
+
+          this._localBattleWonEventIds.add(eid);
+
+          this._refreshNpcVisibility();
+
+          this._syncNpcTaskIndicators();
+
+          this._persistLocalStoryState();
         }
 
         _clearBattleProgress(npcUid, ev) {
@@ -1377,7 +1422,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               node,
               events
             } of this._resolved) {
-              var _node$getChildByName, _node$getChildByName2, _row$events6;
+              var _node$getChildByName, _node$getChildByName2, _row$events7;
 
               const nameNode = (_node$getChildByName = node == null ? void 0 : node.getChildByName('Name')) != null ? _node$getChildByName : null;
               const statuNode = (_node$getChildByName2 = node == null ? void 0 : node.getChildByName('Statu')) != null ? _node$getChildByName2 : null;
@@ -1385,7 +1430,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               const row = this._npcRows.find(r => r.npcUid === npcUid);
 
-              const chainEvents = events.length ? events : (_row$events6 = row == null ? void 0 : row.events) != null ? _row$events6 : [];
+              const chainEvents = events.length ? events : (_row$events7 = row == null ? void 0 : row.events) != null ? _row$events7 : [];
               const hasChain = chainEvents.length > 0;
 
               if (!hasChain || !(node != null && node.isValid) || !node.active || this._isNpcHiddenUntilReveal(npcUid)) {
@@ -1530,6 +1575,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             this.scheduleOnce(() => this._fetchStoryStateFromServer(), 0.2);
           } catch (err) {
+            const found = this._findMapEventById(settlement.event_id);
+
+            if ((found == null ? void 0 : found.ev.eventType) === 'battle') {
+              this._markBattleWonLocally(found.npcUid, found.ev);
+            }
+
             const msg = err instanceof Error ? err.message : '剧情结算待恢复';
             this.showToast(`战斗已完成，剧情结算待恢复：${msg}`, 4000);
           }
@@ -1847,6 +1898,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
+          this._markBattleWonLocally(npcUid, ev);
+
           if (!battleResult.roomId) {
             this.showToast('战斗已完成，缺少 roomId，剧情结算待恢复', 4000);
 
@@ -1875,8 +1928,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.showToast('战斗已完成，剧情结算待恢复', 4000);
 
             this._endActivation();
-
-            this._syncNpcTaskIndicators();
           }
         }
 
@@ -2192,7 +2243,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _spawnDynamicNpcRow(row) {
-          var _ref2, _this$_npcRows$find, _row$events7;
+          var _ref2, _this$_npcRows$find, _row$events8;
 
           const uid = row.npcUid;
           if (!uid) return;
@@ -2225,7 +2276,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._resolved.push({
             npcUid: uid,
             node,
-            events: (_row$events7 = row.events) != null ? _row$events7 : []
+            events: (_row$events8 = row.events) != null ? _row$events8 : []
           });
 
           this._bindNpcTouchHandlers();
@@ -2309,6 +2360,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   onFinished == null || onFinished(result);
                   return;
                 }
+
+                this._markBattleWonLocally(npcUid, ev);
 
                 onFinished == null || onFinished(result);
               }
@@ -2472,12 +2525,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const deferTextRe = /暂缓|拒绝|算了|稍后再|下次再说|不感兴趣|离开|不做|还没准备好|再想想|稍后|暂不|未准备好|考虑一下/;
 
           for (const row of this._npcRows) {
-            var _row$npcUid5;
+            var _row$npcUid6;
 
-            const npcUid = (_row$npcUid5 = row.npcUid) != null ? _row$npcUid5 : '';
+            const npcUid = (_row$npcUid6 = row.npcUid) != null ? _row$npcUid6 : '';
 
-            for (const ev of (_row$events8 = row.events) != null ? _row$events8 : []) {
-              var _row$events8, _ev$client4, _script$options, _ev$server$allowedCho, _ev$server6;
+            for (const ev of (_row$events9 = row.events) != null ? _row$events9 : []) {
+              var _row$events9, _ev$client4, _script$options, _ev$server$allowedCho, _ev$server6;
 
               if (ev.eventType !== 'choice' && ev.eventType !== 'teleport') continue;
               const sid = (_ev$client4 = ev.client) == null ? void 0 : _ev$client4.choiceScriptId;
@@ -2517,26 +2570,26 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         _warnMisplacedBattleFlowInMap() {
           const hasBattleEvent = this._npcRows.some(row => {
-            var _row$events9;
+            var _row$events10;
 
-            return ((_row$events9 = row.events) != null ? _row$events9 : []).some(ev => ev.eventType === 'battle');
+            return ((_row$events10 = row.events) != null ? _row$events10 : []).some(ev => ev.eventType === 'battle');
           });
 
           const hasEnemyNpc = this._npcRows.some(row => {
-            var _row$npcUid6;
+            var _row$npcUid7;
 
-            const uid = (_row$npcUid6 = row.npcUid) != null ? _row$npcUid6 : '';
+            const uid = (_row$npcUid7 = row.npcUid) != null ? _row$npcUid7 : '';
             return uid.endsWith('_enemy') || /_enemy_\d+$/.test(uid);
           });
 
           for (const row of this._npcRows) {
-            var _row$npcUid7;
+            var _row$npcUid8;
 
-            const uid = (_row$npcUid7 = row.npcUid) != null ? _row$npcUid7 : '';
+            const uid = (_row$npcUid8 = row.npcUid) != null ? _row$npcUid8 : '';
             if (uid.endsWith('_enemy')) continue;
 
-            for (const ev of (_row$events10 = row.events) != null ? _row$events10 : []) {
-              var _row$events10, _ev$eventTypeDesc;
+            for (const ev of (_row$events11 = row.events) != null ? _row$events11 : []) {
+              var _row$events11, _ev$eventTypeDesc;
 
               if (ev.eventType !== 'choice') continue;
               const desc = String((_ev$eventTypeDesc = ev.eventTypeDesc) != null ? _ev$eventTypeDesc : '');
@@ -2553,9 +2606,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (!hasBattleEvent && !hasEnemyNpc) {
             const giverWithBattleResult = this._npcRows.some(row => {
-              var _row$events11;
+              var _row$events12;
 
-              return ((_row$events11 = row.events) != null ? _row$events11 : []).some(ev => {
+              return ((_row$events12 = row.events) != null ? _row$events12 : []).some(ev => {
                 var _ev$eventTypeDesc2;
 
                 return String((_ev$eventTypeDesc2 = ev.eventTypeDesc) != null ? _ev$eventTypeDesc2 : '').includes('战斗结果');
@@ -3103,11 +3156,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           let cloneStackSlot = 0;
 
           for (const row of ordered) {
-            var _row$events12, _row$nodePath;
+            var _row$events13, _row$nodePath;
 
             const npcUid = row.npcUid;
             if (!npcUid) continue;
-            const events = (_row$events12 = row.events) != null ? _row$events12 : [];
+            const events = (_row$events13 = row.events) != null ? _row$events13 : [];
             let node = null;
 
             if ((_row$nodePath = row.nodePath) != null && _row$nodePath.length) {
@@ -3316,12 +3369,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _spawnNpcFromTemplate(scene, template, row, refRow, stackSlotFromTemplate) {
-          var _row$npcUid8;
+          var _row$npcUid9;
 
           const parent = template.parent;
           if (!parent) return null;
           const clone = instantiate(template);
-          clone.name = (_row$npcUid8 = row.npcUid) != null ? _row$npcUid8 : 'StoryNpc';
+          clone.name = (_row$npcUid9 = row.npcUid) != null ? _row$npcUid9 : 'StoryNpc';
           parent.addChild(clone);
           const gapTiles = this.testStackNpcGapTiles;
 
@@ -3452,14 +3505,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _findNpcNodeFallback(scene, row, used) {
-          var _ref6, _this$_playerMove$nod, _this$_playerMove7, _scene$getComponentIn, _row$npcUid10;
+          var _ref6, _this$_playerMove$nod, _this$_playerMove7, _scene$getComponentIn, _row$npcUid11;
 
           const canvas = this._findNodeByName(scene, 'Canvas');
 
           if (canvas) {
-            var _row$npcUid9;
+            var _row$npcUid10;
 
-            const byUid = this._getChildByPath(canvas, `GameArea/WorldRoot/${(_row$npcUid9 = row.npcUid) != null ? _row$npcUid9 : ''}`);
+            const byUid = this._getChildByPath(canvas, `GameArea/WorldRoot/${(_row$npcUid10 = row.npcUid) != null ? _row$npcUid10 : ''}`);
 
             if (byUid && !used.has(byUid)) return byUid;
 
@@ -3478,7 +3531,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const colliders = this._collectColliderNpcNodes(wr, pmNode).filter(n => !used.has(n));
 
           if (colliders.length === 0) return null;
-          const uid = (_row$npcUid10 = row.npcUid) != null ? _row$npcUid10 : '';
+          const uid = (_row$npcUid11 = row.npcUid) != null ? _row$npcUid11 : '';
           const byName = colliders.find(n => n.name === uid);
           if (byName) return byName;
 

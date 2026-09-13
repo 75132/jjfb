@@ -1072,6 +1072,10 @@ class ItemEffectManager:
         })
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
+        from .robot_handler import assert_can_remove_robot_pet
+        can_remove, guard_msg = await assert_can_remove_robot_pet(user_id, character_id)
+        if not can_remove:
+            return {'success': False, 'error': guard_msg}
         from . import bag_handler
         from .equipment_handler import strip_all_equipment_to_bag
         strip_res = await strip_all_equipment_to_bag(
@@ -1116,6 +1120,10 @@ class ItemEffectManager:
         })
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
+        from .robot_handler import assert_can_remove_robot_pet
+        can_remove, guard_msg = await assert_can_remove_robot_pet(user_id, character_id)
+        if not can_remove:
+            return {'success': False, 'error': guard_msg}
         from . import bag_handler
         from .equipment_handler import strip_all_equipment_to_bag
         strip_res = await strip_all_equipment_to_bag(

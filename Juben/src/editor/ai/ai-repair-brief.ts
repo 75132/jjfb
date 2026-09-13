@@ -21,7 +21,9 @@ export function buildRepairBriefFromIssues(
     editMode: "patch",
     targetNodeIds: targetIds.length ? targetIds : options?.fallbackTargetNodeIds,
     constraints: [
+      "optimizeExistingChain",
       "仅补缺失 dialog/choice/questUpdate，禁止 delete npcEntry/npcExit",
+      "禁止 deleteNode 删除已有正常节点，优先 patchNode",
       "必须用 connect 把 entry 连到首个中间节点，链尾连 exit",
       "tasks 顺序即任务束出现顺序；后续 NPC 出现条件绑定前链 event_done",
       ...(focusNpc ? [`聚焦 NPC：${focusNpc}`] : []),

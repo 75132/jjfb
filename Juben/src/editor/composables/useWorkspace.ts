@@ -10,7 +10,7 @@ import {
   type PersistedWorkspace,
   type PersistedWorkspaceProject,
 } from "../persistence";
-import { showValidationError } from "../feedback";
+import { showError, showValidationError } from "../feedback";
 import { appConfirm } from "../useModal";
 
 export type SaveStatus = "idle" | "saving" | "synced" | "local-only" | "error";
@@ -34,30 +34,38 @@ export type WorkspacePersistDeps = {
 };
 
 export function buildWorkspacePayload(deps: WorkspacePersistDeps) {
+  const meta = deps.projects.value[0];
+  const id = deps.currentProjectId.value ?? meta?.id ?? `proj_${crypto.randomUUID()}`;
+  const now = Date.now();
+  const entry: PersistedWorkspaceProject = {
+    id,
+    name: meta?.name ?? "未命名",
+    createdAt: meta?.createdAt ?? now,
+    updatedAt: now,
+    data: deps.cloneProject(deps.project.value),
+  };
+  deps.projects.value = [entry];
+  deps.currentProjectId.value = id;
   return {
     version: 1 as const,
-    savedAt: Date.now(),
-    currentProjectId: deps.currentProjectId.value,
-    projects: deps.projects.value,
+    savedAt: now,
+    currentProjectId: id,
+    projects: [entry],
   };
 }
 
 export function prepareCurrentProjectForSave(deps: WorkspacePersistDeps): PersistedWorkspace | null {
-  if (!deps.currentProjectId.value) return null;
-  const idx = deps.projects.value.findIndex((p) => p.id === deps.currentProjectId.value);
-  if (idx < 0) return null;
+  if (!deps.currentProjectId.value && deps.projects.value.length === 0) return null;
   const report = deps.createIntegrityReport();
   const safeProject = deps.sanitizeProjectData(deps.project.value, report);
   const fixed = deps.sumIntegrityReport(report);
   if (fixed > 0) deps.project.value = safeProject;
   const dataToSave = fixed > 0 ? safeProject : deps.project.value;
   deps.refreshProjectExportHealth(dataToSave);
-  deps.projects.value[idx] = {
-    ...deps.projects.value[idx]!,
-    updatedAt: Date.now(),
-    data: deps.cloneProject(dataToSave),
-  };
-  return buildWorkspacePayload(deps);
+  const payload = buildWorkspacePayload(deps);
+  payload.projects[0]!.data = deps.cloneProject(dataToSave);
+  deps.projects.value = [payload.projects[0]!];
+  return payload;
 }
 
 export async function persistWorkspaceAsync(deps: WorkspacePersistDeps, forceOverwrite = false): Promise<void> {
@@ -73,15 +81,19 @@ export async function persistWorkspaceAsync(deps: WorkspacePersistDeps, forceOve
       deps.saveStatusDetail.value = deps.workspaceFilePath.value || "Juben/data/workspace.json";
       deps.bootRecoveryMessage.value = "";
     } else if (result.errorCode === "CONFLICT") {
-      if (!forceOverwrite) {
-        if (result.diskSavedAt != null) setLastKnownRemoteSavedAt(result.diskSavedAt);
-        await persistWorkspaceAsync(deps, true);
-        return;
-      }
+      if (result.diskSavedAt != null) setLastKnownRemoteSavedAt(result.diskSavedAt);
       deps.saveStatus.value = "error";
       deps.saveStatusDetail.value = "远端 workspace 已更新（双标签页冲突）";
+      if (forceOverwrite) {
+        await showError(
+          "保存冲突",
+          `无法覆盖远端 workspace（savedAt=${result.diskSavedAt ?? "?"}）。`,
+          "请刷新页面后重试。",
+        );
+        return;
+      }
       const reload = await appConfirm(
-        `磁盘 workspace 已被其他标签页更新（savedAt=${result.diskSavedAt ?? "?"}）。\n\n重新加载远端数据？（取消则强制覆盖）`,
+        `磁盘 workspace 已被其他标签页更新（savedAt=${result.diskSavedAt ?? "?"}）。\n\n重新加载远端数据？（取消则强制覆盖本机编辑）`,
         "保存冲突",
       );
       if (reload) {

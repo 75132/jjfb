@@ -1,5 +1,8 @@
 /**
  * 剧情 requirement 求值（对齐 server/services/story_service.py check_requirements）。
+ *
+ * 契约：仅 manifest capabilities.requirements.supported 内的 type 有完整客户端求值。
+ * 未知 / planned type 在 strict 模式下返回 false（默认）；local-preview 可设 unknownPasses=true。
  */
 
 export type StoryRequirementContext = {
@@ -15,13 +18,37 @@ export type StoryRequirementContext = {
     isEventQuestStepComplete: (eventId: string) => boolean;
     debugLog?: boolean;
     onUnknownRequirement?: (type: string) => void;
+    /**
+     * local-preview 专用：未知/planned requirement 视为通过（勿用于 server-development）。
+     * 默认 false，与 manifest v2 strict 契约一致。
+     */
+    unknownRequirementPasses?: boolean;
 };
+
+/** manifest v2 planned — 客户端不实现，strict 下恒 false */
+const PLANNED_REQUIREMENT_TYPES = new Set([
+    'story_var_equals',
+    'var_equals',
+    'server_var_equals',
+    'has_pet',
+    'bag_space_at_least',
+    'activity_switch_on',
+]);
 
 function reqType(raw: Record<string, unknown>): string {
     return String(raw.type ?? raw.action ?? '');
 }
 
-/** 单条 requirement；未知 type 在 debug 下 warn 且视为通过（避免卡死整条链） */
+function isPlannedRequirementType(rtype: string): boolean {
+    return PLANNED_REQUIREMENT_TYPES.has(rtype);
+}
+
+function unknownRequirementResult(rtype: string, ctx: StoryRequirementContext): boolean {
+    ctx.onUnknownRequirement?.(rtype);
+    return ctx.unknownRequirementPasses === true;
+}
+
+/** 单条 requirement；未知/planned 在 strict 模式下返回 false */
 export function evaluateSingleRequirement(
     raw: unknown,
     ctx: StoryRequirementContext,
@@ -64,12 +91,11 @@ export function evaluateSingleRequirement(
         const iid = Number(req.itemId ?? 0);
         return ctx.ownedItemIds.has(iid);
     }
-    if (rtype === 'story_var_equals' || rtype === 'var_equals') {
-        if (ctx.debugLog) ctx.onUnknownRequirement?.(rtype);
-        return true;
+    if (isPlannedRequirementType(rtype)) {
+        return unknownRequirementResult(rtype, ctx);
     }
     if (rtype) {
-        ctx.onUnknownRequirement?.(rtype);
+        return unknownRequirementResult(rtype, ctx);
     }
     return true;
 }

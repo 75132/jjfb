@@ -105,10 +105,9 @@ describe("persistence load priority", () => {
 
     const result = await loadFromStorage();
     expect(result.storageOnline).toBe(true);
-    expect(result.source).toBe("merged");
-    expect(result.workspace?.projects.some((p) => p.id === "remote")).toBe(true);
-    expect(result.workspace?.projects.some((p) => p.id === "local")).toBe(true);
-    expect(result.shouldSyncDisk).toBe(true);
+    // 单项目模式：两边不同 id 时保留内容更丰富的一侧
+    expect(result.workspace?.projects).toHaveLength(1);
+    expect(result.workspace?.projects[0]?.id).toBe("remote");
   });
 
   it("recovers from localStorage when remote workspace is null", async () => {
@@ -186,7 +185,7 @@ describe("persistence load priority", () => {
     expect(result.workspace?.currentProjectId).toBe("local-only");
   });
 
-  it("mergeWorkspaces keeps both project ids", () => {
+  it("mergeWorkspaces keeps a single richer project", () => {
     const a = {
       version: 1 as const,
       savedAt: 100,
@@ -200,8 +199,21 @@ describe("persistence load priority", () => {
       projects: [projectWithNodes("b", "B", 2, 200)],
     };
     const merged = mergeWorkspaces(a, b);
-    expect(merged.projects.some((p) => p.id === "a")).toBe(true);
-    expect(merged.projects.some((p) => p.id === "b")).toBe(true);
+    expect(merged.projects).toHaveLength(1);
+    expect(merged.projects[0]?.id).toBe("b");
+  });
+
+  it("normalize collapses historical multi-project workspace", () => {
+    const ws = {
+      version: 1 as const,
+      savedAt: 100,
+      currentProjectId: "thin",
+      projects: [projectWithNodes("thin", "薄", 1, 100), projectWithNodes("rich", "富", 5, 50)],
+    };
+    writeLocalWorkspace(ws);
+    const local = readLocalWorkspace();
+    expect(local?.projects).toHaveLength(1);
+    expect(local?.projects[0]?.id).toBe("rich");
   });
 
   it("saveToStorageRemote throws when PUT fails", async () => {

@@ -540,8 +540,11 @@ export class StoryManager extends Component {
             ownedItemIds: this._ownedItemIds,
             isEventQuestStepComplete: (eventId) => this._isAppearEventDone(eventId),
             debugLog: this.debugLog,
+            unknownRequirementPasses: allowsSkipServerStoryApis(this.storyRuntimeMode),
             onUnknownRequirement: (type) => {
-                if (this.debugLog) storyLog('warn', 'StoryManager: 未实现 requirement type，已跳过', { type });
+                if (this.debugLog) {
+                    storyLog('warn', 'StoryManager: requirement 未实现或 planned，strict 下不满足', { type });
+                }
             },
         };
     }
@@ -770,6 +773,7 @@ export class StoryManager extends Component {
 
     /** 从已同步的 completed_event_ids / active_tasks 还原战斗胜利与接取 */
     private _rebuildQuestPhaseFromState(): void {
+        const pendingLocalBattleWins = new Set(this._localBattleWonEventIds);
         this._battleClearedEventIds.clear();
         this._localBattleWonEventIds.clear();
         this._acceptedTaskIds.clear();
@@ -791,16 +795,38 @@ export class StoryManager extends Component {
                         this._acceptedTaskIds.add(tid);
                     }
                 }
+            }
+        }
+        for (const row of this._npcRows) {
+            const uid = row.npcUid ?? '';
+            if (!uid) continue;
+            for (const ev of row.events ?? []) {
+                const cast = ev as MapNpcEvent;
                 if (cast.eventType !== 'battle') continue;
-                if (this._serverCompletedEventIds.has(eid) || this._localBattleWonEventIds.has(eid)) {
+                const eid = this._stableEventId(uid, cast);
+                if (this._serverCompletedEventIds.has(eid)) {
                     this._battleClearedEventIds.add(eid);
-                    if (this._serverCompletedEventIds.has(eid)) {
-                        this._localBattleWonEventIds.add(eid);
-                    }
+                    this._localBattleWonEventIds.add(eid);
                 }
             }
         }
+        for (const eid of pendingLocalBattleWins) {
+            if (this._serverCompletedEventIds.has(eid)) continue;
+            this._battleClearedEventIds.add(eid);
+            this._localBattleWonEventIds.add(eid);
+        }
         this._syncNpcTaskIndicators();
+    }
+
+    /** 战斗胜利后先记本地进度，避免 finalize / 状态同步把胜利清掉 */
+    private _markBattleWonLocally(npcUid: string, ev: MapNpcEvent): void {
+        if (ev.eventType !== 'battle') return;
+        const eid = this._stableEventId(npcUid, ev);
+        this._battleClearedEventIds.add(eid);
+        this._localBattleWonEventIds.add(eid);
+        this._refreshNpcVisibility();
+        this._syncNpcTaskIndicators();
+        this._persistLocalStoryState();
     }
 
     private _clearBattleProgress(npcUid: string, ev: MapNpcEvent): void {
@@ -1010,6 +1036,10 @@ export class StoryManager extends Component {
             // 再拉一次状态确认
             this.scheduleOnce(() => this._fetchStoryStateFromServer(), 0.2);
         } catch (err) {
+            const found = this._findMapEventById(settlement.event_id);
+            if (found?.ev.eventType === 'battle') {
+                this._markBattleWonLocally(found.npcUid, found.ev);
+            }
             const msg = err instanceof Error ? err.message : '剧情结算待恢复';
             this.showToast(`战斗已完成，剧情结算待恢复：${msg}`, 4000);
         }
@@ -1251,6 +1281,7 @@ export class StoryManager extends Component {
             this._markEventDone(npcUid, ev, choiceId ? { choiceId } : {});
             return;
         }
+        this._markBattleWonLocally(npcUid, ev);
         if (!battleResult.roomId) {
             this.showToast('战斗已完成，缺少 roomId，剧情结算待恢复', 4000);
             this._endActivation();
@@ -1268,7 +1299,6 @@ export class StoryManager extends Component {
         } catch {
             this.showToast('战斗已完成，剧情结算待恢复', 4000);
             this._endActivation();
-            this._syncNpcTaskIndicators();
         }
     }
 
@@ -1566,6 +1596,7 @@ export class StoryManager extends Component {
                         onFinished?.(result);
                         return;
                     }
+                    this._markBattleWonLocally(npcUid, ev);
                     onFinished?.(result);
                 },
             });

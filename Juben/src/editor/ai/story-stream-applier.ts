@@ -10,6 +10,7 @@ import {
 import type { GameMapDef, GraphData, ProjectData, StoryNode } from "../../types";
 import { createNode, getOptionTargets, setOptionTargets } from "../../types";
 import type { ApplyResult, StreamOp, StreamOpAddNode } from "./types";
+import { clampStoryTitle } from "../story-title-limit";
 
 const HORIZONTAL_STEP = 160;
 
@@ -77,7 +78,7 @@ function ensureNpcForUid(ctx: ApplierContext, npcUid?: string, title?: string) {
   if (!ctx.gameMap || !npcUid) return null;
   let npc = resolveNpc(ctx, npcUid);
   if (npc) return npc;
-  const chainTitle = title?.trim() || npcUid;
+  const chainTitle = clampStoryTitle(title?.trim() || npcUid) || npcUid;
   npc = createTaskChain(ctx.project, ctx.gameMap, {
     npcUid,
     title: chainTitle,
@@ -97,8 +98,8 @@ function applyAddTaskChain(
   }
   const npc = createTaskChain(ctx.project, ctx.gameMap, {
     npcUid: op.npcUid,
-    title: op.title,
-    npcName: op.npcName,
+    title: clampStoryTitle(op.title),
+    npcName: op.npcName ? clampStoryTitle(op.npcName) : undefined,
     npcResourceId: op.npcResourceId,
     x: op.x,
     y: op.y,
@@ -156,7 +157,7 @@ function applyAddNode(ctx: ApplierContext, op: StreamOpAddNode): ApplyResult {
 
   const partial: Partial<StoryNode> = {
     kind: op.kind,
-    title: op.title,
+    title: op.title ? clampStoryTitle(op.title) : op.title,
     text: op.text ?? "",
     speaker: op.speaker,
     dialogLines,
@@ -397,10 +398,11 @@ function applyPatchNode(ctx: ApplierContext, op: import("./types").StreamOpPatch
   }
   const p = op.patch;
   if (p.title) {
+    const nextTitle = clampStoryTitle(p.title);
     if (node.kind === "choice") {
       const g = assertChoiceNodeAllowedForNpc(ctx.project, ctx.graph, ctx.gameMap, node.npcUid, {
         kind: "choice",
-        title: p.title,
+        title: nextTitle,
         npcUid: node.npcUid,
       });
       if (!g.ok) {
@@ -408,7 +410,7 @@ function applyPatchNode(ctx: ApplierContext, op: import("./types").StreamOpPatch
         return { applied: 0, warnings };
       }
     }
-    node.title = p.title;
+    node.title = nextTitle;
   }
   if (p.speaker) node.speaker = p.speaker;
   if (p.text) node.text = p.text;

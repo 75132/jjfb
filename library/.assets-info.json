@@ -22,7 +22,7 @@
       "uuid": "086861e0-2d2c-4808-b92b-d564d372e9d9"
     },
     "UI": {
-      "time": 1777745844727.6975,
+      "time": 1787997127705.5142,
       "uuid": "5af0490f-69ae-4863-8029-59e7fdc57df7"
     },
     "UIPrefab": {
@@ -86,11 +86,11 @@
       "uuid": "417669d8-a87a-41c9-b258-0fe6dfc4639d"
     },
     "Script\\Game": {
-      "time": 1785677909627.944,
+      "time": 1788010126659.9756,
       "uuid": "3bae7031-f184-47c7-9153-defd9af00a25"
     },
     "Script\\global": {
-      "time": 1785670131974.448,
+      "time": 1788075583004.0845,
       "uuid": "26482aef-da31-425c-9354-9a732b60ddca"
     },
     "Script\\login": {
@@ -102,7 +102,7 @@
       "uuid": "c71710f1-0f92-4e8b-a008-69f7e73f5665"
     },
     "UI\\Game": {
-      "time": 1783007238148.0425,
+      "time": 1788083340168.0598,
       "uuid": "a3f2ef33-ca36-4853-97fe-3b00c19d27f9"
     },
     "UI\\Loading": {
@@ -170,7 +170,7 @@
       "uuid": "a27a5705-b32c-43c4-bb72-98ac20058be3"
     },
     "resources\\Sample\\剧情脚本": {
-      "time": 1783144743145.7935,
+      "time": 1788105111269.671,
       "uuid": "65db2d4a-770d-4de6-aa30-7963eb9891ba"
     },
     "resources\\Weapon\\Dun": {
@@ -662,7 +662,7 @@
       "uuid": "02618dfd-c9a4-435a-a8da-585a0c970939"
     },
     "Scene\\Game.scene": {
-      "time": 1785677855589.9143,
+      "time": 1788105172766.3633,
       "uuid": "52951fea-982c-46ee-a091-a218f6765fb9"
     },
     "Scene\\Login.scene": {
@@ -2470,11 +2470,11 @@
       "uuid": "48162798-f598-4195-9675-79363e04dff1"
     },
     "Script\\Game\\BagItem.ts": {
-      "time": 1785670710296.0059,
+      "time": 1788086866395.676,
       "uuid": "a63322a7-0a8f-4979-af8c-fed717835ca6"
     },
     "Script\\Game\\BattleScene.ts": {
-      "time": 1785677856340.795,
+      "time": 1788087719294.8447,
       "uuid": "90ca8aeb-27fd-454f-83d1-e679150a214f"
     },
     "Script\\Game\\CentralMenu.ts": {
@@ -2498,7 +2498,7 @@
       "uuid": "a9482551-4ab9-4c31-8296-1ba2b738682a"
     },
     "Script\\Game\\GameControl.ts": {
-      "time": 1785670962262.6443,
+      "time": 1788091450128.1929,
       "uuid": "6cf1d6ae-647a-47b6-846a-bebb1884c97c"
     },
     "Script\\Game\\GameMenu.ts": {
@@ -2534,11 +2534,11 @@
       "uuid": "90656a70-0dc0-431d-a9f2-ce81b943262d"
     },
     "Script\\Game\\RobotList.ts": {
-      "time": 1777757261209.4019,
+      "time": 1788086859159.0906,
       "uuid": "97585498-f163-4b0b-928f-9304e50abaf1"
     },
     "Script\\Game\\RobotShow.ts": {
-      "time": 1772364448000,
+      "time": 1788087387029.7085,
       "uuid": "0abcd145-7047-4ad2-8a5f-5e6fcbc99e71"
     },
     "Script\\Game\\StoryUIViewRefs.ts": {
@@ -2566,7 +2566,7 @@
       "uuid": "bd8b37af-eab2-4ffa-abf6-cddc12dfc547"
     },
     "Script\\global\\GameConfig.ts": {
-      "time": 1785680214878.7505,
+      "time": 1788010030518.5818,
       "uuid": "08c7d6d0-23d4-4a4a-b06d-d46bfa3f564e"
     },
     "Script\\global\\log.ts": {
@@ -3730,7 +3730,7 @@
       "uuid": "bf6b6743-4579-4781-8317-e2c34a3db24d"
     },
     "Script\\Game\\GameArea\\PlayerGridMove.ts": {
-      "time": 1783161039988.6716,
+      "time": 1789309481503.4565,
       "uuid": "7d7be216-da0b-48a1-93c6-dee09eb54fa0"
     },
     "Script\\Game\\GameArea\\PlayerSceneRefs.ts": {
@@ -10413,10 +10413,6 @@
     "UI\\CharacterSelect.meta": {
       "time": 1777745845026.2622
     },
-    "UI\\CharacterSelect": {
-      "time": 1777745838227.184,
-      "uuid": "f63583d7-6ac7-48c1-96d4-6fca5e5b8d59"
-    },
     "Script\\Game\\StoryLocalTaskState.ts.meta": {
       "time": 1777828861245.484
     },
@@ -10446,11 +10442,11 @@
       "time": 1777837450627.5916
     },
     "Script\\Game\\StoryManager.ts": {
-      "time": 1785680235653.166,
+      "time": 1788093089206.2744,
       "uuid": "c3d8a7f1-4e2b-5c9d-a1b2-3c4d5e6f7081"
     },
     "Script\\Game\\STORY_MIGRATION.md": {
-      "time": 1783140907600.8154,
+      "time": 1788006430374.779,
       "uuid": "1c71f69e-4f75-4fb0-b8ca-6ef7abb9bbb4"
     },
     "Script\\Game\\MailPanel.ts.meta": {
@@ -10541,7 +10537,7 @@
       "uuid": "879be813-d413-4d7a-9c9f-1db4592fe8ff"
     },
     "Script\\Game\\story-requirements.ts": {
-      "time": 1783140754812.1643,
+      "time": 1788006108949.0461,
       "uuid": "f57d9c30-8e83-4629-95af-47776e6faad5"
     },
     "Script\\Game\\story-local-mode.ts.meta": {
@@ -10583,7 +10579,7 @@
       "uuid": "1acef8c5-9d41-4e46-a8fa-98956fecd4f3"
     },
     "Script\\Game\\BattleResumeController.ts": {
-      "time": 1785674839844.5752,
+      "time": 1787997128815.578,
       "uuid": "f5250bfc-ed9b-4b6f-854a-cdd3a2cc3c7b"
     },
     "Script\\Game\\battle-entry-intent.ts.meta": {
@@ -10606,6 +10602,111 @@
     "Script\\Game\\story-runtime-mode.ts": {
       "time": 1785677502026.7522,
       "uuid": "c3e8a71d-5b24-4f9a-9e1c-0a7d6b2f4e91"
+    },
+    "Script\\Game\\StarterMechPicker.ts.meta": {
+      "time": 1788010127025.4456
+    },
+    "Script\\Game\\StarterMechPicker.ts": {
+      "time": 1788091419968.3767,
+      "uuid": "601be564-d457-4eec-94cb-f3095b7b18b7"
+    },
+    "GlobalUiPrefab.meta": {
+      "time": 1788011337454.5442
+    },
+    "GlobalUiPrefab": {
+      "time": 1788075193271.1826,
+      "uuid": "3d4b1633-ce0c-4689-9323-9f144772f5fd"
+    },
+    "GlobalUiPrefab\\img.meta": {
+      "time": 1788074791579.4978
+    },
+    "GlobalUiPrefab\\img\\TipWindows_0000.png.meta": {
+      "time": 1788074890059.5408
+    },
+    "GlobalUiPrefab\\img\\TipWindows_0001.png.meta": {
+      "time": 1788074890061.5005
+    },
+    "GlobalUiPrefab\\img\\TipWindows_0002.png.meta": {
+      "time": 1788074890062.5044
+    },
+    "GlobalUiPrefab\\img": {
+      "time": 1788074791240.9727,
+      "uuid": "1dfce3b9-cb13-43a9-a415-09f4ea6ac829"
+    },
+    "GlobalUiPrefab\\img\\TipWindows_0000.png": {
+      "time": 1788074710849.9255,
+      "uuid": "29f70b79-1f22-4021-beb4-21e2600a6bca"
+    },
+    "GlobalUiPrefab\\img\\TipWindows_0001.png": {
+      "time": 1788074715451.2793,
+      "uuid": "763eee01-74dc-4020-8664-b08af7d2bfac"
+    },
+    "GlobalUiPrefab\\img\\TipWindows_0002.png": {
+      "time": 1788074719576.1013,
+      "uuid": "389cc673-5a3f-4214-a966-e6334d7eeb20"
+    },
+    "GlobalUiPrefab\\TipWindows.prefab.meta": {
+      "time": 1788075193278.1858
+    },
+    "GlobalUiPrefab\\TipWindows.prefab": {
+      "time": 1788086949403.7969,
+      "uuid": "adae7a4c-e773-4b23-8739-151111216c69"
+    },
+    "Script\\global\\TipWindows.ts.meta": {
+      "time": 1788075583433.0833
+    },
+    "Script\\global\\TipWindows.ts": {
+      "time": 1788091828310.5508,
+      "uuid": "a89aaf8b-57a1-47db-83e7-4a57930d7cd4"
+    },
+    "UI\\Game\\Task.meta": {
+      "time": 1788079007450.379
+    },
+    "UI\\Game\\Task\\TipLittleWindows.png.meta": {
+      "time": 1788080609179.588
+    },
+    "UI\\Game\\Task": {
+      "time": 1788079006977.389,
+      "uuid": "8d90a399-a296-4c68-bcaa-a8d88ccb9b7c"
+    },
+    "UI\\Game\\Task\\TipLittleWindows.png": {
+      "time": 1788080664264.8445,
+      "uuid": "02831a4e-2d3d-4648-b1fa-c31e85aa04ff"
+    },
+    "UI\\Game\\SelectWindow.meta": {
+      "time": 1788083340552.7817
+    },
+    "UI\\Game\\SelectWindow\\SelectWindows_0000.png.meta": {
+      "time": 1788083582490.1814
+    },
+    "UI\\Game\\SelectWindow\\SelectWindows_0001.png.meta": {
+      "time": 1788083582462.186
+    },
+    "UI\\Game\\SelectWindow\\SelectWindows_0002.png.meta": {
+      "time": 1788083690197.364
+    },
+    "UI\\Game\\SelectWindow": {
+      "time": 1788083581701.5007,
+      "uuid": "1fd4b92e-b547-41d5-866a-c4874e44c721"
+    },
+    "UI\\Game\\SelectWindow\\SelectWindows_0000.png": {
+      "time": 1788083508158.146,
+      "uuid": "e9ddf564-f7cd-4c2b-951b-248544e056f5"
+    },
+    "UI\\Game\\SelectWindow\\SelectWindows_0001.png": {
+      "time": 1788083512944.0215,
+      "uuid": "5c0721b1-f4ed-4a97-84d9-a42249349863"
+    },
+    "UI\\Game\\SelectWindow\\SelectWindows_0002.png": {
+      "time": 1788083517837.5627,
+      "uuid": "ab274090-4141-4bd4-ac17-11b3b1756cb8"
+    },
+    "resources\\Sample\\剧情脚本\\map_00.json.meta": {
+      "time": 1788105112254.1345
+    },
+    "resources\\Sample\\剧情脚本\\map_00.json": {
+      "time": 1788105862663.2107,
+      "uuid": "8f11671d-3151-4828-808e-f967011334ee"
     }
   },
   "missing": {}

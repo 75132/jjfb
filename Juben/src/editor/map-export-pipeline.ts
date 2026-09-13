@@ -8,9 +8,11 @@ import { formatMapRuntimeReport, validateMapConfig, type MapRuntimeReport, type 
 import {
   getClientRuntimeManifest,
   isKnownBattleRef,
+  isPlannedEffectAction,
+  isPlannedRequirementType,
+  isServerOnlyEffectAction,
+  isUnsupportedEffectAction,
   isUnsupportedRequirementType,
-  isWarnOnlyEffectAction,
-  isWarnOnlyRequirementType,
 } from "./client-runtime-manifest";
 import { collectCocosExportMapImageIssues } from "./map-slice-layout";
 import { getActiveGameMapsForExport } from "./timeline-logic";
@@ -48,25 +50,52 @@ export type MapExportPipelineResult = {
 
 export function patchSequentialNpcAppear(runtime: RuntimeMapConfig): void {
   const npcs = runtime.npcs ?? [];
-  for (let i = 1; i < npcs.length; i++) {
+  const allEventIds = new Set<string>();
+  for (const n of npcs) {
+    for (const ev of n.events ?? []) {
+      if (ev.eventId) allEventIds.add(ev.eventId);
+    }
+  }
+
+  for (let i = 0; i < npcs.length; i++) {
     const row = npcs[i] as RuntimeNpcRow;
-    const appear = row.appear;
-    if (!appear || appear.mode !== "conditional") continue;
-    if (appear.requirements?.length) continue;
-    const prev = npcs[i - 1] as RuntimeNpcRow;
-    const prevEvents = prev.events ?? [];
-    let eventId: string | undefined;
+    const uid = row.npcUid ?? "";
+    if (isRuntimeBattleEnemyUid(uid)) continue;
+
+    let prevGiverIdx = i - 1;
+    while (prevGiverIdx >= 0 && isRuntimeBattleEnemyUid(npcs[prevGiverIdx]?.npcUid)) {
+      prevGiverIdx--;
+    }
+    if (prevGiverIdx < 0) continue;
+
+    const prevEvents = npcs[prevGiverIdx]!.events ?? [];
+    let lastEventId: string | undefined;
     for (let ei = prevEvents.length - 1; ei >= 0; ei--) {
       const ev = prevEvents[ei]!;
       if (ev.eventType && ev.eventId) {
-        eventId = ev.eventId;
+        lastEventId = ev.eventId;
         break;
       }
     }
-    if (eventId) {
-      appear.requirements = [{ type: "event_done", eventId } as { type: string; eventId: string }];
+    if (!lastEventId) continue;
+
+    const appear = row.appear;
+    if (!appear || appear.mode !== "conditional") continue;
+
+    const reqs = appear.requirements ?? [];
+    const eventDone = reqs.find((r) => r.type === "event_done") as { eventId?: string } | undefined;
+    const stale = eventDone?.eventId && !allEventIds.has(eventDone.eventId);
+    const empty = reqs.length === 0;
+
+    if (empty || stale) {
+      appear.requirements = [{ type: "event_done", eventId: lastEventId }];
     }
   }
+}
+
+function isRuntimeBattleEnemyUid(npcUid?: string): boolean {
+  if (!npcUid) return false;
+  return npcUid.endsWith("_enemy") || /_enemy_\d+$/.test(npcUid);
 }
 
 /** 预检导出时 patchSequentialNpcAppear 将补全的 appear（编辑器内可见，不静默） */
@@ -235,17 +264,17 @@ function collectManifestIssues(cfg: RuntimeMapConfig): MapExportPipelineResult["
     for (const req of npc.appear?.requirements ?? []) {
       const t = String((req as { type?: string }).type ?? "");
       if (!t) continue;
-      if (isUnsupportedRequirementType(t)) {
+      if (isPlannedRequirementType(t)) {
         issues.push({
           level: "error",
           path: `${npcPath}.appear`,
-          message: `客户端不支持的 appear 条件 type=${t}（manifest 未列出）`,
+          message: `requirement type=${t} 在 manifest 中为 planned，禁止导出（见 docs/story-system-plan.md）`,
         });
-      } else if (isWarnOnlyRequirementType(t)) {
+      } else if (isUnsupportedRequirementType(t)) {
         issues.push({
-          level: "warn",
+          level: "error",
           path: `${npcPath}.appear`,
-          message: `CLIENT_WARN: appear 条件 type=${t} 客户端可能未实现`,
+          message: `appear 条件 type=${t} 不在 manifest 能力清单中`,
         });
       }
     }
@@ -272,28 +301,37 @@ function collectManifestIssues(cfg: RuntimeMapConfig): MapExportPipelineResult["
         if (!req || typeof req !== "object") continue;
         const t = String((req as { type?: string }).type ?? "");
         if (!t) continue;
-        if (isUnsupportedRequirementType(t)) {
+        if (isPlannedRequirementType(t)) {
           issues.push({
             level: "error",
             path: `${evPath}.server.requirements`,
-            message: `客户端不支持的 requirement type=${t}`,
+            message: `requirement type=${t} 在 manifest 中为 planned，禁止导出`,
           });
-        } else if (isWarnOnlyRequirementType(t)) {
+        } else if (isUnsupportedRequirementType(t)) {
           issues.push({
-            level: "warn",
+            level: "error",
             path: `${evPath}.server.requirements`,
-            message: `CLIENT_WARN: requirement type=${t} 客户端可能未实现`,
+            message: `requirement type=${t} 不在 manifest 能力清单中`,
           });
         }
       }
       for (const eff of ev.server?.effects ?? []) {
         const action = String((eff as RuntimeEffect).action ?? "");
-        if (action && isWarnOnlyEffectAction(action)) {
+        if (!action) continue;
+        if (isPlannedEffectAction(action)) {
           issues.push({
-            level: "warn",
+            level: "error",
             path: `${evPath}.server.effects`,
-            message: `CLIENT_WARN: effect action=${action} 客户端可能未实现`,
+            message: `effect action=${action} 在 manifest 中为 planned，禁止导出`,
           });
+        } else if (isUnsupportedEffectAction(action)) {
+          issues.push({
+            level: "error",
+            path: `${evPath}.server.effects`,
+            message: `effect action=${action} 不在 manifest 能力清单中`,
+          });
+        } else if (isServerOnlyEffectAction(action)) {
+          // 服务端权威执行；客户端仅展示 Tips，导出不告警
         }
       }
     }

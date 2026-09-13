@@ -38,7 +38,10 @@ npm run audit:story-maps -- --fix --publish   # 修补并双写 Cocos + Server
 
 ## 离线测试与「暂缓」选项
 
-本地验收时可在 **StoryManager** 勾选 `skipServerRequirements = true`，客户端以 JSON 内 `server.requirements` / `allowedChoiceIds` / 选项 `completesEvent` 自行判定。
+本地验收时在 **StoryManager** 将 `storyRuntimeMode` 设为 `local-preview`（或场景里选「本地预览」）。此模式下客户端以 JSON 内 `server.requirements` / `allowedChoiceIds` / 选项 `completesEvent` 自行判定，且 `unknownRequirementPasses=true`。
+
+> **已废弃**：`skipServerRequirements` 属性名；请统一使用 `storyRuntimeMode = local-preview`。  
+> **上线/联调**必须使用 `server-development`（默认），走完整 `story_get_state` / `story_interact` / `story_event_complete`。
 
 **暂缓（defer）契约**（对标 RM MV「选项不改 Switch」）：
 
@@ -111,4 +114,5 @@ Juben 启动 / 全局检查时会自动：
 
 - `StoryUIViewRefs.ts` 与 `CanvasRoot(UI).prefab` 的 UI 槽位绑定勿改。
 - 战斗 `battleRef` 对齐 `server/data/battle_refs.json`（Juben manifest 校验）。
-- 本地测试：`skipServerRequirements = true`；联网须 Server JSON 与 Cocos JsonAsset 同源发布。
+- 本地测试：`storyRuntimeMode = local-preview`；联网须 `server-development` 且 Server JSON 与 Cocos JsonAsset 同源发布。
+- 能力契约：`Juben/data/client-runtime-manifest.json`（v2）；扩展见 `docs/story-system-plan.md` §7。

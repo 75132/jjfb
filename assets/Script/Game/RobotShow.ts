@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Sprite, SpriteFrame, Animation, Label, UITransform, tween, Tween, UIOpacity, JsonAsset, instantiate, Vec3 } from 'cc';
+import { _decorator, Component, Node, Sprite, SpriteFrame, Animation, Label, UITransform, tween, Tween, UIOpacity, JsonAsset, instantiate, Vec3, Color } from 'cc';
 import { ResourceManager } from './ResourceManager';
 
 const { ccclass, property } = _decorator;
@@ -176,6 +176,7 @@ export class RobotShow extends Component {
      */
     public updateFromRobotData(data: any): void {
         if (!data) return;
+        this.resetVisualState();
 
         // 关键修复：提取并保存 petId，用于验证数据是否匹配
         const rawPetId = data.pet_id ?? data.data?.pet_id;
@@ -214,6 +215,19 @@ export class RobotShow extends Component {
             console.log(`⚠️ [RobotShow] 资源未加载完成，装备图标将在资源加载后更新 (pet_id: ${petId})`);
             this.scheduleApplyWhenReady(petId, 0);
         }
+    }
+
+    /** 恢复击破/渐变后的显示状态，避免连续多场战斗时机甲形象不可见 */
+    public resetVisualState(): void {
+        if (!this.node?.isValid) return;
+        this.node.active = true;
+        if (this.body?.isValid) this.body.active = true;
+        const sprites = this.node.getComponentsInChildren(Sprite);
+        sprites.forEach((s) => {
+            if (!s?.node?.isValid) return;
+            const c = s.color;
+            s.color = new Color(c.r, c.g, c.b, 255);
+        });
     }
 
     // ===== 战斗内：伤害数字 + 局内血条（仅战斗时显示） =====

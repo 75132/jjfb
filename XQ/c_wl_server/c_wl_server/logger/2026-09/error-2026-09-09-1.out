@@ -1,0 +1,51 @@
+[01:48:44:950] [ERROR] - com.zaxxer.hikari.pool.HikariPool.throwPoolInitializationException(HikariPool.java:594) - data-pool- - Exception during pool initialization.
+java.sql.SQLException: RSA public key is not available client side (option serverRsaPublicKeyFile not set)
+	at org.mariadb.jdbc.plugin.authentication.standard.CachingSha2PasswordPlugin.process(CachingSha2PasswordPlugin.java:141) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.authenticationHandler(ConnectionHelper.java:290) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.<init>(StandardClient.java:188) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.Driver.connect(Driver.java:70) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.Driver.connect(Driver.java:101) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.Driver.connect(Driver.java:27) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.HikariDataSource.<init>(HikariDataSource.java:81) ~[c_wl_server.jar:?]
+	at my.db.HikariDataSourceFactory.<init>(HikariDataSourceFactory.java:43) ~[c_wl_server.jar:?]
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[?:1.8.0_504]
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423) ~[?:1.8.0_504]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.dataSourceElement(XMLConfigBuilder.java:332) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.environmentsElement(XMLConfigBuilder.java:286) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.parseConfiguration(XMLConfigBuilder.java:117) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.parse(XMLConfigBuilder.java:99) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.session.SqlSessionFactoryBuilder.build(SqlSessionFactoryBuilder.java:80) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.session.SqlSessionFactoryBuilder.build(SqlSessionFactoryBuilder.java:66) ~[c_wl_server.jar:?]
+	at my.db.mybatisConfig.config(mybatisConfig.java:29) ~[c_wl_server.jar:?]
+	at my.startBef.init(startBef.java:112) ~[c_wl_server.jar:?]
+	at my.start.app(start.java:32) ~[c_wl_server.jar:?]
+	at my.start.main(start.java:169) ~[c_wl_server.jar:?]
+[02:37:28:248] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=96) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=96) Incorrect integer value: '' for column 'offline' at row 1
+[02:44:14:714] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=117) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=117) Incorrect integer value: '' for column 'offline' at row 1
+[23:50:33:745] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4396) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4396) Incorrect integer value: '' for column 'offline' at row 1

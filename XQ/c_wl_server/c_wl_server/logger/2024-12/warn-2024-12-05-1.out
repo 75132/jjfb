@@ -1,0 +1,1 @@
+[10:29:05:880] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.

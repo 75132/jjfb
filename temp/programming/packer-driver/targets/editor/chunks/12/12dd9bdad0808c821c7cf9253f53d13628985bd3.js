@@ -569,6 +569,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
           if (action === 'story-wait') {
+            this.prepareRobotShowsForNewBattle();
+
             this._syncBattlePortraitVisibility();
 
             return;
@@ -588,8 +590,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.lastRoundPlayerAction = null;
           if (this.battleSelectPanel) this.battleSelectPanel.active = false;
           if (this.timerRoot) this.timerRoot.active = false;
-          this.resetRobotShowOpacity(this.playerRobotShow);
-          this.resetRobotShowOpacity(this.enemyRobotShow);
+          this.prepareRobotShowsForNewBattle();
 
           this._syncBattlePortraitVisibility();
 
@@ -762,6 +763,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._sessionId += 1;
           this._roomStateApplied = false;
           this.unschedule(this._onBattleEnterTimeout);
+          this.prepareRobotShowsForNewBattle();
           this.node.active = true;
           this.scheduleOnce(this._onBattleEnterTimeout, this.BATTLE_ENTER_TIMEOUT_SEC);
           const characterId = (_this$ws$getCharacter3 = (_this$ws3 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter3.call(_this$ws3);
@@ -955,6 +957,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!forRoundAnimation && !isNewRoom && incomingRoomId && this._appliedRestoreRoomId === incomingRoomId && this._roomStateApplied) {
             console.log(`[BattleScene] skip duplicate restore animation room_id=${incomingRoomId}`);
             return;
+          }
+
+          if (isNewRoom && !forRoundAnimation) {
+            this.prepareRobotShowsForNewBattle();
           } // 根据服务器返回的模式切换：PVP 可能需要更长的 action 等待时间（双方都提交完才结算）
 
 
@@ -2298,6 +2304,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             onTweenDone();
           }).start();
         }
+        /** 新一场战斗开始前：恢复击破动画后的透明度，并清理上一场 schedule/tween */
+
+
+        prepareRobotShowsForNewBattle() {
+          var _this$playerRobotShow6, _this$enemyRobotShow6;
+
+          this.unscheduleAllCallbacks();
+          if ((_this$playerRobotShow6 = this.playerRobotShow) != null && _this$playerRobotShow6.node) Tween.stopAllByTarget(this.playerRobotShow.node);
+          if ((_this$enemyRobotShow6 = this.enemyRobotShow) != null && _this$enemyRobotShow6.node) Tween.stopAllByTarget(this.enemyRobotShow.node);
+          this.resetRobotShowOpacity(this.playerRobotShow);
+          this.resetRobotShowOpacity(this.enemyRobotShow);
+          if (this.playerRobotShow) this.playerRobotShow.resetVisualState();
+          if (this.enemyRobotShow) this.enemyRobotShow.resetVisualState();
+        }
         /** 将 RobotShow 下所有 Sprite 的透明度恢复为 255，避免击破动画后下次战斗不显示 */
 
 
@@ -2519,7 +2539,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _syncBattlePortraitVisibility() {
-          var _this$playerRobotShow6, _this$enemyRobotShow6;
+          var _this$playerRobotShow7, _this$enemyRobotShow7;
 
           const story = this._isStoryBattle();
 
@@ -2531,11 +2551,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.enemyPlayerShowRoot.active = !story;
           }
 
-          if ((_this$playerRobotShow6 = this.playerRobotShow) != null && _this$playerRobotShow6.node) {
+          if ((_this$playerRobotShow7 = this.playerRobotShow) != null && _this$playerRobotShow7.node) {
             this.playerRobotShow.node.active = true;
           }
 
-          if ((_this$enemyRobotShow6 = this.enemyRobotShow) != null && _this$enemyRobotShow6.node) {
+          if ((_this$enemyRobotShow7 = this.enemyRobotShow) != null && _this$enemyRobotShow7.node) {
             this.enemyRobotShow.node.active = true;
           }
         }

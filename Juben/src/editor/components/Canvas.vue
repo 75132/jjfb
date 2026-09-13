@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import {
   VueFlow,
   type Node,
@@ -44,9 +44,10 @@ const emit = defineEmits<{
   (e: "paneClick", ev: MouseEvent): void;
   (e: "ready"): void;
   (e: "unready"): void;
+  (e: "panMode", active: boolean): void;
 }>();
 
-const { viewport, removeSelectedElements, addSelectedNodes, findNode, nodesSelectionActive, dimensions, updateNodeInternals } =
+const { viewport, removeSelectedElements, addSelectedNodes, findNode, nodesSelectionActive, dimensions, updateNodeInternals, zoomIn, zoomOut, fitView } =
   useVueFlow(STORY_FLOW_ID);
 
 const canvasEl = ref<HTMLElement | null>(null);
@@ -126,6 +127,17 @@ const boxStartFlow = ref<{ x: number; y: number } | null>(null);
 const boxCurrentFlow = ref<{ x: number; y: number } | null>(null);
 const boxAdditive = ref(false);
 
+const zoomPercent = computed(() => Math.round((viewport.value.zoom || 1) * 100));
+const isBoxing = computed(() => !!boxStartLocal.value && !!boxCurrentLocal.value);
+
+function isTypingTarget(): boolean {
+  const active = document.activeElement as HTMLElement | null;
+  if (!active) return false;
+  if (active.isContentEditable) return true;
+  const tag = active.tagName?.toLowerCase();
+  return tag === "input" || tag === "textarea" || tag === "select";
+}
+
 function applyEditorSelection(nodeIds: string[]) {
   const idSet = new Set(nodeIds);
   removeSelectedElements();
@@ -137,16 +149,38 @@ function applyEditorSelection(nodeIds: string[]) {
   if (toSelect.length > 0) addSelectedNodes(toSelect);
 }
 
-defineExpose({ applyEditorSelection, refreshFlowDimensions });
+defineExpose({ applyEditorSelection, refreshFlowDimensions, zoomIn, zoomOut, fitView });
+
+watch(spaceDown, (v) => emit("panMode", v));
+
+function setSpacePan(active: boolean) {
+  if (spaceDown.value === active) return;
+  spaceDown.value = active;
+}
 
 function onKeyDown(e: KeyboardEvent) {
-  if (e.code !== "Space") return;
-  spaceDown.value = true;
-  e.preventDefault();
+  if (isTypingTarget()) return;
+  if (e.code === "Space") {
+    if (!e.repeat) setSpacePan(true);
+    e.preventDefault();
+    return;
+  }
+  if (e.key === "=" || e.key === "+" || e.code === "NumpadAdd") {
+    e.preventDefault();
+    zoomIn();
+    return;
+  }
+  if (e.key === "-" || e.code === "Minus" || e.code === "NumpadSubtract") {
+    e.preventDefault();
+    zoomOut();
+  }
 }
 function onKeyUp(e: KeyboardEvent) {
   if (e.code !== "Space") return;
-  spaceDown.value = false;
+  setSpacePan(false);
+}
+function onWindowBlur() {
+  setSpacePan(false);
 }
 
 function normalizeRect(a: { x: number; y: number }, b: { x: number; y: number }): SelectionRect {
@@ -161,6 +195,7 @@ function isBoxTarget(target: EventTarget | null): boolean {
   if (el.closest(".vue-flow__node")) return false;
   if (el.closest(".vue-flow__controls")) return false;
   if (el.closest(".vue-flow__minimap")) return false;
+  if (el.closest(".canvas-hud")) return false;
   return true;
 }
 
@@ -239,6 +274,7 @@ const boxOverlayStyle = computed(() => {
 onMounted(() => {
   window.addEventListener("keydown", onKeyDown, { passive: false });
   window.addEventListener("keyup", onKeyUp);
+  window.addEventListener("blur", onWindowBlur);
   window.addEventListener("pointerdown", onWindowPointerDown, true);
   window.addEventListener("pointermove", onWindowPointerMove, true);
   window.addEventListener("pointerup", onWindowPointerUp, true);
@@ -257,6 +293,7 @@ onBeforeUnmount(() => {
   emit("unready");
   window.removeEventListener("keydown", onKeyDown);
   window.removeEventListener("keyup", onKeyUp);
+  window.removeEventListener("blur", onWindowBlur);
   window.removeEventListener("pointerdown", onWindowPointerDown, true);
   window.removeEventListener("pointermove", onWindowPointerMove, true);
   window.removeEventListener("pointerup", onWindowPointerUp, true);
@@ -264,7 +301,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="canvasEl" class="canvas" @wheel.stop>
+  <div
+    ref="canvasEl"
+    class="canvas"
+    :class="{ 'is-panning': spaceDown, 'is-boxing': isBoxing }"
+    @wheel.stop
+  >
     <div
       v-if="flowMountReady && mountSize"
       class="flow-host"
@@ -273,47 +315,55 @@ onBeforeUnmount(() => {
       <VueFlow
         :id="STORY_FLOW_ID"
         :nodes="nodes"
-      :edges="edges"
-      :node-types="nodeTypes"
-      :fit-view-on-init="true"
-      :min-zoom="0.15"
-      :max-zoom="2.5"
-      :default-viewport="{ x: 0, y: 0, zoom: 1 }"
-      :selection-on-drag="false"
-      :select-nodes-on-drag="false"
-      :nodes-selectable="true"
-      :edges-selectable="true"
-      :elevate-nodes-on-select="true"
-      :pan-on-drag="spaceDown ? true : [1]"
-      :multi-selection-key-code="['Shift', 'Control', 'Meta']"
-      @update:nodes="emit('update:nodes', $event)"
-      @update:edges="emit('update:edges', $event)"
-      @connect="emit('connect', $event)"
-      @nodes-change="emit('nodesChange', $event)"
-      @edges-change="emit('edgesChange', $event)"
-      @node-drag-start="emit('nodeDragStart', $event)"
-      @node-drag="emit('nodeDrag', $event)"
-      @node-drag-stop="emit('nodeDragStop', $event)"
-      @node-click="emit('nodeClick', $event)"
-      @edge-click="emit('edgeClick', $event.edge.id)"
-      @selection-change="
-        emit('selectionChange', { nodeIds: $event.nodes.map((n) => n.id), edgeIds: $event.edges.map((e) => e.id) })
-      "
-      @pane-context-menu="emit('paneContextMenu', $event)"
-      @pane-click="emit('paneClick', $event)"
-      @pane-ready="onPaneReady"
-    >
-      <Background :gap="18" pattern-color="rgba(148,163,184,0.15)" />
-      <MiniMap
-        position="bottom-left"
-        :pannable="true"
-        :zoomable="true"
-        node-color="#475569"
-        mask-color="rgba(2, 6, 23, 0.72)"
-      />
-      <Controls position="top-right" />
+        :edges="edges"
+        :node-types="nodeTypes"
+        :fit-view-on-init="true"
+        :min-zoom="0.15"
+        :max-zoom="2.5"
+        :default-viewport="{ x: 0, y: 0, zoom: 1 }"
+        :selection-on-drag="false"
+        :select-nodes-on-drag="false"
+        :nodes-selectable="true"
+        :edges-selectable="true"
+        :elevate-nodes-on-select="true"
+        :pan-on-drag="spaceDown ? true : [1]"
+        :zoom-on-double-click="false"
+        :multi-selection-key-code="['Shift', 'Control', 'Meta']"
+        @update:nodes="emit('update:nodes', $event)"
+        @update:edges="emit('update:edges', $event)"
+        @connect="emit('connect', $event)"
+        @nodes-change="emit('nodesChange', $event)"
+        @edges-change="emit('edgesChange', $event)"
+        @node-drag-start="emit('nodeDragStart', $event)"
+        @node-drag="emit('nodeDrag', $event)"
+        @node-drag-stop="emit('nodeDragStop', $event)"
+        @node-click="emit('nodeClick', $event)"
+        @edge-click="emit('edgeClick', $event.edge.id)"
+        @selection-change="
+          emit('selectionChange', { nodeIds: $event.nodes.map((n) => n.id), edgeIds: $event.edges.map((e) => e.id) })
+        "
+        @pane-context-menu="emit('paneContextMenu', $event)"
+        @pane-click="emit('paneClick', $event)"
+        @pane-ready="onPaneReady"
+      >
+        <Background variant="dots" :gap="24" :size="1" color="rgba(148,163,184,0.16)" />
+        <MiniMap
+          class="canvas-minimap"
+          position="bottom-left"
+          :pannable="true"
+          :zoomable="true"
+          :width="140"
+          :height="96"
+          :node-stroke-width="1.5"
+          node-color="#64748b"
+          node-stroke-color="#94a3b8"
+          mask-color="rgba(2, 6, 23, 0.78)"
+        />
+        <Controls class="canvas-controls" position="bottom-right" :show-interactive="false" />
       </VueFlow>
     </div>
+
+    <div class="canvas-hud" title="滚轮缩放 · +/- 键">{{ zoomPercent }}%</div>
     <div v-if="boxOverlayStyle" class="selection-box" :style="boxOverlayStyle" />
   </div>
 </template>
@@ -331,6 +381,15 @@ onBeforeUnmount(() => {
   overflow: hidden;
   overscroll-behavior: contain;
 }
+.canvas.is-panning {
+  cursor: grab;
+}
+.canvas.is-panning:active {
+  cursor: grabbing;
+}
+.canvas.is-boxing {
+  cursor: crosshair;
+}
 .flow-host {
   position: relative;
   flex: 0 0 auto;
@@ -341,10 +400,20 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   min-height: 0;
+  background: transparent;
 }
 .flow-host :deep(.vue-flow__viewport) {
   width: 100%;
   height: 100%;
+}
+.flow-host :deep(.vue-flow__pane) {
+  cursor: inherit;
+}
+.canvas.is-panning :deep(.vue-flow__pane) {
+  cursor: grab;
+}
+.canvas.is-panning:active :deep(.vue-flow__pane) {
+  cursor: grabbing;
 }
 .selection-box {
   position: absolute;
@@ -352,6 +421,22 @@ onBeforeUnmount(() => {
   pointer-events: none;
   border: 1px solid rgba(56, 189, 248, 0.85);
   background: rgba(14, 165, 233, 0.12);
-  box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.25);
+  border-radius: 2px;
+}
+.canvas-hud {
+  position: absolute;
+  z-index: 12;
+  top: 10px;
+  left: 10px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.75);
+  color: #94a3b8;
+  font-size: 11px;
+  line-height: 24px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
 }
 </style>

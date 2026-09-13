@@ -10,6 +10,7 @@ import {
   type BlueprintSlotKind,
   type StoryBlueprint,
 } from "../ai/story-blueprint";
+import { clampStoryTitle, STORY_TITLE_MAX_LEN } from "../story-title-limit";
 
 const props = defineProps<{
   focusNpcUid?: string;
@@ -17,7 +18,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "confirm", blueprint: StoryBlueprint): void;
+  (e: "generate", blueprint: StoryBlueprint): void;
 }>();
 
 const blueprint = ref<StoryBlueprint>(defaultStoryBlueprint(4));
@@ -39,11 +40,17 @@ function setKind(index: number, kind: BlueprintSlotKind) {
   if (kind === "battle" && row.enemyCount < 1) row.enemyCount = 1;
 }
 
-function confirm() {
+function onTitleInput(index: number, raw: string) {
+  const row = blueprint.value.nodes[index];
+  if (!row) return;
+  row.title = clampStoryTitle(raw);
+}
+
+function generate() {
   if (!canConfirm.value) return;
-  emit("confirm", {
+  emit("generate", {
     ...blueprint.value,
-    nodes: blueprint.value.nodes.map((n) => ({ ...n })),
+    nodes: blueprint.value.nodes.map((n) => ({ ...n, title: clampStoryTitle(n.title ?? "") })),
   });
 }
 </script>
@@ -73,43 +80,54 @@ function confirm() {
       />
     </div>
 
-    <p class="field-hint">每一格 = 一条独立任务链（左栏会出现 N 条）。你只选对话/战斗；接取、交任务、对白由 AI 自动补。</p>
+    <p class="field-hint">每一格 = 一条任务链。可填短标题（最多 {{ STORY_TITLE_MAX_LEN }} 字），留空则由 AI 起名。</p>
 
     <ul class="slot-list">
-      <li v-for="(row, i) in blueprint.nodes" :key="i" class="slot-row">
-        <span class="slot-idx">{{ i + 1 }}</span>
-        <div class="kind-toggle">
-          <button
-            type="button"
-            class="kind-btn"
-            :class="{ active: row.kind === 'dialog' }"
-            :disabled="disabled"
-            @click="setKind(i, 'dialog')"
-          >
-            对话
-          </button>
-          <button
-            type="button"
-            class="kind-btn battle"
-            :class="{ active: row.kind === 'battle' }"
-            :disabled="disabled"
-            @click="setKind(i, 'battle')"
-          >
-            战斗
-          </button>
+      <li v-for="(row, i) in blueprint.nodes" :key="i" class="slot-card">
+        <div class="slot-row">
+          <span class="slot-idx">{{ i + 1 }}</span>
+          <div class="kind-toggle">
+            <button
+              type="button"
+              class="kind-btn"
+              :class="{ active: row.kind === 'dialog' }"
+              :disabled="disabled"
+              @click="setKind(i, 'dialog')"
+            >
+              对话
+            </button>
+            <button
+              type="button"
+              class="kind-btn battle"
+              :class="{ active: row.kind === 'battle' }"
+              :disabled="disabled"
+              @click="setKind(i, 'battle')"
+            >
+              战斗
+            </button>
+          </div>
+          <div v-if="row.kind === 'battle'" class="enemy-pick">
+            <span class="enemy-lbl">敌人</span>
+            <input
+              v-model.number="row.enemyCount"
+              type="number"
+              class="field-num sm"
+              min="1"
+              max="10"
+              :disabled="disabled"
+            />
+          </div>
+          <span v-else class="slot-kind-label">{{ blueprintSlotLabel(row.kind) }}</span>
         </div>
-        <div v-if="row.kind === 'battle'" class="enemy-pick">
-          <span class="enemy-lbl">敌人</span>
-          <input
-            v-model.number="row.enemyCount"
-            type="number"
-            class="field-num sm"
-            min="1"
-            max="10"
-            :disabled="disabled"
-          />
-        </div>
-        <span v-else class="slot-kind-label">{{ blueprintSlotLabel(row.kind) }}</span>
+        <input
+          :value="row.title ?? ''"
+          type="text"
+          class="title-input"
+          :maxlength="STORY_TITLE_MAX_LEN"
+          :placeholder="`任务标题（≤${STORY_TITLE_MAX_LEN}字，可留空）`"
+          :disabled="disabled"
+          @input="onTitleInput(i, ($event.target as HTMLInputElement).value)"
+        />
       </li>
     </ul>
 
@@ -117,8 +135,8 @@ function confirm() {
       {{ blueprint.nodes.length }} 条任务链 · 战斗格合计 {{ battleTotal }} 个敌人 NPC
     </p>
 
-    <button type="button" class="btn primary wide" :disabled="!canConfirm" @click="confirm">
-      确认蓝图
+    <button type="button" class="btn primary wide" :disabled="!canConfirm" @click="generate">
+      生成剧情
     </button>
   </div>
 </template>
@@ -153,7 +171,8 @@ function confirm() {
   line-height: 1.4;
 }
 .field-textarea,
-.field-num {
+.field-num,
+.title-input {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid rgba(148, 163, 184, 0.45);
@@ -173,6 +192,13 @@ function confirm() {
   width: 48px;
   padding: 4px 6px;
 }
+.title-input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+}
 .row-inline {
   display: flex;
   align-items: center;
@@ -186,14 +212,16 @@ function confirm() {
   flex-direction: column;
   gap: 6px;
 }
-.slot-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.slot-card {
   padding: 8px 10px;
   border-radius: 8px;
   background: #1e293b;
   border: 1px solid rgba(148, 163, 184, 0.3);
+}
+.slot-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .slot-idx {
   width: 20px;

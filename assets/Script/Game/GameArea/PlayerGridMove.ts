@@ -1,4 +1,21 @@
-import { _decorator, Component, Node, UITransform, input, Input, EventKeyboard, KeyCode, misc, Animation, v3, TiledLayer, UIOpacity, Sprite } from 'cc';
+import {
+    _decorator,
+    Component,
+    Node,
+    UITransform,
+    input,
+    Input,
+    EventKeyboard,
+    EventTouch,
+    KeyCode,
+    misc,
+    Animation,
+    v3,
+    Vec2,
+    TiledLayer,
+    UIOpacity,
+    Sprite,
+} from 'cc';
 import { PlayerAnimRuntime } from './PlayerAnimRuntime';
 import { PlayerStateSync } from './PlayerStateSync';
 
@@ -8,12 +25,26 @@ const { ccclass, property } = _decorator;
 const CELL = 48;
 /** RPG Maker MV 的速度基准帧率（引擎内部默认按 60fps 公式定义） */
 const MV_BASE_FPS = 60;
+/** 触控滑动超过该像素则不当作寻路点击 */
+const CLICK_NAV_MAX_SLIDE_PX = 24;
 type MoveDir = 'left' | 'right' | 'up' | 'down';
+type StepDelta = { dc: number; dr: number };
 
 @ccclass('PlayerGridMove')
 export class PlayerGridMove extends Component {
     @property({ type: Node, tooltip: '地图瓦片父节点（MapRoot / TiledMap），用于边界与格子原点' })
     mapRoot: Node | null = null;
+
+    @property({
+        tooltip: '点击/触控地图格子寻路（与键盘兼容；按方向键会取消当前寻路）',
+    })
+    enableClickNavigate = true;
+
+    @property({
+        type: Node,
+        tooltip: '接收点击的节点（默认向上查找名为 GameArea 的节点，找不到则用 mapRoot）',
+    })
+    clickInputRoot: Node | null = null;
 
     @property({ tooltip: 'RPG Maker MV：moveSpeed 1～6（默认 4），对应 Game_CharacterBase.prototype.moveSpeed' })
     moveSpeed = 4;
@@ -106,6 +137,12 @@ export class PlayerGridMove extends Component {
     /** 剧情对白/选项/战斗等由 StoryManager 锁定，对齐 RMV $gamePlayer._locked */
     private _inputLocked = false;
 
+    /** 触控/点击寻路的逐步队列（每项一格） */
+    private _pathQueue: StepDelta[] = [];
+    private _clickBoundRoot: Node | null = null;
+    private readonly _touchStartUI = new Vec2();
+    private _touchTracking = false;
+
     onLoad() {
         this._ut = this.getComponent(UITransform);
         this._anim = this.getComponent(Animation);
@@ -124,6 +161,7 @@ export class PlayerGridMove extends Component {
     onDestroy() {
         input.off(Input.EventType.KEY_DOWN, this._onKeyDown, this);
         input.off(Input.EventType.KEY_UP, this._onKeyUp, this);
+        this._unbindClickNavigate();
     }
 
     start() {
@@ -142,6 +180,7 @@ export class PlayerGridMove extends Component {
             this._nudgeFromUninitializedSpawn();
         }
         this._playIdleAnim(this._facing);
+        this._bindClickNavigate();
     }
 
     /** PlayerStateSync 可能挂在 GameArea 等父节点，而非 Player 自身。 */
@@ -198,6 +237,7 @@ export class PlayerGridMove extends Component {
         this._inputLocked = locked;
         if (locked) {
             this._heldCodes.clear();
+            this.clearNavigatePath();
             this._moving = false;
             this._axis = null;
             this._playIdleAnim(this._facing);
@@ -206,6 +246,44 @@ export class PlayerGridMove extends Component {
 
     public get inputLocked(): boolean {
         return this._inputLocked;
+    }
+
+    /** 取消触控寻路队列（不打断当前这一格的平滑移动） */
+    public clearNavigatePath(): void {
+        this._pathQueue.length = 0;
+    }
+
+    /**
+     * 寻路到目标格并排队逐步行走。键盘方向键优先；成功返回 true。
+     */
+    public navigateToGrid(col: number, row: number): boolean {
+        if (this._inputLocked || !this.enableClickNavigate) return false;
+        const map = this.mapRoot;
+        const ut = this._ut;
+        if (!map || !ut) return false;
+        const mapUt = map.getComponent(UITransform);
+        if (!mapUt) return false;
+        const m = this._mapGridMetrics(map, mapUt);
+        if (m.cols <= 0 || m.rows <= 0) return false;
+
+        const tc = Math.min(m.cols - 1, Math.max(0, Math.floor(col)));
+        const tr = Math.min(m.rows - 1, Math.max(0, Math.floor(row)));
+        // 正在走格时，从本格终点开始规划，避免半格坐标导致路径错位
+        const cur = this._moving
+            ? this._pixelToGridCell(this._destCx, this._destCy) ?? this._currentGridCell(m)
+            : this._currentGridCell(m);
+        if (cur.col === tc && cur.row === tr) {
+            this.clearNavigatePath();
+            return true;
+        }
+
+        const path = this._findPathBfs(cur.col, cur.row, tc, tr, m);
+        if (!path || path.length === 0) {
+            this.clearNavigatePath();
+            return false;
+        }
+        this._pathQueue = path;
+        return true;
     }
 
     update(dt: number) {
@@ -229,7 +307,10 @@ export class PlayerGridMove extends Component {
         if (!this._moving) {
             const dir = this._readDesiredDir();
             if (dir) {
+                this.clearNavigatePath();
                 this._tryBeginStep(dir.dc, dir.dr);
+            } else {
+                this._consumePathStep();
             }
         }
         this._updatePlantVisual(dt);
@@ -237,11 +318,40 @@ export class PlayerGridMove extends Component {
 
     private _onKeyDown(e: EventKeyboard) {
         if (this._inputLocked) return;
+        if (this._isMoveKey(e.keyCode)) {
+            this.clearNavigatePath();
+        }
         this._heldCodes.add(e.keyCode);
     }
 
     private _onKeyUp(e: EventKeyboard) {
         this._heldCodes.delete(e.keyCode);
+    }
+
+    private _isMoveKey(code: number): boolean {
+        return (
+            code === KeyCode.KEY_W ||
+            code === KeyCode.KEY_A ||
+            code === KeyCode.KEY_S ||
+            code === KeyCode.KEY_D ||
+            code === KeyCode.ARROW_UP ||
+            code === KeyCode.ARROW_DOWN ||
+            code === KeyCode.ARROW_LEFT ||
+            code === KeyCode.ARROW_RIGHT
+        );
+    }
+
+    private _consumePathStep(): void {
+        while (this._pathQueue.length > 0) {
+            const next = this._pathQueue[0];
+            if (this._tryBeginStep(next.dc, next.dr)) {
+                this._pathQueue.shift();
+                return;
+            }
+            // 前方被挡则整段取消，避免卡死空转
+            this.clearNavigatePath();
+            return;
+        }
     }
 
     private _readDesiredDir(): { dc: number; dr: number } | null {
@@ -368,6 +478,7 @@ export class PlayerGridMove extends Component {
 
     /** 将当前位置吸附到最近合法格子中心（会取消未完成的移动） */
     public snapToGrid(): void {
+        this.clearNavigatePath();
         this._moving = false;
         this._axis = null;
         this._snapToGridFromCurrentPos();
@@ -376,6 +487,7 @@ export class PlayerGridMove extends Component {
 
     /** 按格子坐标直接放置角色到格子中心（用于出生点/传送点）。 */
     public placeAtGrid(col: number, row: number): void {
+        this.clearNavigatePath();
         const map = this.mapRoot;
         const ut = this._ut;
         if (!map || !ut) return;
@@ -459,6 +571,7 @@ export class PlayerGridMove extends Component {
 
     /** 直接设置到像素坐标；可选吸附到格子中心。 */
     public setPixelPosition(x: number, y: number, snapToGrid = false): void {
+        this.clearNavigatePath();
         const z = this.node.position.z;
         this._setPos(x, y, z);
         if (snapToGrid) {
@@ -598,6 +711,8 @@ export class PlayerGridMove extends Component {
     }
 
     private _tmpV3 = v3();
+    private _tmpV3b = v3();
+    private readonly _tmpUI = new Vec2();
     private _blockedNameSet: Set<string> = new Set();
     private _effectNameSet: Set<string> = new Set();
     private _inPlant = false;
@@ -612,6 +727,243 @@ export class PlayerGridMove extends Component {
             );
         this._blockedNameSet = toSet(this.blockedLayerNames);
         this._effectNameSet = toSet(this.passableEffectLayerNames);
+    }
+
+    private _resolveClickInputRoot(): Node | null {
+        if (this.clickInputRoot?.isValid) return this.clickInputRoot;
+        let n: Node | null = this.mapRoot ?? this.node;
+        while (n) {
+            if (n.name === 'GameArea') return n;
+            n = n.parent;
+        }
+        return this.mapRoot?.isValid ? this.mapRoot : null;
+    }
+
+    private _bindClickNavigate(): void {
+        this._unbindClickNavigate();
+        if (!this.enableClickNavigate) return;
+        const root = this._resolveClickInputRoot();
+        if (!root?.isValid) return;
+        this._clickBoundRoot = root;
+        root.on(Node.EventType.TOUCH_START, this._onNavTouchStart, this);
+        root.on(Node.EventType.TOUCH_END, this._onNavTouchEnd, this);
+        root.on(Node.EventType.TOUCH_CANCEL, this._onNavTouchCancel, this);
+    }
+
+    private _unbindClickNavigate(): void {
+        const root = this._clickBoundRoot;
+        if (root?.isValid) {
+            root.off(Node.EventType.TOUCH_START, this._onNavTouchStart, this);
+            root.off(Node.EventType.TOUCH_END, this._onNavTouchEnd, this);
+            root.off(Node.EventType.TOUCH_CANCEL, this._onNavTouchCancel, this);
+        }
+        this._clickBoundRoot = null;
+        this._touchTracking = false;
+    }
+
+    private _onNavTouchStart(e: EventTouch): void {
+        if (this._inputLocked || !this.enableClickNavigate) return;
+        e.getUILocation(this._touchStartUI);
+        this._touchTracking = true;
+    }
+
+    private _onNavTouchCancel(): void {
+        this._touchTracking = false;
+    }
+
+    private _onNavTouchEnd(e: EventTouch): void {
+        if (!this._touchTracking) return;
+        this._touchTracking = false;
+        if (this._inputLocked || !this.enableClickNavigate) return;
+        // NPC 交互会 stopPropagation；若仍冒泡到此则可能是地图点击
+        if (e.propagationStopped) return;
+
+        const end = e.getUILocation(this._tmpUI);
+        const dx = end.x - this._touchStartUI.x;
+        const dy = end.y - this._touchStartUI.y;
+        if (dx * dx + dy * dy > CLICK_NAV_MAX_SLIDE_PX * CLICK_NAV_MAX_SLIDE_PX) {
+            return;
+        }
+
+        const parentLocal = this._uiLocationToPlayerParentLocal(end.x, end.y);
+        if (!parentLocal) return;
+        const cell = this._pixelToGridCell(parentLocal.x, parentLocal.y);
+        if (!cell) return;
+        this.navigateToGrid(cell.col, cell.row);
+    }
+
+    private _uiLocationToPlayerParentLocal(uiX: number, uiY: number): { x: number; y: number } | null {
+        const parent = this.node.parent;
+        const parentUt = parent?.getComponent(UITransform);
+        const root = this._clickBoundRoot;
+        const rootUt = root?.getComponent(UITransform);
+        if (!parent || !parentUt || !root || !rootUt) return null;
+
+        const uiPos = this._tmpV3;
+        uiPos.set(uiX, uiY, 0);
+        const localInRoot = this._tmpV3b;
+        rootUt.convertToNodeSpaceAR(uiPos, localInRoot);
+        rootUt.convertToWorldSpaceAR(localInRoot, localInRoot);
+        parentUt.convertToNodeSpaceAR(localInRoot, localInRoot);
+        return { x: localInRoot.x, y: localInRoot.y };
+    }
+
+    private _pixelToGridCell(px: number, py: number): { col: number; row: number } | null {
+        const map = this.mapRoot;
+        if (!map) return null;
+        const mapUt = map.getComponent(UITransform);
+        if (!mapUt) return null;
+        const m = this._mapGridMetrics(map, mapUt);
+        if (m.cols <= 0 || m.rows <= 0) return null;
+        let col = Math.floor((px - m.originX) / CELL);
+        let row = this.useAnchorAsGridOrigin
+            ? Math.floor((m.originY - py) / CELL)
+            : Math.floor((py - m.originY) / CELL);
+        if (col < 0 || col > m.cols - 1 || row < 0 || row > m.rows - 1) return null;
+        return { col, row };
+    }
+
+    private _currentGridCell(m: { originX: number; originY: number; cols: number; rows: number }): {
+        col: number;
+        row: number;
+    } {
+        const cur = this.node.position;
+        let col = Math.floor((cur.x - m.originX) / CELL);
+        let row = this.useAnchorAsGridOrigin
+            ? Math.floor((m.originY - cur.y) / CELL)
+            : Math.floor((cur.y - m.originY) / CELL);
+        col = Math.min(m.cols - 1, Math.max(0, col));
+        row = Math.min(m.rows - 1, Math.max(0, row));
+        return { col, row };
+    }
+
+    private _gridCenterPixel(
+        col: number,
+        row: number,
+        m: { originX: number; originY: number }
+    ): { x: number; y: number } {
+        return {
+            x: m.originX + (col + 0.5) * CELL,
+            y: this.useAnchorAsGridOrigin
+                ? m.originY - (row + 0.5) * CELL
+                : m.originY + (row + 0.5) * CELL,
+        };
+    }
+
+    private _canPassGrid(
+        col: number,
+        row: number,
+        m: { originX: number; originY: number; cols: number; rows: number }
+    ): boolean {
+        if (col < 0 || col > m.cols - 1 || row < 0 || row > m.rows - 1) return false;
+        const p = this._gridCenterPixel(col, row, m);
+        return this._canPassByTiledLayers(p.x, p.y);
+    }
+
+    /** 四向 BFS；目标不可走时退化为「最接近目标的可达格」 */
+    private _findPathBfs(
+        sc: number,
+        sr: number,
+        tc: number,
+        tr: number,
+        m: { originX: number; originY: number; cols: number; rows: number }
+    ): StepDelta[] | null {
+        const cols = m.cols;
+        const rows = m.rows;
+        const total = cols * rows;
+        if (total <= 0) return null;
+
+        let goalC = tc;
+        let goalR = tr;
+        if (!this._canPassGrid(goalC, goalR, m)) {
+            const nearest = this._nearestWalkable(tc, tr, m);
+            if (!nearest) return null;
+            goalC = nearest.col;
+            goalR = nearest.row;
+            if (goalC === sc && goalR === sr) return [];
+        }
+
+        const key = (c: number, r: number) => r * cols + c;
+        const visited = new Uint8Array(total);
+        const parent = new Int32Array(total);
+        parent.fill(-1);
+        const qC = new Int16Array(total);
+        const qR = new Int16Array(total);
+        let qh = 0;
+        let qt = 0;
+        qC[qt] = sc;
+        qR[qt] = sr;
+        qt++;
+        visited[key(sc, sr)] = 1;
+
+        const dirs: StepDelta[] = [
+            { dc: 1, dr: 0 },
+            { dc: -1, dr: 0 },
+            { dc: 0, dr: 1 },
+            { dc: 0, dr: -1 },
+        ];
+
+        let found = false;
+        while (qh < qt) {
+            const c = qC[qh];
+            const r = qR[qh];
+            qh++;
+            if (c === goalC && r === goalR) {
+                found = true;
+                break;
+            }
+            for (let i = 0; i < 4; i++) {
+                const nc = c + dirs[i].dc;
+                const nr = r + dirs[i].dr;
+                if (nc < 0 || nc >= cols || nr < 0 || nr >= rows) continue;
+                const k = key(nc, nr);
+                if (visited[k]) continue;
+                if (!this._canPassGrid(nc, nr, m)) continue;
+                visited[k] = 1;
+                parent[k] = key(c, r);
+                qC[qt] = nc;
+                qR[qt] = nr;
+                qt++;
+            }
+        }
+        if (!found) return null;
+
+        const steps: StepDelta[] = [];
+        let ck = key(goalC, goalR);
+        const startK = key(sc, sr);
+        while (ck !== startK) {
+            const pk = parent[ck];
+            if (pk < 0) return null;
+            const c = ck % cols;
+            const r = (ck / cols) | 0;
+            const pc = pk % cols;
+            const pr = (pk / cols) | 0;
+            steps.push({ dc: c - pc, dr: r - pr });
+            ck = pk;
+        }
+        steps.reverse();
+        return steps;
+    }
+
+    private _nearestWalkable(
+        tc: number,
+        tr: number,
+        m: { originX: number; originY: number; cols: number; rows: number }
+    ): { col: number; row: number } | null {
+        const cols = m.cols;
+        const rows = m.rows;
+        const maxR = Math.max(cols, rows);
+        for (let rad = 0; rad <= maxR; rad++) {
+            for (let dr = -rad; dr <= rad; dr++) {
+                for (let dc = -rad; dc <= rad; dc++) {
+                    if (Math.max(Math.abs(dc), Math.abs(dr)) !== rad) continue;
+                    const c = tc + dc;
+                    const r = tr + dr;
+                    if (this._canPassGrid(c, r, m)) return { col: c, row: r };
+                }
+            }
+        }
+        return null;
     }
 
     private _canPassByTiledLayers(targetX: number, targetY: number): boolean {

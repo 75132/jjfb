@@ -1118,7 +1118,8 @@
         "bfdda844-589b-455d-ac4b-a3d3428765f0@f9941",
         "85ac7ff3-b4ca-4697-b7e6-2e26a272a428@f9941",
         "f34bf4b4-077c-48c6-b567-e0963060a459@f9941",
-        "5e7baf89-d1b0-4dd9-8ae6-2f20f14cf3d9",
+        "02831a4e-2d3d-4648-b1fa-c31e85aa04ff@f9941",
+        "8f11671d-3151-4828-808e-f967011334ee",
         "b7957c8e-d4fa-41a3-8b9f-4f1425f75426@f9941",
         "515f0c27-1a6b-4a17-8ab4-8e603a6b8698@f9941",
         "54dde559-12b9-4ecf-80a8-f79e67e414a9@f9941",
@@ -1142,7 +1143,14 @@
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@c2a9a",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@23ad7",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@c64ef",
-        "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@73185"
+        "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@73185",
+        "adae7a4c-e773-4b23-8739-151111216c69",
+        "5c0721b1-f4ed-4a97-84d9-a42249349863@f9941",
+        "45828f25-b50d-4c52-a591-e19491a62b8c@f9941",
+        "f12a23c4-b924-4322-a260-3d982428f1e8@f9941",
+        "29f70b79-1f22-4021-beb4-21e2600a6bca@f9941",
+        "763eee01-74dc-4020-8664-b08af7d2bfac@f9941",
+        "ab274090-4141-4bd4-ac17-11b3b1756cb8@f9941"
       ],
       "dependScripts": [
         "6cf1d6ae-647a-47b6-846a-bebb1884c97c",
@@ -34711,6 +34719,235 @@
   "c3e8a71d-5b24-4f9a-9e1c-0a7d6b2f4e91": {
     "url": "db://assets/Script/Game/story-runtime-mode.ts",
     "value": {},
+    "versionCode": 1
+  },
+  "601be564-d457-4eec-94cb-f3095b7b18b7": {
+    "url": "db://assets/Script/Game/StarterMechPicker.ts",
+    "value": {},
+    "versionCode": 1
+  },
+  "3d4b1633-ce0c-4689-9323-9f144772f5fd": {
+    "url": "db://assets/GlobalUiPrefab",
+    "value": {},
+    "versionCode": 1
+  },
+  "29f70b79-1f22-4021-beb4-21e2600a6bca": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0000.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "763eee01-74dc-4020-8664-b08af7d2bfac": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0001.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "389cc673-5a3f-4214-a966-e6334d7eeb20": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0002.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "1dfce3b9-cb13-43a9-a415-09f4ea6ac829": {
+    "url": "db://assets/GlobalUiPrefab/img",
+    "value": {},
+    "versionCode": 1
+  },
+  "29f70b79-1f22-4021-beb4-21e2600a6bca@6c48a": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0000.png@6c48a",
+    "value": {
+      "depends": [
+        "29f70b79-1f22-4021-beb4-21e2600a6bca"
+      ]
+    },
+    "versionCode": 1
+  },
+  "763eee01-74dc-4020-8664-b08af7d2bfac@6c48a": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0001.png@6c48a",
+    "value": {
+      "depends": [
+        "763eee01-74dc-4020-8664-b08af7d2bfac"
+      ]
+    },
+    "versionCode": 1
+  },
+  "389cc673-5a3f-4214-a966-e6334d7eeb20@6c48a": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0002.png@6c48a",
+    "value": {
+      "depends": [
+        "389cc673-5a3f-4214-a966-e6334d7eeb20"
+      ]
+    },
+    "versionCode": 1
+  },
+  "29f70b79-1f22-4021-beb4-21e2600a6bca@f9941": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0000.png@f9941",
+    "value": {
+      "depends": [
+        "29f70b79-1f22-4021-beb4-21e2600a6bca@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "763eee01-74dc-4020-8664-b08af7d2bfac@f9941": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0001.png@f9941",
+    "value": {
+      "depends": [
+        "763eee01-74dc-4020-8664-b08af7d2bfac@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "389cc673-5a3f-4214-a966-e6334d7eeb20@f9941": {
+    "url": "db://assets/GlobalUiPrefab/img/TipWindows_0002.png@f9941",
+    "value": {
+      "depends": [
+        "389cc673-5a3f-4214-a966-e6334d7eeb20@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "adae7a4c-e773-4b23-8739-151111216c69": {
+    "url": "db://assets/GlobalUiPrefab/TipWindows.prefab",
+    "value": {
+      "depends": [
+        "20835ba4-6145-4fbc-a58a-051ce700aa3e@f9941",
+        "544e49d6-3f05-4fa8-9a9e-091f98fc2ce8@f9941",
+        "951249e0-9f16-456d-8b85-a6ca954da16b@f9941",
+        "29f70b79-1f22-4021-beb4-21e2600a6bca@f9941",
+        "763eee01-74dc-4020-8664-b08af7d2bfac@f9941",
+        "389cc673-5a3f-4214-a966-e6334d7eeb20@f9941"
+      ],
+      "dependScripts": [
+        "a89aaf8b-57a1-47db-83e7-4a57930d7cd4"
+      ]
+    },
+    "versionCode": 1
+  },
+  "a89aaf8b-57a1-47db-83e7-4a57930d7cd4": {
+    "url": "db://assets/Script/global/TipWindows.ts",
+    "value": {},
+    "versionCode": 1
+  },
+  "02831a4e-2d3d-4648-b1fa-c31e85aa04ff": {
+    "url": "db://assets/UI/Game/Task/TipLittleWindows.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "8d90a399-a296-4c68-bcaa-a8d88ccb9b7c": {
+    "url": "db://assets/UI/Game/Task",
+    "value": {},
+    "versionCode": 1
+  },
+  "02831a4e-2d3d-4648-b1fa-c31e85aa04ff@6c48a": {
+    "url": "db://assets/UI/Game/Task/TipLittleWindows.png@6c48a",
+    "value": {
+      "depends": [
+        "02831a4e-2d3d-4648-b1fa-c31e85aa04ff"
+      ]
+    },
+    "versionCode": 1
+  },
+  "02831a4e-2d3d-4648-b1fa-c31e85aa04ff@f9941": {
+    "url": "db://assets/UI/Game/Task/TipLittleWindows.png@f9941",
+    "value": {
+      "depends": [
+        "02831a4e-2d3d-4648-b1fa-c31e85aa04ff@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "e9ddf564-f7cd-4c2b-951b-248544e056f5": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0000.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "5c0721b1-f4ed-4a97-84d9-a42249349863": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0001.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "ab274090-4141-4bd4-ac17-11b3b1756cb8": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0002.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "1fd4b92e-b547-41d5-866a-c4874e44c721": {
+    "url": "db://assets/UI/Game/SelectWindow",
+    "value": {},
+    "versionCode": 1
+  },
+  "e9ddf564-f7cd-4c2b-951b-248544e056f5@6c48a": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0000.png@6c48a",
+    "value": {
+      "depends": [
+        "e9ddf564-f7cd-4c2b-951b-248544e056f5"
+      ]
+    },
+    "versionCode": 1
+  },
+  "5c0721b1-f4ed-4a97-84d9-a42249349863@6c48a": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0001.png@6c48a",
+    "value": {
+      "depends": [
+        "5c0721b1-f4ed-4a97-84d9-a42249349863"
+      ]
+    },
+    "versionCode": 1
+  },
+  "e9ddf564-f7cd-4c2b-951b-248544e056f5@f9941": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0000.png@f9941",
+    "value": {
+      "depends": [
+        "e9ddf564-f7cd-4c2b-951b-248544e056f5@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "5c0721b1-f4ed-4a97-84d9-a42249349863@f9941": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0001.png@f9941",
+    "value": {
+      "depends": [
+        "5c0721b1-f4ed-4a97-84d9-a42249349863@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "ab274090-4141-4bd4-ac17-11b3b1756cb8@6c48a": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0002.png@6c48a",
+    "value": {
+      "depends": [
+        "ab274090-4141-4bd4-ac17-11b3b1756cb8"
+      ]
+    },
+    "versionCode": 1
+  },
+  "ab274090-4141-4bd4-ac17-11b3b1756cb8@f9941": {
+    "url": "db://assets/UI/Game/SelectWindow/SelectWindows_0002.png@f9941",
+    "value": {
+      "depends": [
+        "ab274090-4141-4bd4-ac17-11b3b1756cb8@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "8f11671d-3151-4828-808e-f967011334ee": {
+    "url": "db://assets/resources/Sample/剧情脚本/map_00.json",
+    "value": {
+      "depends": []
+    },
     "versionCode": 1
   }
 }

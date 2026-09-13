@@ -1,0 +1,150 @@
+[02:27:31:825] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[02:27:31:886] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4926) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4926) Incorrect integer value: '' for column 'offline' at row 1
+[02:35:21:762] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[02:35:21:764] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4953) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4953) Incorrect integer value: '' for column 'offline' at row 1
+[02:37:31:099] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[02:37:31:099] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4960) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4960) Incorrect integer value: '' for column 'offline' at row 1
+[02:39:44:772] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[02:39:44:773] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4967) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4967) Incorrect integer value: '' for column 'offline' at row 1
+[02:42:11:197] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[02:42:11:198] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4976) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4976) Incorrect integer value: '' for column 'offline' at row 1
+[02:45:20:948] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[02:45:20:949] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=4986) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=4986) Incorrect integer value: '' for column 'offline' at row 1
+[20:50:45:590] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[20:50:45:595] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=8650) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=8650) Incorrect integer value: '' for column 'offline' at row 1
+[21:16:07:782] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[21:16:07:783] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=8736) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=8736) Incorrect integer value: '' for column 'offline' at row 1
+[21:40:23:017] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[21:40:23:018] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=8816) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=8816) Incorrect integer value: '' for column 'offline' at row 1
+[21:44:37:700] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-HY000: Incorrect integer value: '' for column 'offline' at row 1
+[21:44:37:701] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLException: (conn=8830) Incorrect integer value: '' for column 'offline' at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLException: (conn=8830) Incorrect integer value: '' for column 'offline' at row 1
+[18:31:10:878] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[18:31:11:973] [ERROR] - com.zaxxer.hikari.pool.HikariPool.throwPoolInitializationException(HikariPool.java:594) - data-pool- - Exception during pool initialization.
+java.sql.SQLNonTransientConnectionException: Socket fail to connect to host:address=(host=localhost)(port=3306)(type=primary). Connection refused: getsockopt
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.connectSocket(ConnectionHelper.java:136) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.<init>(StandardClient.java:103) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.Driver.connect(Driver.java:70) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.Driver.connect(Driver.java:101) ~[c_wl_server.jar:?]
+	at org.mariadb.jdbc.Driver.connect(Driver.java:27) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115) ~[c_wl_server.jar:?]
+	at com.zaxxer.hikari.HikariDataSource.<init>(HikariDataSource.java:81) ~[c_wl_server.jar:?]
+	at my.db.HikariDataSourceFactory.<init>(HikariDataSourceFactory.java:43) ~[c_wl_server.jar:?]
+	at jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[?:?]
+	at jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77) ~[?:?]
+	at jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[?:?]
+	at java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500) ~[?:?]
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:481) ~[?:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.dataSourceElement(XMLConfigBuilder.java:332) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.environmentsElement(XMLConfigBuilder.java:286) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.parseConfiguration(XMLConfigBuilder.java:117) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.builder.xml.XMLConfigBuilder.parse(XMLConfigBuilder.java:99) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.session.SqlSessionFactoryBuilder.build(SqlSessionFactoryBuilder.java:80) ~[c_wl_server.jar:?]
+	at org.apache.ibatis.session.SqlSessionFactoryBuilder.build(SqlSessionFactoryBuilder.java:66) ~[c_wl_server.jar:?]
+	at my.db.mybatisConfig.config(mybatisConfig.java:29) ~[c_wl_server.jar:?]
+	at my.startBef.init(startBef.java:112) ~[c_wl_server.jar:?]
+	at my.start.app(start.java:32) ~[c_wl_server.jar:?]
+	at my.start.main(start.java:169) ~[c_wl_server.jar:?]
+Caused by: java.net.ConnectException: Connection refused: getsockopt
+	at sun.nio.ch.Net.pollConnect(Native Method) ~[?:?]
+	at sun.nio.ch.Net.pollConnectNow(Net.java:684) ~[?:?]
+	at sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:547) ~[?:?]
+	at sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:602) ~[?:?]
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327) ~[?:?]
+	at java.net.Socket.connect(Socket.java:633) ~[?:?]
+	at org.mariadb.jdbc.client.impl.ConnectionHelper.connectSocket(ConnectionHelper.java:130) ~[c_wl_server.jar:?]
+	... 27 more
+[18:42:28:439] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[18:59:43:338] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[20:05:37:972] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[20:57:26:250] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[20:57:26:256] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=475) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=475) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[21:09:35:433] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[21:09:35:435] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=518) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=518) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[21:28:10:324] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[21:39:21:215] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[21:43:08:429] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[21:43:08:434] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=641) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=641) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[23:48:14:478] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=1m21s5ms164?s100ns).

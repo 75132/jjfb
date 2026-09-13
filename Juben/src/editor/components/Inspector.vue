@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import type {
   ActionStep,
   CharacterAsset,
@@ -22,13 +22,14 @@ import { findGameMapForGraph, taskLabelForNpc } from "../game-map-logic";
 import { findQuestForMapGraph } from "../quest-logic";
 import { NODE_KIND_GUIDE, NODE_OVERLAP_HINTS } from "../node-catalog";
 import { normalizeEnemyTokenExpression } from "../enemy-format";
-import { battleRefOptions, getClientRuntimeManifest } from "../client-runtime-manifest";
+import { battleRefOptions, getClientRuntimeManifest, listCapabilityIds } from "../client-runtime-manifest";
 import { collectNpcEventChain, resolveNpcPrefabKey } from "../map-export";
 import NpcAppearFields from "./NpcAppearFields.vue";
 import NpcPortraitPicker from "./NpcPortraitPicker.vue";
 import { normalizeNpcPortraitPath } from "../npc-portrait-catalog";
 import { chainPortraitShortLabel } from "../npc-chain-portrait";
 import { normalizeNpcAppear, provisionNpcAppearFromChainOrder } from "../npc-appear";
+import { clampStoryTitle, STORY_TITLE_MAX_LEN } from "../story-title-limit";
 import { cocosMapJsonFilename } from "../cocos-map-publish";
 import {
   assertChoiceNodeAllowedForNpc,
@@ -39,6 +40,7 @@ import {
 import { inferChainSlotKind } from "../chain-slot-kind";
 import { resolveNpcBattleChains } from "../battle-enemy-bind";
 import { appAlert, appConfirm } from "../useModal";
+import { AI_ASSISTANT_KEY } from "../editorInjection";
 
 const props = defineProps<{
   project: ProjectData;
@@ -175,6 +177,26 @@ const selectedNodeGuide = computed(() => {
   const k = selectedNode.value?.kind;
   return k ? NODE_KIND_GUIDE[k] : "";
 });
+
+function kindLabel(kind: string): string {
+  const map: Record<string, string> = {
+    dialog: "对话",
+    choice: "选择",
+    battle: "战斗",
+    questUpdate: "任务",
+    npcEntry: "任务入口",
+    npcExit: "任务出口",
+    gainItem: "获得",
+    loseItem: "失去",
+    condition: "条件",
+    action: "动作",
+    check: "检查",
+    setVar: "变量",
+    callQuest: "跳转",
+    mapPortal: "章节",
+  };
+  return map[kind] ?? kind;
+}
 
 const selectedNodeOverlapHint = computed(() => {
   const k = selectedNode.value?.kind;
@@ -375,7 +397,9 @@ function showSelfSwitchHint() {
 function commitEntryTitle() {
   const node = selectedNode.value;
   if (node?.kind !== "npcEntry" || !node.npcUid) return;
-  emit("patchTaskEntry", { npcUid: node.npcUid, title: node.title?.trim() || "任务" });
+  const title = clampStoryTitle(node.title?.trim() || "任务");
+  if (node.title !== title) node.title = title;
+  emit("patchTaskEntry", { npcUid: node.npcUid, title });
 }
 
 /** 与地图标记、导出 JSON 同源：prefabKey override > 资源库 image */
@@ -643,6 +667,21 @@ const isMapChainEventNode = computed(() => {
   return MAP_CHAIN_EVENT_KINDS.has(n.kind);
 });
 
+const aiBridge = inject(AI_ASSISTANT_KEY, null);
+
+function onAiEditSelected() {
+  const node = selectedNode.value;
+  if (!node || !aiBridge) return;
+  const label = node.title?.trim() || node.kind;
+  aiBridge.runCommand(`润色节点「${label}」的对白与选项，只改这一处`, { nodeIds: [node.id] });
+}
+
+function onAiEditEntryTitle() {
+  const node = selectedNode.value;
+  if (!node || node.kind !== "npcEntry" || !aiBridge) return;
+  aiBridge.runCommand(`把任务标题改成更短的剧情名（≤${STORY_TITLE_MAX_LEN}字）`, { nodeIds: [node.id] });
+}
+
 function onChainContinuousChange(e: Event) {
   const node = selectedNode.value;
   if (!node) return;
@@ -656,7 +695,7 @@ function onRequiresApproachChange(e: Event) {
 }
 
 const manifestBattleRefs = computed(() => battleRefOptions());
-const supportedReqTypes = computed(() => getClientRuntimeManifest().supportedRequirementTypes);
+const supportedReqTypes = computed(() => listCapabilityIds("requirements", "supported"));
 
 const chainExportHint = computed(() => {
   const node = selectedNode.value;
@@ -800,14 +839,15 @@ function commitMapNamePatch() {
 
 <template>
   <section class="panel panel-right" @wheel.stop>
-    <div class="section-title">属性</div>
+    <div class="panel-head">
+      <div class="section-title">属性</div>
+    </div>
 
+    <div class="panel-body">
     <div v-if="selectedNode" class="node-summary">
-      <div class="summary-line"><span class="summary-k">类型</span>{{ selectedNode.kind }}</div>
-      <div class="summary-line"><span class="summary-k">标题</span>{{ selectedNode.title || "（无）" }}</div>
-      <div v-if="selectedNodeNpcLabel" class="summary-line">
-        <span class="summary-k">所属 NPC</span>{{ selectedNodeNpcLabel }}
-      </div>
+      <span class="kind-pill" :class="selectedNode.kind">{{ kindLabel(selectedNode.kind) }}</span>
+      <div class="summary-title">{{ selectedNode.title || "未命名" }}</div>
+      <div v-if="selectedNodeNpcLabel" class="summary-npc muted-small">{{ selectedNodeNpcLabel }}</div>
     </div>
 
     <div v-if="selectedNode">
@@ -816,32 +856,68 @@ function commitMapNamePatch() {
 
       <div class="row row-left node-actions">
         <button
+          v-if="isMapChainEventNode && aiBridge"
+          class="btn btn-ai"
+          type="button"
+          title="用白话让 AI 只改这个节点"
+          @click="onAiEditSelected"
+        >
+          AI 改此处
+        </button>
+        <button
+          v-if="selectedNode.kind === 'npcEntry' && aiBridge"
+          class="btn btn-ai"
+          type="button"
+          title="让 AI 优化任务标题"
+          @click="onAiEditEntryTitle"
+        >
+          AI 改标题
+        </button>
+        <button
           class="btn btn-danger"
           type="button"
           :disabled="!canDeleteSelectedNode"
           :title="selectedNodeDeleteBlock || '删除选中节点 (Del)'"
           @click="emit('deleteNode', selectedNode.id)"
         >
-          删除节点
+          删除
         </button>
-        <span v-if="selectedNodeDeleteBlock" class="hint">{{ selectedNodeDeleteBlock }}</span>
       </div>
 
       <div class="field">
-        <label>所属地图</label>
-        <input :value="selectedNode.mapId || '（未分配）'" readonly />
-      </div>
-
-      <div class="field">
-        <label>{{ selectedNode.kind === "npcEntry" ? "任务标题" : "标题（画布显示名）" }}</label>
+        <label>{{ selectedNode.kind === "npcEntry" ? "任务标题" : "步骤名" }}</label>
         <input
           v-model="selectedNode.title"
+          :maxlength="selectedNode.kind === 'npcEntry' ? STORY_TITLE_MAX_LEN : undefined"
           @change="selectedNode.kind === 'npcEntry' ? commitEntryTitle() : undefined"
         />
+        <div v-if="selectedNode.kind === 'npcEntry'" class="hint">最多 {{ STORY_TITLE_MAX_LEN }} 字</div>
       </div>
 
-      <details v-if="isMapChainEventNode" class="inspector-group" open>
-        <summary>运行时</summary>
+      <div v-if="selectedNode.kind === 'dialog'" class="field dialog-primary">
+        <label>对白</label>
+        <div
+          v-for="line in (ensureDialogLines(selectedNode), selectedNode.dialogLines!)"
+          :key="line.id"
+          class="dialog-edit"
+        >
+          <textarea v-model="line.text" placeholder="这一句对白…" rows="3" />
+          <div class="row dialog-line-actions">
+            <button class="btn btn-sm" type="button" @click="moveDialogLine(selectedNode, line.id, -1)">上移</button>
+            <button class="btn btn-sm" type="button" @click="moveDialogLine(selectedNode, line.id, 1)">下移</button>
+            <button class="btn btn-sm btn-del" type="button" @click="deleteDialogLine(selectedNode, line.id)">删</button>
+          </div>
+        </div>
+        <button class="btn btn-soft btn-sm" type="button" @click="addDialogLine(selectedNode)">+ 增加一段</button>
+      </div>
+
+      <div v-if="selectedNode.kind === 'dialog'" class="field">
+        <label>说话人</label>
+        <input v-model="selectedNode.speaker" placeholder="旁白 / 角色名" />
+      </div>
+
+      <details v-if="isMapChainEventNode" class="inspector-group">
+        <summary>运行时（进阶）</summary>
         <div class="group-body">
           <div v-if="isMapChainEventNode" class="field">
             <label class="inline checkbox-row">
@@ -944,31 +1020,36 @@ function commitMapNamePatch() {
       <div v-if="selectedNode.kind === 'mapPortal'" class="hint">双击节点进入地图摆点与任务剧情链。</div>
 
       <div v-if="selectedNode.kind === 'npcEntry' && selectedNpc" class="field entry-visual">
-        <div class="hint task-visual-hint">
-          本任务链：{{ selectedNodeNpcLabel }}（{{ selectedNpc.npcUid }}）
-        </div>
-        <label>页类型（对标 RM Event Page）</label>
+        <div class="hint task-visual-hint">本任务链：{{ selectedNodeNpcLabel }}</div>
+        <label>页类型</label>
         <select
           class="shell-input"
           :value="selectedNpc.chainSlotKind ?? selectedNpcSlotKind"
           @change="onChainSlotKindChange"
         >
-          <option value="dialog">对话页 · 仅 Show Text / 接取交任务</option>
-          <option value="battle">战斗页 · 任务官 + 独立战斗 Event</option>
+          <option value="dialog">对话页 · 仅对话 / 接取交任务</option>
+          <option value="battle">战斗页 · 任务官 + 独立战斗</option>
         </select>
         <div class="hint">当前：{{ chainSlotKindLabel(selectedNpc.chainSlotKind ?? selectedNpcSlotKind) }}</div>
         <label style="margin-top: 8px">触发方式</label>
-        <div class="hint">玩家交互（Action Button）— 走近 NPC 按交互键</div>
+        <div class="hint">走近 NPC 按交互键</div>
         <label class="inline" style="margin-top: 6px">
           <input v-model="selectedNode.chainContinuous" type="checkbox" />
-          连续执行（类似 Autorun，接取后不中断；完成后需交任务/exit 防循环）
+          连续执行（接取后不中断；完成后需交任务/exit）
         </label>
         <NpcPortraitPicker
           v-model="selectedNpcPortraitPath"
-          label="NPC 形象（本任务链）"
+          label="NPC 形象"
           compact
         />
-        <div class="hint">全链统一：对话 / 左栏 / 地图蓝点 / 导出一致。仅红色「战斗敌人」可单独指定。</div>
+        <div class="hint">全链统一形象。红色「战斗敌人」可单独指定。</div>
+        <details class="inspector-group" style="margin-top: 10px">
+          <summary>高级 ID</summary>
+          <div class="group-body">
+            <div class="hint">npcUid：{{ selectedNpc.npcUid }}</div>
+            <div class="hint">entry：{{ selectedNpc.entryNodeId }}</div>
+          </div>
+        </details>
         <div v-if="selectedNpcPortraitPath" class="row row-left" style="margin-top: 6px">
           <label class="inline mini-field">
             <span>X</span>
@@ -1034,57 +1115,30 @@ function commitMapNamePatch() {
         </div>
       </details>
 
-      <div v-if="selectedNode.kind === 'dialog'" class="field">
-        <label>说话人</label>
-        <input v-model="selectedNode.speaker" placeholder="比如：旁白 / NPC_001" />
-      </div>
-
       <div v-if="(selectedNode.kind === 'dialog' || selectedNode.kind === 'choice') && selectedNpc" class="field">
         <NpcPortraitPicker
           v-model="selectedNpcPortraitPath"
-          label="NPC 形象（本任务链统一）"
+          label="NPC 形象"
           compact
         />
-        <div class="hint">
-          当前：{{ chainPortraitShortLabel(project, selectedNpc) }} · 修改后同步左栏与地图。
-          战斗页额外召唤的敌人请在左栏红色「战斗敌人」行单独指定。
+      </div>
+
+      <details v-if="selectedNode.kind === 'dialog'" class="inspector-group">
+        <summary>NPC 资源（可选）</summary>
+        <div class="group-body">
+          <select v-model="selectedNode.npcId">
+            <option value="">（不绑定 NPC）</option>
+            <option v-for="x in npcs" :key="x.id" :value="x.id">{{ x.name }}</option>
+          </select>
         </div>
-      </div>
+      </details>
 
-      <div v-if="selectedNode.kind === 'dialog'" class="field">
-        <label>NPC 资源（可选）</label>
-        <select v-model="selectedNode.npcId">
-          <option value="">（不绑定 NPC）</option>
-          <option v-for="x in npcs" :key="x.id" :value="x.id">{{ x.name }} ({{ x.id }})</option>
-        </select>
-        <div v-if="selectedNode.npcId" class="hint">当前：{{ resourceName("npc", selectedNode.npcId) }}</div>
-      </div>
-
-      <div v-if="selectedNode.kind === 'dialog'" class="field">
-        <label>对白（正式内容）</label>
-        <div class="hint">这里是对白正文，会按顺序播放；与下方「备注」不同。</div>
-        <div
-          v-for="line in (ensureDialogLines(selectedNode), selectedNode.dialogLines!)"
-          :key="line.id"
-          class="dialog-edit"
-        >
-          <textarea v-model="line.text" placeholder="这一句对白…" />
-          <div class="row">
-            <button class="btn" @click="moveDialogLine(selectedNode, line.id, -1)">上移</button>
-            <button class="btn" @click="moveDialogLine(selectedNode, line.id, 1)">下移</button>
-            <button class="btn" @click="deleteDialogLine(selectedNode, line.id)">删除段</button>
-          </div>
-        </div>
-        <button class="btn" @click="addDialogLine(selectedNode)">+ 增加一段</button>
-      </div>
-
-      <div v-else class="field">
+      <div v-if="selectedNode.kind !== 'dialog'" class="field">
         <label>备注</label>
         <div v-if="selectedNode.kind === 'choice'" class="hint">
-          可选，给自己看的说明；玩家看到的分支文案请在下方「选项」里编辑。
+          可选说明；玩家看到的分支请在下方「选项」编辑。
         </div>
-        <div v-else class="hint">可选，画布上展示摘要、方便区分节点；具体逻辑以上方各配置为准。</div>
-        <textarea v-model="selectedNode.text" placeholder="例如：这步要干啥、注意点…" />
+        <textarea v-model="selectedNode.text" placeholder="备注…" />
       </div>
 
       <details v-if="selectedNode.kind === 'battle'" class="inspector-group" open>
@@ -1791,57 +1845,93 @@ function commitMapNamePatch() {
       </div>
     </div>
     <div v-else class="empty">请选择一个节点或地图</div>
+    </div>
   </section>
 </template>
 
 <style scoped>
 .panel {
-  padding: 10px;
-  background: var(--bg-app);
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: var(--bg-panel);
+  overflow: hidden;
   overscroll-behavior: contain;
 }
 .panel-right {
   border-left: 1px solid var(--border-strong);
 }
+.panel-head {
+  flex: 0 0 auto;
+  padding: 14px var(--panel-pad) 12px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+}
+.panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px var(--panel-pad) var(--panel-pad);
+  scrollbar-gutter: stable;
+}
 .section-title {
-  font-size: 12px;
-  color: var(--fg-secondary);
-  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--fg-main);
+  margin-bottom: 0;
 }
 .node-summary {
-  margin-bottom: 10px;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
-  background: var(--bg-surface-2);
-  font-size: 11px;
+  background: var(--bg-surface);
+}
+.summary-title {
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fg-main);
+  line-height: 1.35;
+}
+.summary-npc {
+  margin-top: 4px;
+}
+.dialog-primary textarea {
+  min-height: 88px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.dialog-line-actions {
+  margin-top: 6px;
 }
 .summary-line {
-  margin: 2px 0;
+  margin: 3px 0;
   color: var(--fg-secondary);
+  line-height: 1.4;
 }
 .summary-k {
   display: inline-block;
-  min-width: 52px;
+  min-width: 56px;
   color: var(--fg-tertiary);
-  margin-right: 6px;
+  margin-right: 8px;
 }
 .node-guide {
   font-size: 11px;
-  color: #94a3b8;
-  line-height: 1.45;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border-radius: var(--radius-sm);
+  color: #a8b6c8;
+  line-height: 1.5;
+  padding: 9px 11px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-md);
   background: rgba(14, 165, 233, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.18);
 }
 .block-title {
   font-size: 12px;
-  font-weight: 600;
-  color: #cbd5e1;
-  margin-bottom: 6px;
+  font-weight: 650;
+  color: #c5d0de;
+  margin-bottom: 8px;
 }
 .node-guide.warn {
   color: #fbbf24;
@@ -1849,34 +1939,41 @@ function commitMapNamePatch() {
   border-color: rgba(251, 191, 36, 0.25);
 }
 .field {
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 label {
   display: block;
   font-size: 12px;
-  margin-bottom: 6px;
+  font-weight: 500;
+  margin-bottom: 7px;
   color: var(--fg-secondary);
 }
 input,
 textarea,
 select {
   width: 100%;
-  padding: 6px 8px;
+  padding: 7px 10px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-default);
-  background: rgba(2, 6, 23, 0.35);
+  background: rgba(2, 6, 23, 0.5);
   color: var(--fg-main);
   font-size: 13px;
+  line-height: 1.35;
+}
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: #334155;
 }
 textarea {
-  min-height: 70px;
+  min-height: 76px;
   resize: vertical;
 }
 .btn {
-  padding: 6px 8px;
+  padding: 7px 10px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-default);
-  background: rgba(2, 6, 23, 0.2);
+  background: rgba(15, 23, 42, 0.45);
   color: var(--fg-main);
   font-size: 12px;
   cursor: pointer;
@@ -1886,7 +1983,7 @@ textarea {
 }
 .row {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   justify-content: flex-end;
   align-items: center;
 }
@@ -1896,30 +1993,40 @@ textarea {
 .hint {
   font-size: 11px;
   color: var(--fg-tertiary);
-  margin-bottom: 6px;
+  line-height: 1.5;
+  margin-bottom: 8px;
 }
 .dialog-edit {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .req-card {
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  border: 1px solid rgba(148, 163, 184, 0.16);
   background: rgba(148, 163, 184, 0.06);
-  padding: 8px;
-  border-radius: 10px;
-  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
 }
 .req-title {
   font-size: 12px;
   color: #c7d2fe;
-  margin-bottom: 6px;
-}
-.opt-edit {
   margin-bottom: 8px;
 }
-.node-actions {
+.opt-edit {
   margin-bottom: 10px;
+}
+.node-actions {
+  margin-bottom: 14px;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+}
+.btn-ai {
+  border-color: rgba(129, 140, 248, 0.5);
+  background: rgba(99, 102, 241, 0.2);
+  color: #e0e7ff;
+}
+.btn-ai:hover {
+  background: rgba(99, 102, 241, 0.35);
 }
 .btn-danger {
   border-color: rgba(248, 113, 113, 0.45);
@@ -1932,7 +2039,7 @@ textarea {
 }
 .opt-row {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: stretch;
 }
 .opt-input {
@@ -1940,7 +2047,7 @@ textarea {
   min-width: 0;
 }
 .opt-runtime {
-  margin-top: 6px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1948,15 +2055,15 @@ textarea {
 .opt-runtime-section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  background: rgba(2, 6, 23, 0.35);
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  background: rgba(2, 6, 23, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.12);
 }
 .opt-runtime-title {
   font-size: 11px;
-  color: #94a3b8;
+  color: #a8b6c8;
   letter-spacing: 0.02em;
 }
 .legacy-task-warn {
@@ -1966,13 +2073,13 @@ textarea {
   flex-wrap: wrap;
   font-size: 12px;
   color: #fcd34d;
-  padding: 6px 8px;
-  border-radius: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
   background: rgba(120, 53, 15, 0.25);
   border: 1px solid rgba(251, 191, 36, 0.25);
 }
 .btn-mini {
-  padding: 2px 8px;
+  padding: 3px 8px;
   font-size: 11px;
 }
 .opt-sub {
@@ -1984,7 +2091,7 @@ textarea {
 }
 .btn-del-opt {
   flex-shrink: 0;
-  padding: 6px 8px;
+  padding: 7px 9px;
 }
 .btn-del-opt:disabled {
   opacity: 0.45;
@@ -1992,9 +2099,9 @@ textarea {
 }
 .opt-meta {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .muted {
   color: var(--fg-tertiary);
@@ -2002,7 +2109,7 @@ textarea {
 }
 .inline {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 .mini-field {
@@ -2014,19 +2121,25 @@ textarea {
 .empty {
   color: var(--fg-tertiary);
   font-size: 13px;
+  padding: 28px 12px;
+  text-align: center;
+  line-height: 1.5;
+  border: 1px dashed rgba(148, 163, 184, 0.22);
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.35);
 }
 .target-list {
   border: 1px solid rgba(148, 163, 184, 0.14);
   background: rgba(148, 163, 184, 0.06);
-  border-radius: 8px;
-  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
 .target-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   margin: 0;
 }
 .target-item input {
@@ -2035,20 +2148,21 @@ textarea {
 }
 .map-form {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 .node-chip {
   font-size: 11px;
   color: var(--fg-main);
   border: 1px solid var(--border-default);
   border-radius: 999px;
-  padding: 4px 8px;
+  padding: 4px 9px;
   width: fit-content;
   margin-top: 6px;
+  background: rgba(15, 23, 42, 0.4);
 }
 .rm-battle-branches {
-  padding: 8px;
-  border-radius: var(--radius-sm);
+  padding: 10px;
+  border-radius: var(--radius-md);
   background: var(--bg-surface-2);
   border: 1px solid var(--border-default);
 }

@@ -1,7 +1,7 @@
 System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Sprite, SpriteFrame, Animation, Label, UITransform, tween, UIOpacity, JsonAsset, instantiate, ResourceManager, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _class3, _crd, ccclass, property, RobotShow;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Sprite, SpriteFrame, Animation, Label, UITransform, tween, UIOpacity, JsonAsset, instantiate, Color, ResourceManager, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _class3, _crd, ccclass, property, RobotShow;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -32,6 +32,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       UIOpacity = _cc.UIOpacity;
       JsonAsset = _cc.JsonAsset;
       instantiate = _cc.instantiate;
+      Color = _cc.Color;
     }, function (_unresolved_2) {
       ResourceManager = _unresolved_2.ResourceManager;
     }],
@@ -40,7 +41,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
       _cclegacy._RF.push({}, "0abcdFFcEdK0opfXm/LyZ5x", "RobotShow", undefined);
 
-      __checkObsolete__(['_decorator', 'Component', 'Node', 'Sprite', 'SpriteFrame', 'Animation', 'Label', 'UITransform', 'tween', 'Tween', 'UIOpacity', 'JsonAsset', 'instantiate', 'Vec3']);
+      __checkObsolete__(['_decorator', 'Component', 'Node', 'Sprite', 'SpriteFrame', 'Animation', 'Label', 'UITransform', 'tween', 'Tween', 'UIOpacity', 'JsonAsset', 'instantiate', 'Vec3', 'Color']);
 
       ({
         ccclass,
@@ -223,7 +224,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
         updateFromRobotData(data) {
           var _data$pet_id, _data$data, _data$data2;
 
-          if (!data) return; // 关键修复：提取并保存 petId，用于验证数据是否匹配
+          if (!data) return;
+          this.resetVisualState(); // 关键修复：提取并保存 petId，用于验证数据是否匹配
 
           var rawPetId = (_data$pet_id = data.pet_id) != null ? _data$pet_id : (_data$data = data.data) == null ? void 0 : _data$data.pet_id;
           var petId = rawPetId !== undefined && rawPetId !== null ? String(rawPetId) : null; // 关键修复：如果 petId 发生变化，清空旧数据，避免显示错误的机甲
@@ -257,6 +259,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
             console.log("\u26A0\uFE0F [RobotShow] \u8D44\u6E90\u672A\u52A0\u8F7D\u5B8C\u6210\uFF0C\u88C5\u5907\u56FE\u6807\u5C06\u5728\u8D44\u6E90\u52A0\u8F7D\u540E\u66F4\u65B0 (pet_id: " + petId + ")");
             this.scheduleApplyWhenReady(petId, 0);
           }
+        }
+        /** 恢复击破/渐变后的显示状态，避免连续多场战斗时机甲形象不可见 */
+
+
+        resetVisualState() {
+          var _this$node, _this$body;
+
+          if (!((_this$node = this.node) != null && _this$node.isValid)) return;
+          this.node.active = true;
+          if ((_this$body = this.body) != null && _this$body.isValid) this.body.active = true;
+          var sprites = this.node.getComponentsInChildren(Sprite);
+          sprites.forEach(s => {
+            var _s$node;
+
+            if (!(s != null && (_s$node = s.node) != null && _s$node.isValid)) return;
+            var c = s.color;
+            s.color = new Color(c.r, c.g, c.b, 255);
+          });
         } // ===== 战斗内：伤害数字 + 局内血条（仅战斗时显示） =====
 
         /** 掉落偏移（左下方向）：X 负为左，Y 负为下，单位像素 */

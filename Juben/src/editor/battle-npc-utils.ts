@@ -1,5 +1,10 @@
 import type { GameMapDef, GameMapNpcDef, GraphData } from "../types";
 
+/** 地图战斗敌人 NPC（uid 后缀 _enemy / _enemy_N） */
+export function isBattleEnemyMapNpc(npc: Pick<GameMapNpcDef, "npcUid">): boolean {
+  return npc.npcUid.endsWith("_enemy") || /_enemy_\d+$/.test(npc.npcUid);
+}
+
 /** 战斗专用 NPC（uid 后缀 _battle） */
 export function isBattleOnlyNpc(npc: GameMapNpcDef, _graph?: GraphData): boolean {
   return npc.npcUid.endsWith("_battle");

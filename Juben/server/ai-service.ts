@@ -1,9 +1,13 @@
-import type { Response } from "express";
-import { DEEPSEEK_CONFIG, isDeepSeekConfigured } from "./deepseek-config";
+import type { Response as ExpressResponse } from "express";
+import {
+  DEEPSEEK_CONFIG,
+  deepSeekChatCompletionsUrl,
+  isDeepSeekConfigured,
+} from "./deepseek-config";
 import { buildMessagesForPhase } from "./ai-prompts";
 import type { StoryStreamRequest } from "./ai-types";
 
-export async function streamDeepSeekToResponse(req: StoryStreamRequest, res: Response): Promise<void> {
+export async function streamDeepSeekToResponse(req: StoryStreamRequest, res: ExpressResponse): Promise<void> {
   if (!isDeepSeekConfigured()) {
     res.status(503).json({
       error: {
@@ -44,21 +48,50 @@ export async function streamDeepSeekToResponse(req: StoryStreamRequest, res: Res
     thinking: DEEPSEEK_CONFIG.thinking,
   };
 
-  const upstream = await fetch(`${DEEPSEEK_CONFIG.baseUrl}/v1/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${DEEPSEEK_CONFIG.apiKey}`,
-    },
-    body: JSON.stringify(body),
-  });
+  // 官方文档：POST https://api.deepseek.com/chat/completions
+  const upstreamUrl = deepSeekChatCompletionsUrl(DEEPSEEK_CONFIG.baseUrl);
+  const upstreamAbort = new AbortController();
+  const upstreamTimer = setTimeout(() => upstreamAbort.abort(), 180_000);
+  let upstream: globalThis.Response;
+  try {
+    upstream = await fetch(upstreamUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${DEEPSEEK_CONFIG.apiKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: upstreamAbort.signal,
+    });
+  } catch (e) {
+    clearTimeout(upstreamTimer);
+    const aborted = e instanceof Error && e.name === "AbortError";
+    res.status(aborted ? 504 : 502).json({
+      error: {
+        code: aborted ? "DEEPSEEK_TIMEOUT" : "DEEPSEEK_FETCH_FAILED",
+        message: aborted
+          ? "DeepSeek 请求超时（180s）。可稍后重试，或在 .env 设 DEEPSEEK_THINKING=disabled。"
+          : `DeepSeek 连接失败: ${e instanceof Error ? e.message : String(e)}`,
+        model: DEEPSEEK_CONFIG.model,
+        endpoint: upstreamUrl,
+      },
+    });
+    return;
+  }
+  clearTimeout(upstreamTimer);
 
   if (!upstream.ok) {
     const errText = await upstream.text().catch(() => "");
+    const authHint =
+      upstream.status === 401
+        ? " API Key 无效或已失效：请到 https://platform.deepseek.com/api_keys 新建密钥，写入 Juben/.env 的 DEEPSEEK_API_KEY 后重启 npm run dev。"
+        : "";
     res.status(upstream.status).json({
       error: {
-        code: "DEEPSEEK_ERROR",
-        message: `DeepSeek API ${upstream.status}: ${errText.slice(0, 500)}`,
+        code: upstream.status === 401 ? "DEEPSEEK_AUTH" : "DEEPSEEK_ERROR",
+        message: `DeepSeek API ${upstream.status}: ${errText.slice(0, 400)}${authHint}`,
+        model: DEEPSEEK_CONFIG.model,
+        endpoint: upstreamUrl,
       },
     });
     return;

@@ -41,11 +41,22 @@ describe("story-requirements", () => {
     expect(evaluateSingleRequirement({ type: "item_owned", itemId: 1 }, c)).toBe(false);
   });
 
-  it("unknown requirement types do not block chain", () => {
+  it("strict mode: planned requirement types fail", () => {
     const c = ctx();
-    expect(evaluateRequirements([{ type: "story_var_equals", varId: 1, value: 0 }, { type: "mainline_step", value: 0 }], c)).toBe(
-      true,
-    );
+    expect(evaluateSingleRequirement({ type: "story_var_equals", varId: 1, value: 0 }, c)).toBe(false);
+    expect(evaluateSingleRequirement({ type: "has_pet", petId: 1 }, c)).toBe(false);
+  });
+
+  it("local-preview: unknown requirement types pass when unknownRequirementPasses=true", () => {
+    const c = ctx({ unknownRequirementPasses: true });
+    expect(
+      evaluateRequirements([{ type: "story_var_equals", varId: 1, value: 0 }, { type: "mainline_step", value: 0 }], c),
+    ).toBe(true);
+  });
+
+  it("strict mode: unknown requirement types fail", () => {
+    const c = ctx();
+    expect(evaluateSingleRequirement({ type: "totally_unknown_type" }, c)).toBe(false);
   });
 
   it("mainline_step AND chain", () => {

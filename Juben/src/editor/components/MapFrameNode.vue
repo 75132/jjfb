@@ -67,17 +67,16 @@ onBeforeUnmount(() => {
     :style="{ width: `${map.width}px`, height: `${map.height}px` }"
   >
     <div class="map-header">
-      <span class="map-id">{{ map.id }}</span>
-      <span v-if="map.name" class="map-name">{{ map.name }}</span>
+      <span class="map-id">{{ map.name || map.id }}</span>
+      <span class="map-count">{{ data.assignedNodeTitles.length }} 节点</span>
     </div>
-    <div class="map-count">节点 {{ data.assignedNodeTitles.length }}</div>
     <div v-if="data.assignedNodeTitles.length" class="map-nodes">
-      <span v-for="name in data.assignedNodeTitles.slice(0, 4)" :key="name" class="map-node-chip">{{ name }}</span>
-      <span v-if="data.assignedNodeTitles.length > 4" class="map-node-chip">
-        +{{ data.assignedNodeTitles.length - 4 }}
+      <span v-for="name in data.assignedNodeTitles.slice(0, 3)" :key="name" class="map-node-chip">{{ name }}</span>
+      <span v-if="data.assignedNodeTitles.length > 3" class="map-node-chip">
+        +{{ data.assignedNodeTitles.length - 3 }}
       </span>
     </div>
-    <div class="map-hint">将节点拖入此区域</div>
+    <div v-else class="map-hint">拖入节点</div>
     <div class="select-strip select-strip-top" />
     <div class="select-strip select-strip-right" />
     <div class="select-strip select-strip-bottom" />
@@ -96,11 +95,19 @@ onBeforeUnmount(() => {
   color: var(--fg-secondary);
   /* 框体仅作背景，点击穿透到上层剧情节点；标题栏/缩放手柄可交互 */
   pointer-events: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 }
 .map-frame.selected {
   border-color: rgba(14, 165, 233, 0.95);
   box-shadow: 0 0 0 1px rgba(14, 165, 233, 0.35);
   background: rgba(14, 165, 233, 0.1);
+}
+.map-frame:hover {
+  border-color: rgba(56, 189, 248, 0.65);
+  background: rgba(14, 165, 233, 0.09);
 }
 .map-frame.resizing {
   user-select: none;
@@ -109,10 +116,11 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 8px;
   left: 10px;
-  right: 28px;
+  right: 22px;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
   pointer-events: auto;
   cursor: grab;
 }
@@ -123,10 +131,14 @@ onBeforeUnmount(() => {
   font-size: 11px;
   font-weight: 600;
   color: #7dd3fc;
-  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
-.map-name {
-  font-size: 11px;
+.map-count {
+  flex-shrink: 0;
+  font-size: 10px;
   color: var(--fg-tertiary);
 }
 .map-hint {
@@ -138,19 +150,11 @@ onBeforeUnmount(() => {
   opacity: 0.85;
   pointer-events: none;
 }
-.map-count {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 10px;
-  color: var(--fg-tertiary);
-  pointer-events: none;
-}
 .map-nodes {
   position: absolute;
   left: 10px;
   right: 10px;
-  bottom: 28px;
+  bottom: 10px;
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
@@ -177,25 +181,25 @@ onBeforeUnmount(() => {
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 14px;
 }
 .select-strip-bottom {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 14px;
 }
 .select-strip-left {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 6px;
+  width: 12px;
 }
 .select-strip-right {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 6px;
+  width: 12px;
 }
 .resize-handle {
   position: absolute;

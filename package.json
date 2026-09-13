@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:runtime": "vitest run --config vitest.runtime.config.ts"
+    "test:runtime": "vitest run --config vitest.runtime.config.ts",
+    "test:story-gate": "npm run test:runtime && npm test --prefix Juben && npm run audit:story-maps --prefix Juben && python -m pytest server/tests -q -k story"
   },
   "devDependencies": {
     "vitest": "^4.1.3",

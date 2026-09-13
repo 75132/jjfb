@@ -8,6 +8,7 @@ import {
   saveFloatPosition,
   saveFloatSize,
 } from "../ai/ai-target";
+import type { AiPendingCommand } from "../editorInjection";
 import AiAssistantPanel from "./AiAssistantPanel.vue";
 import type { ProjectData } from "../../types";
 import type { AiTarget, NavContext } from "../ai/ai-target";
@@ -17,6 +18,7 @@ const props = defineProps<{
   navContext: NavContext;
   selectedNodeIds: string[];
   visible: boolean;
+  pendingCommand?: AiPendingCommand | null;
 }>();
 
 const emit = defineEmits<{
@@ -41,68 +43,84 @@ const dragStart = ref({ x: 0, y: 0, px: 0, py: 0 });
 const resizing = ref(false);
 const resizeStart = ref({ x: 0, y: 0, w: 0, h: 0 });
 
+/** 窗口再大也要能拖：保证标题栏至少露出一截 */
 function clampPosition(x: number, y: number) {
-  const h = minimized.value ? 48 : size.value.h;
+  const minVisibleX = 96;
+  const minVisibleY = 40;
+  const minX = minVisibleX - size.value.w;
+  const maxX = window.innerWidth - minVisibleX;
+  const minY = 56;
+  const maxY = Math.max(minY, window.innerHeight - minVisibleY);
   return {
-    x: Math.max(8, Math.min(window.innerWidth - size.value.w - 8, x)),
-    y: Math.max(56, Math.min(window.innerHeight - h - 8, y)),
+    x: Math.max(minX, Math.min(maxX, x)),
+    y: Math.max(minY, Math.min(maxY, y)),
   };
 }
 
 onMounted(() => {
   const savedSize = loadFloatSize();
   if (savedSize) size.value = clampFloatSize(savedSize.w, savedSize.h);
+  else size.value = defaultFloatSize();
+  // 过大时先压回视口，避免「拖不动」
+  size.value = clampFloatSize(size.value.w, size.value.h);
   const saved = loadFloatPosition();
   const defaultPos = {
     x: Math.max(16, window.innerWidth - size.value.w - 24),
     y: Math.max(72, window.innerHeight - size.value.h - 24),
   };
-  pos.value = saved ? clampPosition(saved.x, saved.y) : defaultPos;
+  pos.value = saved ? clampPosition(saved.x, saved.y) : clampPosition(defaultPos.x, defaultPos.y);
 });
 
 function onHeaderPointerDown(e: PointerEvent) {
+  if (e.button !== 0) return;
   if ((e.target as HTMLElement).closest("button")) return;
+  e.preventDefault();
   dragging.value = true;
   dragStart.value = { x: e.clientX, y: e.clientY, px: pos.value.x, py: pos.value.y };
-  (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-}
-
-function onHeaderPointerMove(e: PointerEvent) {
-  if (!dragging.value) return;
-  const dx = e.clientX - dragStart.value.x;
-  const dy = e.clientY - dragStart.value.y;
-  const next = clampPosition(dragStart.value.px + dx, dragStart.value.py + dy);
-  pos.value = next;
-}
-
-function onHeaderPointerUp(e: PointerEvent) {
-  if (!dragging.value) return;
-  dragging.value = false;
-  saveFloatPosition(pos.value.x, pos.value.y);
-  (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+  const prevUserSelect = document.body.style.userSelect;
+  document.body.style.userSelect = "none";
+  const onMove = (ev: PointerEvent) => {
+    if (!dragging.value) return;
+    const dx = ev.clientX - dragStart.value.x;
+    const dy = ev.clientY - dragStart.value.y;
+    pos.value = clampPosition(dragStart.value.px + dx, dragStart.value.py + dy);
+  };
+  const onUp = () => {
+    dragging.value = false;
+    document.body.style.userSelect = prevUserSelect;
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+    saveFloatPosition(pos.value.x, pos.value.y);
+  };
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
 }
 
 function onResizePointerDown(e: PointerEvent) {
+  if (e.button !== 0) return;
   e.stopPropagation();
+  e.preventDefault();
   resizing.value = true;
   resizeStart.value = { x: e.clientX, y: e.clientY, w: size.value.w, h: size.value.h };
-  (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-}
-
-function onResizePointerMove(e: PointerEvent) {
-  if (!resizing.value) return;
-  const dx = e.clientX - resizeStart.value.x;
-  const dy = e.clientY - resizeStart.value.y;
-  size.value = clampFloatSize(resizeStart.value.w + dx, resizeStart.value.h + dy);
-  pos.value = clampPosition(pos.value.x, pos.value.y);
-}
-
-function onResizePointerUp(e: PointerEvent) {
-  if (!resizing.value) return;
-  resizing.value = false;
-  saveFloatSize(size.value.w, size.value.h);
-  saveFloatPosition(pos.value.x, pos.value.y);
-  (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+  const prevUserSelect = document.body.style.userSelect;
+  document.body.style.userSelect = "none";
+  const onMove = (ev: PointerEvent) => {
+    if (!resizing.value) return;
+    const dx = ev.clientX - resizeStart.value.x;
+    const dy = ev.clientY - resizeStart.value.y;
+    size.value = clampFloatSize(resizeStart.value.w + dx, resizeStart.value.h + dy);
+    pos.value = clampPosition(pos.value.x, pos.value.y);
+  };
+  const onUp = () => {
+    resizing.value = false;
+    document.body.style.userSelect = prevUserSelect;
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+    saveFloatSize(size.value.w, size.value.h);
+    saveFloatPosition(pos.value.x, pos.value.y);
+  };
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
 }
 
 onUnmounted(() => {
@@ -119,14 +137,8 @@ onUnmounted(() => {
       :class="{ minimized, dragging, resizing }"
       :style="{ left: `${pos.x}px`, top: `${pos.y}px`, width: `${size.w}px`, height: minimized ? 'auto' : `${size.h}px` }"
     >
-      <header
-        class="float-header"
-        @pointerdown="onHeaderPointerDown"
-        @pointermove="onHeaderPointerMove"
-        @pointerup="onHeaderPointerUp"
-        @pointercancel="onHeaderPointerUp"
-      >
-        <span class="float-title">DeepSeek 剧情助手</span>
+      <header class="float-header" title="拖动标题栏可移动窗口" @pointerdown="onHeaderPointerDown">
+        <span class="float-title">AI 剧情助手</span>
         <div class="float-actions">
           <button type="button" class="icon-btn" :title="minimized ? '展开' : '最小化'" @click="minimized = !minimized">
             {{ minimized ? "□" : "—" }}
@@ -139,6 +151,7 @@ onUnmounted(() => {
           :project="project"
           :nav-context="navContext"
           :selected-node-ids="selectedNodeIds"
+          :pending-command="pendingCommand"
           @close="emit('close')"
           @rebuild="emit('rebuild')"
           @save="emit('save')"
@@ -156,9 +169,6 @@ onUnmounted(() => {
         class="resize-handle"
         title="拖拽调整大小"
         @pointerdown="onResizePointerDown"
-        @pointermove="onResizePointerMove"
-        @pointerup="onResizePointerUp"
-        @pointercancel="onResizePointerUp"
       />
     </div>
   </Teleport>
@@ -216,7 +226,7 @@ onUnmounted(() => {
 }
 .icon-btn:hover {
   background: rgba(148, 163, 184, 0.15);
-  color: #e2e8f0;
+  color: #e0e7ff;
 }
 .float-body {
   flex: 1;

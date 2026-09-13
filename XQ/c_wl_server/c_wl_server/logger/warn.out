@@ -1,0 +1,67 @@
+[01:36:05:788] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=45m50s426ms18?s599ns).
+[02:16:57:437] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=30m51s416ms180?s300ns).
+[02:28:18:297] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:28:18:298] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1352) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1352) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:31:49:437] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:31:49:440] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1371) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1371) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:40:35:355] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:40:35:357] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1392) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1392) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:44:52:592] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[02:44:52:593] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1412) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1412) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[03:08:55:901] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[03:09:15:004] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[03:10:38:151] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[03:10:38:156] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1512) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1512) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[04:00:03:283] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=27m17s710ms29?s100ns).
+[04:33:31:787] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=33m28s505ms510?s).
+[06:52:59:390] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=2h19m27s603ms578?s800ns).
+[12:23:59:222] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=5h30m59s831ms486?s).
+[12:49:28:779] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=15m59s395ms208?s700ns).
+[13:33:07:521] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=33m38s569ms407?s900ns).
+[15:41:07:108] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=1h57m59s419ms289?s800ns).
+[15:57:50:538] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[15:57:50:539] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1796) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1796) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[16:20:43:399] [WARN] - org.mariadb.jdbc.util.log.Slf4JLogger.warn(Slf4JLogger.java:100) - Error: 1366-22007: Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+[16:20:43:401] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 日志插入异常
+### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: (conn=1876) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1
+### The error may exist in my/dao/logMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: insert into xq_log_online(name,online,accumulate,offline) values(?,?,?,?)
+### Cause: java.sql.SQLSyntaxErrorException: (conn=1876) Incorrect integer value: '' for column `myxq3d1`.`xq_log_online`.`offline` at row 1

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from "vue";
+import { computed, inject, nextTick, ref } from "vue";
 import type { GameMapDef, GraphData, GraphKind, NodeKind, ProjectData, StoryMapRegion } from "../../types";
 import { findGameMapForGraph, taskLabelForNpc } from "../game-map-logic";
-import { appearSummaryLabel } from "../npc-appear";
 import { MAP_IMAGE_PRESETS, isCocosStitchMapConfig, resolveMapPresetId } from "../map-slice-layout";
 import { getMapAncestors, getMapChildren, getTimelineGraph } from "../map-tree";
 import { questStatusLabel } from "../quest-logic";
@@ -18,7 +17,6 @@ import {
   isCatalogEntryDisabledForNpc,
 } from "../chain-slot-guards";
 import { inferChainSlotKind } from "../chain-slot-kind";
-import { formatChainSummary } from "../chain-step-labels";
 import {
   resolveNpcBattleChain,
   resolveNpcBattleChains,
@@ -27,11 +25,12 @@ import {
 } from "../battle-enemy-bind";
 import { npcPortraitPreviewUrl } from "../npc-portrait-catalog";
 import {
-  chainPortraitShortLabel,
   resolveChainPortraitPath,
   resolveChainPortraitPreviewUrl,
 } from "../npc-chain-portrait";
 import { appConfirm, appPrompt } from "../useModal";
+import { AI_ASSISTANT_KEY } from "../editorInjection";
+import { clampStoryTitle, STORY_TITLE_MAX_LEN } from "../story-title-limit";
 import NpcAppearFields from "./NpcAppearFields.vue";
 import NpcPortraitPicker from "./NpcPortraitPicker.vue";
 import type { NpcAppearConfig } from "../../types";
@@ -47,6 +46,7 @@ const props = defineProps<{
   /** 多敌人时选中的 spawn npcUid（如 task_1_enemy_2） */
   selectedBattleSpawnUid?: string | null;
   editorViewMode?: "map" | "story";
+  selectedNodeId?: string | null;
 }>();
 
 const emit = defineEmits<{
@@ -76,6 +76,7 @@ const emit = defineEmits<{
   (e: "deleteBattleBranch", giverNpcUid: string): void;
   (e: "patchBattleEnemy", payload: { giverNpcUid: string; patch: Record<string, unknown> }): void;
   (e: "switchView", mode: "map" | "story"): void;
+  (e: "applyStoryPlacement"): void;
   (e: "addNpc"): void;
   (e: "deleteNpc", npcUid: string): void;
   (e: "patchNpc", payload: { npcUid: string; patch: Record<string, unknown> }): void;
@@ -83,10 +84,13 @@ const emit = defineEmits<{
   (e: "openQuestDetail", questId: string): void;
   (e: "addGlobalQuest"): void;
   (e: "reorderGlobalQuest", payload: { fromIndex: number; toIndex: number }): void;
+  (e: "reorderNpc", payload: { fromIndex: number; toIndex: number }): void;
   (e: "addChildMap", parentGameMapId: string | null): void;
   (e: "navigateTimeline"): void;
   (e: "patchPortalNode", payload: { nodeId: string; title: string }): void;
   (e: "deletePortal", payload: { portalNodeId: string; deleteGameMap: boolean }): void;
+  (e: "insertChainStep", payload: { npcUid: string; afterNodeId: string; kind: NodeKind }): void;
+  (e: "selectChainStep", payload: { npcUid: string; nodeId: string }): void;
 }>();
 
 const currentGraph = computed(() => props.project.graphs.find((g) => g.id === props.selectedGraphId) ?? null);
@@ -109,30 +113,41 @@ function taskLabel(npc: import("../../types").GameMapNpcDef, index: number): str
   return taskLabelForNpc(props.project, currentGameMap.value, npc, index);
 }
 
-function taskSubtitle(npc: import("../../types").GameMapNpcDef): string {
-  const label = chainPortraitShortLabel(props.project, npc);
-  if (label !== "未指定形象") return `形象 · ${label}`;
-  const graph = props.project.graphs.find((g) => g.id === currentGameMap.value?.graphId);
-  const entry = graph?.nodes.find((n) => n.id === npc.entryNodeId);
-  if (entry?.characterId) {
-    const asset = props.project.characterAssets?.find((a) => a.id === entry.characterId);
-    if (asset?.name) return asset.name;
-  }
-  const npcResId = entry?.npcId ?? npc.npcResourceId ?? npc.npcUid;
-  const res = props.project.resources?.npc?.find((r) => r.id === npcResId);
-  if (res?.name) return res.name;
-  return "未指定形象";
+const aiBridge = inject(AI_ASSISTANT_KEY, null);
+const aiMenuNpcUid = ref<string | null>(null);
+
+function onAiTaskChain(npc: import("../../types").GameMapNpcDef, index: number) {
+  const label = taskLabel(npc, index);
+  aiBridge?.runCommand(`用传统 RPG 水准润色任务链「${label}」：改掉任务板式对白，写出角色脾气与信息差；可改短标题，保留任务结构`, {
+    npcUid: npc.npcUid,
+  });
+  aiMenuNpcUid.value = null;
+}
+
+function onAiAppendToChain(
+  npc: import("../../types").GameMapNpcDef,
+  index: number,
+  kind: "dialog" | "battle" | "choice" | "side",
+) {
+  const label = taskLabel(npc, index);
+  const prompts: Record<typeof kind, string> = {
+    dialog: `在任务链「${label}」现有步骤之后追加 1～2 段有人味的 RPG 对白（短句、情绪/信息差，禁止任务板说明），保留接取/完成结构，不要删原有节点`,
+    battle: `在任务链「${label}」里补一段战斗（战前对白要有紧张或试探，禁止「模拟胜利」），接到现有步骤之后，保留任务结构`,
+    choice: `在任务链「${label}」里加一个选择分支（2～3 个态度/代价分流选项，禁止确定/取消同义），接到合适位置，保留主线可完成`,
+    side: `在任务链「${label}」主线旁加一小段支线（有人味对话或战斗），再汇回主线，不要拆坏接取/完成`,
+  };
+  aiBridge?.runCommand(prompts[kind], { npcUid: npc.npcUid });
+  aiMenuNpcUid.value = null;
+}
+
+function toggleAiMenu(npcUid: string) {
+  aiMenuNpcUid.value = aiMenuNpcUid.value === npcUid ? null : npcUid;
 }
 
 function giverPortrait(npc: import("../../types").GameMapNpcDef): string {
   return resolveChainPortraitPreviewUrl(props.project, npc) ?? "";
 }
 
-function npcEventChainSummary(npc: import("../../types").GameMapNpcDef): string {
-  const graph = props.project.graphs.find((g) => g.id === currentGameMap.value?.graphId);
-  if (!graph || !npc.entryNodeId) return "";
-  return formatChainSummary(graph, npc.entryNodeId);
-}
 const globalGraphs = computed(() =>
   props.project.graphs.filter((g) => g.kind === "mainline" || g.kind === "side" || g.kind === "quest"),
 );
@@ -144,11 +159,13 @@ const sectionOpen = ref({
   tasks: true,
   subareas: false,
   mapSettings: false,
-  selectedNpc: true,
-  nodeLib: true,
+  selectedNpc: false,
+  nodeLib: false,
   legacy: false,
 });
 const dragQuestIndex = ref<number | null>(null);
+const dragNpcIndex = ref<number | null>(null);
+const dragNpcOverIndex = ref<number | null>(null);
 const editingKey = ref<string | null>(null);
 const editingValue = ref("");
 
@@ -200,6 +217,34 @@ function onQuestDrop(toIdx: number) {
   dragQuestIndex.value = null;
 }
 
+function onNpcDragStart(e: DragEvent, idx: number) {
+  dragNpcIndex.value = idx;
+  dragNpcOverIndex.value = idx;
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", String(idx));
+  }
+}
+
+function onNpcDragOver(e: DragEvent, idx: number) {
+  e.preventDefault();
+  if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+  dragNpcOverIndex.value = idx;
+}
+
+function onNpcDrop(toIdx: number) {
+  const from = dragNpcIndex.value;
+  dragNpcOverIndex.value = null;
+  dragNpcIndex.value = null;
+  if (from == null || from === toIdx) return;
+  emit("reorderNpc", { fromIndex: from, toIndex: toIdx });
+}
+
+function onNpcDragEnd() {
+  dragNpcIndex.value = null;
+  dragNpcOverIndex.value = null;
+}
+
 function statusBadgeClass(status: string): string {
   if (status === "Completed") return "badge-done";
   if (status === "InProgress") return "badge-active";
@@ -242,11 +287,11 @@ function commitInlineEdit() {
     return;
   }
   if (kind === "npc") {
-    emit("patchNpc", { npcUid: id, patch: { npcName: next } });
+    emit("patchNpc", { npcUid: id, patch: { npcName: clampStoryTitle(next) } });
     return;
   }
   if (kind === "task") {
-    emit("patchTaskEntry", { npcUid: id, title: next });
+    emit("patchTaskEntry", { npcUid: id, title: clampStoryTitle(next) });
     return;
   }
   if (kind === "portal") {
@@ -491,58 +536,59 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
     </div>
 
     <!-- 地图内：位置导航 -->
-    <div v-if="!isTimelineGraph && currentGameMap" class="panel-section">
-      <div class="panel-section-head" @click="sectionOpen.location = !sectionOpen.location">
-        <span>当前位置</span>
-        <span class="muted-small">{{ sectionOpen.location ? "▾" : "▸" }}</span>
-      </div>
-      <div v-show="sectionOpen.location" class="panel-section-body nav-block">
-        <div class="loc-path">
-          <div
-            v-for="(gm, idx) in mapAncestors"
-            :key="gm.id"
-            class="loc-crumb"
-            :class="{ active: gm.id === selectedGameMapId, last: idx === mapAncestors.length - 1 }"
-            title="单击进入 · 双击改名"
-            @click="emit('selectGameMap', gm.id)"
-            @dblclick.stop="startInlineEdit(editKey('map', gm.id), mapDisplayName(gm))"
-          >
-            <span v-if="idx > 0" class="loc-sep">›</span>
-            <input
-              v-if="editingKey === editKey('map', gm.id)"
-              v-model="editingValue"
-              class="inline-edit inline-edit-active inline-edit-crumb"
-              @keydown.enter="commitInlineEdit"
-              @keydown.esc="cancelInlineEdit"
-              @blur="commitInlineEdit"
-              @click.stop
-            />
-            <span v-else>{{ mapDisplayName(gm) }}</span>
-          </div>
-        </div>
-        <div v-if="chapterIndexForMap(rootChapterMapId) >= 0 && mapAncestors.length > 1" class="hint chapter-hint">
-          所属章节：第 {{ chapterIndexForMap(rootChapterMapId) + 1 }} 章
-        </div>
-        <div class="mode-row">
-          <button
-            class="btn mode-btn"
-            :class="{ active: editorViewMode === 'map' }"
-            type="button"
-            title="地图摆点：拖拽任务官与红色战斗敌人"
-            @click="emit('switchView', 'map')"
-          >
-            摆点
-          </button>
-          <button
-            class="btn mode-btn"
-            :class="{ active: editorViewMode === 'story' }"
-            type="button"
-            @click="emit('switchView', 'story')"
-          >
-            编剧情
-          </button>
+    <div v-if="!isTimelineGraph && currentGameMap" class="nav-compact">
+      <div class="loc-path">
+        <div
+          v-for="(gm, idx) in mapAncestors"
+          :key="gm.id"
+          class="loc-crumb"
+          :class="{ active: gm.id === selectedGameMapId, last: idx === mapAncestors.length - 1 }"
+          title="单击进入 · 双击改名"
+          @click="emit('selectGameMap', gm.id)"
+          @dblclick.stop="startInlineEdit(editKey('map', gm.id), mapDisplayName(gm))"
+        >
+          <span v-if="idx > 0" class="loc-sep">›</span>
+          <input
+            v-if="editingKey === editKey('map', gm.id)"
+            v-model="editingValue"
+            class="inline-edit inline-edit-active inline-edit-crumb"
+            @keydown.enter="commitInlineEdit"
+            @keydown.esc="cancelInlineEdit"
+            @blur="commitInlineEdit"
+            @click.stop
+          />
+          <span v-else>{{ mapDisplayName(gm) }}</span>
         </div>
       </div>
+      <div class="mode-row">
+        <button
+          class="btn mode-btn"
+          :class="{ active: editorViewMode === 'map' }"
+          type="button"
+          title="摆点工作台"
+          @click="emit('switchView', 'map')"
+        >
+          摆点
+        </button>
+        <button
+          class="btn mode-btn"
+          :class="{ active: editorViewMode === 'story' }"
+          type="button"
+          title="剧情工作台"
+          @click="emit('switchView', 'story')"
+        >
+          剧情
+        </button>
+      </div>
+      <button
+        v-if="editorViewMode === 'map'"
+        class="btn btn-primary block-action"
+        type="button"
+        title="按剧情任务链补缺省坐标/形象，并物化战斗敌人摆点"
+        @click="emit('applyStoryPlacement')"
+      >
+        从剧情套用摆点
+      </button>
     </div>
 
     <!-- 地图内：子区域（仅当前层下级） -->
@@ -600,26 +646,35 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
     <template v-if="currentGameMap && !isTimelineGraph">
       <div class="panel-section">
         <div class="panel-section-head" @click="sectionOpen.tasks = !sectionOpen.tasks">
-          <span>任务链 · {{ currentGameMap.npcs.length }}</span>
+          <span>任务 · {{ currentGameMap.npcs.length }}</span>
           <span class="muted-small">{{ sectionOpen.tasks ? "▾" : "▸" }}</span>
         </div>
-        <div v-show="sectionOpen.tasks" class="panel-section-body">
-          <div class="row-head" style="margin-bottom: 6px">
+        <div v-show="sectionOpen.tasks" class="panel-section-body tasks-body">
+          <div class="row-head tasks-toolbar">
             <button class="btn btn-mini btn-accent" type="button" title="新建任务链" @click="emit('addNpc')">
               + 新建
             </button>
           </div>
-            <p class="hint">
-            列表顺序 = 游戏里逐个出现。点任务官摆点；点下方红色「战斗敌人」进入摆点模式拖拽敌人位置。
-          </p>
-          <div v-if="currentGameMap.npcs.length === 0" class="empty-inline">暂无任务，点击 + 添加</div>
+          <div v-if="currentGameMap.npcs.length === 0" class="empty-inline">暂无任务</div>
           <div
             v-for="(npc, idx) in currentGameMap.npcs"
             :key="npc.npcUid"
             class="npc-card"
-            :class="{ active: isNpcRowActive(npc.npcUid, npc.zoneId) }"
+            :class="{
+              active: isNpcRowActive(npc.npcUid, npc.zoneId),
+              'drag-over': dragNpcOverIndex === idx && dragNpcIndex !== idx,
+              dragging: dragNpcIndex === idx,
+            }"
+            @dragover="onNpcDragOver($event, idx)"
+            @drop.prevent="onNpcDrop(idx)"
           >
-            <span class="npc-order">#{{ idx + 1 }}</span>
+            <span
+              class="npc-order"
+              draggable="true"
+              title="拖拽调整任务顺序"
+              @dragstart="onNpcDragStart($event, idx)"
+              @dragend="onNpcDragEnd"
+            >#{{ idx + 1 }}</span>
             <div class="npc-card-stack">
               <div class="npc-row">
                 <button
@@ -633,6 +688,7 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
                     v-if="editingKey === editKey('task', npc.npcUid)"
                     v-model="editingValue"
                     class="inline-edit inline-edit-active inline-edit-btn"
+                    :maxlength="STORY_TITLE_MAX_LEN"
                     @keydown.enter="commitInlineEdit"
                     @keydown.esc="cancelInlineEdit"
                     @blur="commitInlineEdit"
@@ -641,20 +697,39 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
                   <span v-else-if="editingKey !== editKey('task', npc.npcUid)" class="task-name-line">
                     <img v-if="giverPortrait(npc)" class="giver-thumb" :src="giverPortrait(npc)" alt="" />
                     <span v-else class="giver-dot" />
-                    <span class="task-name-inner">{{ taskLabel(npc, idx) }} <span class="slot-badge">{{ npcSlotBadge(npc) }}</span></span>
+                    <span class="task-name-inner">{{ taskLabel(npc, idx) }}</span>
+                    <span class="slot-badge">{{ npcSlotBadge(npc) }}</span>
                   </span>
-                  <span v-if="editingKey !== editKey('task', npc.npcUid)" class="task-sub">入口节点 · {{ taskSubtitle(npc) }}</span>
-                  <span v-if="editingKey !== editKey('task', npc.npcUid)" class="task-chain">{{
-                    npcEventChainSummary(npc)
-                  }}</span>
-                  <span v-if="editingKey !== editKey('task', npc.npcUid)" class="task-appear muted-small">{{
-                    appearSummaryLabel(npc)
-                  }}</span>
+                </button>
+                <button
+                  v-if="aiBridge"
+                  class="btn btn-ai-mini"
+                  type="button"
+                  title="AI：润色 / 补对话 / 补战斗 / 小支线"
+                  @click.stop="toggleAiMenu(npc.npcUid)"
+                >
+                  AI
                 </button>
                 <button class="btn btn-del" type="button" title="删除任务链" @click="emit('deleteNpc', npc.npcUid)">
                   ×
                 </button>
               </div>
+              <div v-if="aiMenuNpcUid === npc.npcUid && aiBridge" class="ai-menu" @click.stop>
+                <button type="button" class="ai-menu-item" @click="onAiAppendToChain(npc, idx, 'dialog')">
+                  AI 补对话
+                </button>
+                <button type="button" class="ai-menu-item" @click="onAiAppendToChain(npc, idx, 'battle')">
+                  AI 补战斗
+                </button>
+                <button type="button" class="ai-menu-item" @click="onAiAppendToChain(npc, idx, 'choice')">
+                  AI 加选择
+                </button>
+                <button type="button" class="ai-menu-item" @click="onAiAppendToChain(npc, idx, 'side')">
+                  AI 加小支线
+                </button>
+                <button type="button" class="ai-menu-item" @click="onAiTaskChain(npc, idx)">AI 润色整链</button>
+              </div>
+
               <div v-for="(bind, bi) in battleBindsFor(npc.npcUid)" :key="bind.spawnStep?.npcUid ?? bi" class="npc-row battle-row">
                 <button
                   class="btn item npc-name-btn task-name-btn battle-name-btn"
@@ -674,9 +749,6 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
                     战斗敌人 · {{ bind.enemyName }}
                   </span>
                   <span class="task-sub">{{ battleEnemySubtitle(bind) }}</span>
-                  <span v-if="bind.battleConfigId" class="task-chain muted-small">
-                    {{ bind.battleConfigId }}
-                  </span>
                 </button>
                 <button
                   v-if="bi === 0"
@@ -895,8 +967,8 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
       </div>
     </template>
 
-    <!-- 节点库 -->
-    <div v-if="isTimelineGraph || !currentGameMap || editorViewMode === 'story' || !isMapGraph" class="block">
+    <!-- 节点库：地图剧情改由中间操作面板插入步骤；时间线/旧画布仍可用 -->
+    <div v-if="isTimelineGraph || (!isMapGraph && !currentGameMap)" class="block">
       <div class="quick-actions">
         <button
           v-for="item in quickCreateNodes"
@@ -1019,65 +1091,95 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 <style scoped>
 .panel {
   border-right: 1px solid var(--border-strong);
-  padding: 10px;
-  background: var(--bg-app);
+  padding: var(--panel-pad);
+  background: var(--bg-panel);
   overflow: auto;
   overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 .block {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 .block-title {
   font-size: 12px;
-  font-weight: 600;
-  color: #cbd5e1;
-  margin-bottom: 6px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: #c5d0de;
+  margin-bottom: 8px;
 }
 .row-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 .nav-block {
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  padding-bottom: 2px;
+  border-bottom: none;
+}
+.nav-compact {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+}
+.nav-compact .loc-path {
+  margin-bottom: 8px;
+}
+.nav-compact .mode-row {
+  margin-top: 0;
+}
+.nav-compact .block-action {
+  width: 100%;
+  margin-top: 8px;
+}
+.tasks-body {
+  padding-top: 8px !important;
+}
+.tasks-toolbar {
+  margin-bottom: 8px;
 }
 .nav-back {
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   text-align: left;
-  color: #94a3b8;
+  color: var(--fg-tertiary);
 }
 .nav-back:hover {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.4);
+  color: var(--accent);
+  border-color: rgba(94, 200, 240, 0.4);
 }
 .loc-path {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 2px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
 }
 .loc-crumb {
   display: inline-flex;
   align-items: center;
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--fg-tertiary);
   font-size: 12px;
   cursor: pointer;
   padding: 2px 0;
 }
 .loc-crumb:hover {
-  color: #38bdf8;
+  color: var(--accent);
 }
 .loc-crumb.active.last {
-  color: #e2e8f0;
-  font-weight: 600;
+  color: var(--fg-main);
+  font-weight: 650;
 }
 .chapter-hint {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .mode-row {
   display: grid;
@@ -1085,15 +1187,25 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
   gap: 6px;
   margin-top: 0;
 }
+.mode-btn {
+  width: 100%;
+  justify-content: center;
+  font-weight: 650;
+}
+.mode-btn.active {
+  background: var(--accent-soft);
+  border-color: rgba(94, 200, 240, 0.4);
+  color: #d7f3fc;
+}
 .loc-sep {
   margin: 0 4px;
-  color: #475569;
+  color: var(--fg-tertiary);
 }
 .inline-edit {
   width: 100%;
   min-width: 60px;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 7px;
+  border-radius: 6px;
   border: 1px solid var(--accent);
   background: rgba(2, 6, 23, 0.9);
   color: #f1f5f9;
@@ -1111,12 +1223,14 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .npc-card {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 6px;
   align-items: flex-start;
-  padding: 4px;
-  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
+  background: transparent;
+  transition: border-color 0.12s ease, background 0.12s ease;
 }
 .npc-card-stack {
   flex: 1;
@@ -1133,7 +1247,7 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .battle-row {
   padding-left: 8px;
-  border-left: 2px solid rgba(239, 68, 68, 0.45);
+  border-left: 2px solid rgba(240, 113, 120, 0.4);
 }
 .battle-name-btn.battle-active,
 .battle-name-btn.battle-active .task-name {
@@ -1162,34 +1276,36 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+  width: 100%;
 }
 .giver-thumb {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
-  border-radius: 3px;
-  border: 1px solid rgba(14, 165, 233, 0.55);
+  border-radius: 4px;
+  border: 1px solid rgba(94, 200, 240, 0.4);
   flex-shrink: 0;
 }
 .giver-dot {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #f59e0b;
+  background: var(--accent-warm);
   flex-shrink: 0;
 }
 .battle-add-btn {
   margin-left: 8px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--fg-tertiary);
 }
 .npc-card:hover {
-  border-color: rgba(148, 163, 184, 0.2);
-  background: rgba(2, 6, 23, 0.25);
+  border-color: var(--border-default);
+  background: var(--bg-hover);
 }
 .npc-card.active {
-  border-color: var(--accent);
-  background: rgba(14, 165, 233, 0.1);
+  border-color: rgba(94, 200, 240, 0.4);
+  background: var(--accent-soft);
 }
 .npc-name-btn {
   flex: 1;
@@ -1199,21 +1315,42 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
+  gap: 0;
   text-align: left;
+  padding: 4px 8px !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.task-name-btn:hover {
+  background: transparent !important;
+}
+.task-name-inner {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--fg-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.slot-badge {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 650;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-muted);
+  color: var(--fg-tertiary);
+  border: 1px solid var(--border-default);
 }
 .task-name {
   font-size: 13px;
-  color: #e2e8f0;
+  color: var(--fg-main);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-}
-.slot-badge {
-  font-size: 10px;
-  color: #93c5fd;
-  margin-left: 4px;
 }
 .palette-item:disabled {
   opacity: 0.45;
@@ -1221,7 +1358,7 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .task-sub {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--fg-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1229,7 +1366,7 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .task-chain {
   font-size: 10px;
-  color: #64748b;
+  color: #7b8ba0;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1238,97 +1375,104 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .block-action {
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .map-shell-block .shell-lbl {
   display: block;
   font-size: 11px;
-  color: #94a3b8;
-  margin: 6px 0 2px;
+  color: #a8b6c8;
+  margin: 8px 0 5px;
 }
 .map-shell-block .shell-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #334155;
-  background: #0f172a;
-  color: #e2e8f0;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: rgba(2, 6, 23, 0.55);
+  color: #e8eef7;
 }
 .map-shell-block .shell-warn {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   font-size: 11px;
-  line-height: 1.45;
+  line-height: 1.5;
   color: #fbbf24;
 }
 .empty-card {
-  padding: 16px 12px;
+  padding: 20px 14px;
   border-radius: var(--radius-md);
-  border: 1px dashed rgba(148, 163, 184, 0.3);
-  background: rgba(2, 6, 23, 0.35);
+  border: 1px dashed rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.4);
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .empty-title {
   font-size: 13px;
-  color: #e2e8f0;
-  margin-bottom: 4px;
+  color: #e8eef7;
+  margin-bottom: 6px;
 }
 .empty-desc {
   font-size: 11px;
-  color: #64748b;
-  margin-bottom: 10px;
+  color: #7b8ba0;
+  margin-bottom: 12px;
+  line-height: 1.45;
 }
 .empty-btn {
   width: 100%;
 }
 .empty-inline {
   font-size: 11px;
-  color: #64748b;
-  padding: 6px 0;
+  color: #7b8ba0;
+  padding: 8px 0;
 }
 .chapter-card {
-  padding: 10px 12px;
-  margin-bottom: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
-  background: rgba(2, 6, 23, 0.4);
+  background: rgba(15, 23, 42, 0.55);
   cursor: grab;
   transition:
     border-color 0.15s,
-    background 0.15s;
+    background 0.15s,
+    box-shadow 0.15s;
 }
 .chapter-card:hover {
   border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.08);
 }
 .chapter-card.active {
   border-color: var(--accent);
-  background: rgba(14, 165, 233, 0.1);
+  background: rgba(14, 165, 233, 0.12);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.15);
 }
 .chapter-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .chapter-num {
   font-size: 11px;
   color: #38bdf8;
-  font-weight: 600;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
 .chapter-title {
   font-size: 14px;
   font-weight: 600;
   color: #f1f5f9;
-  margin-bottom: 8px;
-  line-height: 1.35;
+  margin-bottom: 10px;
+  line-height: 1.4;
 }
 .chapter-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
 }
 .chapter-actions {
   display: flex;
@@ -1337,14 +1481,14 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .chapter-meta {
   font-size: 11px;
-  color: #64748b;
+  color: #7b8ba0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .btn-enter {
   flex-shrink: 0;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
   border: 1px solid rgba(56, 189, 248, 0.35);
   background: rgba(14, 165, 233, 0.12);
@@ -1362,12 +1506,13 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 .sub-area-card {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
-  margin-bottom: 6px;
-  border-radius: var(--radius-sm);
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
-  background: rgba(2, 6, 23, 0.3);
+  background: rgba(15, 23, 42, 0.4);
+  transition: border-color 0.12s ease;
 }
 .sub-area-card:hover {
   border-color: rgba(148, 163, 184, 0.35);
@@ -1382,15 +1527,15 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .sub-area-name {
   font-size: 13px;
-  color: #e2e8f0;
+  color: #e8eef7;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .sub-area-meta {
   font-size: 10px;
-  color: #64748b;
-  margin-top: 2px;
+  color: #7b8ba0;
+  margin-top: 3px;
 }
 .mode-btn.active {
   border-color: var(--accent);
@@ -1399,25 +1544,25 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 .quick-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 .sub-title {
   font-size: 11px;
   color: var(--fg-tertiary);
-  margin: 8px 0 4px;
+  margin: 10px 0 6px;
 }
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 4px;
-  margin-bottom: 6px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 .btn {
-  padding: 5px 7px;
+  padding: 6px 9px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-default);
-  background: rgba(2, 6, 23, 0.2);
+  background: rgba(15, 23, 42, 0.45);
   color: var(--fg-main);
   font-size: 12px;
   cursor: pointer;
@@ -1437,14 +1582,40 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .item-row {
   display: flex;
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: 6px;
+  margin-bottom: 6px;
   align-items: center;
 }
 .npc-order {
   font-size: 10px;
+  font-weight: 650;
   color: var(--fg-tertiary);
-  min-width: 22px;
+  min-width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px dashed transparent;
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.npc-order:hover {
+  color: var(--accent);
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(14, 165, 233, 0.08);
+}
+.npc-order:active {
+  cursor: grabbing;
+}
+.npc-card.dragging {
+  opacity: 0.55;
+}
+.npc-card.drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.25);
 }
 .npc-hidden {
   font-size: 10px;
@@ -1455,7 +1626,7 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .quest-badge {
   font-size: 10px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 999px;
   white-space: nowrap;
 }
@@ -1480,67 +1651,175 @@ async function onDeletePortal(portalId: string, gameMapId?: string) {
 }
 .btn-del,
 .btn-mini {
-  width: 22px;
-  min-width: 22px;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
   padding: 0;
   text-align: center;
   flex-shrink: 0;
 }
-.palette {
+.btn-ai-mini {
+  width: 28px;
+  min-width: 28px;
+  height: 24px;
+  padding: 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: #c4b5fd;
+  border-color: rgba(129, 140, 248, 0.45);
+  background: rgba(99, 102, 241, 0.15);
+  flex-shrink: 0;
+}
+.btn-ai-mini:hover {
+  background: rgba(99, 102, 241, 0.28);
+  color: #e0e7ff;
+}
+.ai-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 4px 0 6px;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  background: rgba(30, 27, 75, 0.55);
+}
+.ai-menu-item {
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: #e0e7ff;
+  font-size: 11px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ai-menu-item:hover {
+  background: rgba(99, 102, 241, 0.28);
+}
+.mini-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 6px;
+  padding: 6px 6px 6px 4px;
+  border-left: 2px solid rgba(56, 189, 248, 0.35);
+}
+.mini-step {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 8px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(2, 6, 23, 0.35);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+.mini-step.active {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(14, 165, 233, 0.1);
+}
+.mini-step-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  font-size: 11px;
+}
+.mini-step-num {
+  color: #38bdf8;
+  font-weight: 650;
+  min-width: 14px;
+}
+.mini-step-kind {
+  font-size: 10px;
+  color: #94a3b8;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+}
+.mini-step-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mini-step-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-left: 18px;
+}
+.mini-step-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 2px;
+}
+.palette {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 .palette-cat {
   font-size: 10px;
-  color: #64748b;
-  margin: 6px 0 4px;
-  letter-spacing: 0.3px;
+  font-weight: 650;
+  color: #7b8ba0;
+  margin: 10px 0 2px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .palette-advanced {
-  margin-top: 4px;
+  margin-top: 6px;
 }
 .palette-item {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 2px;
-  padding: 7px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px dashed #334155;
-  background: rgba(2, 6, 23, 0.25);
+  gap: 3px;
+  padding: 9px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.4);
   color: var(--fg-main);
   cursor: pointer;
   text-align: left;
   width: 100%;
+  transition: border-color 0.12s ease, background 0.12s ease;
 }
 .palette-item:hover {
-  border-color: rgba(56, 189, 248, 0.35);
-  background: rgba(14, 165, 233, 0.08);
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(14, 165, 233, 0.1);
 }
 .palette-label {
   font-size: 12px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: #e8eef7;
 }
 .palette-desc {
   font-size: 10px;
-  color: #64748b;
-  line-height: 1.35;
+  color: #7b8ba0;
+  line-height: 1.4;
 }
 .hint {
   font-size: 11px;
   color: var(--fg-tertiary);
-  line-height: 1.45;
-  margin: 0 0 8px;
+  line-height: 1.5;
+  margin: 0 0 10px;
 }
 .link-btn {
   width: 100%;
-  margin: 4px 0 8px;
-  padding: 5px;
+  margin: 4px 0 10px;
+  padding: 7px 8px;
   background: transparent;
-  border: 1px dashed rgba(148, 163, 184, 0.35);
+  border: 1px dashed rgba(148, 163, 184, 0.3);
   border-radius: var(--radius-sm);
   color: var(--fg-secondary);
   font-size: 11px;

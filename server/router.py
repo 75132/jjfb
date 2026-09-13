@@ -290,6 +290,12 @@ ROUTES: Dict[str, RouteHandler] = {
         returns_user_ids=False,
         description='设置出战队伍（服务器权威）'
     ),
+    'choose_starter_mech': RouteHandler(
+        robot_handler.handle_choose_starter_mech,
+        require_auth=True,
+        returns_user_ids=False,
+        description='选择初始机甲（三选一，15级）'
+    ),
     'robot_release_pet': RouteHandler(
         robot_handler.handle_robot_release_pet,
         require_auth=True,

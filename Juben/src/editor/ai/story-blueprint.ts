@@ -1,3 +1,4 @@
+import { clampStoryTitle, storyTitleMaxLenConstraint } from "../story-title-limit";
 import type { RequirementsBrief, StoryBeat, TaskBrief } from "./types";
 
 /** 用户只需选择：这一格是对话还是战斗（每格 = 一条独立任务链） */
@@ -7,6 +8,8 @@ export type BlueprintSlot = {
   kind: BlueprintSlotKind;
   /** 仅战斗格有效：该任务链需几个地图战斗 NPC */
   enemyCount: number;
+  /** 用户可编辑的任务链标题（≤7 字；空则 AI 生成） */
+  title?: string;
 };
 
 export type StoryBlueprint = {
@@ -20,7 +23,7 @@ export function blueprintSlotLabel(kind: BlueprintSlotKind): string {
 }
 
 export function defaultBlueprintSlot(kind: BlueprintSlotKind = "dialog"): BlueprintSlot {
-  return { kind, enemyCount: kind === "battle" ? 1 : 0 };
+  return { kind, enemyCount: kind === "battle" ? 1 : 0, title: "" };
 }
 
 export function defaultStoryBlueprint(nodeCount = 4): StoryBlueprint {
@@ -59,10 +62,21 @@ export function blueprintTaskPlotHint(storyGoal: string, index: number, slot: Bl
   return `围绕「${storyGoal}」${ord}：纯对话推进，禁止战斗节点与战斗敌人`;
 }
 
-/** 占位标题（AI 生成后应 patch 为剧情名） */
+/** 占位标题（用户未填时由 AI 生成；不得超过 7 字） */
 export function blueprintTaskPlaceholderTitle(storyGoal: string, index: number, total: number): string {
-  if (total <= 1) return storyGoal;
-  return `${storyGoal} · 第${index + 1}幕`;
+  if (total <= 1) return clampStoryTitle(storyGoal) || "任务";
+  return `第${index + 1}幕`;
+}
+
+function resolveBlueprintTaskTitle(
+  slot: BlueprintSlot,
+  storyGoal: string,
+  index: number,
+  total: number,
+): string {
+  const user = clampStoryTitle(slot.title?.trim() ?? "");
+  if (user) return user;
+  return blueprintTaskPlaceholderTitle(storyGoal, index, total);
 }
 
 /** 每格生成一条独立任务链 */
@@ -73,15 +87,18 @@ export function buildBlueprintTasks(
   const mapCode = options?.mapCode?.trim() || "map";
   const base = options?.baseNpcUid?.trim() || `${mapCode}_chain`;
   const total = blueprint.nodes.length;
-  return blueprint.nodes.map((slot, i) => ({
-    taskKey: `${base}_${i + 1}`,
-    title: blueprintTaskPlaceholderTitle(blueprint.storyGoal, i, total),
-    npcName: blueprintTaskPlaceholderTitle(blueprint.storyGoal, i, total),
-    plotHint: blueprintTaskPlotHint(blueprint.storyGoal, i, slot, total),
-    slotKind: slot.kind,
-    enemyCount: slot.kind === "battle" ? Math.max(1, slot.enemyCount) : undefined,
-    slotIndex: i + 1,
-  }));
+  return blueprint.nodes.map((slot, i) => {
+    const title = resolveBlueprintTaskTitle(slot, blueprint.storyGoal, i, total);
+    return {
+      taskKey: `${base}_${i + 1}`,
+      title,
+      npcName: title,
+      plotHint: blueprintTaskPlotHint(blueprint.storyGoal, i, slot, total),
+      slotKind: slot.kind,
+      enemyCount: slot.kind === "battle" ? Math.max(1, slot.enemyCount) : undefined,
+      slotIndex: i + 1,
+    };
+  });
 }
 
 /** 每条任务链一条 beat，供 AI 按 npcUid 分别生成 */
@@ -109,6 +126,14 @@ export function synthesizeBriefFromBlueprint(
 
   if (!constraints.includes("multiChainBlueprint")) constraints.push("multiChainBlueprint");
   if (!constraints.includes("autoQuestFlow")) constraints.push("autoQuestFlow");
+  if (!constraints.includes(storyTitleMaxLenConstraint())) constraints.push(storyTitleMaxLenConstraint());
+  for (const q of [
+    "rpgVoice:对白必须像角色在说话，禁止任务说明书口吻",
+    "rpgVoice:禁止「去打倒敌人再回来交任务」等模板句",
+    "rpgVoice:选择项要是态度/代价分流",
+  ]) {
+    if (!constraints.includes(q)) constraints.push(q);
+  }
   if (blueprint.nodes.some((n) => n.kind === "battle")) {
     if (!constraints.includes("deferUntilAccept")) constraints.push("deferUntilAccept");
   }

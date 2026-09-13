@@ -233,6 +233,114 @@ class TestStoryPendingFsm(unittest.TestCase):
 
         asyncio.run(run())
 
+    def test_atomic_authorized_to_creating_local(self):
+        async def run():
+            from services import story_battle_service as sbs
+            from services import story_service as ss
+
+            ss.STORY_LOCAL_TEST = True
+            ss._local_progress.clear()
+            try:
+                progress = {
+                    "character_id": "cid-a",
+                    "map_code": "m1",
+                    "pending_battle": sbs.make_authorized_pending(
+                        event_id="evt-1", battle_ref="br1", map_code="m1"
+                    ),
+                }
+                ss._local_progress[ss._progress_key("cid-a", "m1")] = progress
+
+                pending, err = await sbs.transition_pending_to_creating(
+                    "uid", "cid-a", "m1", "evt-1", request_id="req-1"
+                )
+                self.assertIsNone(err)
+                self.assertEqual(pending["status"], sbs.STATUS_CREATING)
+                self.assertEqual(pending["request_id"], "req-1")
+
+                pending2, err2 = await sbs.transition_pending_to_creating(
+                    "uid", "cid-a", "m1", "evt-1", request_id="req-1"
+                )
+                self.assertIsNone(err2)
+                self.assertEqual(pending2["status"], sbs.STATUS_CREATING)
+
+                pending3, err3 = await sbs.transition_pending_to_creating(
+                    "uid", "cid-a", "m1", "evt-1", request_id="req-other"
+                )
+                self.assertIsNone(pending3)
+                self.assertIn("重复", err3 or "")
+            finally:
+                ss.STORY_LOCAL_TEST = False
+                ss._local_progress.clear()
+
+        asyncio.run(run())
+
+    def test_atomic_mongo_race_only_one_transition(self):
+        async def run():
+            from services import story_battle_service as sbs
+            from services import story_service as ss
+
+            class FakeCol:
+                def __init__(self):
+                    self.doc = {
+                        "character_id": "cid-race",
+                        "map_code": "m1",
+                        "pending_battle": sbs.make_authorized_pending(
+                            event_id="evt-1", battle_ref="br1", map_code="m1"
+                        ),
+                    }
+                    self.lock = asyncio.Lock()
+
+                def find_one_and_update(self, filt, update, return_document=None):
+                    # sync call from async_mongo_operation thread pool - keep simple
+                    pending = self.doc.get("pending_battle") or {}
+                    if pending.get("event_id") != filt.get("pending_battle.event_id"):
+                        return None
+                    if pending.get("status") != filt.get("pending_battle.status"):
+                        return None
+                    for k, v in (update.get("$set") or {}).items():
+                        if k.startswith("pending_battle."):
+                            field = k.split(".", 1)[1]
+                            pending[field] = v
+                        else:
+                            self.doc[k] = v
+                    self.doc["pending_battle"] = pending
+                    return dict(self.doc)
+
+                def find_one(self, filt):
+                    if (
+                        self.doc.get("character_id") == filt.get("character_id")
+                        and self.doc.get("map_code") == filt.get("map_code")
+                    ):
+                        return dict(self.doc)
+                    return None
+
+            fake = FakeCol()
+            progress = fake.doc
+
+            with patch.object(ss, "STORY_LOCAL_TEST", False), patch.object(
+                ss, "_story_progress_col", fake
+            ), patch(
+                "services.story_service.get_or_create_progress",
+                new=AsyncMock(return_value=progress),
+            ):
+                (p1, e1), (p2, e2) = await asyncio.gather(
+                    sbs.transition_pending_to_creating(
+                        "uid", "cid-race", "m1", "evt-1", request_id="req-a"
+                    ),
+                    sbs.transition_pending_to_creating(
+                        "uid", "cid-race", "m1", "evt-1", request_id="req-b"
+                    ),
+                )
+                statuses = [p1, p2]
+                errors = [e1, e2]
+                self.assertEqual(fake.doc["pending_battle"]["status"], sbs.STATUS_CREATING)
+                success = [p for p in statuses if p is not None]
+                self.assertEqual(len(success), 1)
+                conflict = [e for e in errors if e and "重复" in e]
+                self.assertEqual(len(conflict), 1)
+
+        asyncio.run(run())
+
 
 class TestStoryBattleServiceIsolation(unittest.TestCase):
     def test_service_does_not_import_handlers(self):

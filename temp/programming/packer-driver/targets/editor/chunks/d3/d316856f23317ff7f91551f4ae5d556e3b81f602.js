@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, instantiate, Sprite, UITransform, SpriteAtlas, JsonAsset, assetManager, Color, input, Input, Vec3, Vec2, EditBox, UIOpacity, Graphics, WebSocketManager, GameConfig, RobotList, RobotEvolutionEffect, DataCacheManager, ResourceManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, BagEventHub, normalizeBagItemsResponse, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _dec25, _dec26, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _crd, ccclass, property, BagItem;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, instantiate, Sprite, UITransform, SpriteAtlas, JsonAsset, assetManager, Color, input, Input, Vec3, Vec2, EditBox, UIOpacity, Graphics, WebSocketManager, GameConfig, RobotList, RobotEvolutionEffect, DataCacheManager, ResourceManager, UILockManager, TipWindows, emitBattleTeamUpdated, emitRobotDataUpdated, BagEventHub, normalizeBagItemsResponse, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _crd, ccclass, property, BagItem;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -35,6 +35,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfUILockManager(extras) {
     _reporterNs.report("UILockManager", "../global/UILockManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfTipWindows(extras) {
+    _reporterNs.report("TipWindows", "../global/TipWindows", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfemitBattleTeamUpdated(extras) {
@@ -98,12 +102,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_8) {
       UILockManager = _unresolved_8.UILockManager;
     }, function (_unresolved_9) {
-      emitBattleTeamUpdated = _unresolved_9.emitBattleTeamUpdated;
-      emitRobotDataUpdated = _unresolved_9.emitRobotDataUpdated;
+      TipWindows = _unresolved_9.TipWindows;
     }, function (_unresolved_10) {
-      BagEventHub = _unresolved_10.BagEventHub;
+      emitBattleTeamUpdated = _unresolved_10.emitBattleTeamUpdated;
+      emitRobotDataUpdated = _unresolved_10.emitRobotDataUpdated;
     }, function (_unresolved_11) {
-      normalizeBagItemsResponse = _unresolved_11.normalizeBagItemsResponse;
+      BagEventHub = _unresolved_11.BagEventHub;
+    }, function (_unresolved_12) {
+      normalizeBagItemsResponse = _unresolved_12.normalizeBagItemsResponse;
     }],
     execute: function () {
       _crd = true;
@@ -119,7 +125,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
       _export("BagItem", BagItem = (_dec = ccclass('BagItem'), _dec2 = property(Node), _dec3 = property(Button), _dec4 = property(Button), _dec5 = property(Button), _dec6 = property(Button), _dec7 = property(Button), _dec8 = property(Node), _dec9 = property(Node), _dec10 = property(Button), _dec11 = property(Button), _dec12 = property(EditBox), _dec13 = property(EditBox), _dec14 = property(Button), _dec15 = property(Button), _dec16 = property(Label), _dec17 = property(SpriteAtlas), _dec18 = property(SpriteAtlas), _dec19 = property(Node), _dec20 = property(Node), _dec21 = property(Button), _dec22 = property(Button), _dec23 = property(Button), _dec24 = property(_crd && RobotList === void 0 ? (_reportPossibleCrUseOfRobotList({
         error: Error()
-      }), RobotList) : RobotList), _dec25 = property(Node), _dec26 = property(Label), _dec(_class = (_class2 = class BagItem extends Component {
+      }), RobotList) : RobotList), _dec(_class = (_class2 = class BagItem extends Component {
         constructor(...args) {
           super(...args);
 
@@ -183,12 +189,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           _initializerDefineProperty(this, "robotList", _descriptor23, this);
 
           // 机甲列表面板（用于选择机甲使用物品）
-          _initializerDefineProperty(this, "errorTipsPanel", _descriptor24, this);
-
-          // ErrorTips 面板节点（BagPanel下的ErrorTips）
-          _initializerDefineProperty(this, "errorTipsLabel", _descriptor25, this);
-
-          // ErrorTips 下的 Label 组件
           this.ws = null;
           this.items = [];
           this.currentCategory = 1;
@@ -253,8 +253,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._dragging = false;
           this._dragStartUIPos = new Vec2();
           this._bagNameFilter = '';
-          this._discardArmed = false;
-          this._discardArmTimer = null;
           this._lastUiThrottleTs = 0;
           // 详情面板相对于模板格子（第一个格子）的固定偏移（世界坐标下）
           this.introWorldOffset = null;
@@ -542,15 +540,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               success: true,
               raw: data
             });
-          };
-
-          /**
-           * 隐藏错误提示面板
-           */
-          this.hideErrorTips = () => {
-            if (this.errorTipsPanel) {
-              this.errorTipsPanel.active = false;
-            }
           };
         }
 
@@ -2157,12 +2146,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.selectedItemId = null;
           this.selectedItemSlotIndex = -1;
           this.hoveredItemNode = null;
-          this._discardArmed = false;
-
-          if (this._discardArmTimer) {
-            clearTimeout(this._discardArmTimer);
-            this._discardArmTimer = null;
-          }
         }
         /**
          * 显示使用物品窗口
@@ -2540,7 +2523,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         confirmUseItemForPet(itemId, petId, petData) {
-          var _ref, _ref2, _petData$pet_id, _this$ws$getCharacter6, _this$ws9;
+          var _ref, _ref2, _petData$pet_id, _this$robotList, _this$ws$getCharacter6, _this$ws9;
 
           const itemData = this.itemDataMap.get(itemId);
 
@@ -2572,6 +2555,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (this.robotList && !this.robotList.isPetInCurrentList(pid)) {
             console.warn(`⚠️ [BagItem] petId 不在当前已加载列表，仍交由服务端校验: ${pid}`);
+          }
+
+          if (this.isPetRemovalItem(itemData) && (_this$robotList = this.robotList) != null && _this$robotList.isLastRobot()) {
+            this.isProcessingUseItem = false;
+            this.showErrorTips('至少保留一台机甲，无法分解', false);
+            return;
           }
 
           const cid = ((_this$ws$getCharacter6 = (_this$ws9 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter6.call(_this$ws9)) || undefined;
@@ -2639,8 +2628,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onDiscardItem(itemId) {
-          var _this$ws$getCharacter7, _this$ws10;
-
           // 防止重复操作
           if (this.isProcessingDiscardItem) {
             console.warn('⚠️ [BagItem] 丢弃物品操作正在进行中，请稍候...');
@@ -2666,23 +2653,26 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const itemName = itemData ? itemData.name : `物品ID: ${itemId}`;
           const quantity = bagItem.quantity;
           console.log(`🗑️ [BagItem] 丢弃物品: ${itemName} (ID: ${itemId})，数量: ${quantity}（删除整个格子）`);
+          const tip = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
+            error: Error()
+          }), TipWindows) : TipWindows).getInstance();
 
-          if (!this._discardArmed) {
-            this._discardArmed = true;
-            if (this._discardArmTimer) clearTimeout(this._discardArmTimer);
-            this._discardArmTimer = setTimeout(() => {
-              this._discardArmed = false;
-              this._discardArmTimer = null;
-            }, 5000);
-            this.showErrorTips('请再次点击「丢弃」确认', false);
+          if (tip) {
+            tip.showConfirm(`确定丢弃「${itemName}」×${quantity} 吗？\n此操作不可撤销。`, () => this.executeDiscardItem(itemId), undefined, {
+              confirmText: '确定',
+              cancelText: '取消'
+            });
             return;
           }
 
-          this._discardArmed = false;
+          this.executeDiscardItem(itemId);
+        }
 
-          if (this._discardArmTimer) {
-            clearTimeout(this._discardArmTimer);
-            this._discardArmTimer = null;
+        executeDiscardItem(itemId) {
+          var _this$ws$getCharacter7, _this$ws10;
+
+          if (this.isProcessingDiscardItem) {
+            return;
           }
 
           if (!this.canActThrottle(320)) return;
@@ -2952,66 +2942,41 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return false;
           }
         }
+
+        isPetRemovalItem(itemData) {
+          var _itemData$effect;
+
+          const effect = String((_itemData$effect = itemData.effect) != null ? _itemData$effect : '').trim();
+          return effect === 'PET_DISASSEMBLE_PARTS' || effect === 'PET_DISASSEMBLE_EXP';
+        }
         /**
-         * 显示错误/成功提示（简单版本）
-         * @param message 提示消息
-         * @param isSuccess 是否成功（true=成功，false=失败）
+         * 显示错误/成功提示（全局 TipWindows）
          */
 
 
         showErrorTips(message, isSuccess) {
-          // 如果没有绑定 ErrorTips 面板或 Label，尝试自动查找
-          if (!this.errorTipsPanel && this.panel) {
-            this.errorTipsPanel = this.findNodeByName(this.panel, 'ErrorTips');
+          const tip = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
+            error: Error()
+          }), TipWindows) : TipWindows).getInstance();
+
+          if (!tip) {
+            console.warn('⚠️ [BagItem] TipWindows 未找到，无法显示提示:', message);
+            return;
           }
 
-          if (!this.errorTipsPanel) {
-            console.warn('⚠️ [BagItem] ErrorTips 面板未找到，无法显示提示');
-            return;
-          } // 如果没有绑定 Label，尝试从 ErrorTips 面板下查找
-
-
-          if (!this.errorTipsLabel && this.errorTipsPanel) {
-            const labelNode = this.errorTipsPanel.getChildByName('Label');
-
-            if (labelNode) {
-              this.errorTipsLabel = labelNode.getComponent(Label);
-            }
-          }
-
-          if (!this.errorTipsLabel) {
-            console.warn('⚠️ [BagItem] ErrorTips Label 未找到，无法显示提示');
-            return;
-          } // 取消之前的隐藏定时器
-
-
-          this.unschedule(this.hideErrorTips); // 设置提示文本
-
-          this.errorTipsLabel.string = message; // 设置颜色：成功=FFFF00（黄色），失败=FF3F3F（红色）
-
-          const successColor = new Color(255, 255, 0, 255); // FFFF00
-
-          const failColor = new Color(255, 63, 63, 255); // FF3F3F
-
-          this.errorTipsLabel.color = isSuccess ? successColor : failColor; // 显示面板（确保正常显示）
-
-          this.errorTipsPanel.active = true;
-          this.errorTipsPanel.setScale(1, 1, 1); // 确保背景正常显示
-
-          const sprite = this.errorTipsPanel.getComponent(Sprite);
-
-          if (sprite) {
-            sprite.color = new Color(255, 255, 255, 255);
-          } // 2秒后自动隐藏
-
-
-          this.scheduleOnce(this.hideErrorTips, 2.0);
+          const successColor = new Color(255, 255, 0, 255);
+          const failColor = new Color(255, 63, 63, 255);
+          tip.showAlert(message, undefined, {
+            messageColor: isSuccess ? successColor : failColor,
+            autoCloseMs: 2000
+          });
         }
-
         /**
          * 确保所有物品格子的按钮是可交互的
          * 关键修复：防止场景切换后按钮被禁用导致点击无效
          */
+
+
         ensureAllItemButtonsInteractable() {
           for (let i = 0; i < this.dynamicNodes.length; i++) {
             const node = this.dynamicNodes[i];
@@ -3182,20 +3147,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           return null;
         }
       }), _descriptor23 = _applyDecoratedDescriptor(_class2.prototype, "robotList", [_dec24], {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        initializer: function () {
-          return null;
-        }
-      }), _descriptor24 = _applyDecoratedDescriptor(_class2.prototype, "errorTipsPanel", [_dec25], {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        initializer: function () {
-          return null;
-        }
-      }), _descriptor25 = _applyDecoratedDescriptor(_class2.prototype, "errorTipsLabel", [_dec26], {
         configurable: true,
         enumerable: true,
         writable: true,

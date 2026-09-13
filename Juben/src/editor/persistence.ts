@@ -26,6 +26,7 @@ export type SaveToStorageResult = {
 
 export type StorageHealthInfo = {
   ok: boolean;
+  aiConfigured?: boolean;
   storage?: { dataDir: string; workspaceFile: string };
 };
 
@@ -126,12 +127,45 @@ async function api<T>(
   return (await res.json()) as T;
 }
 
-function normalizeWorkspace(ws: PersistedWorkspace): PersistedWorkspace {
-  ws.projects = ws.projects.map((p) => ({
+/** 多项目历史数据收敛为单一项目：同丰度优先 currentProjectId，否则取内容最丰富/最近更新者。 */
+export function pickSingleProject(
+  projects: PersistedWorkspaceProject[],
+  preferredId?: string | null,
+): PersistedWorkspaceProject | null {
+  const list = projects.filter((p) => !!p?.id);
+  if (list.length === 0) return null;
+  if (list.length === 1) return list[0]!;
+  const ranked = [...list].sort((a, b) => {
+    const scoreDiff = projectContentScore(b) - projectContentScore(a);
+    if (scoreDiff !== 0) return scoreDiff;
+    return (b.updatedAt ?? 0) - (a.updatedAt ?? 0);
+  });
+  const richest = ranked[0]!;
+  if (preferredId) {
+    const preferred = list.find((p) => p.id === preferredId);
+    if (preferred && projectContentScore(preferred) >= projectContentScore(richest)) {
+      return preferred;
+    }
+  }
+  return richest;
+}
+
+export function normalizeToSingleProject(ws: PersistedWorkspace): PersistedWorkspace {
+  const projects = (ws.projects ?? []).map((p) => ({
     ...p,
     createdAt: typeof p.createdAt === "number" ? p.createdAt : p.updatedAt,
   }));
-  return ws;
+  const single = pickSingleProject(projects, ws.currentProjectId);
+  return {
+    version: 1,
+    savedAt: ws.savedAt ?? Date.now(),
+    currentProjectId: single?.id ?? null,
+    projects: single ? [single] : [],
+  };
+}
+
+function normalizeWorkspace(ws: PersistedWorkspace): PersistedWorkspace {
+  return normalizeToSingleProject(ws);
 }
 
 function isValidWorkspace(ws: unknown): ws is PersistedWorkspace {
@@ -141,12 +175,10 @@ function isValidWorkspace(ws: unknown): ws is PersistedWorkspace {
 }
 
 function normalizePayload(workspace: PersistedWorkspace): PersistedWorkspace {
-  return {
-    version: 1,
+  return normalizeToSingleProject({
+    ...workspace,
     savedAt: Date.now(),
-    currentProjectId: workspace.currentProjectId,
-    projects: workspace.projects,
-  };
+  });
 }
 
 export function readLocalWorkspace(): PersistedWorkspace | null {
@@ -361,8 +393,8 @@ export function workspaceHasContent(ws: PersistedWorkspace | null | undefined): 
 /**
  * 启动时合并 remote / local，避免「磁盘空壳覆盖浏览器里刚编辑的数据」。
  * - 磁盘 null → 用 local
- * - 磁盘空壳 + local 有内容 → 用 local（必要时 merge 保留磁盘上的空项目 id）
- * - 双方都有内容 → mergeWorkspaces（同 id 取更丰富/更新者）
+ * - 磁盘空壳 + local 有内容 → 用 local
+ * - 双方都有内容 → mergeWorkspaces（单项目：取更丰富的那份）
  */
 export function resolveBootWorkspace(
   remote: PersistedWorkspace | null,
@@ -443,31 +475,23 @@ function pickRicherProject(
 }
 
 export function mergeWorkspaces(a: PersistedWorkspace, b: PersistedWorkspace): PersistedWorkspace {
-  const byId = new Map<string, PersistedWorkspaceProject>();
-  for (const p of a.projects) {
-    if (p?.id) byId.set(p.id, p);
+  const aSingle = pickSingleProject(a.projects, a.currentProjectId);
+  const bSingle = pickSingleProject(b.projects, b.currentProjectId);
+  let project: PersistedWorkspaceProject | null = null;
+  if (aSingle && bSingle) {
+    project =
+      aSingle.id === bSingle.id
+        ? pickRicherProject(aSingle, bSingle)
+        : pickRicherProject(aSingle, bSingle);
+  } else {
+    project = aSingle ?? bSingle;
   }
-  for (const p of b.projects) {
-    if (!p?.id) continue;
-    const existing = byId.get(p.id);
-    if (!existing) {
-      byId.set(p.id, p);
-      continue;
-    }
-    byId.set(p.id, pickRicherProject(existing, p));
-  }
-  const projects = [...byId.values()].sort((x, y) => (y.updatedAt ?? 0) - (x.updatedAt ?? 0));
   const savedAt = Math.max(a.savedAt ?? 0, b.savedAt ?? 0);
-  const currentProjectId =
-    (a.currentProjectId && projects.some((p) => p.id === a.currentProjectId) && a.currentProjectId) ||
-    (b.currentProjectId && projects.some((p) => p.id === b.currentProjectId) && b.currentProjectId) ||
-    projects[0]?.id ||
-    null;
   return normalizeWorkspace({
     version: 1,
     savedAt,
-    currentProjectId,
-    projects,
+    currentProjectId: project?.id ?? null,
+    projects: project ? [project] : [],
   });
 }
 

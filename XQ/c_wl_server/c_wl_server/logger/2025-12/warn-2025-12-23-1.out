@@ -1,0 +1,577 @@
+[10:45:13:748] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[10:50:38:651] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[11:00:02:442] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@29b779b6 ((conn=34622) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:00:02:441] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=3m23s410ms874µs900ns).
+[11:00:02:449] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@510d6f0e ((conn=34623) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:00:02:452] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@546cb502 ((conn=34624) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:00:02:442] [WARN] - com.zaxxer.hikari.pool.ProxyConnection.checkException(ProxyConnection.java:182) - data-pool- - Connection org.mariadb.jdbc.Connection@6793b89f marked as broken because of SQLSTATE(08000), ErrorCode(-1)
+java.sql.SQLNonTransientConnectionException: (conn=34621) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:847) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readResults(StandardClient.java:763) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readResponse(StandardClient.java:682) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:625) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.ProxyConnection.setAutoCommit(ProxyConnection.java:414) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyConnection.setAutoCommit(HikariProxyConnection.java) ~[HikariCP-4.0.3.jar:?]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.resetAutoCommit(JdbcTransaction.java:131) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.close(JdbcTransaction.java:95) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.close(BaseExecutor.java:90) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.close(CachingExecutor.java:64) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.close(DefaultSqlSession.java:260) ~[mybatis-3.5.10.jar:3.5.10]
+	at my.db.mybatisConfig.close(mybatisConfig.java:120) ~[classes/:?]
+	at my.handle.toService(handle.java:464) ~[classes/:?]
+	at my.handle.sendHttpResponse(handle.java:365) ~[classes/:?]
+	at my.handle.handleHttpRequest(handle.java:187) ~[classes/:?]
+	at my.handle.channelRead0(handle.java:55) ~[classes/:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:327) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:299) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: recv failed
+	at java.net.SocketInputStream.socketRead0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.read(SocketInputStream.java:171) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[?:1.8.0_192]
+	at java.io.FilterInputStream.read(FilterInputStream.java:133) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.ReadAheadBufferedStream.fillingBuffer(ReadAheadBufferedStream.java:93) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.ReadAheadBufferedStream.read(ReadAheadBufferedStream.java:66) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketReader.readPacket(PacketReader.java:76) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.ClientMessage.readPacket(ClientMessage.java:118) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:824) ~[mariadb-java-client-3.0.6.jar:?]
+	... 43 more
+[11:00:15:169] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[11:02:23:776] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7d8fb8f2 ((conn=34642) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:23:780] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@32755308 ((conn=34643) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:23:782] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@32bd359c ((conn=34644) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:46:355] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@22365263 ((conn=34645) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:46:358] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@ec8685d ((conn=34646) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:46:360] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@b627ba8 ((conn=34647) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:46:361] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1bd785ed ((conn=34648) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:46:362] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@77da0449 ((conn=34649) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:02:46:363] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3a1d006f ((conn=34650) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:05:50:347] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1e1304f8 ((conn=34660) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:08:46:353] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6a3f1b03 ((conn=34670) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:08:46:356] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@ef585dc ((conn=34671) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:352] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4a7c2ca9 ((conn=34684) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:353] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5889d1e6 ((conn=34685) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:356] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7af0744e ((conn=34686) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:361] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@49a599aa ((conn=34687) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:368] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6297ed53 ((conn=34688) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:370] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@74070606 ((conn=34689) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:378] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@dac4ecc ((conn=34690) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:14:24:381] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@68a1ee1a ((conn=34691) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:36:42:607] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=20m26s894ms777µs600ns).
+[11:36:42:607] [WARN] - com.zaxxer.hikari.pool.ProxyConnection.checkException(ProxyConnection.java:182) - data-pool- - Connection org.mariadb.jdbc.Connection@1a42ce80 marked as broken because of SQLSTATE(08000), ErrorCode(-1)
+java.sql.SQLNonTransientConnectionException: (conn=34692) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:494) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:623) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.ProxyConnection.setAutoCommit(ProxyConnection.java:414) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyConnection.setAutoCommit(HikariProxyConnection.java) ~[HikariCP-4.0.3.jar:?]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.resetAutoCommit(JdbcTransaction.java:131) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.close(JdbcTransaction.java:95) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.close(BaseExecutor.java:90) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.close(CachingExecutor.java:64) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.close(DefaultSqlSession.java:260) ~[mybatis-3.5.10.jar:3.5.10]
+	at my.db.mybatisConfig.close(mybatisConfig.java:120) ~[classes/:?]
+	at my.handle.toService(handle.java:464) ~[classes/:?]
+	at my.handle.sendHttpResponse(handle.java:365) ~[classes/:?]
+	at my.handle.handleHttpRequest(handle.java:187) ~[classes/:?]
+	at my.handle.channelRead0(handle.java:55) ~[classes/:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:327) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:299) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: socket write error
+	at java.net.SocketOutputStream.socketWrite0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:111) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:155) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.writeSocket(PacketWriter.java:834) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.flush(PacketWriter.java:704) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.client.QueryPacket.encode(QueryPacket.java:35) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:474) ~[mariadb-java-client-3.0.6.jar:?]
+	... 41 more
+[11:36:51:016] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[11:39:14:971] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5b3cbe4f ((conn=34706) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:389] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@371d73d5 ((conn=34707) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:390] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@27f6b912 ((conn=34708) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:392] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@445aa6e2 ((conn=34709) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:393] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@b7d29e7 ((conn=34710) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:395] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@57a27086 ((conn=34711) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:398] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@458e6d49 ((conn=34712) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:400] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@54f2beac ((conn=34713) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:39:18:401] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@362297c4 ((conn=34714) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:42:38:457] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=1m31s666ms345µs900ns).
+[11:42:38:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@554f902 ((conn=34715) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:42:38:476] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@276ad2db ((conn=34723) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:42:38:483] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@52e16f27 ((conn=34724) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[11:43:27:942] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=1m888ms938µs600ns).
+[11:53:30:828] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[12:04:15:228] [WARN] - com.zaxxer.hikari.pool.HikariPool$HouseKeeper.run(HikariPool.java:788) - data-pool- - Thread starvation or clock leap detected (housekeeper delta=6m44s56ms654µs600ns).
+[12:04:15:230] [WARN] - com.zaxxer.hikari.pool.ProxyConnection.checkException(ProxyConnection.java:182) - data-pool- - Connection org.mariadb.jdbc.Connection@6b852153 marked as broken because of SQLSTATE(08000), ErrorCode(-1)
+java.sql.SQLNonTransientConnectionException: (conn=34775) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:494) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:623) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.ProxyConnection.setAutoCommit(ProxyConnection.java:414) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyConnection.setAutoCommit(HikariProxyConnection.java) ~[HikariCP-4.0.3.jar:?]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.resetAutoCommit(JdbcTransaction.java:131) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.close(JdbcTransaction.java:95) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.close(BaseExecutor.java:90) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.close(CachingExecutor.java:64) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.close(DefaultSqlSession.java:260) ~[mybatis-3.5.10.jar:3.5.10]
+	at my.db.mybatisConfig.close(mybatisConfig.java:120) ~[classes/:?]
+	at my.handle.toService(handle.java:464) ~[classes/:?]
+	at my.handle.sendHttpResponse(handle.java:365) ~[classes/:?]
+	at my.handle.handleHttpRequest(handle.java:187) ~[classes/:?]
+	at my.handle.channelRead0(handle.java:55) ~[classes/:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:327) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:299) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: socket write error
+	at java.net.SocketOutputStream.socketWrite0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:111) ~[?:1.8.0_192]
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:155) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.writeSocket(PacketWriter.java:834) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketWriter.flush(PacketWriter.java:704) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.client.QueryPacket.encode(QueryPacket.java:35) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.sendQuery(StandardClient.java:474) ~[mariadb-java-client-3.0.6.jar:?]
+	... 41 more
+[12:04:26:594] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[12:12:16:509] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[12:15:14:950] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@73ce2958 ((conn=34829) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[12:15:14:953] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@36cca945 ((conn=34831) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[12:15:14:958] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7da08ab6 ((conn=34834) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[14:56:22:671] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[15:06:31:288] [WARN] - com.zaxxer.hikari.pool.ProxyConnection.checkException(ProxyConnection.java:182) - data-pool- - Connection org.mariadb.jdbc.Connection@4e57f245 marked as broken because of SQLSTATE(08000), ErrorCode(-1)
+java.sql.SQLNonTransientConnectionException: (conn=34866) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:847) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readResults(StandardClient.java:763) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readResponse(StandardClient.java:682) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:625) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.ProxyConnection.setAutoCommit(ProxyConnection.java:414) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyConnection.setAutoCommit(HikariProxyConnection.java) ~[HikariCP-4.0.3.jar:?]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.resetAutoCommit(JdbcTransaction.java:131) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.close(JdbcTransaction.java:95) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.close(BaseExecutor.java:90) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.close(CachingExecutor.java:64) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.close(DefaultSqlSession.java:260) ~[mybatis-3.5.10.jar:3.5.10]
+	at my.db.mybatisConfig.close(mybatisConfig.java:120) ~[classes/:?]
+	at my.service.zslService.clear(zslService.java:84) ~[classes/:?]
+	at my.service.activityService.lambda$getActivity$28(activityService.java:491) ~[classes/:?]
+	at my.service.activityService.lambda$commonDelayAc$40(activityService.java:618) ~[classes/:?]
+	at my.service.activityService.lambda$createActivity$0(activityService.java:255) ~[classes/:?]
+	at io.netty.util.concurrent.PromiseTask.runTask(PromiseTask.java:98) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.ScheduledFutureTask.run(ScheduledFutureTask.java:159) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask$$$capture(AbstractEventExecutor.java:174) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute$$$capture(AbstractEventExecutor.java:167) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: recv failed
+	at java.net.SocketInputStream.socketRead0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.read(SocketInputStream.java:171) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[?:1.8.0_192]
+	at java.io.FilterInputStream.read(FilterInputStream.java:133) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.ReadAheadBufferedStream.fillingBuffer(ReadAheadBufferedStream.java:93) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.ReadAheadBufferedStream.read(ReadAheadBufferedStream.java:66) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketReader.readPacket(PacketReader.java:76) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.ClientMessage.readPacket(ClientMessage.java:118) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:824) ~[mariadb-java-client-3.0.6.jar:?]
+	... 29 more
+[15:06:31:288] [WARN] - com.zaxxer.hikari.pool.ProxyConnection.checkException(ProxyConnection.java:182) - data-pool- - Connection org.mariadb.jdbc.Connection@2d1d3ea3 marked as broken because of SQLSTATE(08000), ErrorCode(-1)
+java.sql.SQLNonTransientConnectionException: (conn=34865) Socket error
+	at org.mariadb.jdbc.export.ExceptionFactory.createException(ExceptionFactory.java:291) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.export.ExceptionFactory.create(ExceptionFactory.java:357) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:847) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readResults(StandardClient.java:763) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readResponse(StandardClient.java:682) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:625) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.execute(StandardClient.java:499) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.Connection.setAutoCommit(Connection.java:193) ~[mariadb-java-client-3.0.6.jar:?]
+	at com.zaxxer.hikari.pool.ProxyConnection.setAutoCommit(ProxyConnection.java:414) ~[HikariCP-4.0.3.jar:?]
+	at com.zaxxer.hikari.pool.HikariProxyConnection.setAutoCommit(HikariProxyConnection.java) ~[HikariCP-4.0.3.jar:?]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.resetAutoCommit(JdbcTransaction.java:131) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.transaction.jdbc.JdbcTransaction.close(JdbcTransaction.java:95) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.BaseExecutor.close(BaseExecutor.java:90) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.executor.CachingExecutor.close(CachingExecutor.java:64) ~[mybatis-3.5.10.jar:3.5.10]
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.close(DefaultSqlSession.java:260) ~[mybatis-3.5.10.jar:3.5.10]
+	at my.db.mybatisConfig.close(mybatisConfig.java:120) ~[classes/:?]
+	at my.handle.toService(handle.java:464) ~[classes/:?]
+	at my.handle.sendHttpResponse(handle.java:365) ~[classes/:?]
+	at my.handle.handleHttpRequest(handle.java:187) ~[classes/:?]
+	at my.handle.channelRead0(handle.java:55) ~[classes/:?]
+	at io.netty.channel.SimpleChannelInboundHandler.channelRead(SimpleChannelInboundHandler.java:99) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:327) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:299) ~[netty-codec-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:357) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:379) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:365) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496) ~[netty-transport-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.79.Final.jar:4.1.79.Final]
+	at java.lang.Thread.run(Thread.java:748) ~[?:1.8.0_192]
+Caused by: java.net.SocketException: Software caused connection abort: recv failed
+	at java.net.SocketInputStream.socketRead0(Native Method) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.read(SocketInputStream.java:171) ~[?:1.8.0_192]
+	at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[?:1.8.0_192]
+	at java.io.FilterInputStream.read(FilterInputStream.java:133) ~[?:1.8.0_192]
+	at org.mariadb.jdbc.client.socket.impl.ReadAheadBufferedStream.fillingBuffer(ReadAheadBufferedStream.java:93) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.ReadAheadBufferedStream.read(ReadAheadBufferedStream.java:66) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.socket.impl.PacketReader.readPacket(PacketReader.java:76) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.message.ClientMessage.readPacket(ClientMessage.java:118) ~[mariadb-java-client-3.0.6.jar:?]
+	at org.mariadb.jdbc.client.impl.StandardClient.readPacket(StandardClient.java:824) ~[mariadb-java-client-3.0.6.jar:?]
+	... 43 more
+[15:06:41:958] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[15:09:31:644] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[15:15:28:144] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6d300856 ((conn=34911) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:15:28:146] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@184d457c ((conn=34913) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:15:28:151] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5c172272 ((conn=34914) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:15:28:153] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@608031e7 ((conn=34915) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:18:24:004] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[15:27:17:332] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@133bc07 ((conn=34948) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:333] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@60310e43 ((conn=34949) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:334] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7a724e7f ((conn=34950) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:335] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@695847e4 ((conn=34951) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:336] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@75970d4c ((conn=34952) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:337] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1d3c46ab ((conn=34953) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:338] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7555f2c5 ((conn=34954) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:27:17:339] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5e19fcec ((conn=34955) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:30:15:469] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7f39a19f ((conn=34960) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:30:15:471] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@ca8d949 ((conn=34962) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:30:15:473] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3f5c7f36 ((conn=34964) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:32:20:449] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[15:50:03:464] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76dcd087 ((conn=35027) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1611685d ((conn=35028) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@49f73b1d ((conn=35029) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:467] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5c09ada5 ((conn=35030) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:468] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4c41064b ((conn=35031) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:468] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@510fcc1e ((conn=35032) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:472] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21d02af1 ((conn=35033) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:474] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3025cfeb ((conn=35034) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:50:03:474] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7492f4fa ((conn=35035) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:58:59:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@65b15561 ((conn=35063) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[15:58:59:467] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6675809 ((conn=35065) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@9f96620 ((conn=35138) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5585d602 ((conn=35139) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:467] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4cef32ea ((conn=35141) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:468] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@34b73f04 ((conn=35142) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:468] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@76bd97d4 ((conn=35143) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:469] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@d737ac7 ((conn=35144) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:22:35:469] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@38be61e1 ((conn=35145) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:464] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3956f6c8 ((conn=35157) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@72ac396a ((conn=35159) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2633229c ((conn=35160) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:468] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@21f4fae7 ((conn=35161) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:470] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2f1aa8a7 ((conn=35162) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:470] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3ceea347 ((conn=35163) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:471] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3765184 ((conn=35164) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:28:27:472] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5d3b0cf ((conn=35165) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:463] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@364b0f70 ((conn=35187) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:463] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@700924c ((conn=35188) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:464] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1f4d0fab ((conn=35189) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:464] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@538d7f7f ((conn=35190) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3d53daf1 ((conn=35191) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3ec2bde5 ((conn=35192) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4985ddc1 ((conn=35193) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@714b2509 ((conn=35194) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:37:17:467] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@526ced83 ((conn=35195) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:462] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@36ade32f ((conn=35207) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:463] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@398008c ((conn=35208) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:463] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@282428ee ((conn=35209) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:464] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@11ff9bb ((conn=35210) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5872c62c ((conn=35211) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1bad31ce ((conn=35212) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1247090d ((conn=35213) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:467] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6cebe8df ((conn=35214) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:43:09:469] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@226610c8 ((conn=35215) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:52:05:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7a921261 ((conn=35243) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:52:05:465] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@498cb0fc ((conn=35244) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[16:52:05:466] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5b7e0955 ((conn=35245) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:01:03:457] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@765ee685 ((conn=35275) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:04:21:593] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[17:04:38:426] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:38:441] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:38:446] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:40:078] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:42:075] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:44:074] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:46:067] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:48:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:50:075] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:52:071] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:54:064] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:56:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:04:58:075] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:00:071] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:02:066] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:04:065] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:06:074] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:08:069] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:10:065] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:12:073] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:14:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:16:064] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:18:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:20:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:22:072] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:24:070] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:26:074] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:28:072] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:30:067] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:32:063] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:34:078] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:36:074] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:38:075] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:40:095] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:42:078] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:44:067] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:46:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:48:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:50:072] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:52:062] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:54:065] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:56:077] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:05:58:070] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:00:065] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:02:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:04:062] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:06:069] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:08:063] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:10:072] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:12:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:14:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:16:072] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:18:065] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:20:063] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:22:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:24:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:26:071] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:28:064] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:30:071] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:32:063] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:34:074] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:36:076] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:38:070] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:40:080] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:42:066] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:44:071] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:46:068] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:48:070] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:50:070] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:52:071] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:54:066] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:56:062] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:06:58:074] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:00:069] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:02:064] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:04:063] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:12:256] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[17:07:37:468] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:37:483] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:37:488] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:37:493] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:37:499] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:38:186] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:40:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:42:176] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:44:174] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:46:183] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:48:184] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:50:176] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:52:183] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:54:176] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:56:187] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:07:58:175] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:00:183] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:02:181] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:04:187] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:06:178] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:08:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:10:182] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:12:175] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:14:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:16:180] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:18:174] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:20:174] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:22:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:24:177] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:26:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:28:180] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:30:174] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:32:181] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:34:178] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:36:184] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:38:207] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:40:182] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:42:181] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:44:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:46:178] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:48:183] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:50:183] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:52:184] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:54:181] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:56:183] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:08:58:177] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:00:187] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:02:174] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:04:184] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:06:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:08:184] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:10:174] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:12:186] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:14:176] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:16:175] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:18:187] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:20:185] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:22:177] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:24:172] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - mpbwz活动启动失败!
+[17:09:33:442] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[17:13:00:061] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[17:15:51:982] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2ba7e66b ((conn=35338) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:21:53:497] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@6198ee8f ((conn=35360) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:21:53:500] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3f67b0d8 ((conn=35362) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:21:53:503] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@47a0dfcf ((conn=35364) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:21:53:511] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@955f2ad ((conn=35365) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:512] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2dfc1dc5 ((conn=35369) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:515] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4a85a6a9 ((conn=35370) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:519] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1985850e ((conn=35371) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:524] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@545ab1ce ((conn=35372) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:525] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@27c2a126 ((conn=35373) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:527] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@4095eb99 ((conn=35374) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:533] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@758dbb70 ((conn=35375) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:24:43:536] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@74d8b0ce ((conn=35376) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[17:27:43:498] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@46a1e4e2 ((conn=35386) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:01:03:804] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[23:12:50:033] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@38593408 ((conn=35428) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:034] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@198f3e39 ((conn=35429) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:036] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@640c2bb3 ((conn=35430) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:037] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@22aa5377 ((conn=35431) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:038] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@5322da5e ((conn=35432) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:039] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@33bc58f5 ((conn=35433) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:039] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@36e8ac82 ((conn=35434) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:040] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@46a960c3 ((conn=35435) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:12:50:041] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@31ca262 ((conn=35436) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:15:45:264] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[23:21:20:780] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@395a6ce8 ((conn=35459) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:21:38:191] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@201ae4af ((conn=35460) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:27:36:693] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@155aac79 ((conn=35485) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:27:36:694] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@fa142ab ((conn=35486) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:32:59:528] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@632c669c ((conn=35499) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:567] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@fa48e10 ((conn=35500) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:571] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@7a11b124 ((conn=35501) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:574] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@28de332c ((conn=35502) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:584] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@3a1fc29 ((conn=35503) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:586] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@2371eeec ((conn=35504) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:588] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@549ee337 ((conn=35505) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:33:19:589] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@d80fddb ((conn=35506) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:35:20:203] [WARN] - com.zaxxer.hikari.HikariConfig.validateNumerics(HikariConfig.java:1084) - data-pool- - idleTimeout is close to or more than maxLifetime, disabling it.
+[23:59:01:401] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@1bcf6db7 ((conn=35591) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:59:01:402] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@f131421 ((conn=35592) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:59:01:403] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@26da932a ((conn=35593) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:59:01:404] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@771ca20b ((conn=35594) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:59:01:405] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@175edb8a ((conn=35595) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
+[23:59:01:406] [WARN] - com.zaxxer.hikari.pool.PoolBase.isConnectionAlive(PoolBase.java:184) - data-pool- - Failed to validate connection org.mariadb.jdbc.Connection@fb675c ((conn=35596) Connection.setNetworkTimeout cannot be called on a closed connection). Possibly consider using a shorter maxLifetime value.
