@@ -6,6 +6,7 @@ import { RobotShow } from '../Game/RobotShow';
 import { getEnergyBlocksFromPayload } from '../global/MessageTypes';
 import { CharacterCreatePanel } from './CharacterPanel';
 import { normalizeBagItemsResponse } from '../global/protocol/BagProtocol';
+import { ServerSelectPanel } from './ServerSelectPanel';
 const { ccclass, property } = _decorator;
 
 @ccclass('CharacterSelect')
@@ -123,6 +124,8 @@ export class CharacterSelect extends Component {
         if (this.deleteonfirm) this.deleteonfirm.active = false;
         // 默认隐藏Loading
         if (this.loadingNode) this.loadingNode.active = false;
+        // 进入选角场景强制打开选服面板（模拟选服）
+        ServerSelectPanel.ensureInScene(this.node);
     }
 
     start() {

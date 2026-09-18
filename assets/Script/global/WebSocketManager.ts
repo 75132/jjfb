@@ -80,6 +80,21 @@ export class WebSocketManager extends Component {
 
     public isConnected(): boolean { return this.isConnectedFlag; }
 
+    /** Loading 超时后置位：禁止一切自动 connect/重连，直到 allowConnectAttempts */
+    private connectSuspended: boolean = false;
+
+    /** 是否已停止自动连接（Loading 失败停留态） */
+    public isConnectSuspended(): boolean {
+        return this.connectSuspended;
+    }
+
+    /** 允许再次尝试连接（进入 Loading 启动流程时调用） */
+    public allowConnectAttempts(): void {
+        this.connectSuspended = false;
+        this.reconnectAttempts = 0;
+        this.isReconnecting = false;
+    }
+
     public isSessionAuthenticated(): boolean {
         return this.sessionAuthenticated;
     }
@@ -741,6 +756,10 @@ export class WebSocketManager extends Component {
     }
 
     public connect(): void {
+        // Loading 30s 超时后：本地不再自动尝试连接
+        if (this.connectSuspended) {
+            return;
+        }
         if (this.isConnecting) { return; }
         // 关键：readyState=CONNECTING 时也必须视为“正在连接”，否则会重复 new WebSocket 导致 1006 抖动
         if (this.socket) {
@@ -749,11 +768,17 @@ export class WebSocketManager extends Component {
             }
         }
 
-        // 安全阀门控：离线/未鉴权超过阈值，禁止直接使用本地 token 自动上线
+        // 安全阀门控：离线过久的本地 token 不可直接当在线；清凭证后仍要允许连上服务器（登录页 Loading/登录依赖 WS）
         if (this.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [WebSocketManager] 离线超过阈值（${GameConfig.AUTH_INACTIVITY_RELOGIN_MS}ms），强制回登录并清除本地会话`);
-            this.returnToLogin();
-            return;
+            console.warn(`⚠️ [WebSocketManager] 离线超过阈值（${GameConfig.AUTH_INACTIVITY_RELOGIN_MS}ms），清除本地会话后继续连接`);
+            this.clearAll();
+            this.isGameRunning = false;
+            const currentSceneName = director.getScene()?.name;
+            if (currentSceneName && currentSceneName !== GameConfig.SCENE_NAMES.LOGIN) {
+                director.loadScene(GameConfig.SCENE_NAMES.LOGIN);
+                return;
+            }
+            // 已在 Login：清完凭证后继续往下 connect
         }
 
         this.isConnecting = true;
@@ -827,6 +852,10 @@ export class WebSocketManager extends Component {
             // 注意：连接关闭时不清除数据（token、userId、characterId），因为可能是临时断开
             // 只有在重连失败或明确登出时才清除数据
             const node = (this as any).node; if (node && typeof node.emit === 'function') { node.emit('network_disconnect'); }
+            // Loading 已中止连接：不再排队自动重连
+            if (this.connectSuspended) {
+                return;
+            }
             if (!this.isReconnecting && this.reconnectAttempts < this.maxReconnectAttempts) {
                 this.reconnectAttempts++; 
                 this.isReconnecting = true; 
@@ -870,6 +899,68 @@ export class WebSocketManager extends Component {
         this.stopHeartbeat();
         if (this.socket) { this.socket.close(); } 
     }
+
+    /**
+     * 登录 Loading 等场景：主动放弃连接/重连（不清 token，不跳场景）。
+     * 置位 connectSuspended，之后本地不会再自动 connect / 重连，直到 allowConnectAttempts。
+     */
+    public abortConnectAttempts(): void {
+        this.connectSuspended = true;
+        this.isReconnecting = false;
+        this.reconnectAttempts = this.maxReconnectAttempts;
+        this.isConnecting = false;
+        if (this._reconnectTimerId !== -1) {
+            clearTimeout(this._reconnectTimerId);
+            this._reconnectTimerId = -1;
+        }
+        if (this.handshakeTimeout !== -1) {
+            clearTimeout(this.handshakeTimeout);
+            this.handshakeTimeout = -1;
+        }
+        this.stopHeartbeat();
+        this._invalidateSocket();
+        this.isConnectedFlag = false;
+    }
+
+    /**
+     * 强制重连：作废卡住的 CONNECTING/半开连接后重新 connect（Loading 等待期使用）。
+     */
+    public forceReconnect(): void {
+        if (this.connectSuspended) {
+            return;
+        }
+        this.isReconnecting = false;
+        this.reconnectAttempts = 0;
+        this.isConnecting = false;
+        if (this._reconnectTimerId !== -1) {
+            clearTimeout(this._reconnectTimerId);
+            this._reconnectTimerId = -1;
+        }
+        if (this.handshakeTimeout !== -1) {
+            clearTimeout(this.handshakeTimeout);
+            this.handshakeTimeout = -1;
+        }
+        this._invalidateSocket();
+        this.isConnectedFlag = false;
+        this.connect();
+    }
+
+    /** 作废当前 socket，使旧 onopen/onerror/onclose 全部失效 */
+    private _invalidateSocket(): void {
+        this._connectSeq++;
+        const old = this.socket;
+        this.socket = null!;
+        if (old) {
+            try {
+                old.onopen = null;
+                old.onmessage = null;
+                old.onerror = null;
+                old.onclose = null;
+            } catch {}
+            try { old.close(); } catch {}
+        }
+    }
+
     /**
      * 游戏内切换角色：通知服务端结束当前角色会话、清空本地 characterId，保留 token/userId，并关闭连接后自动重连。
      * 注意：这不是「账号登出」；登录界面的退出请用 {@link fullLogout}。

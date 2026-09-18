@@ -17,6 +17,12 @@ export interface ConnectionInitMessage extends BaseMessage {
     data?: string;
 }
 
+/** 登录 Loading 启动检测（无需鉴权） */
+export interface ClientBootCheckMessage extends BaseMessage {
+    type: typeof GameConfig.MESSAGE_TYPES.CLIENT_BOOT_CHECK;
+    stage: 'check_update' | 'download_resources' | 'get_character' | 'loading';
+}
+
 export interface AuthRequestMessage extends BaseMessage {
     type: typeof GameConfig.MESSAGE_TYPES.AUTH_REQUEST;
     token: string;

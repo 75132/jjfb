@@ -103,6 +103,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           /** 最近一次成功 all_characters_response 的规范化指纹（用于选角去重刷 UI） */
           this.lastAllCharactersFingerprint = '';
+
+          /** Loading 超时后置位：禁止一切自动 connect/重连，直到 allowConnectAttempts */
+          this.connectSuspended = false;
           this.heartbeatTimer = -1;
           this.HEARTBEAT_INTERVAL = 30000;
           // 握手状态标记
@@ -136,6 +139,19 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         isConnected() {
           return this.isConnectedFlag;
+        }
+
+        /** 是否已停止自动连接（Loading 失败停留态） */
+        isConnectSuspended() {
+          return this.connectSuspended;
+        }
+        /** 允许再次尝试连接（进入 Loading 启动流程时调用） */
+
+
+        allowConnectAttempts() {
+          this.connectSuspended = false;
+          this.reconnectAttempts = 0;
+          this.isReconnecting = false;
         }
 
         isSessionAuthenticated() {
@@ -912,6 +928,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         connect() {
+          // Loading 30s 超时后：本地不再自动尝试连接
+          if (this.connectSuspended) {
+            return;
+          }
+
           if (this.isConnecting) {
             return;
           } // 关键：readyState=CONNECTING 时也必须视为“正在连接”，否则会重复 new WebSocket 导致 1006 抖动
@@ -921,15 +942,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING) {
               return;
             }
-          } // 安全阀门控：离线/未鉴权超过阈值，禁止直接使用本地 token 自动上线
+          } // 安全阀门控：离线过久的本地 token 不可直接当在线；清凭证后仍要允许连上服务器（登录页 Loading/登录依赖 WS）
 
 
           if (this.isReloginRequiredByIdle()) {
+            var _director$getScene;
+
             console.warn("\u26A0\uFE0F [WebSocketManager] \u79BB\u7EBF\u8D85\u8FC7\u9608\u503C\uFF08" + (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
-            }), GameConfig) : GameConfig).AUTH_INACTIVITY_RELOGIN_MS + "ms\uFF09\uFF0C\u5F3A\u5236\u56DE\u767B\u5F55\u5E76\u6E05\u9664\u672C\u5730\u4F1A\u8BDD");
-            this.returnToLogin();
-            return;
+            }), GameConfig) : GameConfig).AUTH_INACTIVITY_RELOGIN_MS + "ms\uFF09\uFF0C\u6E05\u9664\u672C\u5730\u4F1A\u8BDD\u540E\u7EE7\u7EED\u8FDE\u63A5");
+            this.clearAll();
+            this.isGameRunning = false;
+            var currentSceneName = (_director$getScene = director.getScene()) == null ? void 0 : _director$getScene.name;
+
+            if (currentSceneName && currentSceneName !== (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+              error: Error()
+            }), GameConfig) : GameConfig).SCENE_NAMES.LOGIN) {
+              director.loadScene((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                error: Error()
+              }), GameConfig) : GameConfig).SCENE_NAMES.LOGIN);
+              return;
+            } // 已在 Login：清完凭证后继续往下 connect
+
           }
 
           this.isConnecting = true; // 开新连接前：清掉上一次的重连定时器与握手超时，避免堆积触发
@@ -1031,6 +1065,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (node && typeof node.emit === 'function') {
               node.emit('network_disconnect');
+            } // Loading 已中止连接：不再排队自动重连
+
+
+            if (this.connectSuspended) {
+              return;
             }
 
             if (!this.isReconnecting && this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -1089,6 +1128,84 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (this.socket) {
             this.socket.close();
+          }
+        }
+        /**
+         * 登录 Loading 等场景：主动放弃连接/重连（不清 token，不跳场景）。
+         * 置位 connectSuspended，之后本地不会再自动 connect / 重连，直到 allowConnectAttempts。
+         */
+
+
+        abortConnectAttempts() {
+          this.connectSuspended = true;
+          this.isReconnecting = false;
+          this.reconnectAttempts = this.maxReconnectAttempts;
+          this.isConnecting = false;
+
+          if (this._reconnectTimerId !== -1) {
+            clearTimeout(this._reconnectTimerId);
+            this._reconnectTimerId = -1;
+          }
+
+          if (this.handshakeTimeout !== -1) {
+            clearTimeout(this.handshakeTimeout);
+            this.handshakeTimeout = -1;
+          }
+
+          this.stopHeartbeat();
+
+          this._invalidateSocket();
+
+          this.isConnectedFlag = false;
+        }
+        /**
+         * 强制重连：作废卡住的 CONNECTING/半开连接后重新 connect（Loading 等待期使用）。
+         */
+
+
+        forceReconnect() {
+          if (this.connectSuspended) {
+            return;
+          }
+
+          this.isReconnecting = false;
+          this.reconnectAttempts = 0;
+          this.isConnecting = false;
+
+          if (this._reconnectTimerId !== -1) {
+            clearTimeout(this._reconnectTimerId);
+            this._reconnectTimerId = -1;
+          }
+
+          if (this.handshakeTimeout !== -1) {
+            clearTimeout(this.handshakeTimeout);
+            this.handshakeTimeout = -1;
+          }
+
+          this._invalidateSocket();
+
+          this.isConnectedFlag = false;
+          this.connect();
+        }
+        /** 作废当前 socket，使旧 onopen/onerror/onclose 全部失效 */
+
+
+        _invalidateSocket() {
+          this._connectSeq++;
+          var old = this.socket;
+          this.socket = null;
+
+          if (old) {
+            try {
+              old.onopen = null;
+              old.onmessage = null;
+              old.onerror = null;
+              old.onclose = null;
+            } catch (_unused11) {}
+
+            try {
+              old.close();
+            } catch (_unused12) {}
           }
         }
         /**
@@ -1163,7 +1280,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (message && this.socket && this.socket.readyState === WebSocket.OPEN) {
               try {
                 this.socket.send(JSON.stringify(message));
-              } catch (_unused11) {
+              } catch (_unused13) {
                 this.messageQueue.unshift(message);
                 break;
               }
@@ -1387,7 +1504,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               try {
                 console.log("\uD83D\uDCE5 [WebSocketManager] \u6536\u5230\u6D88\u606F: type=" + data.type, data);
-              } catch (_unused12) {}
+              } catch (_unused14) {}
 
               var node = this.node;
 
@@ -1396,7 +1513,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
                 try {
                   console.log("\u2705 [WebSocketManager] \u5DF2\u89E6\u53D1\u4E8B\u4EF6: " + data.type);
-                } catch (_unused13) {}
+                } catch (_unused15) {}
               } else {
                 console.warn("\u26A0\uFE0F [WebSocketManager] \u65E0\u6CD5\u89E6\u53D1\u4E8B\u4EF6 " + data.type + "\uFF0Cnode\u65E0\u6548");
               }
@@ -1429,11 +1546,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         returnToLogin() {
-          var _director$getScene;
+          var _director$getScene2;
 
           this.clearAll();
           this.isGameRunning = false;
-          var currentSceneName = (_director$getScene = director.getScene()) == null ? void 0 : _director$getScene.name;
+          var currentSceneName = (_director$getScene2 = director.getScene()) == null ? void 0 : _director$getScene2.name;
 
           if (currentSceneName !== (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()

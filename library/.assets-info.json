@@ -10,7 +10,7 @@
       "uuid": "f2cccbbf-23b3-4a18-86d2-52996304b256"
     },
     "resources": {
-      "time": 1775365689614.359,
+      "time": 1789316985695.6152,
       "uuid": "45e247a6-035e-4f22-a6d2-612cbcf4c733"
     },
     "Scene": {
@@ -22,7 +22,7 @@
       "uuid": "086861e0-2d2c-4808-b92b-d564d372e9d9"
     },
     "UI": {
-      "time": 1787997127705.5142,
+      "time": 1789659135937.37,
       "uuid": "5af0490f-69ae-4863-8029-59e7fdc57df7"
     },
     "UIPrefab": {
@@ -82,7 +82,7 @@
       "uuid": "d4dda798-88e0-4426-9ee9-2dcf3f54de2c"
     },
     "Script\\CharacterSelect": {
-      "time": 1777830811702.8213,
+      "time": 1789661452515.0847,
       "uuid": "417669d8-a87a-41c9-b258-0fe6dfc4639d"
     },
     "Script\\Game": {
@@ -94,7 +94,7 @@
       "uuid": "26482aef-da31-425c-9354-9a732b60ddca"
     },
     "Script\\login": {
-      "time": 1777830811718.801,
+      "time": 1789494743407.2249,
       "uuid": "7809e49d-4c2c-4b31-8431-03d89acd02e0"
     },
     "UI\\BG": {
@@ -102,11 +102,11 @@
       "uuid": "c71710f1-0f92-4e8b-a008-69f7e73f5665"
     },
     "UI\\Game": {
-      "time": 1788083340168.0598,
+      "time": 1789662613268.16,
       "uuid": "a3f2ef33-ca36-4853-97fe-3b00c19d27f9"
     },
     "UI\\Loading": {
-      "time": 1775365693159.7888,
+      "time": 1789493718586.9495,
       "uuid": "c391edfa-c025-4dc4-9f66-b92eae6d27ce"
     },
     "UI\\Login": {
@@ -658,15 +658,15 @@
       "uuid": "ec964700-f57a-44a8-9e1a-bc4cf8ce21c3"
     },
     "Scene\\CharacterSelect.scene": {
-      "time": 1777895535853.3313,
+      "time": 1789662615560.5916,
       "uuid": "02618dfd-c9a4-435a-a8da-585a0c970939"
     },
     "Scene\\Game.scene": {
-      "time": 1788105172766.3633,
+      "time": 1789664392394.766,
       "uuid": "52951fea-982c-46ee-a091-a218f6765fb9"
     },
     "Scene\\Login.scene": {
-      "time": 1777895535847.34,
+      "time": 1789498066602.7173,
       "uuid": "7f08a11f-c813-4855-af2a-fdfb427d9447"
     },
     "UI\\1 (40).png": {
@@ -698,7 +698,7 @@
       "uuid": "37e7df6d-889c-4dda-9ddd-ff2a676e4f31"
     },
     "UIPrefab\\GameMenuButton.prefab": {
-      "time": 1766308752000,
+      "time": 1789662754987.882,
       "uuid": "4a774781-cfe4-4dc8-b3e1-34c875bab976"
     },
     "UIPrefab\\MiniGame2ListPrefab.prefab": {
@@ -2446,7 +2446,7 @@
       "uuid": "45b2b286-175a-40ed-bb8b-1a25c314aa7e"
     },
     "Script\\CharacterSelect\\CharacterSelect.ts": {
-      "time": 1785670709935.63,
+      "time": 1789661409952.4739,
       "uuid": "320ada63-38ff-4d0d-8cac-64f3bc1f9bfa"
     },
     "Script\\CharacterSelect\\CharacterSelectControl.ts": {
@@ -2566,7 +2566,7 @@
       "uuid": "bd8b37af-eab2-4ffa-abf6-cddc12dfc547"
     },
     "Script\\global\\GameConfig.ts": {
-      "time": 1788010030518.5818,
+      "time": 1789495751563.0754,
       "uuid": "08c7d6d0-23d4-4a4a-b06d-d46bfa3f564e"
     },
     "Script\\global\\log.ts": {
@@ -2574,7 +2574,7 @@
       "uuid": "318f1454-1373-46fa-8831-8bf9ab391c2c"
     },
     "Script\\global\\MessageTypes.ts": {
-      "time": 1775310662000,
+      "time": 1789494748424.5276,
       "uuid": "3714d100-27bc-455e-b733-9bdd0e99c540"
     },
     "Script\\global\\PerformanceMonitor.ts": {
@@ -2594,7 +2594,7 @@
       "uuid": "3c67f6fd-9340-42e7-a7c7-1141518ace38"
     },
     "Script\\global\\WebSocketManager.ts": {
-      "time": 1785680216910.232,
+      "time": 1789498555728.5083,
       "uuid": "9eef60a9-2ca1-438a-a2ca-151a31f66102"
     },
     "Script\\login\\ChangePasswordPanel.ts": {
@@ -2602,7 +2602,7 @@
       "uuid": "65684acb-c3ea-4c22-ab4b-e9b6c40db885"
     },
     "Script\\login\\login.ts": {
-      "time": 1781708545724.9932,
+      "time": 1789495209551.558,
       "uuid": "21752bef-813d-41a9-9ee7-fbc59daf0f2a"
     },
     "UI\\BG\\1 (26).png": {
@@ -10707,6 +10707,157 @@
     "resources\\Sample\\剧情脚本\\map_00.json": {
       "time": 1788105862663.2107,
       "uuid": "8f11671d-3151-4828-808e-f967011334ee"
+    },
+    "resources\\Skill.meta": {
+      "time": 1789316985896.7334
+    },
+    "resources\\Skill": {
+      "time": 1789318914207.8345,
+      "uuid": "396535ef-0d3b-4ea1-9da1-bc9e8a70127c"
+    },
+    "resources\\Skill\\xg2.mrp__files_gunz__shengmingshequ_xg2.gif.meta": {
+      "time": 1789318914460.9895
+    },
+    "resources\\Skill\\xg2.mrp__files_gunz__zhaqu_xg2.gif.meta": {
+      "time": 1789318914464.9922
+    },
+    "resources\\Skill\\xg2.mrp__files_gunz__shengmingshequ_xg2.gif": {
+      "time": 1788630449580.8972,
+      "uuid": "419056d9-ddb3-4c7c-ac20-aa5780dd52d4"
+    },
+    "resources\\Skill\\xg2.mrp__files_gunz__zhaqu_xg2.gif": {
+      "time": 1788630451074.814,
+      "uuid": "55d20733-878d-4a7e-9802-f4c0c570e70b"
+    },
+    "UI\\Loading\\LoadingUI.meta": {
+      "time": 1789493718719.5315
+    },
+    "UI\\Loading\\LoadingUI\\bar_slash.png.meta": {
+      "time": 1789493718786.4116
+    },
+    "UI\\Loading\\LoadingUI\\progress_track.png.meta": {
+      "time": 1789493718776.403
+    },
+    "UI\\Loading\\LoadingUI\\slogo.png.meta": {
+      "time": 1789493718791.4062
+    },
+    "UI\\Loading\\LoadingUI": {
+      "time": 1789497816052.0896,
+      "uuid": "7ada4e61-30bd-4abf-8ad3-88b8757fc349"
+    },
+    "UI\\Loading\\LoadingUI\\progress_track.png": {
+      "time": 1789493036479.5032,
+      "uuid": "75ddc454-11d8-4380-92ca-53767c2a95ec"
+    },
+    "UI\\Loading\\LoadingUI\\bar_slash.png": {
+      "time": 1789493036482.5098,
+      "uuid": "16293666-1a33-4c56-87c3-7018fb1e7edb"
+    },
+    "UI\\Loading\\LoadingUI\\slogo.png": {
+      "time": 1789493036476.5242,
+      "uuid": "b0a700b3-bdbf-4318-b3fe-5e06caa549c5"
+    },
+    "Script\\login\\LoadingPanel.ts.meta": {
+      "time": 1789494743407.2249
+    },
+    "Script\\login\\LoadingPanel.ts": {
+      "time": 1789498569941.709,
+      "uuid": "cea67906-7922-4d29-8941-94f8d167f5e8"
+    },
+    "UI\\Loading\\LoadingUI\\show1.png.meta": {
+      "time": 1789497816290.7593
+    },
+    "UI\\Loading\\LoadingUI\\show2.png.meta": {
+      "time": 1789497816285.7622
+    },
+    "UI\\Loading\\LoadingUI\\show3.png.meta": {
+      "time": 1789497816286.7683
+    },
+    "UI\\Loading\\LoadingUI\\show2.png": {
+      "time": 1789497528356.685,
+      "uuid": "ee731b10-74a6-4671-909e-fa189afe559a"
+    },
+    "UI\\Loading\\LoadingUI\\show3.png": {
+      "time": 1789497528394.8296,
+      "uuid": "2db9758a-8579-4d15-a292-90019c1e0dd7"
+    },
+    "UI\\Loading\\LoadingUI\\show1.png": {
+      "time": 1789497528316.6982,
+      "uuid": "2d594862-8a33-413f-9f37-2bcc8419621e"
+    },
+    "UI\\CharacterSelect\\row_normal.png.meta": {
+      "time": 1789659161472.7996
+    },
+    "UI\\CharacterSelect\\row_selected.png.meta": {
+      "time": 1789659161469.7952
+    },
+    "UI\\CharacterSelect\\scroll_arrow_down.png.meta": {
+      "time": 1789659161458.792
+    },
+    "UI\\CharacterSelect\\scroll_arrow_up.png.meta": {
+      "time": 1789659161455.7952
+    },
+    "UI\\CharacterSelect\\softkey_bar.png.meta": {
+      "time": 1789659161453.7935
+    },
+    "UI\\CharacterSelect\\title_chrome.png.meta": {
+      "time": 1789659161513.7937
+    },
+    "UI\\CharacterSelect": {
+      "time": 1789659161224.7983,
+      "uuid": "f63583d7-6ac7-48c1-96d4-6fca5e5b8d59"
+    },
+    "UI\\CharacterSelect\\softkey_bar.png": {
+      "time": 1789658848908.3535,
+      "uuid": "4f88bf71-04a0-4102-8e44-5bab3e713629"
+    },
+    "UI\\CharacterSelect\\scroll_arrow_up.png": {
+      "time": 1789658848901.3586,
+      "uuid": "aeb13251-2e9f-4194-9038-2a4e944d66e1"
+    },
+    "UI\\CharacterSelect\\scroll_arrow_down.png": {
+      "time": 1789658848905.3528,
+      "uuid": "8f3168e4-9003-4e81-b700-5d7d9fdfd33c"
+    },
+    "UI\\CharacterSelect\\row_selected.png": {
+      "time": 1789658848898.3574,
+      "uuid": "7d0b0419-2cc9-4ead-87b0-3b636255ece3"
+    },
+    "UI\\CharacterSelect\\row_normal.png": {
+      "time": 1789658848893.354,
+      "uuid": "c18c474a-5c66-4efa-9c1b-999d54ced42e"
+    },
+    "UI\\CharacterSelect\\title_chrome.png": {
+      "time": 1789658848887.358,
+      "uuid": "8b03a172-cde2-4ffc-aacc-27c47416d6bf"
+    },
+    "Script\\CharacterSelect\\ServerSelectPanel.ts.meta": {
+      "time": 1789661452516.09
+    },
+    "Script\\CharacterSelect\\ServerSelectPanel.ts": {
+      "time": 1789661437865.8733,
+      "uuid": "36b0cd90-85db-4359-b97c-0d8dbf3a238b"
+    },
+    "UI\\Game\\Gamemenu.meta": {
+      "time": 1789662613410.1548
+    },
+    "UI\\Game\\Gamemenu\\cell_normal.png.meta": {
+      "time": 1789663207788.694
+    },
+    "UI\\Game\\Gamemenu\\cell_selected.png.meta": {
+      "time": 1789662613460.1538
+    },
+    "UI\\Game\\Gamemenu": {
+      "time": 1789663204522.0942,
+      "uuid": "f037e102-5b6b-48b8-8cb9-4db25ee13ecd"
+    },
+    "UI\\Game\\Gamemenu\\cell_selected.png": {
+      "time": 1789662872118.166,
+      "uuid": "cecb43a3-d8f5-415b-bb04-4b7fe8518548"
+    },
+    "UI\\Game\\Gamemenu\\cell_normal.png": {
+      "time": 1789663204526.1182,
+      "uuid": "9a24b68c-e971-475b-8a29-398a8054d5d0"
     }
   },
   "missing": {}

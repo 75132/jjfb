@@ -1,8 +1,0 @@
-[00:35:00:744] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 下达战斗指令时错误
-[10:53:27:930] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 下达战斗指令时错误
-[23:05:19:675] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 清理通知活动时异常：
-### Error querying database.  Cause: java.sql.SQLTransientConnectionException: data-pool- - Connection is not available, request timed out after 65051ms.
-### The error may exist in my/dao/roleMapper.xml
-### The error may involve my.dao.roleMapper.count
-### The error occurred while executing a query
-### Cause: java.sql.SQLTransientConnectionException: data-pool- - Connection is not available, request timed out after 65051ms.

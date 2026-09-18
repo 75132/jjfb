@@ -52,6 +52,12 @@ ROUTES: Dict[str, RouteHandler] = {
         returns_user_ids=False,
         description='连接初始化'
     ),
+    'client_boot_check': RouteHandler(
+        connection_handler.handle_client_boot_check,
+        require_auth=False,
+        returns_user_ids=False,
+        description='登录Loading启动检测（更新/资源/角色资料 stub）'
+    ),
     
     # ========== 登录相关（不需要认证） ==========
     'login': RouteHandler(

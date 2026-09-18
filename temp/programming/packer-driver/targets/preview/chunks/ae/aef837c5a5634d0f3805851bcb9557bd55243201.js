@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Sprite, SpriteFrame, Label, Button, director, WebSocketManager, GameConfig, DataCacheManager, RobotShow, getEnergyBlocksFromPayload, CharacterCreatePanel, normalizeBagItemsResponse, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _crd, ccclass, property, CharacterSelect;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Sprite, SpriteFrame, Label, Button, director, WebSocketManager, GameConfig, DataCacheManager, RobotShow, getEnergyBlocksFromPayload, CharacterCreatePanel, normalizeBagItemsResponse, ServerSelectPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _crd, ccclass, property, CharacterSelect;
 
   function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -39,6 +39,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("normalizeBagItemsResponse", "../global/protocol/BagProtocol", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfServerSelectPanel(extras) {
+    _reporterNs.report("ServerSelectPanel", "./ServerSelectPanel", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -68,6 +72,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       CharacterCreatePanel = _unresolved_7.CharacterCreatePanel;
     }, function (_unresolved_8) {
       normalizeBagItemsResponse = _unresolved_8.normalizeBagItemsResponse;
+    }, function (_unresolved_9) {
+      ServerSelectPanel = _unresolved_9.ServerSelectPanel;
     }],
     execute: function () {
       _crd = true;
@@ -451,7 +457,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.createPanel) this.createPanel.active = false;
           if (this.deleteonfirm) this.deleteonfirm.active = false; // 默认隐藏Loading
 
-          if (this.loadingNode) this.loadingNode.active = false;
+          if (this.loadingNode) this.loadingNode.active = false; // 进入选角场景强制打开选服面板（模拟选服）
+
+          (_crd && ServerSelectPanel === void 0 ? (_reportPossibleCrUseOfServerSelectPanel({
+            error: Error()
+          }), ServerSelectPanel) : ServerSelectPanel).ensureInScene(this.node);
         }
 
         start() {

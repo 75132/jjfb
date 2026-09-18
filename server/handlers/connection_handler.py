@@ -89,3 +89,65 @@ async def handle_connection_init(websocket, data):
         request_data=data
     )
 
+
+# 登录 Loading 启动检测阶段（与客户端 LoadingPanel 对齐；当前为简易 stub）
+_CLIENT_BOOT_STAGES = {
+    'check_update': {
+        'tip': '检查更新列表',
+        'need_update': False,
+        'min_client_version': '1.0.0',
+        'latest_version': '1.0.0',
+    },
+    'download_resources': {
+        'tip': '正在下载资源文件，请耐心等待',
+        'files': [],
+        'progress': 100,
+    },
+    'get_character': {
+        'tip': '正在获取角色资料',
+        # 未登录阶段不拉真实角色；仅确认检测链路可用
+        'ready': True,
+    },
+    'loading': {
+        'tip': '载入中，请稍等',
+        'ready': True,
+    },
+}
+
+
+async def handle_client_boot_check(websocket, data):
+    """
+    登录页 Loading 启动检测（无需鉴权）
+
+    请求：
+    {
+        "type": "client_boot_check",
+        "stage": "check_update" | "download_resources" | "get_character" | "loading"
+    }
+    """
+    from services.logger_service import get_logger
+    logger = get_logger()
+
+    stage = str(data.get('stage') or '').strip()
+    if stage not in _CLIENT_BOOT_STAGES:
+        await utils.send_error_response(
+            websocket,
+            'client_boot_check',
+            f'未知 stage: {stage}',
+            code=400,
+            request_data=data,
+            error_code='BOOT_BAD_STAGE',
+        )
+        return
+
+    payload = dict(_CLIENT_BOOT_STAGES[stage])
+    payload['stage'] = stage
+    logger.info('client_boot_check', stage=stage)
+    await utils.send_success_response(
+        websocket,
+        'client_boot_check',
+        data=payload,
+        message=payload.get('tip') or 'ok',
+        request_data=data,
+    )
+

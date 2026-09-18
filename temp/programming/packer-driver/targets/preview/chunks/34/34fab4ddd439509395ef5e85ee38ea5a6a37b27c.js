@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, EditBox, Button, Label, director, WebSocketManager, GameConfig, ChangePasswordPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _crd, ccclass, property, Login;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, EditBox, Button, Label, director, WebSocketManager, GameConfig, ChangePasswordPanel, LoadingPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _crd, ccclass, property, Login;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -19,6 +19,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfChangePasswordPanel(extras) {
     _reporterNs.report("ChangePasswordPanel", "./ChangePasswordPanel", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLoadingPanel(extras) {
+    _reporterNs.report("LoadingPanel", "./LoadingPanel", _context.meta, extras);
   }
 
   return {
@@ -41,6 +45,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       GameConfig = _unresolved_3.GameConfig;
     }, function (_unresolved_4) {
       ChangePasswordPanel = _unresolved_4.ChangePasswordPanel;
+    }, function (_unresolved_5) {
+      LoadingPanel = _unresolved_5.LoadingPanel;
     }],
     execute: function () {
       _crd = true;
@@ -59,6 +65,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       }), ChangePasswordPanel) : ChangePasswordPanel), _dec9 = property(EditBox), _dec10 = property(EditBox), _dec11 = property(Label), _dec12 = property(Node), _dec13 = property({
         type: Node,
         tooltip: '进入选角加载时可选遮罩（未绑定则仅用 tipLabel）'
+      }), _dec14 = property({
+        type: _crd && LoadingPanel === void 0 ? (_reportPossibleCrUseOfLoadingPanel({
+          error: Error()
+        }), LoadingPanel) : LoadingPanel,
+        tooltip: 'Canvas/Loading 上的 LoadingPanel（未绑定则跳过启动检测）'
       }), _dec(_class = (_class2 = class Login extends Component {
         constructor() {
           super(...arguments);
@@ -88,6 +99,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           // 登录面板节点，必须手动拖拽绑定
           _initializerDefineProperty(this, "startJumpMaskNode", _descriptor12, this);
+
+          _initializerDefineProperty(this, "loadingPanel", _descriptor13, this);
 
           // 游戏面板节点
           this.gamePanelNode = null;
@@ -150,8 +163,34 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.startButton) {
             this.startButton.node.on(Button.EventType.CLICK, this.onStartButtonClick, this);
             this.startButton.node.active = false;
-          } // 检查内存中的Token状态
+          } // Loading 启动检测：默认开面板，跑完四阶段后再进入登录/自动鉴权 UI
 
+
+          if (this.loadingPanel) {
+            this.loginPanelNode.active = false;
+            if (this.startButton && this.startButton.node) this.startButton.node.active = false;
+            this.loadingPanel.startBootFlow(() => {
+              if (!this.isValid) return;
+              this.continueAfterBoot();
+            });
+            console.log('登录组件初始化完成（等待 Loading 启动检测）');
+            return;
+          }
+
+          this.continueAfterBoot();
+          console.log('登录组件初始化完成');
+        }
+        /** Loading 流程结束后：按 token 显示登录面板或自动鉴权 */
+
+
+        continueAfterBoot() {
+          if (!this.loginPanelNode) return;
+
+          if (!this.webSocketManager) {
+            this.webSocketManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
+              error: Error()
+            }), WebSocketManager) : WebSocketManager).getInstance();
+          }
 
           var token = this.webSocketManager.getToken();
           var hasGameIds = this.webSocketManager.hasGameIds();
@@ -184,8 +223,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             console.log('内存中无Token，显示登录面板');
             this.loginPanelNode.active = true;
           }
-
-          console.log('登录组件初始化完成');
         }
 
         onLoginClick() {
@@ -502,6 +539,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleNetworkDisconnect() {
+          // Loading 仍在连接中/失败停留态时，勿抢登录 UI
+          if (this.loadingPanel && this.loadingPanel.node.active && (this.loadingPanel.isRunning() || this.loadingPanel.isConnectFailed())) {
+            return;
+          }
+
           console.log('网络断开，显示登录面板');
           if (this.tipLabel) this.tipLabel.string = '网络连接已断开，请重新登录';
           if (this.loginPanelNode) this.loginPanelNode.active = true;
@@ -807,6 +849,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           return null;
         }
       }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "startJumpMaskNode", [_dec13], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return null;
+        }
+      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "loadingPanel", [_dec14], {
         configurable: true,
         enumerable: true,
         writable: true,

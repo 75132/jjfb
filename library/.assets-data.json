@@ -847,14 +847,18 @@
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@0f2b2",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1",
         "57520716-48c8-4a19-8acf-41c9f8777fb0@f9941",
-        "65f51b3c-0424-4345-82f1-f531d1548df1"
+        "65f51b3c-0424-4345-82f1-f531d1548df1",
+        "8b03a172-cde2-4ffc-aacc-27c47416d6bf@f9941",
+        "c18c474a-5c66-4efa-9c1b-999d54ced42e@f9941",
+        "7d0b0419-2cc9-4ead-87b0-3b636255ece3@f9941"
       ],
       "dependScripts": [
         "6e87858f-b2c8-4e88-810a-7ae81c566b5c",
         "320ada63-38ff-4d0d-8cac-64f3bc1f9bfa",
         "CC3eba29-7abb-723a-f7ab-ae275e2277e8",
         "45b2b286-175a-40ed-bb8b-1a25c314aa7e",
-        "7b24e195-8c45-4dca-8f6c-11012456edc7"
+        "7b24e195-8c45-4dca-8f6c-11012456edc7",
+        "36b0cd90-85db-4359-b97c-0d8dbf3a238b"
       ]
     },
     "versionCode": 1
@@ -869,9 +873,8 @@
         "544e49d6-3f05-4fa8-9a9e-091f98fc2ce8@f9941",
         "951249e0-9f16-456d-8b85-a6ca954da16b@f9941",
         "ccc3bdb5-26e3-4e96-8404-61b323bf9ee7",
-        "4a774781-cfe4-4dc8-b3e1-34c875bab976",
-        "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@0f2b2",
-        "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1",
+        "9a24b68c-e971-475b-8a29-398a8054d5d0@f9941",
+        "cecb43a3-d8f5-415b-bb04-4b7fe8518548@f9941",
         "7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca@f9941",
         "42f8f15c-669b-4d63-9319-ce35471c6242@f9941",
         "2e86500d-d2f2-4272-b8d7-b24e4dd3169e@f9941",
@@ -888,6 +891,7 @@
         "dea00b3e-c922-491c-a67e-c3b0a3c99a1a@f9941",
         "e00eec25-98f0-47b1-94d3-f3965e0df49e",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@72079",
+        "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@8d3eb",
         "aa71e85e-db8e-44d0-a98f-0ae6257ee951@f9941",
         "aa315d51-eb76-4cf5-b130-f1acde14d049@f9941",
@@ -1011,6 +1015,7 @@
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@3c50d",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@1aad1",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@9d3b8",
+        "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@0f2b2",
         "c7533286-bd2d-4dde-b3d3-7680ef444383@bf082",
         "c7533286-bd2d-4dde-b3d3-7680ef444383",
         "6612a8ac-2cdd-488a-9f4b-8bc6f8b462e1@241c4",
@@ -1154,9 +1159,9 @@
       ],
       "dependScripts": [
         "6cf1d6ae-647a-47b6-846a-bebb1884c97c",
-        "CC3eba29-7abb-723a-f7ab-ae275e2277e8",
         "c49f522f-8db2-47fd-b27d-7cebb000ef56",
         "97585498-f163-4b0b-928f-9304e50abaf1",
+        "CC3eba29-7abb-723a-f7ab-ae275e2277e8",
         "c1cf1d7c-84a1-4042-b12e-cc5765d9c1cd",
         "6f5c9f1c-c77b-4fbf-a3ff-53c80decd3e8",
         "72490835-a837-4f45-9dcf-43beb49d7008",
@@ -1202,6 +1207,13 @@
         "ccc3bdb5-26e3-4e96-8404-61b323bf9ee7@d16ce",
         "02ccf107-bee7-467f-b901-ed8b9cf51287@f9941",
         "75aad75b-5519-4527-a4e4-3251f8036a12",
+        "2d594862-8a33-413f-9f37-2bcc8419621e@f9941",
+        "ee731b10-74a6-4671-909e-fa189afe559a@f9941",
+        "2db9758a-8579-4d15-a292-90019c1e0dd7@f9941",
+        "7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca@f9941",
+        "b0a700b3-bdbf-4318-b3fe-5e06caa549c5@f9941",
+        "16293666-1a33-4c56-87c3-7018fb1e7edb@f9941",
+        "75ddc454-11d8-4380-92ca-53767c2a95ec@f9941",
         "afc47931-f066-46b0-90be-9fe61f213428@f9941",
         "ffb88a8f-af62-48f4-8f1d-3cb606443a43@f9941",
         "b730527c-3233-41c2-aaf7-7cdab58f9749@f9941"
@@ -1210,6 +1222,7 @@
         "21752bef-813d-41a9-9ee7-fbc59daf0f2a",
         "CC3eba29-7abb-723a-f7ab-ae275e2277e8",
         "65684acb-c3ea-4c22-ab4b-e9b6c40db885",
+        "cea67906-7922-4d29-8941-94f8d167f5e8",
         "318f1454-1373-46fa-8831-8bf9ab391c2c"
       ]
     },
@@ -34947,6 +34960,395 @@
     "url": "db://assets/resources/Sample/剧情脚本/map_00.json",
     "value": {
       "depends": []
+    },
+    "versionCode": 1
+  },
+  "396535ef-0d3b-4ea1-9da1-bc9e8a70127c": {
+    "url": "db://assets/resources/Skill",
+    "value": {},
+    "versionCode": 1
+  },
+  "419056d9-ddb3-4c7c-ac20-aa5780dd52d4": {
+    "url": "db://assets/resources/Skill/xg2.mrp__files_gunz__shengmingshequ_xg2.gif",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "55d20733-878d-4a7e-9802-f4c0c570e70b": {
+    "url": "db://assets/resources/Skill/xg2.mrp__files_gunz__zhaqu_xg2.gif",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "16293666-1a33-4c56-87c3-7018fb1e7edb": {
+    "url": "db://assets/UI/Loading/LoadingUI/bar_slash.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "75ddc454-11d8-4380-92ca-53767c2a95ec": {
+    "url": "db://assets/UI/Loading/LoadingUI/progress_track.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "b0a700b3-bdbf-4318-b3fe-5e06caa549c5": {
+    "url": "db://assets/UI/Loading/LoadingUI/slogo.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "7ada4e61-30bd-4abf-8ad3-88b8757fc349": {
+    "url": "db://assets/UI/Loading/LoadingUI",
+    "value": {},
+    "versionCode": 1
+  },
+  "75ddc454-11d8-4380-92ca-53767c2a95ec@6c48a": {
+    "url": "db://assets/UI/Loading/LoadingUI/progress_track.png@6c48a",
+    "value": {
+      "depends": [
+        "75ddc454-11d8-4380-92ca-53767c2a95ec"
+      ]
+    },
+    "versionCode": 1
+  },
+  "16293666-1a33-4c56-87c3-7018fb1e7edb@6c48a": {
+    "url": "db://assets/UI/Loading/LoadingUI/bar_slash.png@6c48a",
+    "value": {
+      "depends": [
+        "16293666-1a33-4c56-87c3-7018fb1e7edb"
+      ]
+    },
+    "versionCode": 1
+  },
+  "b0a700b3-bdbf-4318-b3fe-5e06caa549c5@6c48a": {
+    "url": "db://assets/UI/Loading/LoadingUI/slogo.png@6c48a",
+    "value": {
+      "depends": [
+        "b0a700b3-bdbf-4318-b3fe-5e06caa549c5"
+      ]
+    },
+    "versionCode": 1
+  },
+  "75ddc454-11d8-4380-92ca-53767c2a95ec@f9941": {
+    "url": "db://assets/UI/Loading/LoadingUI/progress_track.png@f9941",
+    "value": {
+      "depends": [
+        "75ddc454-11d8-4380-92ca-53767c2a95ec@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "16293666-1a33-4c56-87c3-7018fb1e7edb@f9941": {
+    "url": "db://assets/UI/Loading/LoadingUI/bar_slash.png@f9941",
+    "value": {
+      "depends": [
+        "16293666-1a33-4c56-87c3-7018fb1e7edb@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "b0a700b3-bdbf-4318-b3fe-5e06caa549c5@f9941": {
+    "url": "db://assets/UI/Loading/LoadingUI/slogo.png@f9941",
+    "value": {
+      "depends": [
+        "b0a700b3-bdbf-4318-b3fe-5e06caa549c5@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "cea67906-7922-4d29-8941-94f8d167f5e8": {
+    "url": "db://assets/Script/login/LoadingPanel.ts",
+    "value": {},
+    "versionCode": 1
+  },
+  "2d594862-8a33-413f-9f37-2bcc8419621e": {
+    "url": "db://assets/UI/Loading/LoadingUI/show1.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "ee731b10-74a6-4671-909e-fa189afe559a": {
+    "url": "db://assets/UI/Loading/LoadingUI/show2.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "2db9758a-8579-4d15-a292-90019c1e0dd7": {
+    "url": "db://assets/UI/Loading/LoadingUI/show3.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "2db9758a-8579-4d15-a292-90019c1e0dd7@6c48a": {
+    "url": "db://assets/UI/Loading/LoadingUI/show3.png@6c48a",
+    "value": {
+      "depends": [
+        "2db9758a-8579-4d15-a292-90019c1e0dd7"
+      ]
+    },
+    "versionCode": 1
+  },
+  "ee731b10-74a6-4671-909e-fa189afe559a@6c48a": {
+    "url": "db://assets/UI/Loading/LoadingUI/show2.png@6c48a",
+    "value": {
+      "depends": [
+        "ee731b10-74a6-4671-909e-fa189afe559a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "2d594862-8a33-413f-9f37-2bcc8419621e@6c48a": {
+    "url": "db://assets/UI/Loading/LoadingUI/show1.png@6c48a",
+    "value": {
+      "depends": [
+        "2d594862-8a33-413f-9f37-2bcc8419621e"
+      ]
+    },
+    "versionCode": 1
+  },
+  "ee731b10-74a6-4671-909e-fa189afe559a@f9941": {
+    "url": "db://assets/UI/Loading/LoadingUI/show2.png@f9941",
+    "value": {
+      "depends": [
+        "ee731b10-74a6-4671-909e-fa189afe559a@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "2db9758a-8579-4d15-a292-90019c1e0dd7@f9941": {
+    "url": "db://assets/UI/Loading/LoadingUI/show3.png@f9941",
+    "value": {
+      "depends": [
+        "2db9758a-8579-4d15-a292-90019c1e0dd7@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "2d594862-8a33-413f-9f37-2bcc8419621e@f9941": {
+    "url": "db://assets/UI/Loading/LoadingUI/show1.png@f9941",
+    "value": {
+      "depends": [
+        "2d594862-8a33-413f-9f37-2bcc8419621e@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "c18c474a-5c66-4efa-9c1b-999d54ced42e": {
+    "url": "db://assets/UI/CharacterSelect/row_normal.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "7d0b0419-2cc9-4ead-87b0-3b636255ece3": {
+    "url": "db://assets/UI/CharacterSelect/row_selected.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "8f3168e4-9003-4e81-b700-5d7d9fdfd33c": {
+    "url": "db://assets/UI/CharacterSelect/scroll_arrow_down.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "aeb13251-2e9f-4194-9038-2a4e944d66e1": {
+    "url": "db://assets/UI/CharacterSelect/scroll_arrow_up.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "4f88bf71-04a0-4102-8e44-5bab3e713629": {
+    "url": "db://assets/UI/CharacterSelect/softkey_bar.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "aeb13251-2e9f-4194-9038-2a4e944d66e1@6c48a": {
+    "url": "db://assets/UI/CharacterSelect/scroll_arrow_up.png@6c48a",
+    "value": {
+      "depends": [
+        "aeb13251-2e9f-4194-9038-2a4e944d66e1"
+      ]
+    },
+    "versionCode": 1
+  },
+  "8f3168e4-9003-4e81-b700-5d7d9fdfd33c@6c48a": {
+    "url": "db://assets/UI/CharacterSelect/scroll_arrow_down.png@6c48a",
+    "value": {
+      "depends": [
+        "8f3168e4-9003-4e81-b700-5d7d9fdfd33c"
+      ]
+    },
+    "versionCode": 1
+  },
+  "4f88bf71-04a0-4102-8e44-5bab3e713629@6c48a": {
+    "url": "db://assets/UI/CharacterSelect/softkey_bar.png@6c48a",
+    "value": {
+      "depends": [
+        "4f88bf71-04a0-4102-8e44-5bab3e713629"
+      ]
+    },
+    "versionCode": 1
+  },
+  "7d0b0419-2cc9-4ead-87b0-3b636255ece3@6c48a": {
+    "url": "db://assets/UI/CharacterSelect/row_selected.png@6c48a",
+    "value": {
+      "depends": [
+        "7d0b0419-2cc9-4ead-87b0-3b636255ece3"
+      ]
+    },
+    "versionCode": 1
+  },
+  "c18c474a-5c66-4efa-9c1b-999d54ced42e@6c48a": {
+    "url": "db://assets/UI/CharacterSelect/row_normal.png@6c48a",
+    "value": {
+      "depends": [
+        "c18c474a-5c66-4efa-9c1b-999d54ced42e"
+      ]
+    },
+    "versionCode": 1
+  },
+  "4f88bf71-04a0-4102-8e44-5bab3e713629@f9941": {
+    "url": "db://assets/UI/CharacterSelect/softkey_bar.png@f9941",
+    "value": {
+      "depends": [
+        "4f88bf71-04a0-4102-8e44-5bab3e713629@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "aeb13251-2e9f-4194-9038-2a4e944d66e1@f9941": {
+    "url": "db://assets/UI/CharacterSelect/scroll_arrow_up.png@f9941",
+    "value": {
+      "depends": [
+        "aeb13251-2e9f-4194-9038-2a4e944d66e1@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "8f3168e4-9003-4e81-b700-5d7d9fdfd33c@f9941": {
+    "url": "db://assets/UI/CharacterSelect/scroll_arrow_down.png@f9941",
+    "value": {
+      "depends": [
+        "8f3168e4-9003-4e81-b700-5d7d9fdfd33c@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "8b03a172-cde2-4ffc-aacc-27c47416d6bf": {
+    "url": "db://assets/UI/CharacterSelect/title_chrome.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "7d0b0419-2cc9-4ead-87b0-3b636255ece3@f9941": {
+    "url": "db://assets/UI/CharacterSelect/row_selected.png@f9941",
+    "value": {
+      "depends": [
+        "7d0b0419-2cc9-4ead-87b0-3b636255ece3@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "c18c474a-5c66-4efa-9c1b-999d54ced42e@f9941": {
+    "url": "db://assets/UI/CharacterSelect/row_normal.png@f9941",
+    "value": {
+      "depends": [
+        "c18c474a-5c66-4efa-9c1b-999d54ced42e@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "8b03a172-cde2-4ffc-aacc-27c47416d6bf@6c48a": {
+    "url": "db://assets/UI/CharacterSelect/title_chrome.png@6c48a",
+    "value": {
+      "depends": [
+        "8b03a172-cde2-4ffc-aacc-27c47416d6bf"
+      ]
+    },
+    "versionCode": 1
+  },
+  "8b03a172-cde2-4ffc-aacc-27c47416d6bf@f9941": {
+    "url": "db://assets/UI/CharacterSelect/title_chrome.png@f9941",
+    "value": {
+      "depends": [
+        "8b03a172-cde2-4ffc-aacc-27c47416d6bf@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "36b0cd90-85db-4359-b97c-0d8dbf3a238b": {
+    "url": "db://assets/Script/CharacterSelect/ServerSelectPanel.ts",
+    "value": {},
+    "versionCode": 1
+  },
+  "9a24b68c-e971-475b-8a29-398a8054d5d0": {
+    "url": "db://assets/UI/Game/Gamemenu/cell_normal.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "cecb43a3-d8f5-415b-bb04-4b7fe8518548": {
+    "url": "db://assets/UI/Game/Gamemenu/cell_selected.png",
+    "value": {
+      "depends": []
+    },
+    "versionCode": 1
+  },
+  "f037e102-5b6b-48b8-8cb9-4db25ee13ecd": {
+    "url": "db://assets/UI/Game/Gamemenu",
+    "value": {},
+    "versionCode": 1
+  },
+  "cecb43a3-d8f5-415b-bb04-4b7fe8518548@6c48a": {
+    "url": "db://assets/UI/Game/Gamemenu/cell_selected.png@6c48a",
+    "value": {
+      "depends": [
+        "cecb43a3-d8f5-415b-bb04-4b7fe8518548"
+      ]
+    },
+    "versionCode": 1
+  },
+  "9a24b68c-e971-475b-8a29-398a8054d5d0@6c48a": {
+    "url": "db://assets/UI/Game/Gamemenu/cell_normal.png@6c48a",
+    "value": {
+      "depends": [
+        "9a24b68c-e971-475b-8a29-398a8054d5d0"
+      ]
+    },
+    "versionCode": 1
+  },
+  "cecb43a3-d8f5-415b-bb04-4b7fe8518548@f9941": {
+    "url": "db://assets/UI/Game/Gamemenu/cell_selected.png@f9941",
+    "value": {
+      "depends": [
+        "cecb43a3-d8f5-415b-bb04-4b7fe8518548@6c48a"
+      ]
+    },
+    "versionCode": 1
+  },
+  "9a24b68c-e971-475b-8a29-398a8054d5d0@f9941": {
+    "url": "db://assets/UI/Game/Gamemenu/cell_normal.png@f9941",
+    "value": {
+      "depends": [
+        "9a24b68c-e971-475b-8a29-398a8054d5d0@6c48a"
+      ]
     },
     "versionCode": 1
   }

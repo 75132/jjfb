@@ -1,7 +1,7 @@
 {
   "modules": {
     "cce:/internal/x/cc": {
-      "mTimestamp": 9981.8212,
+      "mTimestamp": 12583.7989,
       "chunkId": "93ba276ea7b26ffcdc433fab14afc1ed6f05647b",
       "imports": [
         {
@@ -997,7 +997,7 @@
       ]
     },
     "cce:/internal/x/prerequisite-imports": {
-      "mTimestamp": 21303253.9375,
+      "mTimestamp": 17698.9917,
       "chunkId": "6d8fd2b0177941b032ddc0733af48a561fb60657",
       "imports": [
         {
@@ -1141,7 +1141,7 @@
           }
         },
         {
-          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/WebsocketControl.ts",
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/ServerSelectPanel.ts",
           "resolved": "__unresolved_10",
           "loc": {
             "start": {
@@ -1150,959 +1150,987 @@
             },
             "end": {
               "line": 5,
-              "column": 1500
+              "column": 1501
+            }
+          }
+        },
+        {
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/WebsocketControl.ts",
+          "resolved": "__unresolved_11",
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 1517
+            },
+            "end": {
+              "line": 5,
+              "column": 1610
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/AnnouncementPanel.ts",
-          "resolved": "__unresolved_11",
+          "resolved": "__unresolved_12",
           "loc": {
             "start": {
               "line": 5,
-              "column": 1516
+              "column": 1626
             },
             "end": {
               "line": 5,
-              "column": 1599
+              "column": 1709
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/AutoLoginUser.ts",
-          "resolved": "__unresolved_12",
+          "resolved": "__unresolved_13",
           "loc": {
             "start": {
               "line": 5,
-              "column": 1615
+              "column": 1725
             },
             "end": {
               "line": 5,
-              "column": 1694
+              "column": 1804
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BagItem.ts",
-          "resolved": "__unresolved_13",
+          "resolved": "__unresolved_14",
           "loc": {
             "start": {
               "line": 5,
-              "column": 1710
+              "column": 1820
             },
             "end": {
               "line": 5,
-              "column": 1783
+              "column": 1893
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleResumeController.ts",
-          "resolved": "__unresolved_14",
+          "resolved": "__unresolved_15",
           "loc": {
             "start": {
               "line": 5,
-              "column": 1799
+              "column": 1909
             },
             "end": {
               "line": 5,
-              "column": 1887
+              "column": 1997
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/BattleScene.ts",
-          "resolved": "__unresolved_15",
+          "resolved": "__unresolved_16",
           "loc": {
             "start": {
               "line": 5,
-              "column": 1903
+              "column": 2013
             },
             "end": {
               "line": 5,
-              "column": 1980
+              "column": 2090
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/CentralMenu.ts",
-          "resolved": "__unresolved_16",
+          "resolved": "__unresolved_17",
           "loc": {
             "start": {
               "line": 5,
-              "column": 1996
+              "column": 2106
             },
             "end": {
               "line": 5,
-              "column": 2073
+              "column": 2183
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/CharacterProfile.ts",
-          "resolved": "__unresolved_17",
+          "resolved": "__unresolved_18",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2089
+              "column": 2199
             },
             "end": {
               "line": 5,
-              "column": 2171
+              "column": 2281
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/FriendItem.ts",
-          "resolved": "__unresolved_18",
+          "resolved": "__unresolved_19",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2187
+              "column": 2297
             },
             "end": {
               "line": 5,
-              "column": 2263
+              "column": 2373
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/FriendPanel.ts",
-          "resolved": "__unresolved_19",
+          "resolved": "__unresolved_20",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2279
+              "column": 2389
             },
             "end": {
               "line": 5,
-              "column": 2356
+              "column": 2466
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/BattleTriggerOnContact.ts",
-          "resolved": "__unresolved_20",
+          "resolved": "__unresolved_21",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2372
+              "column": 2482
             },
             "end": {
               "line": 5,
-              "column": 2469
+              "column": 2579
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerAnimBank.ts",
-          "resolved": "__unresolved_21",
+          "resolved": "__unresolved_22",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2485
+              "column": 2595
             },
             "end": {
               "line": 5,
-              "column": 2574
+              "column": 2684
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerAnimRuntime.ts",
-          "resolved": "__unresolved_22",
+          "resolved": "__unresolved_23",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2590
+              "column": 2700
             },
             "end": {
               "line": 5,
-              "column": 2682
+              "column": 2792
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerGridMove.ts",
-          "resolved": "__unresolved_23",
+          "resolved": "__unresolved_24",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2698
+              "column": 2808
             },
             "end": {
               "line": 5,
-              "column": 2787
+              "column": 2897
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerSceneRefs.ts",
-          "resolved": "__unresolved_24",
+          "resolved": "__unresolved_25",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2803
+              "column": 2913
             },
             "end": {
               "line": 5,
-              "column": 2893
+              "column": 3003
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/PlayerStateSync.ts",
-          "resolved": "__unresolved_25",
+          "resolved": "__unresolved_26",
           "loc": {
             "start": {
               "line": 5,
-              "column": 2909
+              "column": 3019
             },
             "end": {
               "line": 5,
-              "column": 2999
+              "column": 3109
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/RemoteAvatarController.ts",
-          "resolved": "__unresolved_26",
+          "resolved": "__unresolved_27",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3015
+              "column": 3125
             },
             "end": {
               "line": 5,
-              "column": 3112
+              "column": 3222
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/WorldFollow.ts",
-          "resolved": "__unresolved_27",
+          "resolved": "__unresolved_28",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3128
+              "column": 3238
             },
             "end": {
               "line": 5,
-              "column": 3214
+              "column": 3324
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameArea/WorldOnlineSync.ts",
-          "resolved": "__unresolved_28",
+          "resolved": "__unresolved_29",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3230
+              "column": 3340
             },
             "end": {
               "line": 5,
-              "column": 3320
+              "column": 3430
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameCommonData.ts",
-          "resolved": "__unresolved_29",
+          "resolved": "__unresolved_30",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3336
+              "column": 3446
             },
             "end": {
               "line": 5,
-              "column": 3416
+              "column": 3526
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameControl.ts",
-          "resolved": "__unresolved_30",
+          "resolved": "__unresolved_31",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3432
+              "column": 3542
             },
             "end": {
               "line": 5,
-              "column": 3509
+              "column": 3619
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GameMenu.ts",
-          "resolved": "__unresolved_31",
+          "resolved": "__unresolved_32",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3525
+              "column": 3635
             },
             "end": {
               "line": 5,
-              "column": 3599
+              "column": 3709
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GlobalChat/ChatRoom.ts",
-          "resolved": "__unresolved_32",
+          "resolved": "__unresolved_33",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3615
+              "column": 3725
             },
             "end": {
               "line": 5,
-              "column": 3700
+              "column": 3810
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/GlobalChat/ChatRoomFull.ts",
-          "resolved": "__unresolved_33",
+          "resolved": "__unresolved_34",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3716
+              "column": 3826
             },
             "end": {
               "line": 5,
-              "column": 3805
+              "column": 3915
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/MailPanel.ts",
-          "resolved": "__unresolved_34",
+          "resolved": "__unresolved_35",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3821
+              "column": 3931
             },
             "end": {
               "line": 5,
-              "column": 3896
+              "column": 4006
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/MechAttributeTEST.ts",
-          "resolved": "__unresolved_35",
+          "resolved": "__unresolved_36",
           "loc": {
             "start": {
               "line": 5,
-              "column": 3912
+              "column": 4022
             },
             "end": {
               "line": 5,
-              "column": 3995
+              "column": 4105
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/MechEquipment.ts",
-          "resolved": "__unresolved_36",
+          "resolved": "__unresolved_37",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4011
+              "column": 4121
             },
             "end": {
               "line": 5,
-              "column": 4090
+              "column": 4200
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/MiniGame1.ts",
-          "resolved": "__unresolved_37",
+          "resolved": "__unresolved_38",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4106
+              "column": 4216
             },
             "end": {
               "line": 5,
-              "column": 4181
+              "column": 4291
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/MiniGame2.ts",
-          "resolved": "__unresolved_38",
+          "resolved": "__unresolved_39",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4197
+              "column": 4307
             },
             "end": {
               "line": 5,
-              "column": 4272
+              "column": 4382
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/ResourceManager.ts",
-          "resolved": "__unresolved_39",
+          "resolved": "__unresolved_40",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4288
+              "column": 4398
             },
             "end": {
               "line": 5,
-              "column": 4369
+              "column": 4479
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/RobotAttributePanel.ts",
-          "resolved": "__unresolved_40",
+          "resolved": "__unresolved_41",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4385
+              "column": 4495
             },
             "end": {
               "line": 5,
-              "column": 4470
+              "column": 4580
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/RobotEvolutionEffect.ts",
-          "resolved": "__unresolved_41",
+          "resolved": "__unresolved_42",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4486
+              "column": 4596
             },
             "end": {
               "line": 5,
-              "column": 4572
+              "column": 4682
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/RobotList.ts",
-          "resolved": "__unresolved_42",
+          "resolved": "__unresolved_43",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4588
+              "column": 4698
             },
             "end": {
               "line": 5,
-              "column": 4663
+              "column": 4773
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/RobotShow.ts",
-          "resolved": "__unresolved_43",
+          "resolved": "__unresolved_44",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4679
+              "column": 4789
             },
             "end": {
               "line": 5,
-              "column": 4754
+              "column": 4864
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/StarterMechPicker.ts",
-          "resolved": "__unresolved_44",
+          "resolved": "__unresolved_45",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4770
+              "column": 4880
             },
             "end": {
               "line": 5,
-              "column": 4853
+              "column": 4963
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/StoryManager.ts",
-          "resolved": "__unresolved_45",
+          "resolved": "__unresolved_46",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4869
+              "column": 4979
             },
             "end": {
               "line": 5,
-              "column": 4947
+              "column": 5057
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/StoryUIViewRefs.ts",
-          "resolved": "__unresolved_46",
+          "resolved": "__unresolved_47",
           "loc": {
             "start": {
               "line": 5,
-              "column": 4963
+              "column": 5073
             },
             "end": {
               "line": 5,
-              "column": 5044
+              "column": 5154
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/TaskTracker.ts",
-          "resolved": "__unresolved_47",
+          "resolved": "__unresolved_48",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5060
+              "column": 5170
             },
             "end": {
               "line": 5,
-              "column": 5137
+              "column": 5247
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/Test.ts",
-          "resolved": "__unresolved_48",
+          "resolved": "__unresolved_49",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5153
+              "column": 5263
             },
             "end": {
               "line": 5,
-              "column": 5223
+              "column": 5333
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/TopRole.ts",
-          "resolved": "__unresolved_49",
+          "resolved": "__unresolved_50",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5239
+              "column": 5349
             },
             "end": {
               "line": 5,
-              "column": 5312
+              "column": 5422
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-entry-intent.ts",
-          "resolved": "__unresolved_50",
+          "resolved": "__unresolved_51",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5328
+              "column": 5438
             },
             "end": {
               "line": 5,
-              "column": 5413
+              "column": 5523
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-restore.ts",
-          "resolved": "__unresolved_51",
+          "resolved": "__unresolved_52",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5429
+              "column": 5539
             },
             "end": {
               "line": 5,
-              "column": 5509
+              "column": 5619
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/battle-resume-gate.ts",
-          "resolved": "__unresolved_52",
+          "resolved": "__unresolved_53",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5525
+              "column": 5635
             },
             "end": {
               "line": 5,
-              "column": 5609
+              "column": 5719
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/npc-task-indicator.ts",
-          "resolved": "__unresolved_53",
+          "resolved": "__unresolved_54",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5625
+              "column": 5735
             },
             "end": {
               "line": 5,
-              "column": 5709
+              "column": 5819
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-event-flow.ts",
-          "resolved": "__unresolved_54",
+          "resolved": "__unresolved_55",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5725
+              "column": 5835
             },
             "end": {
               "line": 5,
-              "column": 5807
+              "column": 5917
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-local-mode.ts",
-          "resolved": "__unresolved_55",
+          "resolved": "__unresolved_56",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5823
+              "column": 5933
             },
             "end": {
               "line": 5,
-              "column": 5905
+              "column": 6015
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-npc-visibility.ts",
-          "resolved": "__unresolved_56",
+          "resolved": "__unresolved_57",
           "loc": {
             "start": {
               "line": 5,
-              "column": 5921
+              "column": 6031
             },
             "end": {
               "line": 5,
-              "column": 6007
+              "column": 6117
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-requirements.ts",
-          "resolved": "__unresolved_57",
+          "resolved": "__unresolved_58",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6023
+              "column": 6133
             },
             "end": {
               "line": 5,
-              "column": 6107
+              "column": 6217
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-mode.ts",
-          "resolved": "__unresolved_58",
+          "resolved": "__unresolved_59",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6123
+              "column": 6233
             },
             "end": {
               "line": 5,
-              "column": 6207
+              "column": 6317
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/story-runtime-sanitize.ts",
-          "resolved": "__unresolved_59",
+          "resolved": "__unresolved_60",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6223
+              "column": 6333
             },
             "end": {
               "line": 5,
-              "column": 6311
+              "column": 6421
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/Game/tilemap-coords.ts",
-          "resolved": "__unresolved_60",
+          "resolved": "__unresolved_61",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6327
+              "column": 6437
             },
             "end": {
               "line": 5,
-              "column": 6407
+              "column": 6517
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BagEvent.ts",
-          "resolved": "__unresolved_61",
+          "resolved": "__unresolved_62",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6423
+              "column": 6533
             },
             "end": {
               "line": 5,
-              "column": 6499
+              "column": 6609
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/BaseSceneController.ts",
-          "resolved": "__unresolved_62",
+          "resolved": "__unresolved_63",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6515
+              "column": 6625
             },
             "end": {
               "line": 5,
-              "column": 6602
+              "column": 6712
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/CentralMenu.ts",
-          "resolved": "__unresolved_63",
+          "resolved": "__unresolved_64",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6618
+              "column": 6728
             },
             "end": {
               "line": 5,
-              "column": 6697
+              "column": 6807
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/DataCacheManager.ts",
-          "resolved": "__unresolved_64",
+          "resolved": "__unresolved_65",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6713
+              "column": 6823
             },
             "end": {
               "line": 5,
-              "column": 6797
+              "column": 6907
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts",
-          "resolved": "__unresolved_65",
+          "resolved": "__unresolved_66",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6813
+              "column": 6923
             },
             "end": {
               "line": 5,
-              "column": 6891
+              "column": 7001
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/MessageTypes.ts",
-          "resolved": "__unresolved_66",
+          "resolved": "__unresolved_67",
           "loc": {
             "start": {
               "line": 5,
-              "column": 6907
+              "column": 7017
             },
             "end": {
               "line": 5,
-              "column": 6987
+              "column": 7097
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/PerformanceMonitor.ts",
-          "resolved": "__unresolved_67",
+          "resolved": "__unresolved_68",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7003
+              "column": 7113
             },
             "end": {
               "line": 5,
-              "column": 7089
+              "column": 7199
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RequestRetryManager.ts",
-          "resolved": "__unresolved_68",
+          "resolved": "__unresolved_69",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7105
+              "column": 7215
             },
             "end": {
               "line": 5,
-              "column": 7192
+              "column": 7302
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RobotGameEvents.ts",
-          "resolved": "__unresolved_69",
+          "resolved": "__unresolved_70",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7208
+              "column": 7318
             },
             "end": {
               "line": 5,
-              "column": 7291
+              "column": 7401
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/RouteDictionary.ts",
-          "resolved": "__unresolved_70",
+          "resolved": "__unresolved_71",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7307
+              "column": 7417
             },
             "end": {
               "line": 5,
-              "column": 7390
+              "column": 7500
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/SceneLoadMonitor.ts",
-          "resolved": "__unresolved_71",
+          "resolved": "__unresolved_72",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7406
+              "column": 7516
             },
             "end": {
               "line": 5,
-              "column": 7490
+              "column": 7600
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/TipWindows.ts",
-          "resolved": "__unresolved_72",
+          "resolved": "__unresolved_73",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7506
+              "column": 7616
             },
             "end": {
               "line": 5,
-              "column": 7584
+              "column": 7694
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/UILockManager.ts",
-          "resolved": "__unresolved_73",
+          "resolved": "__unresolved_74",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7600
+              "column": 7710
             },
             "end": {
               "line": 5,
-              "column": 7681
+              "column": 7791
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts",
-          "resolved": "__unresolved_74",
+          "resolved": "__unresolved_75",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7697
+              "column": 7807
             },
             "end": {
               "line": 5,
-              "column": 7781
+              "column": 7891
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/log.ts",
-          "resolved": "__unresolved_75",
+          "resolved": "__unresolved_76",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7797
+              "column": 7907
             },
             "end": {
               "line": 5,
-              "column": 7868
+              "column": 7978
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts",
-          "resolved": "__unresolved_76",
+          "resolved": "__unresolved_77",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7884
+              "column": 7994
             },
             "end": {
               "line": 5,
-              "column": 7972
+              "column": 8082
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts",
-          "resolved": "__unresolved_77",
+          "resolved": "__unresolved_78",
           "loc": {
             "start": {
               "line": 5,
-              "column": 7988
+              "column": 8098
             },
             "end": {
               "line": 5,
-              "column": 8074
+              "column": 8184
+            }
+          }
+        },
+        {
+          "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/LoadingPanel.ts",
+          "resolved": "__unresolved_79",
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 8200
+            },
+            "end": {
+              "line": 5,
+              "column": 8279
             }
           }
         },
         {
           "value": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/login.ts",
-          "resolved": "__unresolved_78",
+          "resolved": "__unresolved_80",
           "loc": {
             "start": {
               "line": 5,
-              "column": 8090
+              "column": 8295
             },
             "end": {
               "line": 5,
-              "column": 8162
+              "column": 8367
             }
           }
         }
@@ -2176,6 +2204,13 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/Return.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/ServerSelectPanel.ts"
           },
           "messages": []
         },
@@ -2652,6 +2687,13 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/LoadingPanel.ts"
           },
           "messages": []
         },
@@ -3312,7 +3354,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/CharacterSelect.ts": {
       "mTimestamp": {
-        "mtime": 1785670709935.63,
+        "mtime": 1789661409952.4739,
         "uuid": "320ada63-38ff-4d0d-8cac-64f3bc1f9bfa"
       },
       "chunkId": "aef837c5a5634d0f3805851bcb9557bd55243201",
@@ -3437,6 +3479,20 @@
               "column": 74
             }
           }
+        },
+        {
+          "value": "./ServerSelectPanel",
+          "resolved": "__unresolved_8",
+          "loc": {
+            "start": {
+              "line": 9,
+              "column": 34
+            },
+            "end": {
+              "line": 9,
+              "column": 55
+            }
+          }
         }
       ],
       "type": "esm",
@@ -3515,6 +3571,13 @@
           "resolved": {
             "type": "module",
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/protocol/BagProtocol.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/ServerSelectPanel.ts"
           },
           "messages": []
         }
@@ -9150,7 +9213,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts": {
       "mTimestamp": {
-        "mtime": 1788010030518.5818,
+        "mtime": 1789495751563.0754,
         "uuid": "08c7d6d0-23d4-4a4a-b06d-d46bfa3f564e"
       },
       "chunkId": "286c811006e81d7bd5f4c9aa5b7fd2a983502f20",
@@ -9172,7 +9235,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/MessageTypes.ts": {
       "mTimestamp": {
-        "mtime": 1775310662000,
+        "mtime": 1789494748424.5276,
         "uuid": "3714d100-27bc-455e-b733-9bdd0e99c540"
       },
       "chunkId": "f99e905be1d9c7b9cfa54f1e3838b304fa349eec",
@@ -9427,7 +9490,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts": {
       "mTimestamp": {
-        "mtime": 1785680216910.232,
+        "mtime": 1789498555728.5083,
         "uuid": "9eef60a9-2ca1-438a-a2ca-151a31f66102"
       },
       "chunkId": "e09b7bfbdbb72f5c7442f04e0ba1df6717835e84",
@@ -9753,7 +9816,7 @@
     },
     "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/login.ts": {
       "mTimestamp": {
-        "mtime": 1781708545724.9932,
+        "mtime": 1789495209551.558,
         "uuid": "21752bef-813d-41a9-9ee7-fbc59daf0f2a"
       },
       "chunkId": "34fab4ddd439509395ef5e85ee38ea5a6a37b27c",
@@ -9822,6 +9885,20 @@
               "column": 59
             }
           }
+        },
+        {
+          "value": "./LoadingPanel",
+          "resolved": "__unresolved_4",
+          "loc": {
+            "start": {
+              "line": 5,
+              "column": 29
+            },
+            "end": {
+              "line": 5,
+              "column": 45
+            }
+          }
         }
       ],
       "type": "esm",
@@ -9874,11 +9951,18 @@
             "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/ChangePasswordPanel.ts"
           },
           "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/LoadingPanel.ts"
+          },
+          "messages": []
         }
       ]
     },
     "cce:/internal/code-quality/cr.mjs": {
-      "mTimestamp": 1789288478889,
+      "mTimestamp": 1789753932273,
       "chunkId": "6a5019a719a9014c047e67aa1cf34453ab8392ce",
       "imports": [],
       "type": "esm",
@@ -10099,6 +10183,237 @@
           "resolved": {
             "type": "module",
             "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        }
+      ]
+    },
+    "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/login/LoadingPanel.ts": {
+      "mTimestamp": {
+        "mtime": 1789498569941.709,
+        "uuid": "cea67906-7922-4d29-8941-94f8d167f5e8"
+      },
+      "chunkId": "b08b48e6f5a5dbe332ddaad7b98d97cec82af955",
+      "imports": [
+        {
+          "value": "cce:/internal/code-quality/cr.mjs",
+          "resolved": "__unresolved_0"
+        },
+        {
+          "value": "cc"
+        },
+        {
+          "value": "cc"
+        },
+        {
+          "value": "cc",
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 92
+            },
+            "end": {
+              "line": 1,
+              "column": 96
+            }
+          }
+        },
+        {
+          "value": "../global/WebSocketManager",
+          "resolved": "__unresolved_1",
+          "loc": {
+            "start": {
+              "line": 2,
+              "column": 33
+            },
+            "end": {
+              "line": 2,
+              "column": 61
+            }
+          }
+        },
+        {
+          "value": "../global/GameConfig",
+          "resolved": "__unresolved_2",
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 27
+            },
+            "end": {
+              "line": 3,
+              "column": 49
+            }
+          }
+        }
+      ],
+      "type": "esm",
+      "resolutions": [
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/code-quality/cr.mjs"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts"
+          },
+          "messages": []
+        }
+      ]
+    },
+    "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/ServerSelectPanel.ts": {
+      "mTimestamp": {
+        "mtime": 1789661437865.8733,
+        "uuid": "36b0cd90-85db-4359-b97c-0d8dbf3a238b"
+      },
+      "chunkId": "affcafcd502eba17ccd43faf47e35c2572c84c07",
+      "imports": [
+        {
+          "value": "cce:/internal/code-quality/cr.mjs",
+          "resolved": "__unresolved_0"
+        },
+        {
+          "value": "cc"
+        },
+        {
+          "value": "cc"
+        },
+        {
+          "value": "cc",
+          "loc": {
+            "start": {
+              "line": 14,
+              "column": 7
+            },
+            "end": {
+              "line": 14,
+              "column": 11
+            }
+          }
+        },
+        {
+          "value": "../global/WebSocketManager",
+          "resolved": "__unresolved_1",
+          "loc": {
+            "start": {
+              "line": 15,
+              "column": 33
+            },
+            "end": {
+              "line": 15,
+              "column": 61
+            }
+          }
+        },
+        {
+          "value": "../global/GameConfig",
+          "resolved": "__unresolved_2",
+          "loc": {
+            "start": {
+              "line": 16,
+              "column": 27
+            },
+            "end": {
+              "line": 16,
+              "column": 49
+            }
+          }
+        },
+        {
+          "value": "./Return",
+          "resolved": "__unresolved_3",
+          "loc": {
+            "start": {
+              "line": 17,
+              "column": 21
+            },
+            "end": {
+              "line": 17,
+              "column": 31
+            }
+          }
+        }
+      ],
+      "type": "esm",
+      "resolutions": [
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/code-quality/cr.mjs"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "cce:/internal/x/cc"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/WebSocketManager.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/global/GameConfig.ts"
+          },
+          "messages": []
+        },
+        {
+          "resolved": {
+            "type": "module",
+            "url": "file:///D:/jjfbol-cocos/jjfbol-cocos/jjfb/assets/Script/CharacterSelect/Return.ts"
           },
           "messages": []
         }

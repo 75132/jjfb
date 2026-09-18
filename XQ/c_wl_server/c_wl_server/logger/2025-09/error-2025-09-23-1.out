@@ -1,5 +1,0 @@
-[21:46:00:464] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null
-[21:47:36:099] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null
-[21:49:27:064] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 战斗创建失败(请求数据超时)：null
-[22:09:06:990] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 下达战斗指令时错误
-[22:11:42:364] [ERROR] - my.utils.loggerUtils.error(loggerUtils.java:34) - 下达战斗指令时错误

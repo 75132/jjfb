@@ -36,6 +36,8 @@ System.register(["__unresolved_0", "cc"], function (_export, _context) {
        */
       // 基础消息接口
       // 连接相关消息
+
+      /** 登录 Loading 启动检测（无需鉴权） */
       // 心跳消息
       // 认证相关消息
       // 用户相关消息

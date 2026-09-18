@@ -23,13 +23,10 @@ System.register(["cc"], function (_export, _context) {
           try {
             var win = typeof window !== 'undefined' ? window : {};
             var override = win.__WS_URL__ || (win.localStorage ? win.localStorage.getItem('WS_URL') : null);
+            var url = override && typeof override === 'string' && override.length > 0 ? override : GameConfig.WEBSOCKET_URL; // Windows / Preview：localhost 常优先解析到 ::1，而本机服务只听 IPv4 → 一直 [WS] 错误
 
-            if (override && typeof override === 'string' && override.length > 0) {
-              return override;
-            } // 默认固定到公网地址
-
-
-            return GameConfig.WEBSOCKET_URL;
+            url = url.replace(/:\/\/localhost(?=[:/]|$)/gi, '://127.0.0.1');
+            return url;
           } catch (_unused) {
             return GameConfig.WEBSOCKET_URL;
           }
@@ -54,8 +51,8 @@ System.register(["cc"], function (_export, _context) {
       // static readonly WEBSOCKET_URL = 'ws://8.140.236.16:8001';
       // 生产环境：通过域名反向代理访问 WS
       // static readonly WEBSOCKET_URL = 'ws://www.jjfbol.cn/ws'; 
-      // 本地测试地址
-      GameConfig.WEBSOCKET_URL = 'ws://localhost:8001';
+      // 本地测试地址（用 127.0.0.1，避免 Windows 上 localhost 优先走 ::1 而服务端仅听 IPv4 导致连不上）
+      GameConfig.WEBSOCKET_URL = 'ws://127.0.0.1:8001';
       GameConfig.RECONNECT_DELAY = 3000;
       GameConfig.MAX_RECONNECT_ATTEMPTS = 5;
       GameConfig.CONNECTION_TIMEOUT = 10000;
@@ -82,6 +79,7 @@ System.register(["cc"], function (_export, _context) {
       GameConfig.MESSAGE_TYPES = {
         // 连接相关
         CONNECTION_INIT: 'connection_init',
+        CLIENT_BOOT_CHECK: 'client_boot_check',
         AUTH_REQUEST: 'auth_request',
         // 认证相关
         LOGIN: 'login',

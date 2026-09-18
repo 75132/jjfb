@@ -2,6 +2,7 @@ import { _decorator, Component, Node, EditBox, Button, Label, director } from 'c
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 import { ChangePasswordPanel } from './ChangePasswordPanel';
+import { LoadingPanel } from './LoadingPanel';
 const { ccclass, property } = _decorator;
 
 @ccclass('Login')
@@ -42,6 +43,9 @@ export class Login extends Component {
 
     @property({ type: Node, tooltip: '进入选角加载时可选遮罩（未绑定则仅用 tipLabel）' })
     startJumpMaskNode: Node | null = null;
+
+    @property({ type: LoadingPanel, tooltip: 'Canvas/Loading 上的 LoadingPanel（未绑定则跳过启动检测）' })
+    loadingPanel: LoadingPanel | null = null;
 
     // 游戏面板节点
     private gamePanelNode: Node = null!;
@@ -92,10 +96,32 @@ export class Login extends Component {
             this.startButton.node.on(Button.EventType.CLICK, this.onStartButtonClick, this);
             this.startButton.node.active = false;
         }
-        // 检查内存中的Token状态
+
+        // Loading 启动检测：默认开面板，跑完四阶段后再进入登录/自动鉴权 UI
+        if (this.loadingPanel) {
+            this.loginPanelNode.active = false;
+            if (this.startButton && this.startButton.node) this.startButton.node.active = false;
+            this.loadingPanel.startBootFlow(() => {
+                if (!this.isValid) return;
+                this.continueAfterBoot();
+            });
+            console.log('登录组件初始化完成（等待 Loading 启动检测）');
+            return;
+        }
+
+        this.continueAfterBoot();
+        console.log('登录组件初始化完成');
+    }
+
+    /** Loading 流程结束后：按 token 显示登录面板或自动鉴权 */
+    private continueAfterBoot() {
+        if (!this.loginPanelNode) return;
+        if (!this.webSocketManager) {
+            this.webSocketManager = WebSocketManager.getInstance();
+        }
         const token = this.webSocketManager.getToken();
         const hasGameIds = this.webSocketManager.hasGameIds();
-        
+
         if (token) {
             console.log('检测到内存中的Token，准备自动登录');
             if (this.tipLabel) this.tipLabel.string = '自动登录中...';
@@ -125,7 +151,6 @@ export class Login extends Component {
             console.log('内存中无Token，显示登录面板');
             this.loginPanelNode.active = true;
         }
-        console.log('登录组件初始化完成');
     }
 
     onLoginClick() {
@@ -391,6 +416,11 @@ export class Login extends Component {
      * 处理网络断开
      */
     private handleNetworkDisconnect() {
+        // Loading 仍在连接中/失败停留态时，勿抢登录 UI
+        if (this.loadingPanel && this.loadingPanel.node.active &&
+            (this.loadingPanel.isRunning() || this.loadingPanel.isConnectFailed())) {
+            return;
+        }
         console.log('网络断开，显示登录面板');
         if (this.tipLabel) this.tipLabel.string = '网络连接已断开，请重新登录';
         if (this.loginPanelNode) this.loginPanelNode.active = true;
