@@ -1,0 +1,57 @@
+{
+  "configVersion": "1.0.0",
+  "mapId": 2,
+  "mapCode": "world_map2",
+  "mapName": "地图二",
+  "tileSize": 48,
+  "mapWidth": 1440,
+  "mapHeight": 1680,
+  "mapLayout": "vertical_stitch",
+  "imageSlices": [
+    "/Map/map2/2-1.png",
+    "/Map/map2/2-2.png"
+  ],
+  "tasks": [],
+  "client": {
+    "dialogueScripts": {},
+    "choiceScripts": {}
+  },
+  "npcs": [
+    {
+      "npcUid": "map2_warp_to_map1",
+      "npcName": "返回一区传送点",
+      "characterName": "传送官",
+      "prefabKey": "Npc/Npc_01",
+      "x": 24,
+      "y": -312,
+      "events": [
+        {
+          "eventId": "map2_warp_to_map1_e1",
+          "eventType": "teleport",
+          "eventTypeDesc": "传送至地图1",
+          "order": 1,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "teleport",
+                "toMapId": 1,
+                "toX": 216,
+                "toY": -24
+              }
+            ]
+          },
+          "client": {
+            "endsSession": true
+          }
+        }
+      ],
+      "appear": {
+        "mode": "always",
+        "matchMode": "ALL",
+        "requirements": []
+      },
+      "hideWhenComplete": false
+    }
+  ]
+}

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>e2e block running</title>
+<style>
+  body { background:#111; color:#ddd; font:13px/1.6 Consolas,"Microsoft YaHei",monospace; margin:0; }
+  #log { padding:12px 16px; white-space:pre-wrap; }
+  #fr { width:1680px; height:920px; border:1px solid #444; display:block; margin:12px; }
+  .h { color:#7ec8ff; font-weight:700; }
+  .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+</style>
+</head>
+<body>
+<div id="log">running…</div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* =============================================================
+   整块贴（Block）端到端自测
+   素材：制作进行素材/地图素材/map1_7x6.png（7×6 = 42 格，整块异形）
+   ============================================================= */
+const OUT = []; let PASS = 0, FAIL = 0;
+function head(s) { OUT.push('<span class="h">' + s + '</span>'); }
+function ck(name, cond, extra) {
+  if (cond) { PASS++; OUT.push('  <span class="ok">[OK]  </span>' + name + (extra ? '  ' + extra : '')); }
+  else { FAIL++; OUT.push('  <span class="bad">[FAIL]</span> ' + name + (extra ? '  ' + extra : '')); }
+}
+function flush() {
+  document.getElementById('log').innerHTML = OUT.join('\n') +
+    '\n\n<span class="h">==== 通过 ' + PASS + '　失败 ' + FAIL + ' ====</span>';
+  document.title = 'e2e block ' + PASS + '/' + (PASS + FAIL);
+}
+
+setTimeout(() => { run().catch(e => { ck('run 抛异常', false, e.message + '\n' + (e.stack || '')); flush(); }); }, 4500);
+
+function same(da, i, db, j) {
+  if (da[i + 3] !== db[j + 3]) return false;
+  if (da[i + 3] === 0) return true;
+  return da[i] === db[j] && da[i + 1] === db[j + 1] && da[i + 2] === db[j + 2];
+}
+
+async function run() {
+  const W = document.getElementById('fr').contentWindow;
+  const T = W.TS, S = T.S, D = document.getElementById('fr').contentDocument;
+  window.__TS__ = T;
+  ck('window.TS 已暴露', !!T);
+  if (!T) { flush(); return; }
+
+  const roots = await (await fetch('/api/roots')).json();
+
+  /* ---------- 1 新素材源 ---------- */
+  head('[1] 制作进行素材 / 地图素材');
+  ck('后端暴露 mapSrc', !!roots.mapSrc, roots.mapSrc);
+  ck('mapSrc 在 mounts 里', (roots.mounts || []).some(m => m.path === roots.mapSrc));
+  ck('前端目录下拉已填充', D.querySelectorAll('#rootSelect option').length === (roots.mounts || []).length,
+    D.querySelectorAll('#rootSelect option').length + ' 项');
+  const list = await (await fetch('/api/list?dir=' + encodeURIComponent(roots.mapSrc) + '&sizes=1')).json();
+  ck('地图素材目录可列', list.ok && list.items.length > 0, list.items.length + ' 个条目');
+  const map1 = list.items.find(x => x.name === 'map1_7x6.png');
+  ck('含 map1_7x6.png', !!map1, map1 ? map1.w + '×' + map1.h : '');
+
+  await T.openSheetByPath(map1.path, map1.name);
+  ck('已加载整块素材', S.sheet && S.sheet.name === 'map1_7x6.png', S.sheet ? S.sheet.name : '');
+  ck('识别为 7×6 = 42 格', S.sheet.cols === 7 && S.sheet.rows === 6, S.sheet.cols + '×' + S.sheet.rows);
+
+  /* ---------- 2 整块识别 ---------- */
+  head('[2] 框选 = 一整块');
+  T.setMode('block');
+  ck('默认即为「整块贴」', S.blockMode === true);
+  ck('#segMode 有 2 个按钮', D.querySelectorAll('#segMode > button').length === 2);
+
+  S.sel.clear();
+  for (let i = 0; i < 42; i++) S.sel.add(i);
+  let b = T.selBlock();
+  ck('整张图 → 块 7×6', b && b.w === 7 && b.h === 6, b ? b.w + '×' + b.h : 'null');
+  ck('块无空洞', b && b.holes === 0, b ? 'holes=' + b.holes : '');
+  ck('块内 42 格', b && b.count === 42);
+
+  /* 3×2 的小块（用来区分「整块」与「逐个铺」） */
+  S.sel.clear();
+  [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]].forEach(p => S.sel.add(p[1] * 7 + p[0]));
+  b = T.selBlock();
+  ck('3×2 子块识别正确', b && b.w === 3 && b.h === 2 && b.count === 6, b ? b.w + '×' + b.h : '');
+  ck('子块 cells 保持相对排布',
+    b.cells[0][0] === 0 && b.cells[0][2] === 2 && b.cells[1][0] === 7 && b.cells[1][2] === 9,
+    JSON.stringify(b.cells));
+
+  /* ---------- 3 整块 vs 逐个铺 ---------- */
+  head('[3] 整块贴 / 逐个铺 的区别');
+  S.curSlot = 'B'; S.out.B.fill(null);
+  T.setMode('block'); S.placeTf = 'none';
+  T.doPlace();
+  ck('整块贴 → 6 格在位', S.out.B.filter(Boolean).length === 6);
+  ck('整块贴 → 落点保持矩形',
+    S.out.B[0] && S.out.B[1] && S.out.B[2] && S.out.B[16] && S.out.B[17] && S.out.B[18] && !S.out.B[3],
+    '占用 ' + [0, 1, 2, 16, 17, 18].filter(i => S.out.B[i]).join(',') + ' 空位3=' + !S.out.B[3]);
+  ck('整块贴 → 源索引对得上',
+    S.out.B[0].src.index === 0 && S.out.B[2].src.index === 2 &&
+    S.out.B[16].src.index === 7 && S.out.B[18].src.index === 9);
+
+  S.out.B.fill(null);
+  T.setMode('flat');
+  T.doPlace();
+  ck('逐个铺 → 排成一行', S.out.B[0] && S.out.B[5] && !S.out.B[16] && S.out.B.filter(Boolean).length === 6,
+    '占用 ' + [0, 1, 2, 3, 4, 5].filter(i => S.out.B[i]).join(','));
+  ck('两种模式的落点确实不同',
+    S.out.B[3] && S.out.B[4] && S.out.B[5] && !S.out.B[16]);
+
+  /* ---------- 4 整块贴整张图，逐格与源图对得上 ---------- */
+  head('[4] 整张图当一整块（7×6）');
+  T.setMode('block');
+  S.out.B.fill(null);
+  S.sel.clear();
+  for (let i = 0; i < 42; i++) S.sel.add(i);
+  T.doPlace();
+  ck('42 格全部落位', S.out.B.filter(Boolean).length === 42);
+  let idxOk = 0;
+  for (let r = 0; r < 6; r++)
+    for (let c = 0; c < 7; c++) {
+      const cell = S.out.B[r * 16 + c];
+      if (cell && cell.src.index === r * 7 + c) idxOk++;
+    }
+  ck('每一格的源索引都对（7×6 原样搬）', idxOk === 42, idxOk + '/42');
+
+  // 像素级：导出图 (c,r) 处 == 源图块 (r*7+c)
+  const cvB = T.slotToCanvas('B');
+  const pg = cvB.getContext('2d').getImageData(0, 0, 768, 768).data;
+  let pxBad = 0;
+  for (let r = 0; r < 6; r++)
+    for (let c = 0; c < 7; c++) {
+      const sp = document.createElement('canvas');
+      sp.width = sp.height = 48;
+      const sg = sp.getContext('2d');
+      sg.imageSmoothingEnabled = false;
+      sg.drawImage(S.out.B[r * 16 + c].snap, 0, 0);
+      const sd = sg.getImageData(0, 0, 48, 48).data;
+      for (let y = 0; y < 48; y++)
+        for (let x = 0; x < 48; x++) {
+          if (!same(pg, ((r * 48 + y) * 768 + (c * 48 + x)) * 4, sd, (y * 48 + x) * 4)) pxBad++;
+        }
+    }
+  ck('导出图像素 == 源图逐格搬（7×6×2304 px）', pxBad === 0, '不符 ' + pxBad);
+
+  /* ---------- 5 一变四：每个变体都是一整块 ---------- */
+  head('[5] 一变四（保持块形）');
+  S.out.B.fill(null);
+  T.doVariants('all');
+  ck('4 块 × 42 = 168 格', S.out.B.filter(Boolean).length === 168,
+    S.out.B.filter(Boolean).length + ' 格');
+  const spots = [[0, 0], [7, 0], [0, 6], [7, 6]];
+  const tfs = ['none', 'h', 'v', 'hv'];
+  let blockOk = 0, tfOk = 0, idxOk2 = 0;
+  spots.forEach(([c0, r0], k) => {
+    let all = true, tfAll = true;
+    for (let y = 0; y < 6; y++)
+      for (let x = 0; x < 7; x++) {
+        const cell = S.out.B[(r0 + y) * 16 + (c0 + x)];
+        if (!cell) { all = false; continue; }
+        if (cell.tf !== tfs[k]) tfAll = false;
+        // 块1（原图、无翻转）必须逐格原样
+        if (k === 0 && cell.src.index === y * 7 + x) idxOk2++;
+      }
+    if (all) blockOk++;
+    if (all && tfAll) tfOk++;
+  });
+  ck('4 个块都完整落下（无缺格）', blockOk === 4, blockOk + '/4');
+  ck('4 个块各自统一变换', tfOk === 4, tfOk + '/4');
+  ck('原图那块逐格原样（42/42）', idxOk2 === 42, idxOk2 + '/42');
+  // 「整块镜像」下，块2 的列序应该被反过来
+  let orderFlip = 0;
+  for (let y = 0; y < 6; y++)
+    for (let x = 0; x < 7; x++) {
+      const cell = S.out.B[y * 16 + (7 + x)];
+      if (cell && cell.src.index === y * 7 + (6 - x)) orderFlip++;
+    }
+  ck('整块镜像：块2 的列序被反过来', orderFlip === 42, orderFlip + '/42');
+  ck('块外留白正确（B[14]/B[15] 空、第 12 行空）',
+    !S.out.B[14] && !S.out.B[15] && !S.out.B[12 * 16],
+    'B[14]=' + !!S.out.B[14] + ' B[15]=' + !!S.out.B[15] + ' B[192]=' + !!S.out.B[192]);
+
+  // 镜像块的像素验证：第二块 (7,0) 应该是第一块的左右镜像
+  const cv2 = T.slotToCanvas('B');
+  const g2 = cv2.getContext('2d').getImageData(0, 0, 768, 768).data;
+  let mirBad = 0;
+  for (let y = 0; y < 288; y++)
+    for (let x = 0; x < 336; x++) {
+      const a = (y * 768 + x) * 4;                     // 块 1 @ x 0..335
+      const bb = (y * 768 + (336 + (335 - x))) * 4;    // 块 2 @ x 336..671（镜像）
+      if (!same(g2, bb, g2, a)) mirBad++;
+    }
+  ck('整块镜像：块2 == 块1 左右翻转（逐像素）', mirBad === 0, '不符 ' + mirBad + '/96768');
+
+  /* ---------- 5b 块翻转的三种口径逐像素 ---------- */
+  head('[5b] 块翻转：v / 180° 逐像素');
+  const W37 = 7 * 48, H36 = 6 * 48;   // 336 × 288
+  const px = (x, y) => (y * 768 + x) * 4;
+
+  let vBad = 0;
+  for (let y = 0; y < H36; y++)
+    for (let x = 0; x < W37; x++) {
+      // 块3 @ 行 6（y 288..575）应为块1 的上下翻转
+      if (!same(g2, px(x, 288 + (H36 - 1 - y)), g2, px(x, y))) vBad++;
+    }
+  ck('整块垂直翻转：块3 == 块1 上下翻转', vBad === 0, '不符 ' + vBad + '/' + (W37 * H36));
+
+  let hvBad = 0;
+  for (let y = 0; y < H36; y++)
+    for (let x = 0; x < W37; x++) {
+      // 块4 @ (7,6) 应为块1 的 180°
+      if (!same(g2, px(336 + (W37 - 1 - x), 288 + (H36 - 1 - y)), g2, px(x, y))) hvBad++;
+    }
+  ck('整块 180°：块4 == 块1 中心对称', hvBad === 0, '不符 ' + hvBad + '/' + (W37 * H36));
+
+  /* 换成「只翻每格」→ 排布不变，同一格位置逐格镜像 */
+  T.setBlkFlip('tile');
+  ck('已切到「只翻每格」', S.blockFlip === 'tile');
+  S.out.B.fill(null);
+  T.doVariants('all');
+  const g3 = T.slotToCanvas('B').getContext('2d').getImageData(0, 0, 768, 768).data;
+  let tileBad = 0;
+  for (let y = 0; y < H36; y++)
+    for (let x = 0; x < W37; x++) {
+      const cx = x % 48, cy = y % 48, cbase = x - cx, rbase = y - cy;
+      if (!same(g3, px(336 + cbase + (47 - cx), rbase + cy), g3, px(x, y))) tileBad++;
+    }
+  ck('只翻每格：块2 每格自身镜像、排布不动', tileBad === 0, '不符 ' + tileBad + '/' + (W37 * H36));
+  let orderSame = 0;
+  for (let y = 0; y < 6; y++)
+    for (let x = 0; x < 7; x++) {
+      const a2 = S.out.B[y * 16 + x], b2 = S.out.B[y * 16 + (7 + x)];
+      if (a2 && b2 && a2.src.index === b2.src.index) orderSame++;
+    }
+  ck('只翻每格：两块的格子位置一一对应（顺序没变）', orderSame === 42, orderSame + '/42');
+  T.setBlkFlip('order');
+
+  /* ---------- 6 刷块（输出区拖矩形平铺） ---------- */
+  head('[6] 刷块：拖一个大矩形 → 整块平铺');
+  S.out.B.fill(null);
+  S.sel.clear();
+  [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]].forEach(p => S.sel.add(p[1] * 7 + p[0]));
+  b = T.selBlock();
+  ck('块 3×2', b.w === 3 && b.h === 2);
+  let r = T.commitBrush(4, 3, 9, 8);            // 6×6 区域 = 3×2 平铺 2×3
+  ck('平铺进 6×6 = 36 格', S.out.B.filter(Boolean).length === 36,
+    S.out.B.filter(Boolean).length + ' 格');
+  ck('落地计数正确', r.placed === 36, 'placed=' + r.placed);
+  ck('起点对（列4行3）', !!S.out.B[3 * 16 + 4]);
+  ck('终点对（列9行8）', !!S.out.B[8 * 16 + 9]);
+  ck('区域外没被写', !S.out.B[2 * 16 + 4] && !S.out.B[3 * 16 + 3] && !S.out.B[9 * 16 + 4]);
+  ck('平铺的第 2 遍与原块一致',
+    S.out.B[3 * 16 + 7].src.index === 0 && S.out.B[3 * 16 + 9].src.index === 2 &&
+    S.out.B[4 * 16 + 4].src.index === 7,
+    'idx ' + S.out.B[3 * 16 + 7].src.index + ',' + S.out.B[3 * 16 + 9].src.index + ',' + S.out.B[4 * 16 + 4].src.index);
+
+  /* 越界裁剪 */
+  S.out.B.fill(null);
+  r = T.commitBrush(13, 14, 17, 18);            // 拖出边界：列13..17 / 行14..18
+  ck('越界自动裁剪（只写槽内）', r.placed === 6 && r.out === 19,
+    'placed=' + r.placed + ' out=' + r.out);
+
+  /* 覆盖计数 */
+  S.out.B.fill(null);
+  T.commitBrush(0, 0, 5, 5);
+  r = T.commitBrush(0, 0, 5, 5);                // 同一处再刷一遍
+  ck('二次覆盖被记录', r.cleared === 36, 'cleared=' + r.cleared);
+
+  /* ---------- 7 块内空洞 ---------- */
+  head('[7] 块内空洞（散点选择）');
+  S.out.B.fill(null);
+  S.sel.clear();
+  for (let i = 0; i < 42; i++) if (i !== 9) S.sel.add(i);   // 挖掉 (2,1)
+  b = T.selBlock();
+  ck('识别出 1 个空洞', b.w === 7 && b.h === 6 && b.holes === 1, 'holes=' + b.holes);
+  T.doPlace();
+  ck('贴入 41 格（空洞保持不写）', S.out.B.filter(Boolean).length === 41,
+    S.out.B.filter(Boolean).length + ' 格');
+  ck('空洞位置确实是空的', !S.out.B[1 * 16 + 2]);
+  let holes = 0;
+  for (let rr = 0; rr < 6; rr++)
+    for (let cc = 0; cc < 7; cc++) if (!S.out.B[rr * 16 + cc]) holes++;
+  ck('块矩形内空白只有那 1 格', holes === 1, '空白 ' + holes);
+  ck('「补齐为矩形」按钮存在', !!D.querySelector('#btnSelRect'));
+
+  /* ---------- 8 按语义分配不打散块 ---------- */
+  head('[8] 按语义分配：整块搬运');
+  T.SLOTS.forEach(s => S.out[s.id] = new Array(s.cols * s.rows).fill(null));
+  S.sel.clear();
+  for (let i = 0; i < 42; i++) S.sel.add(i);
+  T.applyTag('wall');                       // 墙面 → C 槽
+  T.doPlace();                              // 落到 B 槽（当前槽）
+  ck('先落在 B 槽 42 格', S.out.B.filter(Boolean).length === 42);
+  const beforeTotal = T.SLOTS.reduce((n, s) => n + S.out[s.id].filter(Boolean).length, 0);
+  T.assignByTag();
+  const afterTotal = T.SLOTS.reduce((n, s) => n + S.out[s.id].filter(Boolean).length, 0);
+  ck('墙面整块 → C 槽', S.out.C.filter(Boolean).length === 42, 'C=' + S.out.C.filter(Boolean).length);
+  ck('B 槽已清空', S.out.B.filter(Boolean).length === 0);
+  ck('总数守恒（一块都没丢）', beforeTotal === afterTotal && afterTotal === 42,
+    beforeTotal + ' → ' + afterTotal);
+  let cOk = 0;
+  for (let rr = 0; rr < 6; rr++)
+    for (let cc = 0; cc < 7; cc++) {
+      const cell = S.out.C[rr * 16 + cc];
+      if (cell && cell.src.index === rr * 7 + cc) cOk++;
+    }
+  ck('搬到 C 槽后仍是完整的 7×6（形状没散）', cOk === 42, cOk + '/42');
+  ck('块标记已重建', !!S.out.C[0].blk && S.out.C[0].blk.w === 7 && S.out.C[0].blk.h === 6,
+    JSON.stringify(S.out.C[0].blk));
+
+  /* ---------- 9 块内单击 / 删除 ---------- */
+  head('[9] 块为单位的选择与删除');
+  S.curSlot = 'C';
+  const ids = T.blockCellsOf(S.out.C[5]);
+  ck('blockCellsOf 取到整块 42 格', ids.length === 42, ids.length + ' 格');
+  T.selectWholeBlock(S.out.C[5]);
+  ck('单击任意格 → 整块被选中', S.outSel.size === 42, S.outSel.size + ' 格');
+  T.deleteOut();
+  ck('删除选中 = 删掉整块', S.out.C.filter(Boolean).length === 0, S.out.C.filter(Boolean).length + ' 格');
+
+  /* ---------- 10 容量与安全 ---------- */
+  head('[10] 容量与安全');
+  S.curSlot = 'B';
+  S.out.B.fill(null);
+  S.sel.clear();
+  for (let i = 0; i < 42; i++) S.sel.add(i);
+  b = T.selBlock();
+  const perRow = Math.floor(16 / b.w), perCol = Math.floor(16 / b.h);
+  ck('B 槽能放 2×2 = 4 块（刚够一变四）', perRow === 2 && perCol === 2, perRow + '×' + perCol);
+  T.doVariants('all');
+  ck('4 块全部放下', S.out.B.filter(Boolean).length === 168);
+  const r5 = T.layoutBlocks(S.out.B, T.SLOT_BY_ID.B, b.w, b.h, 8);
+  ck('槽满后 layoutBlocks 不越界', r5.length === 0, '再找到 ' + r5.length + ' 个位');
+  // 槽满时再整块贴：必须安全失败（不写坏任何东西）
+  const before10 = S.out.B.filter(Boolean).length;
+  const ok10 = T.findFreeRect(S.out.B, T.SLOT_BY_ID.B, b.w, b.h);
+  ck('槽满时 findFreeRect 返回 null（不会越界写）', ok10 === null);
+  ck('数据未被破坏', S.out.B.filter(Boolean).length === before10);
+
+  /* B 槽放不下的超大块 → 安全返回（不越界） */
+  S.curSlot = 'A5'; S.out.A5.fill(null);
+  T.commitBrush(0, 0, 7, 15);                   // A5 8×16，7×6 块平铺填满
+  ck('A5 平铺 7×6 块：8×16 全填满 = 128 格', S.out.A5.filter(Boolean).length === 128,
+    S.out.A5.filter(Boolean).length + ' 格');
+  S.out.A5.fill(null);
+  T.commitBrush(0, 0, 7, 15);
+  const a5repeat = S.out.A5.filter(Boolean).length;
+  ck('重复刷块结果稳定（幂等）', a5repeat === 128, a5repeat + ' 格');
+
+  /* ---------- 11 通行表照旧 ---------- */
+  head('[11] 通行表 flags');
+  const f = T.computeFlags();
+  ck('长度 8192', f.length === 8192);
+  S.sel.clear(); S.sel.add(0); T.applyTag('plant_np');
+  S.out.C[0] = T.newCell(0, 'none');
+  ck('不可通行 → 0x000F', T.computeFlags()[256] === 0x000F, 'flags[256]=' + T.computeFlags()[256]);
+
+  /* ---------- 12 界面 ---------- */
+  head('[12] 界面');
+  ck('#segOutMode 有 3 个按钮（刷块/框选/橡皮）', D.querySelectorAll('#segOutMode > button').length === 3,
+    D.querySelectorAll('#segOutMode > button').length + ' 个');
+  ck('撤回 / 重做按钮存在', !!D.querySelector('#btnUndo') && !!D.querySelector('#btnRedo'));
+  ck('撤回按钮已可用（本轮已做过操作）', !D.querySelector('#btnUndo').disabled);
+  ck('导出目录默认在桌面', /Desktop/i.test(T.S.outDir || '') || /桌面/.test(T.S.outDir || ''), T.S.outDir);
+  ck('#blockInfo 有内容', (D.querySelector('#blockInfo').textContent || '').length > 4,
+    (D.querySelector('#blockInfo').textContent || '').slice(0, 46));
+  ck('#btnWholeSheet 存在', !!D.querySelector('#btnWholeSheet'));
+  ck('输出区鼠标模式默认刷块', S.outMode === 'brush', S.outMode);
+  ck('footer 仍可见', D.querySelector('footer').getBoundingClientRect().height > 20);
+
+  flush();
+}
+</script>
+</body>
+</html>

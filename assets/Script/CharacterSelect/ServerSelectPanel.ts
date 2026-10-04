@@ -15,6 +15,7 @@ import {
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 import { Back } from './Return';
+import { Logger } from '../global/Logger';
 
 const { ccclass } = _decorator;
 
@@ -80,13 +81,13 @@ export class ServerSelectPanel extends Component {
             ? host.parent
             : (director.getScene()?.getChildByName('Canvas') ?? null);
         if (!canvas) {
-            console.warn('[ServerSelectPanel] Canvas 未找到，跳过选服初始化');
+            Logger.warn('[ServerSelectPanel] Canvas 未找到，跳过选服初始化');
             return;
         }
 
         const panelNode = canvas.getChildByName('ServerSelect');
         if (!panelNode) {
-            console.warn('[ServerSelectPanel] ServerSelect 节点未找到');
+            Logger.warn('[ServerSelectPanel] ServerSelect 节点未找到');
             return;
         }
 
@@ -347,7 +348,7 @@ export class ServerSelectPanel extends Component {
             if (n?.isValid && s) this.applyItemContent(n, s);
         }
 
-        console.log(`[ServerSelectPanel] 模拟选服确认: ${info.zone} ${info.name}`);
+        Logger.debug(`[ServerSelectPanel] 模拟选服确认: ${info.zone} ${info.name}`);
         this.closePanel();
     };
 
@@ -368,7 +369,7 @@ export class ServerSelectPanel extends Component {
 
         director.loadScene(GameConfig.SCENE_NAMES.LOGIN, (error) => {
             if (error) {
-                console.error('[ServerSelectPanel] 返回 Login 失败:', error);
+                Logger.error('[ServerSelectPanel] 返回 Login 失败:', error);
                 this._backToLoginBusy = false;
                 if (panelBtn) panelBtn.interactable = true;
             }

@@ -1,5 +1,6 @@
 import { _decorator, Component, Node, Label, Button, Sprite, SpriteFrame, instantiate, Prefab, EditBox, assetManager, UITransform, v2 } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -492,7 +493,7 @@ export class MiniGame2 extends Component {
 
             this._optionCategorySig = this.categoryStructureSig(rows);
         } catch (e) {
-            console.warn('[MiniGame2] rebuildOptionItems', e);
+            Logger.warn('[MiniGame2] rebuildOptionItems', e);
         }
 
         if (token !== this._rebuildToken) return;
@@ -512,7 +513,7 @@ export class MiniGame2 extends Component {
                     { path: 'UIPrefab/MiniGame2ListPrefab', type: Prefab },
                     (err: Error | null, asset: Prefab | null) => {
                         if (err) {
-                            console.warn('[MiniGame2] load MiniGame2ListPrefab failed:', err);
+                            Logger.warn('[MiniGame2] load MiniGame2ListPrefab failed:', err);
                             resolve(null);
                             return;
                         }
@@ -768,7 +769,7 @@ export class MiniGame2 extends Component {
     }
 
     private showError(text: string) {
-        console.warn('[MiniGame2]', text);
+        Logger.warn('[MiniGame2]', text);
         if (!this.errorPanel) return;
 
         // 若之前没找到 Label，这里再兜底找一次，优先直系子节点名为 "Label" 的主文案

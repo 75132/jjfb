@@ -5379,7 +5379,7 @@
     "showRotateSeconds": 3,
     "progressSpacing": 24,
     "maxProgressBlocks": 12,
-    "progressStepSeconds": 0.2,
+    "progressStepSeconds": 0.05,
     "connectTimeoutSeconds": 30,
     "allowLocalFallback": true,
     "stageRequestTimeoutMs": 2500,

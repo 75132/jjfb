@@ -1,0 +1,99 @@
+{
+  "name": "zuojia9",
+  "cn": "新座驾6",
+  "mode": "piece_compose",
+  "rect_count": 12,
+  "piece_frames": 16,
+  "out_frames": 16,
+  "frame_sizes": [
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ],
+    [
+      96,
+      66
+    ]
+  ],
+  "compose": {
+    "mode": "piece_records",
+    "frame_count": 16,
+    "draw_order": "record_order",
+    "anchor_mode": "top_left",
+    "seam_fix": true,
+    "apply_flag_transform": true,
+    "canvas_box": [
+      -48,
+      -49,
+      48,
+      17
+    ],
+    "canvas_size": [
+      96,
+      66
+    ]
+  },
+  "parse": {
+    "frame_count": 16,
+    "tail_start": 135,
+    "tail_end": 1023,
+    "remaining_bytes": 57
+  },
+  "chroma_changed": 1770
+}

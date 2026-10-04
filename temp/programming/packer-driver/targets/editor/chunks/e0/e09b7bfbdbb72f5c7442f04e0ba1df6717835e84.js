@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, director, GameConfig, RequestRetryManager, RouteDictionary, DataCacheManager, _dec, _class, _class2, _crd, ccclass, property, WebSocketManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, director, GameConfig, RequestRetryManager, RouteDictionary, DataCacheManager, Logger, _dec, _class, _class2, _crd, ccclass, property, WebSocketManager;
 
   function _reportPossibleCrUseOfGameConfig(extras) {
     _reporterNs.report("GameConfig", "./GameConfig", _context.meta, extras);
@@ -23,6 +23,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("DataCacheManager", "./DataCacheManager", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "./Logger", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -42,6 +46,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       RouteDictionary = _unresolved_4.RouteDictionary;
     }, function (_unresolved_5) {
       DataCacheManager = _unresolved_5.DataCacheManager;
+    }, function (_unresolved_6) {
+      Logger = _unresolved_6.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -442,17 +448,33 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (response.request_id !== undefined && response.request_id !== null) {
                 if (response.request_id !== requestId) {
                   // request_id 不匹配，忽略此响应（可能是其他请求的响应）
-                  console.log(`[Request] ⏭️ 忽略 request_id 不匹配的响应 (${route}):`, {
-                    received: response.request_id,
-                    expected: requestId
-                  });
+                  if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                    error: Error()
+                  }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).ws(`[Request] 忽略 request_id 不匹配的响应 (${route}):`, {
+                      received: response.request_id,
+                      expected: requestId
+                    });
+                  }
+
                   return;
                 }
 
-                console.log(`[Request] ✅ request_id 匹配 (${route}):`, requestId);
-              } else {
-                // 如果没有 request_id，使用旧的匹配方式（向后兼容）
-                console.log(`[Request] ⚠️ 响应缺少 request_id，使用旧匹配方式 (${route})`);
+                if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                  error: Error()
+                }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).ws(`[Request] request_id 匹配 (${route}):`, requestId);
+                }
+              } else if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                error: Error()
+              }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).ws(`[Request] 响应缺少 request_id，使用旧匹配方式 (${route})`);
               }
 
               responded = true;
@@ -468,18 +490,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 const code = response.code || 500; // 限流错误（429）- 不自动重试，显示友好提示
 
                 if (code === 429) {
-                  console.warn(`⚠️ [WebSocketManager] 请求限流: ${route}`); // 可以在这里显示友好提示（如果有UI提示组件）
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 请求限流: ${route}`); // 可以在这里显示友好提示（如果有UI提示组件）
                   // 例如：ToastManager.getInstance()?.show('操作过于频繁，请稍后再试');
                 } // 服务器繁忙（503）- 延迟后重试（最多重试1次）
 
 
                 if (code === 503) {
-                  console.warn(`⚠️ [WebSocketManager] 服务器繁忙: ${route}`); // 延迟3秒后重试（最多重试1次）
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 服务器繁忙: ${route}`); // 延迟3秒后重试（最多重试1次）
 
                   const retryCount = (data._retryCount || 0) + 1;
 
                   if (retryCount <= 1) {
-                    console.log(`🔄 [WebSocketManager] 3秒后自动重试 (${route})`);
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug(`🔄 [WebSocketManager] 3秒后自动重试 (${route})`);
                     setTimeout(() => {
                       const retryData = { ...data,
                         _retryCount: retryCount
@@ -488,7 +516,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                     }, 3000);
                     return; // 不调用回调，等待重试结果
                   } else {
-                    console.warn(`⚠️ [WebSocketManager] 重试次数已达上限，放弃重试 (${route})`); // 可以显示友好提示
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 重试次数已达上限，放弃重试 (${route})`); // 可以显示友好提示
                     // 例如：ToastManager.getInstance()?.show('服务器繁忙，请稍后再试');
                   }
                 }
@@ -498,7 +528,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               try {
                 callback(response);
               } catch (error) {
-                console.error(`[Request] 回调执行错误 (${route}):`, error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`[Request] 回调执行错误 (${route}):`, error);
               }
             }; // 设置超时
 
@@ -507,13 +539,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (!responded) {
                 responded = true;
                 this.off(responseType, responseHandler);
-                console.warn(`[Request] 请求超时 (${route}), request_id: ${requestId}`); // 仅对部分只读路由执行一次超时重试
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn(`[Request] 请求超时 (${route}), request_id: ${requestId}`); // 仅对部分只读路由执行一次超时重试
 
                 const canRetry = RETRY_ON_TIMEOUT_ROUTES.has(route);
                 const timeoutRetryCount = (data._timeoutRetryCount || 0) + 1;
 
                 if (canRetry && timeoutRetryCount <= 1) {
-                  console.log(`🔄 [WebSocketManager] 请求超时自动重试 (${route})，第 ${timeoutRetryCount} 次`);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug(`🔄 [WebSocketManager] 请求超时自动重试 (${route})，第 ${timeoutRetryCount} 次`);
                   setTimeout(() => {
                     const retryData = { ...data,
                       _timeoutRetryCount: timeoutRetryCount
@@ -904,7 +940,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.isReloginRequiredByIdle()) {
             var _director$getScene;
 
-            console.warn(`⚠️ [WebSocketManager] 离线超过阈值（${(_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 离线超过阈值（${(_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).AUTH_INACTIVITY_RELOGIN_MS}ms），清除本地会话后继续连接`);
             this.clearAll();
@@ -940,7 +978,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), GameConfig) : GameConfig).getWsUrl();
 
           try {
-            console.log(`WebSocket 连接地址: ${this.url}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`WebSocket 连接地址: ${this.url}`);
           } catch {}
 
           const seq = ++this._connectSeq;
@@ -952,7 +992,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket !== ws || this._connectSeq !== seq) return;
 
             try {
-              console.log(`[WS] 已连接: ${this.url}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[WS] 已连接: ${this.url}`);
             } catch {}
 
             this.invalidateSessionAuth();
@@ -977,7 +1019,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket !== ws || this._connectSeq !== seq) return;
 
             try {
-              console.warn(`[WS] 连接关闭 code=${ev == null ? void 0 : ev.code} reason=${(ev == null ? void 0 : ev.reason) || ''}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`[WS] 连接关闭 code=${ev == null ? void 0 : ev.code} reason=${(ev == null ? void 0 : ev.reason) || ''}`);
             } catch {}
 
             this.stopHeartbeat(); // 停止心跳
@@ -993,7 +1037,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (this.isSwitchingCharacterSession) {
-              console.log('ℹ️ [WS] 切换角色会话结束（保留账号），将重建连接');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('ℹ️ [WS] 切换角色会话结束（保留账号），将重建连接');
               this.isSwitchingCharacterSession = false;
               const token = this.getToken();
               const userId = this.getUserId();
@@ -1004,10 +1050,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   if (this.isConnectedFlag || this.isConnecting) return;
 
                   try {
-                    console.log('🔄 [WS] 切换角色后重建 WebSocket（返回选角）');
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug('🔄 [WS] 切换角色后重建 WebSocket（返回选角）');
                     this.connect();
                   } catch (e) {
-                    console.warn('[WS] 切换角色后重建连接失败', e);
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).warn('[WS] 切换角色后重建连接失败', e);
                   }
                 }, 120);
               }
@@ -1033,7 +1083,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.isReconnecting = true; // 使用优化后的指数退避策略，根据网络状况调整重连延迟
 
               const backoffDelay = this.getReconnectDelay();
-              console.log(`🔄 [WebSocketManager] 将在 ${backoffDelay}ms 后尝试重连 (尝试 ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`🔄 [WebSocketManager] 将在 ${backoffDelay}ms 后尝试重连 (尝试 ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
 
               if (this._reconnectTimerId !== -1) {
                 clearTimeout(this._reconnectTimerId);
@@ -1049,7 +1101,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               // 登录页/主动 logout/fullLogout 触发 close 时，reconnectAttempts 可能被预设到上限，
               // 这类情况下不应再打印 error（避免日志噪音，并避免误清 token）。
               if (this.isGameRunning) {
-                console.error(`❌ [WebSocketManager] 重连失败，已达到最大重试次数 (${this.maxReconnectAttempts})`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`❌ [WebSocketManager] 重连失败，已达到最大重试次数 (${this.maxReconnectAttempts})`);
                 this.clearAll();
                 this.returnToLogin();
               }
@@ -1060,7 +1114,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket !== ws || this._connectSeq !== seq) return;
 
             try {
-              console.error('[WS] 错误', (e == null ? void 0 : e.message) || e);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[WS] 错误', (e == null ? void 0 : e.message) || e);
             } catch {}
 
             this.stopHeartbeat(); // 停止心跳
@@ -1290,7 +1346,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.handshakeTimeout = setTimeout(() => {
             if (!this.handshakeCompleted) {
-              console.warn('⚠️ [WebSocketManager] 握手超时，继续正常流程（向后兼容）');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [WebSocketManager] 握手超时，继续正常流程（向后兼容）');
               this.onHandshakeCompleteOrTimeout();
             }
           }, 3000);
@@ -1382,7 +1440,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (data && data.type === 'handshake_ack') {
-              console.log('✅ [WebSocketManager] 握手成功');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [WebSocketManager] 握手成功');
               this.handshakeCompleted = true; // 清除握手超时定时器
 
               if (this.handshakeTimeout !== -1) {
@@ -1398,13 +1458,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   id_to_route: data.sys.code_to_route || {}
                 });
                 this.useRouteDict = data.sys.use_dict === true;
-                console.log(`✅ [WebSocketManager] 字典已加载，启用压缩: ${this.useRouteDict}`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug(`✅ [WebSocketManager] 字典已加载，启用压缩: ${this.useRouteDict}`);
               } // 更新心跳配置（如果服务器返回）
 
 
               if (data.sys && data.sys.heartbeat) {
                 // 可以更新心跳间隔（当前是固定30秒）
-                console.log(`📡 [WebSocketManager] 心跳间隔: ${data.sys.heartbeat}秒`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug(`📡 [WebSocketManager] 心跳间隔: ${data.sys.heartbeat}秒`);
               } // 握手成功后，继续正常流程（发送认证请求等）
 
 
@@ -1420,13 +1484,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 // 假设是响应消息，添加 _response 后缀
                 data.type = route + '_response';
               } else {
-                console.warn(`⚠️ [WebSocketManager] 无法解码 route_id: ${data.route_id}`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 无法解码 route_id: ${data.route_id}`);
               }
             } // 检查消息版本（可选，用于兼容性检查）
 
 
             if (data.version && data.version !== this.MESSAGE_PROTOCOL_VERSION) {
-              console.warn(`⚠️ [WebSocketManager] 消息版本不匹配: 期望 ${this.MESSAGE_PROTOCOL_VERSION}，收到 ${data.version}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 消息版本不匹配: 期望 ${this.MESSAGE_PROTOCOL_VERSION}，收到 ${data.version}`);
             }
 
             if (data && data.type) {
@@ -1454,29 +1522,42 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 if (resp != null && resp.success && resp.characters && typeof resp.characters === 'object') {
                   this.lastAllCharactersFingerprint = WebSocketManager.fingerprintAllCharactersPayload(resp.characters);
                 }
-              } // 添加调试日志，方便排查消息接收问题
+              }
 
-
-              try {
-                console.log(`📥 [WebSocketManager] 收到消息: type=${data.type}`, data);
-              } catch {}
+              if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                error: Error()
+              }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).ws(`[WebSocketManager] 收到消息: type=${data.type}`, data);
+              }
 
               const node = this.node;
 
               if (node && typeof node.emit === 'function') {
                 node.emit(data.type, data);
 
-                try {
-                  console.log(`✅ [WebSocketManager] 已触发事件: ${data.type}`);
-                } catch {}
+                if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                  error: Error()
+                }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).ws(`[WebSocketManager] 已触发事件: ${data.type}`);
+                }
               } else {
-                console.warn(`⚠️ [WebSocketManager] 无法触发事件 ${data.type}，node无效`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn(`⚠️ [WebSocketManager] 无法触发事件 ${data.type}，node无效`);
               }
             } else {
-              console.warn('⚠️ [WebSocketManager] 收到无type的消息:', data);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [WebSocketManager] 收到无type的消息:', data);
             }
           } catch (error) {
-            console.error('❌ [WebSocketManager] 处理消息失败:', error, message);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [WebSocketManager] 处理消息失败:', error, message);
           }
         }
         /**

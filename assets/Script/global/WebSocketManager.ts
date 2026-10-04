@@ -4,6 +4,7 @@ import { ClientMessage, ServerResponse } from './MessageTypes';
 import { RequestRetryManager } from './RequestRetryManager';
 import { RouteDictionary } from './RouteDictionary';
 import { DataCacheManager } from './DataCacheManager';
+import { Logger } from './Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -364,16 +365,19 @@ export class WebSocketManager extends Component {
                 if (response.request_id !== undefined && response.request_id !== null) {
                     if (response.request_id !== requestId) {
                         // request_id 不匹配，忽略此响应（可能是其他请求的响应）
-                        console.log(`[Request] ⏭️ 忽略 request_id 不匹配的响应 (${route}):`, {
-                            received: response.request_id,
-                            expected: requestId
-                        });
+                        if (GameConfig.LOG_WS_TRAFFIC) {
+                            Logger.ws(`[Request] 忽略 request_id 不匹配的响应 (${route}):`, {
+                                received: response.request_id,
+                                expected: requestId
+                            });
+                        }
                         return;
                     }
-                    console.log(`[Request] ✅ request_id 匹配 (${route}):`, requestId);
-                } else {
-                    // 如果没有 request_id，使用旧的匹配方式（向后兼容）
-                    console.log(`[Request] ⚠️ 响应缺少 request_id，使用旧匹配方式 (${route})`);
+                    if (GameConfig.LOG_WS_TRAFFIC) {
+                        Logger.ws(`[Request] request_id 匹配 (${route}):`, requestId);
+                    }
+                } else if (GameConfig.LOG_WS_TRAFFIC) {
+                    Logger.ws(`[Request] 响应缺少 request_id，使用旧匹配方式 (${route})`);
                 }
                 
                 responded = true;
@@ -391,25 +395,25 @@ export class WebSocketManager extends Component {
                     
                     // 限流错误（429）- 不自动重试，显示友好提示
                     if (code === 429) {
-                        console.warn(`⚠️ [WebSocketManager] 请求限流: ${route}`);
+                        Logger.warn(`⚠️ [WebSocketManager] 请求限流: ${route}`);
                         // 可以在这里显示友好提示（如果有UI提示组件）
                         // 例如：ToastManager.getInstance()?.show('操作过于频繁，请稍后再试');
                     }
                     
                     // 服务器繁忙（503）- 延迟后重试（最多重试1次）
                     if (code === 503) {
-                        console.warn(`⚠️ [WebSocketManager] 服务器繁忙: ${route}`);
+                        Logger.warn(`⚠️ [WebSocketManager] 服务器繁忙: ${route}`);
                         // 延迟3秒后重试（最多重试1次）
                         const retryCount = (data._retryCount || 0) + 1;
                         if (retryCount <= 1) {
-                            console.log(`🔄 [WebSocketManager] 3秒后自动重试 (${route})`);
+                            Logger.debug(`🔄 [WebSocketManager] 3秒后自动重试 (${route})`);
                             setTimeout(() => {
                                 const retryData = { ...data, _retryCount: retryCount };
                                 this.request(route, retryData, callback, requireAuth, timeout);
                             }, 3000);
                             return; // 不调用回调，等待重试结果
                         } else {
-                            console.warn(`⚠️ [WebSocketManager] 重试次数已达上限，放弃重试 (${route})`);
+                            Logger.warn(`⚠️ [WebSocketManager] 重试次数已达上限，放弃重试 (${route})`);
                             // 可以显示友好提示
                             // 例如：ToastManager.getInstance()?.show('服务器繁忙，请稍后再试');
                         }
@@ -420,7 +424,7 @@ export class WebSocketManager extends Component {
                 try {
                     callback(response);
                 } catch (error) {
-                    console.error(`[Request] 回调执行错误 (${route}):`, error);
+                    Logger.error(`[Request] 回调执行错误 (${route}):`, error);
                 }
             };
 
@@ -429,13 +433,13 @@ export class WebSocketManager extends Component {
                 if (!responded) {
                     responded = true;
                     this.off(responseType, responseHandler);
-                    console.warn(`[Request] 请求超时 (${route}), request_id: ${requestId}`);
+                    Logger.warn(`[Request] 请求超时 (${route}), request_id: ${requestId}`);
 
                     // 仅对部分只读路由执行一次超时重试
                     const canRetry = RETRY_ON_TIMEOUT_ROUTES.has(route);
                     const timeoutRetryCount = (data._timeoutRetryCount || 0) + 1;
                     if (canRetry && timeoutRetryCount <= 1) {
-                        console.log(`🔄 [WebSocketManager] 请求超时自动重试 (${route})，第 ${timeoutRetryCount} 次`);
+                        Logger.debug(`🔄 [WebSocketManager] 请求超时自动重试 (${route})，第 ${timeoutRetryCount} 次`);
                         setTimeout(() => {
                             const retryData = { ...data, _timeoutRetryCount: timeoutRetryCount };
                             this.request(route, retryData, callback, requireAuth, timeout);
@@ -770,7 +774,7 @@ export class WebSocketManager extends Component {
 
         // 安全阀门控：离线过久的本地 token 不可直接当在线；清凭证后仍要允许连上服务器（登录页 Loading/登录依赖 WS）
         if (this.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [WebSocketManager] 离线超过阈值（${GameConfig.AUTH_INACTIVITY_RELOGIN_MS}ms），清除本地会话后继续连接`);
+            Logger.warn(`⚠️ [WebSocketManager] 离线超过阈值（${GameConfig.AUTH_INACTIVITY_RELOGIN_MS}ms），清除本地会话后继续连接`);
             this.clearAll();
             this.isGameRunning = false;
             const currentSceneName = director.getScene()?.name;
@@ -793,14 +797,14 @@ export class WebSocketManager extends Component {
         }
         // 每次连接前重新读取URL（支持运行时覆盖，如 localStorage['WS_URL']）
         this.url = GameConfig.getWsUrl();
-        try { console.log(`WebSocket 连接地址: ${this.url}`); } catch {}
+        try { Logger.debug(`WebSocket 连接地址: ${this.url}`); } catch {}
         const seq = ++this._connectSeq;
         const ws = new WebSocket(this.url);
         this.socket = ws;
         ws.onopen = () => {
             // 只处理“当前有效 socket”的回调（旧 socket 的回调直接丢弃）
             if (this.socket !== ws || this._connectSeq !== seq) return;
-            try { console.log(`[WS] 已连接: ${this.url}`); } catch {}
+            try { Logger.debug(`[WS] 已连接: ${this.url}`); } catch {}
             this.invalidateSessionAuth();
             this.isConnectedFlag = true; this.isConnecting = false; this.reconnectAttempts = 0; this.isReconnecting = false;
             // 不在此处 flush messageQueue：否则断线重连后业务包会在 handshake/auth 之前发出，易被服务端丢弃（表现为选角「进游戏」首次无响应）
@@ -817,7 +821,7 @@ export class WebSocketManager extends Component {
         };
         ws.onclose = (ev: any) => {
             if (this.socket !== ws || this._connectSeq !== seq) return;
-            try { console.warn(`[WS] 连接关闭 code=${ev?.code} reason=${ev?.reason || ''}`); } catch {}
+            try { Logger.warn(`[WS] 连接关闭 code=${ev?.code} reason=${ev?.reason || ''}`); } catch {}
             this.stopHeartbeat(); // 停止心跳
             this.invalidateSessionAuth();
             this.isConnectedFlag = false; 
@@ -830,7 +834,7 @@ export class WebSocketManager extends Component {
             
             // 切换角色（游戏内回选角）：已清 characterId，仍保留 token/userId — 关闭旧连接后需重建 WS
             if (this.isSwitchingCharacterSession) {
-                console.log('ℹ️ [WS] 切换角色会话结束（保留账号），将重建连接');
+                Logger.debug('ℹ️ [WS] 切换角色会话结束（保留账号），将重建连接');
                 this.isSwitchingCharacterSession = false;
                 const token = this.getToken();
                 const userId = this.getUserId();
@@ -839,10 +843,10 @@ export class WebSocketManager extends Component {
                     setTimeout(() => {
                         if (this.isConnectedFlag || this.isConnecting) return;
                         try {
-                            console.log('🔄 [WS] 切换角色后重建 WebSocket（返回选角）');
+                            Logger.debug('🔄 [WS] 切换角色后重建 WebSocket（返回选角）');
                             this.connect();
                         } catch (e) {
-                            console.warn('[WS] 切换角色后重建连接失败', e);
+                            Logger.warn('[WS] 切换角色后重建连接失败', e);
                         }
                     }, 120);
                 }
@@ -861,7 +865,7 @@ export class WebSocketManager extends Component {
                 this.isReconnecting = true; 
                 // 使用优化后的指数退避策略，根据网络状况调整重连延迟
                 const backoffDelay = this.getReconnectDelay();
-                console.log(`🔄 [WebSocketManager] 将在 ${backoffDelay}ms 后尝试重连 (尝试 ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+                Logger.debug(`🔄 [WebSocketManager] 将在 ${backoffDelay}ms 后尝试重连 (尝试 ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
                 if (this._reconnectTimerId !== -1) {
                     clearTimeout(this._reconnectTimerId);
                 }
@@ -875,7 +879,7 @@ export class WebSocketManager extends Component {
                 // 登录页/主动 logout/fullLogout 触发 close 时，reconnectAttempts 可能被预设到上限，
                 // 这类情况下不应再打印 error（避免日志噪音，并避免误清 token）。
                 if (this.isGameRunning) {
-                    console.error(`❌ [WebSocketManager] 重连失败，已达到最大重试次数 (${this.maxReconnectAttempts})`);
+                    Logger.error(`❌ [WebSocketManager] 重连失败，已达到最大重试次数 (${this.maxReconnectAttempts})`);
                     this.clearAll();
                     this.returnToLogin();
                 }
@@ -883,7 +887,7 @@ export class WebSocketManager extends Component {
         };
         ws.onerror = (e: any) => { 
             if (this.socket !== ws || this._connectSeq !== seq) return;
-            try { console.error('[WS] 错误', e?.message || e); } catch {} 
+            try { Logger.error('[WS] 错误', e?.message || e); } catch {} 
             this.stopHeartbeat(); // 停止心跳
             this.isConnectedFlag = false; 
             this.isConnecting = false; 
@@ -1078,7 +1082,7 @@ export class WebSocketManager extends Component {
         // 设置超时（3秒后如果还没收到握手响应，继续正常流程，向后兼容）
         this.handshakeTimeout = setTimeout(() => {
             if (!this.handshakeCompleted) {
-                console.warn('⚠️ [WebSocketManager] 握手超时，继续正常流程（向后兼容）');
+                Logger.warn('⚠️ [WebSocketManager] 握手超时，继续正常流程（向后兼容）');
                 this.onHandshakeCompleteOrTimeout();
             }
         }, 3000) as any;
@@ -1147,7 +1151,7 @@ export class WebSocketManager extends Component {
             
             // 处理握手响应（参考 Pomelo 设计）
             if (data && data.type === 'handshake_ack') {
-                console.log('✅ [WebSocketManager] 握手成功');
+                Logger.debug('✅ [WebSocketManager] 握手成功');
                 this.handshakeCompleted = true;
                 
                 // 清除握手超时定时器
@@ -1164,13 +1168,13 @@ export class WebSocketManager extends Component {
                         id_to_route: data.sys.code_to_route || {}
                     });
                     this.useRouteDict = data.sys.use_dict === true;
-                    console.log(`✅ [WebSocketManager] 字典已加载，启用压缩: ${this.useRouteDict}`);
+                    Logger.debug(`✅ [WebSocketManager] 字典已加载，启用压缩: ${this.useRouteDict}`);
                 }
                 
                 // 更新心跳配置（如果服务器返回）
                 if (data.sys && data.sys.heartbeat) {
                     // 可以更新心跳间隔（当前是固定30秒）
-                    console.log(`📡 [WebSocketManager] 心跳间隔: ${data.sys.heartbeat}秒`);
+                    Logger.debug(`📡 [WebSocketManager] 心跳间隔: ${data.sys.heartbeat}秒`);
                 }
                 
                 // 握手成功后，继续正常流程（发送认证请求等）
@@ -1185,13 +1189,13 @@ export class WebSocketManager extends Component {
                     // 假设是响应消息，添加 _response 后缀
                     data.type = route + '_response';
                 } else {
-                    console.warn(`⚠️ [WebSocketManager] 无法解码 route_id: ${data.route_id}`);
+                    Logger.warn(`⚠️ [WebSocketManager] 无法解码 route_id: ${data.route_id}`);
                 }
             }
             
             // 检查消息版本（可选，用于兼容性检查）
             if (data.version && data.version !== this.MESSAGE_PROTOCOL_VERSION) {
-                console.warn(`⚠️ [WebSocketManager] 消息版本不匹配: 期望 ${this.MESSAGE_PROTOCOL_VERSION}，收到 ${data.version}`);
+                Logger.warn(`⚠️ [WebSocketManager] 消息版本不匹配: 期望 ${this.MESSAGE_PROTOCOL_VERSION}，收到 ${data.version}`);
             }
             
             if (data && data.type) {
@@ -1217,25 +1221,24 @@ export class WebSocketManager extends Component {
                         );
                     }
                 }
-                // 添加调试日志，方便排查消息接收问题
-                try {
-                    console.log(`📥 [WebSocketManager] 收到消息: type=${data.type}`, data);
-                } catch {}
+                if (GameConfig.LOG_WS_TRAFFIC) {
+                    Logger.ws(`[WebSocketManager] 收到消息: type=${data.type}`, data);
+                }
                 
                 const node = (this as any).node; 
                 if (node && typeof node.emit === 'function') { 
                     node.emit(data.type, data); 
-                    try {
-                        console.log(`✅ [WebSocketManager] 已触发事件: ${data.type}`);
-                    } catch {}
+                    if (GameConfig.LOG_WS_TRAFFIC) {
+                        Logger.ws(`[WebSocketManager] 已触发事件: ${data.type}`);
+                    }
                 } else {
-                    console.warn(`⚠️ [WebSocketManager] 无法触发事件 ${data.type}，node无效`);
+                    Logger.warn(`⚠️ [WebSocketManager] 无法触发事件 ${data.type}，node无效`);
                 }
             } else {
-                console.warn('⚠️ [WebSocketManager] 收到无type的消息:', data);
+                Logger.warn('⚠️ [WebSocketManager] 收到无type的消息:', data);
             }
         } catch (error) {
-            console.error('❌ [WebSocketManager] 处理消息失败:', error, message);
+            Logger.error('❌ [WebSocketManager] 处理消息失败:', error, message);
         } 
     }
     /**

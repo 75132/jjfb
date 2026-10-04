@@ -10,6 +10,8 @@ import { TipWindows } from '../global/TipWindows';
 import { emitBattleTeamUpdated, emitRobotDataUpdated } from '../global/RobotGameEvents';
 import { BagEventHub } from '../global/BagEvent';
 import { normalizeBagItemsResponse, type BagItemSnapshot } from '../global/protocol/BagProtocol';
+import { Logger } from '../global/Logger';
+import { MechSkillPanel } from './MechSkillPanel';
 
 const { ccclass, property } = _decorator;
 
@@ -262,11 +264,11 @@ export class BagItem extends Component {
         
         const checkComplete = () => {
             if (loadedCount === jsonFiles.length) {
-                console.log(`✅ [BagItem] 已加载所有物品和装备数据，共 ${totalItems} 个`);
+                Logger.debug(`✅ [BagItem] 已加载所有物品和装备数据，共 ${totalItems} 个`);
                 this.itemsDataLoaded = true;
                 // 如果已经有物品数据，重新渲染
                 if (this.items.length > 0) {
-                    console.log('🔄 [BagItem] 物品数据已加载，重新渲染物品列表');
+                    Logger.debug('🔄 [BagItem] 物品数据已加载，重新渲染物品列表');
                     this.render();
                 }
             }
@@ -285,14 +287,14 @@ export class BagItem extends Component {
             resourceMgr.loadAsset<JsonAsset>(`json/${fileName}`, JsonAsset, (err: Error | null, asset: JsonAsset | null) => {
                 loadedCount++;
                 if (err) {
-                    console.warn(`⚠️ [BagItem] 加载 ${fileName}.json 失败:`, err);
+                    Logger.warn(`⚠️ [BagItem] 加载 ${fileName}.json 失败:`, err);
                 } else if (asset && asset.json) {
                     const items = asset.json as ItemData[];
                     this.parseItemsData(items);
                     totalItems += items.length;
-                    console.log(`✅ [BagItem] 已加载 ${fileName}.json: ${items.length} 个物品`);
+                    Logger.debug(`✅ [BagItem] 已加载 ${fileName}.json: ${items.length} 个物品`);
                 } else {
-                    console.error(`❌ [BagItem] ${fileName}.json 数据格式错误`);
+                    Logger.error(`❌ [BagItem] ${fileName}.json 数据格式错误`);
                 }
                 
                 checkComplete();
@@ -322,10 +324,10 @@ export class BagItem extends Component {
         // 尝试使用 assetManager 从 json 目录加载
         assetManager.loadAny({ path: 'json/Items', type: JsonAsset }, (err: Error | null, asset: JsonAsset | null) => {
             if (err) {
-                console.error('❌ [BagItem] 所有加载方式都失败:', err);
-                console.error('💡 解决方案:');
-                console.error('   1. 将 Items.json 移动到 assets/resources/json/ 目录');
-                console.error('   2. 或者在 Cocos Creator 中右键 Items.json -> 设置为资源');
+                Logger.error('❌ [BagItem] 所有加载方式都失败:', err);
+                Logger.error('💡 解决方案:');
+                Logger.error('   1. 将 Items.json 移动到 assets/resources/json/ 目录');
+                Logger.error('   2. 或者在 Cocos Creator 中右键 Items.json -> 设置为资源');
                 // 设置一个默认的图标映射，避免完全无法显示
                 this.setupDefaultIcons();
                 return;
@@ -333,7 +335,7 @@ export class BagItem extends Component {
             if (asset && asset.json) {
                 this.parseItemsData(asset.json as ItemData[]);
             } else {
-                console.error('❌ [BagItem] Items.json 数据格式错误');
+                Logger.error('❌ [BagItem] Items.json 数据格式错误');
             }
         });
     }
@@ -342,7 +344,7 @@ export class BagItem extends Component {
      * 设置默认图标映射（当 JSON 加载失败时使用）
      */
     private setupDefaultIcons() {
-        console.warn('⚠️ [BagItem] 使用默认图标映射（建议修复 JSON 加载问题）');
+        Logger.warn('⚠️ [BagItem] 使用默认图标映射（建议修复 JSON 加载问题）');
         // 这里可以设置一些默认的 item_id -> iconIndex 映射
         // 但最好还是修复 JSON 加载问题
     }
@@ -361,10 +363,10 @@ export class BagItem extends Component {
         }
         // 只有在所有JSON文件加载完成后才标记为已加载
         // 这个标记在 loadItemsData 的 checkComplete 中设置
-        console.log(`✅ [BagItem] 解析了 ${addedCount} 个物品，当前总计 ${this.itemDataMap.size} 个物品数据`);
+        Logger.debug(`✅ [BagItem] 解析了 ${addedCount} 个物品，当前总计 ${this.itemDataMap.size} 个物品数据`);
         // 如果已经有物品数据，重新渲染
         if (this.items.length > 0) {
-            console.log('🔄 [BagItem] 物品数据已更新，重新渲染物品列表');
+            Logger.debug('🔄 [BagItem] 物品数据已更新，重新渲染物品列表');
             this.render();
         }
     }
@@ -414,7 +416,7 @@ export class BagItem extends Component {
      */
     private onCharacterChanged = (data: any): void => {
         if (data && data.reason === 'character_id_cleared') {
-            console.log('🗑️ [BagItem] 检测到角色切换，清除内部状态');
+            Logger.debug('🗑️ [BagItem] 检测到角色切换，清除内部状态');
             // 清除所有内部状态
             this.items = [];
             this.currentPage = 1;
@@ -512,7 +514,7 @@ export class BagItem extends Component {
     private requestFetchBag() {
         const cid = this.ws.getCharacterId?.() || undefined;
         if (!cid) {
-            console.warn('⚠️ [BagItem] 无法获取角色ID，无法请求背包数据');
+            Logger.warn('⚠️ [BagItem] 无法获取角色ID，无法请求背包数据');
             return;
         }
 
@@ -539,7 +541,7 @@ export class BagItem extends Component {
     private applyBagSnapshot(snapshot: BagItemSnapshot): void {
         if (!snapshot.success) {
             const msg = snapshot.message || '获取背包数据失败';
-            console.error(`❌ [BagItem] 获取背包物品失败: ${msg}`);
+            Logger.error(`❌ [BagItem] 获取背包物品失败: ${msg}`);
             if (this.panel && this.panel.active) {
                 this.showErrorTips(msg, false);
             }
@@ -552,7 +554,7 @@ export class BagItem extends Component {
         const serverTotalPages = snapshot.total_pages > 0 ? snapshot.total_pages : (this.totalPages || 1);
 
         if (serverPage !== this.currentPage) {
-            console.log(`🔄 [BagItem] 页码已调整：请求 ${this.currentPage}，服务器返回 ${serverPage}`);
+            Logger.debug(`🔄 [BagItem] 页码已调整：请求 ${this.currentPage}，服务器返回 ${serverPage}`);
         }
 
         this.currentPage = serverPage;
@@ -561,13 +563,13 @@ export class BagItem extends Component {
         if (this.currentPage > this.totalPages && this.totalPages > 0) {
             const oldPage = this.currentPage;
             this.currentPage = this.totalPages;
-            console.log(`⚠️ [BagItem] 页码超出范围，从 ${oldPage} 调整为最后一页: ${this.currentPage}`);
+            Logger.debug(`⚠️ [BagItem] 页码超出范围，从 ${oldPage} 调整为最后一页: ${this.currentPage}`);
             this.scheduleOnce(() => this.requestFetchBag(), 0.05);
             return;
         }
 
         if (serverItems.length === 0 && this.currentPage < this.totalPages && this.totalPages > 1) {
-            console.log(`🔄 [BagItem] 当前页为空，调整到前一页`);
+            Logger.debug(`🔄 [BagItem] 当前页为空，调整到前一页`);
             this.currentPage = Math.max(1, this.currentPage - 1);
             this.scheduleOnce(() => this.requestFetchBag(), 0.05);
             return;
@@ -580,7 +582,7 @@ export class BagItem extends Component {
         }));
 
         this.updatePageNumberUI();
-        console.log(`📦 [BagItem] 收到服务器数据：${this.items.length} 个物品，页码 ${this.currentPage}/${this.totalPages}`);
+        Logger.debug(`📦 [BagItem] 收到服务器数据：${this.items.length} 个物品，页码 ${this.currentPage}/${this.totalPages}`);
         BagEventHub.emit('bag', {
             kind: 'refreshed',
             category: this.currentCategory,
@@ -610,7 +612,7 @@ export class BagItem extends Component {
             if (delta && Array.isArray(delta.ops)) {
                 for (const op of delta.ops) {
                     if (op && op.op && op.op !== 'refetch') {
-                        console.log(`[BagItem] bag_delta op=${op.op}（当前仍走整页 refetch）`);
+                        Logger.debug(`[BagItem] bag_delta op=${op.op}（当前仍走整页 refetch）`);
                     }
                 }
             }
@@ -784,20 +786,20 @@ export class BagItem extends Component {
         const spr = node.getComponent(Sprite);
         const btn = node.getComponent(Button);
         if (!spr) {
-            console.warn(`⚠️ [BagItem] 节点缺少 Sprite 组件`);
+            Logger.warn(`⚠️ [BagItem] 节点缺少 Sprite 组件`);
             return;
         }
 
         // 检查数据是否已加载
         if (!this.itemsDataLoaded) {
-            console.warn(`⚠️ [BagItem] Items.json 尚未加载完成，物品 ${itemId} 使用默认图标`);
+            Logger.warn(`⚠️ [BagItem] Items.json 尚未加载完成，物品 ${itemId} 使用默认图标`);
             return;
         }
 
         // 从 Items.json 获取物品数据
         const itemData = this.itemDataMap.get(itemId);
         if (!itemData || !itemData.iconIndex) {
-            console.warn(`⚠️ [BagItem] 物品 ${itemId} 没有找到对应的图标数据 (itemDataMap大小: ${this.itemDataMap.size})`);
+            Logger.warn(`⚠️ [BagItem] 物品 ${itemId} 没有找到对应的图标数据 (itemDataMap大小: ${this.itemDataMap.size})`);
             return;
         }
 
@@ -809,7 +811,7 @@ export class BagItem extends Component {
         const atlas: SpriteAtlas | null = useUI2Atlas ? this.ui2Atlas : this.iconSet2Atlas;
 
         if (!atlas) {
-            console.error(`❌ [BagItem] 图集未设置: ${useUI2Atlas ? 'UI2' : 'IconSet2'}，请在编辑器中设置图集属性`);
+            Logger.error(`❌ [BagItem] 图集未设置: ${useUI2Atlas ? 'UI2' : 'IconSet2'}，请在编辑器中设置图集属性`);
             return;
         }
 
@@ -852,7 +854,7 @@ export class BagItem extends Component {
             spr.spriteFrame = sf;
             if (btn) { (btn as any).normalSprite = sf; }
         } else {
-            console.error(`❌ [BagItem] 在图集中未找到图标: ${iconIndex} (图集: ${useUI2Atlas ? 'UI2' : 'IconSet2'})`);
+            Logger.error(`❌ [BagItem] 在图集中未找到图标: ${iconIndex} (图集: ${useUI2Atlas ? 'UI2' : 'IconSet2'})`);
         }
     }
 
@@ -1082,13 +1084,13 @@ export class BagItem extends Component {
         }
         // 如果正在处理操作，忽略点击（防止状态混乱）
         if (this.isProcessingUseItem || this.isProcessingDiscardItem) {
-            console.warn('⚠️ [BagItem] 操作进行中，忽略点击');
+            Logger.warn('⚠️ [BagItem] 操作进行中，忽略点击');
             return;
         }
         
         // 验证节点有效性
         if (!node || !node.isValid) {
-            console.warn('⚠️ [BagItem] 节点无效，忽略点击');
+            Logger.warn('⚠️ [BagItem] 节点无效，忽略点击');
             return;
         }
         // 双击检测：如果点击的是同一个物品，且在双击时间间隔内
@@ -1116,7 +1118,7 @@ export class BagItem extends Component {
             this.selectedItemSlotIndex = (this.currentPage - 1) * this.PAGE_SIZE + itemIndexInPage;
             // 应用选中效果
             this.applyYellowFilter(node, true);
-            console.log(`🎯 [BagItem] 双击选中物品 ${itemId}，当前页: ${this.currentPage}，页内索引: ${itemIndexInPage}，全局slot_index: ${this.selectedItemSlotIndex}`);
+            Logger.debug(`🎯 [BagItem] 双击选中物品 ${itemId}，当前页: ${this.currentPage}，页内索引: ${itemIndexInPage}，全局slot_index: ${this.selectedItemSlotIndex}`);
             this.showUseItemPanel(itemId);
             return;
         }
@@ -1138,7 +1140,7 @@ export class BagItem extends Component {
         // 计算选中物品在当前分类中的全局slot索引（MMO最佳实践：精确标识物品位置）
         // slot_index = (当前页 - 1) * 每页大小 + 当前页内的索引（0-based）
         this.selectedItemSlotIndex = (this.currentPage - 1) * this.PAGE_SIZE + itemIndexInPage;
-        console.log(`🎯 [BagItem] 选中物品 ${itemId}，当前页: ${this.currentPage}，页内索引: ${itemIndexInPage}，全局slot_index: ${this.selectedItemSlotIndex}`);
+        Logger.debug(`🎯 [BagItem] 选中物品 ${itemId}，当前页: ${this.currentPage}，页内索引: ${itemIndexInPage}，全局slot_index: ${this.selectedItemSlotIndex}`);
 
         // 清除悬浮状态（点击时应该关闭悬浮显示的简介）
         if (this.hoveredItemNode && this.hoveredItemNode !== node) {
@@ -1208,24 +1210,24 @@ export class BagItem extends Component {
      */
     private showIntroduction(itemId: number, itemNode: Node) {
         if (!itemNode) {
-            console.warn('⚠️ [BagItem] 物品节点未提供');
+            Logger.warn('⚠️ [BagItem] 物品节点未提供');
             return;
         }
 
         if (!this.itemsDataLoaded) {
-            console.warn('⚠️ [BagItem] Items.json 尚未加载完成');
+            Logger.warn('⚠️ [BagItem] Items.json 尚未加载完成');
             return;
         }
 
         const itemData = this.itemDataMap.get(itemId);
         if (!itemData) {
-            console.warn(`⚠️ [BagItem] 物品 ${itemId} 没有找到对应的数据`);
+            Logger.warn(`⚠️ [BagItem] 物品 ${itemId} 没有找到对应的数据`);
             return;
         }
 
         const introPanel = this.introductionPanel;
         if (!introPanel) {
-            console.warn('⚠️ [BagItem] 未在 BagItem 脚本上绑定 Introduction 面板节点');
+            Logger.warn('⚠️ [BagItem] 未在 BagItem 脚本上绑定 Introduction 面板节点');
             return;
         }
 
@@ -1290,7 +1292,7 @@ export class BagItem extends Component {
                 introPanel.setSiblingIndex(introPanel.parent!.children.length - 1);
             }
         } catch (e) {
-            console.warn('⚠️ [BagItem] 设置 Introduction 面板位置失败:', e);
+            Logger.warn('⚠️ [BagItem] 设置 Introduction 面板位置失败:', e);
         }
 
         // 获取Introduction面板的子节点
@@ -1314,7 +1316,7 @@ export class BagItem extends Component {
                     targetFrame = (btn as any).normalSprite as SpriteFrame;
                 } else {
                     // 如果Button没有normalSprite，从itemData重新加载图标
-                    console.warn('⚠️ [BagItem] Button没有normalSprite，从itemData重新加载图标');
+                    Logger.warn('⚠️ [BagItem] Button没有normalSprite，从itemData重新加载图标');
                     this.applyItemIconToSprite(iconNode, itemId);
                     return; // 已经设置了，直接返回
                 }
@@ -1536,7 +1538,7 @@ export class BagItem extends Component {
                 const baseUT = node.getComponent(UITransform);
                 
                 if (!baseUT) {
-                    console.warn('⚠️ [BagItem] 物品格子节点缺少UITransform组件');
+                    Logger.warn('⚠️ [BagItem] 物品格子节点缺少UITransform组件');
                     return;
                 }
                 
@@ -1630,7 +1632,7 @@ export class BagItem extends Component {
      */
     private showUseItemPanel(itemId: number) {
         if (!this.useItemPanel) {
-            console.warn('⚠️ [BagItem] 未绑定 UseItem 面板节点');
+            Logger.warn('⚠️ [BagItem] 未绑定 UseItem 面板节点');
             return;
         }
 
@@ -1789,27 +1791,27 @@ export class BagItem extends Component {
     private onUseItem(itemId: number) {
         // 防止重复操作（双重检查）
         if (this.isProcessingUseItem) {
-            console.warn('⚠️ [BagItem] 使用物品操作正在进行中，请稍候...');
+            Logger.warn('⚠️ [BagItem] 使用物品操作正在进行中，请稍候...');
             return;
         }
 
         // 验证基础数据
         if (!this.itemsDataLoaded) {
-            console.error('❌ [BagItem] Items.json 尚未加载完成，无法使用物品');
+            Logger.error('❌ [BagItem] Items.json 尚未加载完成，无法使用物品');
             return;
         }
 
         // 检查物品是否存在于本地数据
         const itemData = this.itemDataMap.get(itemId);
         if (!itemData) {
-            console.error(`❌ [BagItem] 物品 ${itemId} 在本地 Items.json 中不存在`);
+            Logger.error(`❌ [BagItem] 物品 ${itemId} 在本地 Items.json 中不存在`);
             return;
         }
 
         // 检查物品是否在背包中（MMO最佳实践：客户端预检查，但服务器是权威）
         const bagItem = this.items.find(item => item.item_id === itemId);
         if (!bagItem) {
-            console.error(`❌ [BagItem] 物品 ${itemId} 不在当前背包中（可能已被删除或不同步）`);
+            Logger.error(`❌ [BagItem] 物品 ${itemId} 不在当前背包中（可能已被删除或不同步）`);
             // 刷新背包数据，确保数据同步
             this.requestFetchBag();
             return;
@@ -1817,7 +1819,7 @@ export class BagItem extends Component {
 
         // 验证选中状态（如果选中状态丢失，尝试恢复）
         if (!this.selectedItemId || this.selectedItemId !== itemId || this.selectedItemSlotIndex < 0) {
-            console.warn(`⚠️ [BagItem] 选中状态异常，尝试恢复: selectedItemId=${this.selectedItemId}, itemId=${itemId}, slotIndex=${this.selectedItemSlotIndex}`);
+            Logger.warn(`⚠️ [BagItem] 选中状态异常，尝试恢复: selectedItemId=${this.selectedItemId}, itemId=${itemId}, slotIndex=${this.selectedItemSlotIndex}`);
             // 尝试在当前页面查找该物品并恢复选中状态
             const itemIndex = this.items.findIndex(item => item.item_id === itemId);
             if (itemIndex >= 0 && itemIndex < this.dynamicNodes.length) {
@@ -1832,20 +1834,20 @@ export class BagItem extends Component {
                     this.selectedItemId = itemId;
                     this.selectedItemSlotIndex = (this.currentPage - 1) * this.PAGE_SIZE + itemIndex;
                     this.applyYellowFilter(node, true);
-                    console.log(`✅ [BagItem] 已恢复选中状态: 物品 ${itemId}，slot_index: ${this.selectedItemSlotIndex}`);
+                    Logger.debug(`✅ [BagItem] 已恢复选中状态: 物品 ${itemId}，slot_index: ${this.selectedItemSlotIndex}`);
                 } else {
-                    console.error(`❌ [BagItem] 无法恢复选中状态：节点无效`);
+                    Logger.error(`❌ [BagItem] 无法恢复选中状态：节点无效`);
                     return;
                 }
             } else {
-                console.error(`❌ [BagItem] 无法恢复选中状态：物品不在当前页面`);
+                Logger.error(`❌ [BagItem] 无法恢复选中状态：物品不在当前页面`);
                 return;
             }
         }
 
         // 最终验证：确保选中状态完整
         if (!this.selectedItemId || this.selectedItemId !== itemId || this.selectedItemSlotIndex < 0) {
-            console.error(`❌ [BagItem] 选中状态验证失败，无法使用物品`);
+            Logger.error(`❌ [BagItem] 选中状态验证失败，无法使用物品`);
             return;
         }
 
@@ -1862,7 +1864,7 @@ export class BagItem extends Component {
             // Pet 类型：需要选择机甲后使用
             this.useItemForPet(itemId, itemData);
         } else {
-            console.error(`❌ [BagItem] 未知的 UsageTarget: ${usageTarget}，物品ID: ${itemId}`);
+            Logger.error(`❌ [BagItem] 未知的 UsageTarget: ${usageTarget}，物品ID: ${itemId}`);
             // 清除处理标志
             this.isProcessingUseItem = false;
         }
@@ -1874,11 +1876,11 @@ export class BagItem extends Component {
      * @param itemData 物品数据
      */
     private useItemForPlayer(itemId: number, itemData: ItemData) {
-        console.log(`🎮 [BagItem] 对玩家使用物品: ${itemData.name} (ID: ${itemId})`);
+        Logger.debug(`🎮 [BagItem] 对玩家使用物品: ${itemData.name} (ID: ${itemId})`);
         
         const cid = this.ws.getCharacterId?.() || undefined;
         if (!cid) {
-            console.error('❌ [BagItem] 无法获取角色ID，无法使用物品');
+            Logger.error('❌ [BagItem] 无法获取角色ID，无法使用物品');
             this.isProcessingUseItem = false;
             return;
         }
@@ -1886,7 +1888,7 @@ export class BagItem extends Component {
         // 发送使用物品请求到服务端
         // MMO最佳实践：发送slot_index精确定位物品（在当前分类中的全局索引）
         if (this.selectedItemSlotIndex < 0) {
-            console.error(`❌ [BagItem] 无法确定物品的slot索引，无法使用`);
+            Logger.error(`❌ [BagItem] 无法确定物品的slot索引，无法使用`);
             this.isProcessingUseItem = false;
             return;
         }
@@ -1928,10 +1930,10 @@ export class BagItem extends Component {
      * @param itemData 物品数据
      */
     private useItemForPet(itemId: number, itemData: ItemData) {
-        console.log(`🤖 [BagItem] 对机甲使用物品: ${itemData.name} (ID: ${itemId})，打开机甲列表选择目标`);
+        Logger.debug(`🤖 [BagItem] 对机甲使用物品: ${itemData.name} (ID: ${itemId})，打开机甲列表选择目标`);
         
         if (!this.robotList) {
-            console.error('❌ [BagItem] RobotList 未绑定，无法选择机甲');
+            Logger.error('❌ [BagItem] RobotList 未绑定，无法选择机甲');
             // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
             this.isProcessingUseItem = false;
             return;
@@ -1945,7 +1947,7 @@ export class BagItem extends Component {
         if (this.robotList && this.robotList.node) {
             this.robotList.node.active = true;
         } else {
-            console.error('❌ [BagItem] RobotList 未绑定或节点不存在');
+            Logger.error('❌ [BagItem] RobotList 未绑定或节点不存在');
             // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
             this.isProcessingUseItem = false;
             return;
@@ -1982,30 +1984,30 @@ export class BagItem extends Component {
     private confirmUseItemForPet(itemId: number, petId: string, petData: any) {
         const itemData = this.itemDataMap.get(itemId);
         if (!itemData) {
-            console.error(`❌ [BagItem] 物品 ${itemId} 数据不存在`);
+            Logger.error(`❌ [BagItem] 物品 ${itemId} 数据不存在`);
             // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
             this.isProcessingUseItem = false;
             return;
         }
 
-        console.log(`✅ [BagItem] 对机甲 ${petData.RobotName || petId} 使用物品: ${itemData.name} (ID: ${itemId})`);
+        Logger.debug(`✅ [BagItem] 对机甲 ${petData.RobotName || petId} 使用物品: ${itemData.name} (ID: ${itemId})`);
 
         const pid = String(petId || '').trim();
         if (!pid || pid.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(pid)) {
-            console.error(`❌ [BagItem] petId 无效，拒绝发送: ${petId}`);
+            Logger.error(`❌ [BagItem] petId 无效，拒绝发送: ${petId}`);
             this.isProcessingUseItem = false;
             this.showErrorTips('机甲 ID 无效', false);
             return;
         }
         const pdataId = String(petData?.pet_id ?? petData?._id ?? petData?.id ?? '').trim();
         if (pdataId && pdataId.toLowerCase() !== pid.toLowerCase()) {
-            console.error(`❌ [BagItem] petId 与所选机甲数据不一致: req=${pid} data=${pdataId}`);
+            Logger.error(`❌ [BagItem] petId 与所选机甲数据不一致: req=${pid} data=${pdataId}`);
             this.isProcessingUseItem = false;
             this.showErrorTips('所选机甲与请求不一致', false);
             return;
         }
         if (this.robotList && !this.robotList.isPetInCurrentList(pid)) {
-            console.warn(`⚠️ [BagItem] petId 不在当前已加载列表，仍交由服务端校验: ${pid}`);
+            Logger.warn(`⚠️ [BagItem] petId 不在当前已加载列表，仍交由服务端校验: ${pid}`);
         }
         if (this.isPetRemovalItem(itemData) && this.robotList?.isLastRobot()) {
             this.isProcessingUseItem = false;
@@ -2015,7 +2017,7 @@ export class BagItem extends Component {
 
         const cid = this.ws.getCharacterId?.() || undefined;
         if (!cid) {
-            console.error('❌ [BagItem] 无法获取角色ID，无法使用物品');
+            Logger.error('❌ [BagItem] 无法获取角色ID，无法使用物品');
             // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
             this.isProcessingUseItem = false;
             return;
@@ -2031,7 +2033,7 @@ export class BagItem extends Component {
         // 注意：这里使用selectedItemSlotIndex，因为是在确认使用前选中的物品
         const slotIndex = this.selectedItemSlotIndex >= 0 ? this.selectedItemSlotIndex : -1;
         if (slotIndex < 0) {
-            console.error(`❌ [BagItem] 无法确定物品的slot索引，无法使用`);
+            Logger.error(`❌ [BagItem] 无法确定物品的slot索引，无法使用`);
             this.isProcessingUseItem = false;
             return;
         }
@@ -2078,19 +2080,19 @@ export class BagItem extends Component {
     private onDiscardItem(itemId: number) {
         // 防止重复操作
         if (this.isProcessingDiscardItem) {
-            console.warn('⚠️ [BagItem] 丢弃物品操作正在进行中，请稍候...');
+            Logger.warn('⚠️ [BagItem] 丢弃物品操作正在进行中，请稍候...');
             return;
         }
 
         if (!this.itemsDataLoaded) {
-            console.error('❌ [BagItem] Items.json 尚未加载完成，无法丢弃物品');
+            Logger.error('❌ [BagItem] Items.json 尚未加载完成，无法丢弃物品');
             return;
         }
 
         // 检查物品是否在背包中
         const bagItem = this.items.find(item => item.item_id === itemId);
         if (!bagItem) {
-            console.error(`❌ [BagItem] 物品 ${itemId} 不在当前背包中（可能已被删除或不同步）`);
+            Logger.error(`❌ [BagItem] 物品 ${itemId} 不在当前背包中（可能已被删除或不同步）`);
             // 刷新背包数据，确保数据同步
             this.requestFetchBag();
             return;
@@ -2100,7 +2102,7 @@ export class BagItem extends Component {
         const itemName = itemData ? itemData.name : `物品ID: ${itemId}`;
         const quantity = bagItem.quantity;
 
-        console.log(`🗑️ [BagItem] 丢弃物品: ${itemName} (ID: ${itemId})，数量: ${quantity}（删除整个格子）`);
+        Logger.debug(`🗑️ [BagItem] 丢弃物品: ${itemName} (ID: ${itemId})，数量: ${quantity}（删除整个格子）`);
 
         const tip = TipWindows.getInstance();
         if (tip) {
@@ -2124,7 +2126,7 @@ export class BagItem extends Component {
 
         const cid = this.ws.getCharacterId?.() || undefined;
         if (!cid) {
-            console.error('❌ [BagItem] 无法获取角色ID，无法丢弃物品');
+            Logger.error('❌ [BagItem] 无法获取角色ID，无法丢弃物品');
             // 修复点：错误路径恢复丢弃中的状态，避免后续操作被永久锁死
             this.isProcessingDiscardItem = false;
             return;
@@ -2136,7 +2138,7 @@ export class BagItem extends Component {
         // 发送丢弃物品请求到服务端（删除整个格子）
         // MMO最佳实践：发送slot_index精确定位物品（在当前分类中的全局索引）
         if (this.selectedItemSlotIndex < 0) {
-            console.error(`❌ [BagItem] 无法确定物品的slot索引，无法丢弃`);
+            Logger.error(`❌ [BagItem] 无法确定物品的slot索引，无法丢弃`);
             this.isProcessingDiscardItem = false;
             return;
         }
@@ -2184,7 +2186,7 @@ export class BagItem extends Component {
      * 处理请求超时（MMO最佳实践：超时恢复机制）
      */
     private handleRequestTimeout(): void {
-        console.warn('⚠️ [BagItem] 请求超时，恢复状态并刷新数据');
+        Logger.warn('⚠️ [BagItem] 请求超时，恢复状态并刷新数据');
         this.clearRequestTimeout();
         UILockManager.instance.unlock('bag');
         this.isProcessingUseItem = false;
@@ -2209,14 +2211,14 @@ export class BagItem extends Component {
 
         if (!data || !data.success) {
             const errorMsg = data?.error || data?.message || '未知错误';
-            console.error(`❌ [BagItem] 使用物品失败: ${errorMsg}`);
+            Logger.error(`❌ [BagItem] 使用物品失败: ${errorMsg}`);
             
             // 显示失败提示
             this.showErrorTips(errorMsg, false);
             
             // 如果是因为物品不存在或数量不足，刷新背包数据
             if (errorMsg.includes('不存在') || errorMsg.includes('数量') || errorMsg.includes('不足') || errorMsg.includes('无效')) {
-                console.log('🔄 [BagItem] 检测到数据不同步，刷新背包数据');
+                Logger.debug('🔄 [BagItem] 检测到数据不同步，刷新背包数据');
                 // 关闭使用窗口
                 this.closeUseItemPanel();
                 // 立即刷新（MMO最佳实践：服务器是权威数据源）
@@ -2245,12 +2247,12 @@ export class BagItem extends Component {
                     cacheManager.clearRobotPetsCache(cid);
                 }
             }
-            console.log(`🗑️ [BagItem] 对机甲使用物品后清除机甲缓存 (pet_id: ${pid}, equipped: ${!!responseData.equipped})`);
+            Logger.debug(`🗑️ [BagItem] 对机甲使用物品后清除机甲缓存 (pet_id: ${pid}, equipped: ${!!responseData.equipped})`);
         }
         const targetName = responseData.target_name || (responseData.pet_id ? `机甲ID: ${responseData.pet_id}` : '玩家');
         const effectResult = responseData.effect_result || data.effect_result; // 兼容两种格式
 
-        console.log(`✅ [BagItem] 成功使用物品: ${itemName} (ID: ${itemId})，目标: ${targetName} (${targetType})`);
+        Logger.debug(`✅ [BagItem] 成功使用物品: ${itemName} (ID: ${itemId})，目标: ${targetName} (${targetType})`);
 
         if (String(targetType).toLowerCase() === 'pet' && responseData.pet_id) {
             emitRobotDataUpdated({
@@ -2261,22 +2263,40 @@ export class BagItem extends Component {
         }
 
         // 显示成功提示
-        const successMsg = `成功使用物品: ${itemName}`;
-        this.showErrorTips(successMsg, true);
+        // ⚠ 技能书用更明确的文案：服务端返回结构化 `skill_book`（学会 + 等级 + 消耗书数），
+        //   比「成功使用物品: 技能书-肉搏攻击」清楚得多；同时刷新机甲技能面板。
+        //   注：技能书**只能用来「学会」**，已学会时服务端会直接拒绝（走失败分支提示）。
+        const skillBook = responseData.skill_book;
+        if (skillBook && skillBook.skill_key) {
+            const costTip = skillBook.books_consumed ? `，消耗技能书 ×${skillBook.books_consumed}` : '';
+            const text = skillBook.action === 'upgrade'
+                ? `「${skillBook.name || itemName}」升级至 Lv${skillBook.to_level}${costTip}`
+                : `已学会技能「${skillBook.name || itemName}」${costTip}`;
+            this.showErrorTips(text, true);
+            try {
+                // 技能面板节点默认未激活，getComponentInChildren 找不到 → 走静态登记表
+                MechSkillPanel.refreshForPet(skillBook.pet_id || responseData.pet_id);
+            } catch (err) {
+                Logger.warn('⚠️ [BagItem] 刷新技能面板失败:', err);
+            }
+        } else {
+            const successMsg = `成功使用物品: ${itemName}`;
+            this.showErrorTips(successMsg, true);
+        }
 
         // 显示效果结果（如果有）
         if (effectResult && effectResult.success) {
-            console.log(`✨ [BagItem] 效果应用成功: ${effectResult.message || '无消息'}`);
+            Logger.debug(`✨ [BagItem] 效果应用成功: ${effectResult.message || '无消息'}`);
             
             // 显示详细效果信息
             if (effectResult.results && effectResult.results.length > 0) {
                 effectResult.results.forEach((result: any, index: number) => {
                     if (result.success) {
-                        console.log(`  [效果 ${index + 1}] ${result.effect_type}: ${result.message || ''}`);
+                        Logger.debug(`  [效果 ${index + 1}] ${result.effect_type}: ${result.message || ''}`);
                         
                         // 显示升级信息（如果有）
                         if (result.data && result.data.level_up_count > 0) {
-                            console.log(`    🎉 升级了 ${result.data.level_up_count} 级！`);
+                            Logger.debug(`    🎉 升级了 ${result.data.level_up_count} 级！`);
                         }
                     }
                 });
@@ -2291,7 +2311,7 @@ export class BagItem extends Component {
                         : '';
                     const evolver = RobotEvolutionEffect.getInstance();
                     if (evolver) {
-                        console.log(`🎬 [BagItem] 触发进化动画: ${oldAniId} -> ${newAniId}`);
+                        Logger.debug(`🎬 [BagItem] 触发进化动画: ${oldAniId} -> ${newAniId}`);
                         evolver.playEvolution(oldAniId, newAniId);
                     }
                 }
@@ -2310,7 +2330,7 @@ export class BagItem extends Component {
             
             // MMO最佳实践：如果是对机甲使用物品，强制刷新机甲列表
             if (targetType === 'Pet' && this.robotList) {
-                console.log('🔄 [BagItem] 对机甲使用物品成功，强制刷新机甲列表');
+                Logger.debug('🔄 [BagItem] 对机甲使用物品成功，强制刷新机甲列表');
                 // 再延迟一小段时间，确保服务器数据已更新
                 this.scheduleOnce(() => {
                     if (this.robotList) {
@@ -2343,11 +2363,11 @@ export class BagItem extends Component {
 
         if (!data || !data.success) {
             const errorMsg = data?.error || data?.message || '未知错误';
-            console.error(`❌ [BagItem] 丢弃物品失败: ${errorMsg}`);
+            Logger.error(`❌ [BagItem] 丢弃物品失败: ${errorMsg}`);
             
             // 如果是因为物品不存在或无效，刷新背包数据
             if (errorMsg.includes('不存在') || errorMsg.includes('无效')) {
-                console.log('🔄 [BagItem] 检测到数据不同步，刷新背包数据');
+                Logger.debug('🔄 [BagItem] 检测到数据不同步，刷新背包数据');
                 // 关闭使用窗口
                 this.closeUseItemPanel();
                 // 立即刷新（MMO最佳实践：服务器是权威数据源）
@@ -2362,7 +2382,7 @@ export class BagItem extends Component {
         const itemData = this.itemDataMap.get(itemId);
         const itemName = itemData ? itemData.name : `物品ID: ${itemId}`;
 
-        console.log(`✅ [BagItem] 成功丢弃物品: ${itemName} (ID: ${itemId})`);
+        Logger.debug(`✅ [BagItem] 成功丢弃物品: ${itemName} (ID: ${itemId})`);
 
         // 关闭使用窗口（会自动恢复到合适位置）
         this.closeUseItemPanel();
@@ -2530,7 +2550,7 @@ export class BagItem extends Component {
                 uiTransform.convertToNodeSpaceAR(uiPos, localPos);
             } catch (error) {
                 // 如果转换失败（可能因为camera引用问题），返回false
-                console.warn('⚠️ [BagItem] convertToNodeSpaceAR失败:', error);
+                Logger.warn('⚠️ [BagItem] convertToNodeSpaceAR失败:', error);
                 return false;
             }
 
@@ -2552,7 +2572,7 @@ export class BagItem extends Component {
 
             return inBounds;
         } catch (error) {
-            console.error('❌ [BagItem] isPointInNode错误:', error);
+            Logger.error('❌ [BagItem] isPointInNode错误:', error);
             return false;
         }
     }
@@ -2568,7 +2588,7 @@ export class BagItem extends Component {
     private showErrorTips(message: string, isSuccess: boolean) {
         const tip = TipWindows.getInstance();
         if (!tip) {
-            console.warn('⚠️ [BagItem] TipWindows 未找到，无法显示提示:', message);
+            Logger.warn('⚠️ [BagItem] TipWindows 未找到，无法显示提示:', message);
             return;
         }
         const successColor = new Color(255, 255, 0, 255);

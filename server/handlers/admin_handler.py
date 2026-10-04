@@ -6,6 +6,7 @@ import json
 import re
 import time
 import random
+from pymongo import ReturnDocument
 from . import utils
 
 # 需要从ws_server导入的函数（通过参数传递）
@@ -42,10 +43,10 @@ async def handle_admin_search_account(websocket, data):
         }))
     else:
         try:
-            user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'account': account}))
+            user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'account': account}))
             if user:
                 # 获取该用户的所有角色
-                players = utils.safe_mongo_operation(lambda: list(utils.players_col.find({'user_id': user['_id']})))
+                players = await utils.async_mongo_operation_read(lambda: list(utils.players_col.find({'user_id': user['_id']})))
                 characters_data = []
                 for player in players:
                     characters_data.append({
@@ -95,12 +96,25 @@ async def handle_admin_search_character(websocket, data):
         try:
             # 使用正则表达式进行模糊搜索
             pattern = re.compile(role_name, re.IGNORECASE)
-            players = utils.safe_mongo_operation(lambda: list(utils.players_col.find({'role_name': pattern})))
+            players = await utils.async_mongo_operation_read(lambda: list(utils.players_col.find({'role_name': pattern})))
             
             if players:
+                user_ids = []
+                seen_user_ids = set()
+                for player in players:
+                    uid = player.get('user_id')
+                    if uid is not None and uid not in seen_user_ids:
+                        seen_user_ids.add(uid)
+                        user_ids.append(uid)
+                users = []
+                if user_ids:
+                    users = await utils.async_mongo_operation_read(
+                        lambda ids=user_ids: list(utils.users_col.find({'_id': {'$in': ids}}))
+                    )
+                user_by_id = {u.get('_id'): u for u in users}
                 characters_data = []
                 for player in players:
-                    user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'_id': player.get('user_id')}))
+                    user = user_by_id.get(player.get('user_id'))
                     characters_data.append({
                         'user_id': str(player.get('user_id', '')),
                         'account': user.get('account', '') if user else '',
@@ -145,9 +159,9 @@ async def handle_admin_get_player_by_id(websocket, data):
         }))
     else:
         try:
-            player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+            player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
             if player:
-                user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'_id': player.get('user_id')}))
+                user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'_id': player.get('user_id')}))
                 # 计算等级
                 total_exp = player.get('exp', 0)
                 level = utils.calculate_level_from_exp(total_exp)
@@ -155,7 +169,7 @@ async def handle_admin_get_player_by_id(websocket, data):
                 # 从inventory_col获取背包物品（与客户端读取的集合一致）
                 from .bag_handler import merge_inventory_items
                 user_id = player.get('user_id')
-                inventory_doc = utils.safe_mongo_operation(lambda: utils.inventory_col.find_one({
+                inventory_doc = await utils.async_mongo_operation_read(lambda: utils.inventory_col.find_one({
                     'user_id': user_id,
                     'character_id': character_id
                 }))
@@ -240,10 +254,10 @@ async def handle_admin_get_server_stats(websocket, data):
                 online_count += 1
         
         # 统计总用户数
-        total_users = utils.safe_mongo_operation(lambda: utils.users_col.count_documents({}))
+        total_users = await utils.async_mongo_operation_read(lambda: utils.users_col.count_documents({}))
         
         # 统计总角色数
-        total_characters = utils.safe_mongo_operation(lambda: utils.players_col.count_documents({'character_id': {'$ne': None}}))
+        total_characters = await utils.async_mongo_operation_read(lambda: utils.players_col.count_documents({'character_id': {'$ne': None}}))
         
         # 获取路由统计信息
         route_total_stats = route_stats_service.get_total_stats()
@@ -303,51 +317,40 @@ async def handle_admin_modify_gold(websocket, data):
         }))
     else:
         try:
-            player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
-            if not player:
+            stored_gold = max(0, gold_amount)
+            updated_player = await utils.async_mongo_operation(lambda: utils.players_col.find_one_and_update(
+                {'character_id': character_id},
+                {'$set': {'gold': stored_gold}},
+                return_document=ReturnDocument.AFTER,
+            ))
+            if not updated_player:
                 await websocket.send(json.dumps({
                     'type': 'admin_modify_response',
                     'success': False,
                     'message': '角色不存在'
                 }))
             else:
-                result = utils.safe_mongo_operation(lambda: utils.players_col.update_one(
-                    {'character_id': character_id},
-                    {'$set': {'gold': max(0, gold_amount)}}
-                ))
-                if result.matched_count > 0:
-                    # 通知客户端更新数据
-                    user_id = player.get('user_id')
-                    if user_id and _broadcast_to_user_async:
-                        # 获取更新后的完整玩家信息
-                        updated_player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
-                        if updated_player:
-                            total_exp = updated_player.get('exp', 0)
-                            level = utils.calculate_level_from_exp(total_exp)
-                            await _broadcast_to_user_async(user_id, {
-                                'type': 'player_info_update',
-                                'success': True,
-                                'character_id': character_id,
-                                'gold': gold_amount,
-                                'level': level,
-                                'exp': total_exp,
-                                'items': updated_player.get('items', {})
-                            })
-                    
-                    await websocket.send(json.dumps({
-                        'type': 'admin_modify_response',
+                user_id = updated_player.get('user_id')
+                if user_id and _broadcast_to_user_async:
+                    total_exp = updated_player.get('exp', 0)
+                    level = utils.calculate_level_from_exp(total_exp)
+                    await _broadcast_to_user_async(user_id, {
+                        'type': 'player_info_update',
                         'success': True,
-                        'action': 'modify_gold',
                         'character_id': character_id,
                         'gold': gold_amount,
-                        'message': f'金币已修改为 {gold_amount}'
-                    }))
-                else:
-                    await websocket.send(json.dumps({
-                        'type': 'admin_modify_response',
-                        'success': False,
-                        'message': '更新失败'
-                    }))
+                        'level': level,
+                        'exp': total_exp,
+                        'items': updated_player.get('items', {})
+                    })
+                await websocket.send(json.dumps({
+                    'type': 'admin_modify_response',
+                    'success': True,
+                    'action': 'modify_gold',
+                    'character_id': character_id,
+                    'gold': gold_amount,
+                    'message': f'金币已修改为 {gold_amount}'
+                }))
         except Exception as e:
             await websocket.send(json.dumps({
                 'type': 'admin_modify_response',
@@ -375,55 +378,42 @@ async def handle_admin_modify_level(websocket, data):
         }))
     else:
         try:
-            player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
-            if not player:
+            total_exp = utils.get_total_exp_for_level(level)
+            updated_player = await utils.async_mongo_operation(lambda: utils.players_col.find_one_and_update(
+                {'character_id': character_id},
+                {'$set': {
+                    'level': level,
+                    'exp': total_exp
+                }},
+                return_document=ReturnDocument.AFTER,
+            ))
+            if not updated_player:
                 await websocket.send(json.dumps({
                     'type': 'admin_modify_response',
                     'success': False,
                     'message': '角色不存在'
                 }))
             else:
-                # 计算该等级对应的经验值
-                total_exp = utils.get_total_exp_for_level(level)
-                result = utils.safe_mongo_operation(lambda: utils.players_col.update_one(
-                    {'character_id': character_id},
-                    {'$set': {
-                        'level': level,
-                        'exp': total_exp
-                    }}
-                ))
-                if result.matched_count > 0:
-                    # 通知客户端更新数据
-                    user_id = player.get('user_id')
-                    if user_id and _broadcast_to_user_async:
-                        # 获取更新后的完整玩家信息
-                        updated_player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
-                        if updated_player:
-                            await _broadcast_to_user_async(user_id, {
-                                'type': 'player_info_update',
-                                'success': True,
-                                'character_id': character_id,
-                                'level': level,
-                                'exp': total_exp,
-                                'gold': updated_player.get('gold', 0),
-                                'items': updated_player.get('items', {})
-                            })
-                    
-                    await websocket.send(json.dumps({
-                        'type': 'admin_modify_response',
+                user_id = updated_player.get('user_id')
+                if user_id and _broadcast_to_user_async:
+                    await _broadcast_to_user_async(user_id, {
+                        'type': 'player_info_update',
                         'success': True,
-                        'action': 'modify_level',
                         'character_id': character_id,
                         'level': level,
                         'exp': total_exp,
-                        'message': f'等级已修改为 {level}，经验值已设置为 {total_exp}'
-                    }))
-                else:
-                    await websocket.send(json.dumps({
-                        'type': 'admin_modify_response',
-                        'success': False,
-                        'message': '更新失败'
-                    }))
+                        'gold': updated_player.get('gold', 0),
+                        'items': updated_player.get('items', {})
+                    })
+                await websocket.send(json.dumps({
+                    'type': 'admin_modify_response',
+                    'success': True,
+                    'action': 'modify_level',
+                    'character_id': character_id,
+                    'level': level,
+                    'exp': total_exp,
+                    'message': f'等级已修改为 {level}，经验值已设置为 {total_exp}'
+                }))
         except Exception as e:
             await websocket.send(json.dumps({
                 'type': 'admin_modify_response',
@@ -456,12 +446,12 @@ async def handle_admin_get_online_players(websocket, data):
                     continue
                 
                 # 获取用户信息
-                user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'_id': user_id}))
+                user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'_id': user_id}))
                 if not user:
                     continue
                 
                 # 获取角色信息
-                player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({
+                player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
                     'character_id': character_id,
                     'user_id': user_id
                 }))
@@ -555,7 +545,7 @@ async def handle_admin_add_exp(websocket, data):
         }))
     else:
         try:
-            player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+            player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
             if not player:
                 await websocket.send(json.dumps({
                     'type': 'admin_modify_response',
@@ -573,7 +563,7 @@ async def handle_admin_add_exp(websocket, data):
                 
                 user_id = player.get('user_id')
                 new_level, new_exp, level_up_count = _add_exp_to_player(player, exp_amount)
-                utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+                await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                     {'character_id': character_id},
                     {'$set': {'level': new_level, 'exp': new_exp}}
                 ))
@@ -581,7 +571,7 @@ async def handle_admin_add_exp(websocket, data):
                 # 通知客户端更新数据
                 if user_id and _broadcast_to_user_async:
                     # 获取更新后的完整玩家信息
-                    updated_player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+                    updated_player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
                     if updated_player:
                         await _broadcast_to_user_async(user_id, {
                             'type': 'player_info_update',
@@ -636,7 +626,7 @@ async def handle_admin_add_item(websocket, data):
     
     try:
         # 先查找角色，获取user_id
-        player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+        player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
         if not player:
             await websocket.send(json.dumps({
                 'type': 'admin_modify_response',
@@ -656,7 +646,7 @@ async def handle_admin_add_item(websocket, data):
         
         # 从inventory_col获取现有物品列表（与客户端读取的集合一致）
         from .bag_handler import merge_inventory_items, split_inventory_items
-        doc = utils.safe_mongo_operation(lambda: utils.inventory_col.find_one({
+        doc = await utils.async_mongo_operation_read(lambda: utils.inventory_col.find_one({
             'user_id': user_id,
             'character_id': character_id
         }))
@@ -732,7 +722,7 @@ async def handle_admin_add_item(websocket, data):
         inventory_data['character_id'] = character_id
         
         # 更新inventory_col（与客户端读取的集合一致）
-        utils.safe_mongo_operation(lambda: utils.inventory_col.replace_one(
+        await utils.async_mongo_operation(lambda: utils.inventory_col.replace_one(
             {'user_id': user_id, 'character_id': character_id},
             inventory_data,
             upsert=True
@@ -774,7 +764,7 @@ async def handle_admin_get_all_accounts(websocket, data):
     """获取所有账号列表（管理接口）"""
     try:
         # 获取所有账号，只返回账号名和基本信息
-        users = utils.safe_mongo_operation(lambda: list(utils.users_col.find(
+        users = await utils.async_mongo_operation_read(lambda: list(utils.users_col.find(
             {},
             {'account': 1, '_id': 1}  # 只查询账号和ID字段
         ).sort('account', 1)))  # 按账号名排序
@@ -793,7 +783,7 @@ async def handle_admin_get_all_accounts(websocket, data):
         accounts_data = []
         for user in users:
             # 统计该账号下的角色数量
-            character_count = utils.safe_mongo_operation(lambda: utils.players_col.count_documents({
+            character_count = await utils.async_mongo_operation_read(lambda: utils.players_col.count_documents({
                 'user_id': user['_id'],
                 'character_id': {'$ne': None}
             }))
@@ -836,7 +826,7 @@ async def handle_admin_get_robot_pets(websocket, data):
     
     try:
         # 先查找角色
-        player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+        player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
         if not player:
             await websocket.send(json.dumps({
                 'type': 'admin_robot_pets_response',
@@ -848,14 +838,14 @@ async def handle_admin_get_robot_pets(websocket, data):
         user_id = player.get('user_id')
         
         # 获取该角色的所有宠物机甲
-        pets = utils.safe_mongo_operation(lambda: list(utils.robotpet_col.find(
+        pets = await utils.async_mongo_operation_read(lambda: list(utils.robotpet_col.find(
             {'user_id': user_id, 'character_id': character_id},
             {
                 '_id': 1, 'RobotName': 1, 'RobotID': 1, 'Growth': 1, 'Comprehension': 1,
                 'Level': 1, 'StarLevel': 1, 'Form': 1, 'Class': 1, 'AniID': 1,
                 'EXP': 1, 'HP': 1, 'MaxHP': 1, 'CurrentHP': 1, 'MP': 1, 'MaxMP': 1, 'CurrentMP': 1,
                 'Melee': 1, 'Accuracy': 1, 'Armor': 1, 'Corrosion': 1, 'Initiative': 1,
-                'Block': 1, 'ParticleShield': 1, 'ArmorPenetration': 1, 'Shooting': 1,
+                'Block': 1, 'AttackCount': 1, 'ArmorPenetration': 1, 'Shooting': 1,
                 'Evasion': 1, 'Lethality': 1, 'Resistance': 1, 'Counterattack': 1, 'robot_base_id': 1
             }
         ).sort('Level', -1)))  # 按等级降序排列
@@ -896,7 +886,7 @@ async def handle_admin_get_robot_pets(websocket, data):
                 'Corrosion': pet.get('Corrosion', 0),
                 'Initiative': pet.get('Initiative', 0),
                 'Block': pet.get('Block', 0),
-                'ParticleShield': pet.get('ParticleShield', 0),
+                'AttackCount': pet.get('AttackCount', 1),
                 'ArmorPenetration': pet.get('ArmorPenetration', 0),
                 'Shooting': pet.get('Shooting', 0),
                 'Evasion': pet.get('Evasion', 0),
@@ -941,7 +931,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
         pet_object_id = ObjectId(pet_id)
         
         # 查找宠物
-        pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
         if not pet:
             await websocket.send(json.dumps({
                 'type': 'admin_modify_robot_pet_response',
@@ -986,7 +976,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
                 message_parts.append(f'等级提升 {level_up_count} 级（{pet.get("Level", 1)} -> {new_level}）')
             
             # 重新获取更新后的宠物数据
-            pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
+            pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
             
         elif modify_type == 'level':
             # 修改等级（需要重新计算经验和属性，使用备份数据作为基础）
@@ -1059,7 +1049,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
                 update_data['_star_bonus_rates'] = calc_pet['_star_bonus_rates']
             update_data.update(updated_attrs)
             
-            utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id},
                 {'$set': update_data}
             ))
@@ -1091,7 +1081,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
                 update_data['_star_bonus_rates'] = pet['_star_bonus_rates']
             update_data.update(updated_attrs)
             
-            utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id},
                 {'$set': update_data}
             ))
@@ -1123,7 +1113,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
                 update_data['_star_bonus_rates'] = pet['_star_bonus_rates']
             update_data.update(updated_attrs)
             
-            utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id},
                 {'$set': update_data}
             ))
@@ -1185,7 +1175,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
                 update_data['_star_bonus_rates'] = calc_pet['_star_bonus_rates']
             update_data.update(updated_attrs)
             
-            utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id},
                 {'$set': update_data}
             ))
@@ -1210,11 +1200,11 @@ async def handle_admin_modify_robot_pet(websocket, data):
                 'HP', 'MaxHP', 'CurrentHP', 'MP', 'MaxMP', 'CurrentMP',
                 'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
                 'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-                'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+                'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
                 'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
                 'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
                 'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-                'CurrentArmorPenetration', 'CurrentParticleShield'
+                'CurrentArmorPenetration', 'CurrentAttackCount'
             ]
             
             if attr_name not in allowed_attrs:
@@ -1234,7 +1224,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
             elif attr_name == 'MaxMP':
                 update_data['CurrentMP'] = min(pet.get('CurrentMP', 0), attr_value)
             
-            utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id},
                 {'$set': update_data}
             ))
@@ -1250,7 +1240,7 @@ async def handle_admin_modify_robot_pet(websocket, data):
             return
         
         # 重新获取更新后的宠物数据
-        updated_pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
+        updated_pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
         
         await websocket.send(json.dumps({
             'type': 'admin_modify_robot_pet_response',
@@ -1296,7 +1286,7 @@ async def handle_admin_reset_robot_pet(websocket, data):
         pet_object_id = ObjectId(pet_id)
         
         # 查找宠物
-        pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
         if not pet:
             await websocket.send(json.dumps({
                 'type': 'admin_reset_robot_pet_response',
@@ -1329,7 +1319,7 @@ async def handle_admin_reset_robot_pet(websocket, data):
                 reset_data[key] = value
         
         # 更新数据库
-        utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id},
             {'$set': reset_data}
         ))
@@ -1368,7 +1358,7 @@ async def handle_admin_delete_robot_pet(websocket, data):
         pet_object_id = ObjectId(pet_id)
         
         # 查找宠物
-        pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({'_id': pet_object_id}))
         if not pet:
             await websocket.send(json.dumps({
                 'type': 'admin_delete_robot_pet_response',
@@ -1387,14 +1377,14 @@ async def handle_admin_delete_robot_pet(websocket, data):
         # 如果是放生操作，应该在删除前调用 utils.clear_slot_index(pet_id)
         
         # 删除宠物（包括备份数据）
-        result = utils.safe_mongo_operation(lambda: utils.robotpet_col.delete_one({'_id': pet_object_id}))
+        result = await utils.async_mongo_operation(lambda: utils.robotpet_col.delete_one({'_id': pet_object_id}))
         
         if result.deleted_count > 0:
             # 更新机甲数量
             if user_id and character_id:
                 # 如果该机甲在出战队伍中，移除（服务器权威）
                 try:
-                    utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+                    await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                         {'user_id': user_id, 'character_id': character_id},
                         {'$pull': {'battle_team': str(pet_object_id)}}
                     ))
@@ -1402,13 +1392,13 @@ async def handle_admin_delete_robot_pet(websocket, data):
                     pass
 
                 rc = utils.compute_robot_count(user_id, character_id)
-                utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+                await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                     {'user_id': user_id, 'character_id': character_id},
                     {'$set': {'robotcount': rc}}
                 ))
                 
                 # 获取更新后的机甲列表
-                pets = list(utils.safe_mongo_operation(lambda: utils.robotpet_col.find({
+                pets = list(await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find({
                     'user_id': user_id,
                     'character_id': character_id
                 })))
@@ -1484,7 +1474,7 @@ async def handle_admin_clear_all_robots(websocket, data):
     
     try:
         # 先查找角色
-        player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+        player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
         if not player:
             await websocket.send(json.dumps({
                 'type': 'admin_clear_all_robots_response',
@@ -1496,7 +1486,7 @@ async def handle_admin_clear_all_robots(websocket, data):
         user_id = player.get('user_id')
         
         # 删除该角色的所有机甲
-        result = utils.safe_mongo_operation(lambda: utils.robotpet_col.delete_many({
+        result = await utils.async_mongo_operation(lambda: utils.robotpet_col.delete_many({
             'user_id': user_id,
             'character_id': character_id
         }))
@@ -1543,7 +1533,7 @@ async def handle_admin_add_random_robots(websocket, data):
     
     try:
         # 查找角色
-        player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id}))
+        player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'character_id': character_id}))
         if not player:
             await websocket.send(json.dumps({
                 'type': 'admin_add_random_robots_response',
@@ -1555,7 +1545,7 @@ async def handle_admin_add_random_robots(websocket, data):
         user_id = player.get('user_id')
         
         # 检查RobotBase是否有数据
-        robotbase_count = utils.safe_mongo_operation(lambda: utils.robotbase_col.count_documents({}))
+        robotbase_count = await utils.async_mongo_operation_read(lambda: utils.robotbase_col.count_documents({}))
         if robotbase_count == 0:
             await websocket.send(json.dumps({
                 'type': 'admin_add_random_robots_response',
@@ -1579,7 +1569,7 @@ async def handle_admin_add_random_robots(websocket, data):
         for i in range(count):
             try:
                 # 随机从RobotBase选择一个机甲
-                sample = utils.safe_mongo_operation(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
+                sample = await utils.async_mongo_operation_read(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
                 if sample:
                     base_robot = sample[0]
                     robot_pet = _create_robot_pet(user_id, character_id, base_robot)
@@ -1592,13 +1582,13 @@ async def handle_admin_add_random_robots(websocket, data):
         
         # 更新机甲数量
         rc = utils.compute_robot_count(user_id, character_id)
-        utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.players_col.update_one(
             {'user_id': user_id, 'character_id': character_id},
             {'$set': {'robotcount': rc}}
         ))
         
         # 获取更新后的机甲列表
-        pets = list(utils.safe_mongo_operation(lambda: utils.robotpet_col.find({
+        pets = list(await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find({
             'user_id': user_id,
             'character_id': character_id
         })))
@@ -1687,7 +1677,7 @@ async def handle_admin_register_admin_account(websocket, data):
         
         # 1. 注册账号
         initial_token = utils.generate_unique_token(account, password)
-        result = utils.safe_mongo_operation(lambda: utils.users_col.find_one_and_update(
+        result = await utils.async_mongo_operation(lambda: utils.users_col.find_one_and_update(
             {'account': account},
             {'$setOnInsert': {
                 'account': account,
@@ -1737,11 +1727,11 @@ async def handle_admin_register_admin_account(websocket, data):
             'friend_id': friend_id
         }
         chars[slot_index] = ch
-        utils.users_col.update_one({'_id': user_id}, {'$set': {'characters': chars}})
+        await utils.async_mongo_operation(lambda: utils.users_col.update_one({'_id': user_id}, {'$set': {'characters': chars}}))
         
         # 3. 在players_col中创建玩家数据
         try:
-            utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                 {'user_id': user_id, 'slot_index': slot_index},
                 {'$setOnInsert': {
                     'user_id': user_id,
@@ -1770,10 +1760,10 @@ async def handle_admin_register_admin_account(websocket, data):
         # 4. 更新机甲数量
         try:
             rc = utils.compute_robot_count(user_id, character_id)
-            utils.players_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                 {'user_id': user_id, 'slot_index': slot_index},
                 {'$set': {'robotcount': rc}}
-            )
+            ))
         except Exception:
             pass
         
@@ -1808,7 +1798,7 @@ async def handle_admin_get_admin_accounts(websocket, data):
     """获取所有管理员账号列表（管理接口）"""
     try:
         # 查找所有标记为管理员账号的用户（包含密码字段）
-        users = utils.safe_mongo_operation(lambda: list(utils.users_col.find(
+        users = await utils.async_mongo_operation_read(lambda: list(utils.users_col.find(
             {'is_admin_account': True},
             {'account': 1, 'password': 1, '_id': 1, 'created_at': 1, 'admin_account_created_at': 1, 'last_login': 1}
         ).sort('admin_account_created_at', -1)))  # 按创建时间倒序
@@ -1817,13 +1807,13 @@ async def handle_admin_get_admin_accounts(websocket, data):
         for user in users:
             user_id = user['_id']
             # 统计该账号下的角色数量
-            character_count = utils.safe_mongo_operation(lambda: utils.players_col.count_documents({
+            character_count = await utils.async_mongo_operation_read(lambda: utils.players_col.count_documents({
                 'user_id': user_id,
                 'character_id': {'$ne': None}
             }))
             
             # 获取第一个角色信息
-            first_character = utils.safe_mongo_operation(lambda: utils.players_col.find_one(
+            first_character = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
                 {'user_id': user_id, 'slot_index': 0},
                 {'character_id': 1, 'role_name': 1, 'level': 1}
             ))
@@ -1882,7 +1872,7 @@ async def handle_admin_delete_admin_account(websocket, data):
             return
         
         # 查找用户
-        user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'account': account, 'is_admin_account': True}))
+        user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'account': account, 'is_admin_account': True}))
         if not user:
             await websocket.send(json.dumps({
                 'type': 'admin_delete_admin_account_response',
@@ -1894,13 +1884,13 @@ async def handle_admin_delete_admin_account(websocket, data):
         user_id = user['_id']
         
         # 删除该账号的所有角色数据
-        utils.safe_mongo_operation(lambda: utils.players_col.delete_many({'user_id': user_id}))
+        await utils.async_mongo_operation(lambda: utils.players_col.delete_many({'user_id': user_id}))
         
         # 删除该账号的所有机甲数据
-        utils.safe_mongo_operation(lambda: utils.robotpet_col.delete_many({'user_id': user_id}))
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.delete_many({'user_id': user_id}))
         
         # 删除账号
-        utils.safe_mongo_operation(lambda: utils.users_col.delete_one({'_id': user_id}))
+        await utils.async_mongo_operation(lambda: utils.users_col.delete_one({'_id': user_id}))
         
         await websocket.send(json.dumps({
             'type': 'admin_delete_admin_account_response',

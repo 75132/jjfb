@@ -95,6 +95,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
         colliderEnabled: false,
         isCurrentMainline: false
       };
+    } // 常驻传送点：不受主线顺序显隐限制
+
+
+    if (isAlwaysVisibleWarpNpc(row, events)) {
+      const active = state.hasActiveInteractEvent(npcUid, events);
+      return {
+        visible: true,
+        colliderEnabled: active,
+        isCurrentMainline: false
+      };
     }
 
     if (!state.sequentialReveal) {
@@ -134,6 +144,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       isCurrentMainline: isCurrent
     };
   }
+  /** appear.always 且仅含 teleport 事件 → 互传点，始终显示 */
+
+
+  function isAlwaysVisibleWarpNpc(row, events) {
+    var _row$appear;
+
+    if ((row == null || (_row$appear = row.appear) == null ? void 0 : _row$appear.mode) !== 'always') return false;
+    if (!(events != null && events.length)) return false;
+    return events.every(raw => {
+      var _eventType;
+
+      return String((_eventType = raw.eventType) != null ? _eventType : '') === 'teleport';
+    });
+  }
   /** appear 条件是否满足（不含 reveal_npc 与 initialHidden） */
 
 
@@ -146,11 +170,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
   }
 
   function isNpcHiddenUntilReveal(npcUid, row, revealedNpcUids, ctx) {
-    var _row$appear;
+    var _row$appear2;
 
     if (!row) return false;
     if (revealedNpcUids.has(npcUid)) return false;
-    if (((_row$appear = row.appear) == null ? void 0 : _row$appear.mode) === 'always') return false;
+    if (((_row$appear2 = row.appear) == null ? void 0 : _row$appear2.mode) === 'always') return false;
     if (npcAppearRequirementsMet(row, ctx)) return false;
     if (!row.appear && !row.initialHidden) return false;
     return true;
@@ -170,6 +194,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
     isStaleMainlineGiver: isStaleMainlineGiver,
     parseEnemyGiverUid: parseEnemyGiverUid,
     decideNpcVisibility: decideNpcVisibility,
+    isAlwaysVisibleWarpNpc: isAlwaysVisibleWarpNpc,
     npcAppearRequirementsMet: npcAppearRequirementsMet,
     isNpcHiddenUntilReveal: isNpcHiddenUntilReveal
   });

@@ -39,7 +39,7 @@ export class MechAttributeTEST extends Component {
     @property(Node) Corrosion: Node = null;
     @property(Node) Initiative: Node = null;
     @property(Node) Block: Node = null;
-    @property(Node) ParticleShield: Node = null;
+    @property(Node) AttackCount: Node = null;
     @property(Node) ArmorPenetration: Node = null;
     @property(Node) Shooting: Node = null;
     @property(Node) Evasion: Node = null;
@@ -68,6 +68,8 @@ export class MechAttributeTEST extends Component {
     // 初始化状态标记
     private isInitialized: boolean = false;
     private initializationPromise: Promise<void> | null = null;
+    private fetchDelayTimer: ReturnType<typeof setTimeout> | null = null;
+    private fetchDelayResolve: (() => void) | null = null;
     
     // 是否已注册消息监听
     private isListenerRegistered: boolean = false;
@@ -137,7 +139,7 @@ export class MechAttributeTEST extends Component {
             // 分割型
             const keys = [
                 'Melee', 'Armor', 'Accuracy', 'Corrosion', 'Initiative',
-                'Block', 'ParticleShield', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'
+                'Block', 'AttackCount', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'
             ];
             for (const key of keys) {
                 const parent = this[key];
@@ -334,7 +336,15 @@ export class MechAttributeTEST extends Component {
                 if (this.initializationPromise) {
                     await this.initializationPromise;
                 } else {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await new Promise<void>((resolve) => {
+                        this.fetchDelayResolve = resolve;
+                        this.fetchDelayTimer = setTimeout(() => {
+                            this.fetchDelayTimer = null;
+                            this.fetchDelayResolve = null;
+                            resolve();
+                        }, 1000);
+                    });
+                    if (!this.node?.isValid) return;
                 }
             }
 
@@ -422,21 +432,22 @@ export class MechAttributeTEST extends Component {
             }
             for (const key in this.nodeMap) {
                 const group = this.nodeMap[key];
-                if (group.left && group.right && group.slash) {
-                    const currentKey = 'Current' + key;
-                    const baseValue = data[key] ?? 0;
-                    const currentValue = data[currentKey];
-                    // 如果存在 Current 字段（包括值为 0 的情况），显示基础值/当前值
-                    if (Object.prototype.hasOwnProperty.call(data, currentKey)) {
-                        group.left.string = String(baseValue);
-                        group.right.string = String(currentValue ?? 0);
-                        group.slash.active = true;
-                    } else {
-                        // 如果不存在 Current 字段，只显示基础值
-                        group.left.string = String(baseValue);
-                        group.right.string = '';
-                        group.slash.active = false;
-                    }
+                if (!group || !group.left) continue;
+                const currentKey = 'Current' + key;
+                const baseValue = data[key] ?? 0;
+                // 只有存在 Current 字段（含值为 0）时才走「基础/当前」分割显示；
+                // 否则只显示基础值（右侧与斜杠自动隐藏）。
+                // 注意：某些属性节点（如 AttackCount）场景里可能没有 RightLabel/SlashSprite，
+                //       此时也只能显示单个值，不能整块跳过。
+                const hasCurrent = Object.prototype.hasOwnProperty.call(data, currentKey);
+                if (hasCurrent && group.right && group.slash) {
+                    group.left.string = String(baseValue);
+                    group.right.string = String(data[currentKey] ?? 0);
+                    group.slash.active = true;
+                } else {
+                    group.left.string = String(baseValue);
+                    if (group.right) group.right.string = '';
+                    if (group.slash) group.slash.active = false;
                 }
             }
             const barKeys = [
@@ -604,6 +615,13 @@ export class MechAttributeTEST extends Component {
     }
     
     onDestroy() {
+        if (this.fetchDelayTimer !== null) {
+            clearTimeout(this.fetchDelayTimer);
+            this.fetchDelayTimer = null;
+        }
+        const resolveDelay = this.fetchDelayResolve;
+        this.fetchDelayResolve = null;
+        if (resolveDelay) resolveDelay();
         // 清理事件监听
         if (this.wsManager && this.isListenerRegistered) {
             this.wsManager.off(GameConfig.MESSAGE_TYPES.ROBOT_INFO, this.onRobotInfo, this);

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PVP 真人模拟端 · 联调测试</title>
+<style>
+  :root {
+    --bg: #0b1016;
+    --panel: #131b24;
+    --panel-2: #1a2531;
+    --line: #26384a;
+    --text: #d7e3ee;
+    --dim: #7d92a6;
+    --accent: #3fa9f5;
+    --accent-2: #25d0a5;
+    --danger: #ff5d6c;
+    --warn: #ffb020;
+    --hp-self: #35d07f;
+    --hp-enemy: #ff5d6c;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: radial-gradient(1200px 700px at 50% -10%, #16222f 0%, var(--bg) 60%);
+    color: var(--text);
+    font: 13px/1.5 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 14px 16px 40px; }
+  h1 { font-size: 17px; margin: 0 0 2px; letter-spacing: .5px; }
+  .sub { color: var(--dim); font-size: 12px; margin-bottom: 12px; }
+  .sub code { color: var(--accent); background: #0e1620; padding: 1px 5px; border-radius: 4px; }
+
+  .grid { display: grid; grid-template-columns: 320px 1fr; gap: 14px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: linear-gradient(180deg, var(--panel) 0%, #101820 100%);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .card h2 {
+    font-size: 12px; margin: 0 0 10px; color: var(--dim);
+    text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600;
+  }
+  label { display: block; font-size: 11px; color: var(--dim); margin: 8px 0 3px; }
+  input, select, button, textarea {
+    font-family: inherit; font-size: 12px; color: var(--text);
+    background: #0d141c; border: 1px solid var(--line); border-radius: 6px;
+    padding: 6px 8px; width: 100%; outline: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  button {
+    cursor: pointer; background: #1d2c3b; border-color: #2c4256;
+    transition: .15s; font-weight: 600; padding: 7px 10px;
+  }
+  button:hover:not(:disabled) { background: #26405a; border-color: var(--accent); }
+  button:disabled { opacity: .38; cursor: not-allowed; }
+  button.primary { background: #14456b; border-color: #2b7bb8; }
+  button.primary:hover:not(:disabled) { background: #1a5b8d; }
+  button.ghost { background: transparent; }
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; }
+  .row.tight { gap: 6px; }
+
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; padding: 2px 9px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--dim); background: #0e1620;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dim); }
+  .dot.on { background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
+  .dot.err { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+  .dot.wait { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+
+  /* ===== 战斗台 ===== */
+  .arena {
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    background:
+      linear-gradient(180deg, rgba(63,169,245,.06), transparent 40%),
+      radial-gradient(600px 220px at 50% 0%, #16283a 0%, #0c131b 70%);
+  }
+  .arena-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-bottom: 1px solid var(--line); background: #0f1922;
+  }
+  .arena-title { font-size: 12px; color: var(--dim); letter-spacing: .8px; }
+  .round-badge {
+    font-size: 12px; font-weight: 700; color: #cfe6ff;
+    background: #10283d; border: 1px solid #2b6ea8; padding: 2px 10px; border-radius: 6px;
+  }
+  .field { padding: 14px 12px 10px; }
+  .unit { margin-bottom: 14px; }
+  .unit-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+  .unit-name { font-size: 13px; font-weight: 700; }
+  .unit-tag { font-size: 10px; color: var(--dim); }
+  .unit-hpnum { margin-left: auto; font-size: 11px; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .bar { height: 14px; background: #0a1119; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; position: relative; }
+  .bar > i { display: block; height: 100%; width: 100%; transition: width .32s ease; }
+  .bar.self > i { background: linear-gradient(90deg, #1f8f58, var(--hp-self)); }
+  .bar.enemy > i { background: linear-gradient(90deg, #a12a38, var(--hp-enemy)); }
+  .bar.self { margin-bottom: 0; }
+  .stats { display: flex; gap: 10px; margin-top: 5px; font-size: 10px; color: var(--dim); flex-wrap: wrap; }
+  .stats b { color: #a9c2d6; font-weight: 600; }
+  .vs { text-align: center; font-size: 11px; color: #3d5468; letter-spacing: 3px; margin: -4px 0 12px; }
+
+  /* ===== 倒计时 ===== */
+  .timer-zone { padding: 0 12px 12px; min-height: 52px; }
+  .timerbox {
+    border: 1px solid var(--line); border-radius: 8px; background: #0d161f;
+    padding: 9px 12px; display: none;
+  }
+  .timerbox.on { display: block; }
+  .timerbox.grace { border-color: #2f4b62; }
+  .timerbox.active { border-color: #b8791a; box-shadow: 0 0 0 1px rgba(255,176,32,.18) inset; }
+  .tb-head { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--dim); }
+  .tb-head b { font-size: 15px; font-variant-numeric: tabular-nums; color: #ffd694; }
+  .tb-track { height: 5px; background: #0a1119; border-radius: 3px; overflow: hidden; margin-top: 7px; }
+  .tb-track > i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg,#3fa9f5,#25d0a5); }
+  .timerbox.active .tb-track > i { background: linear-gradient(90deg,#ffb020,#ff5d6c); }
+  .tb-hint { font-size: 10px; color: #5d7386; margin-top: 5px; }
+  .idle-hint { font-size: 11px; color: #54718a; padding: 9px 4px; }
+
+  /* ===== 操作 ===== */
+  .actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0 12px 12px; }
+  .act {
+    padding: 12px 6px; border-radius: 8px; border: 1px solid var(--line);
+    background: #131f2a; font-size: 13px; font-weight: 700; cursor: pointer;
+    transition: .15s; text-align: center;
+  }
+  .act small { display: block; font-size: 10px; color: var(--dim); font-weight: 400; margin-top: 2px; }
+  .act:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--accent); background: #1a2c3c; }
+  .act[data-a="ATTACK"]:hover:not(:disabled) { border-color: var(--danger); }
+  .act:disabled { opacity: .3; cursor: not-allowed; }
+  .act.sel { border-color: var(--accent); background: #17303f; }
+
+  /* ===== 日志 ===== */
+  .logbox { height: 236px; overflow-y: auto; font-size: 11px; line-height: 1.75; font-family: Consolas, monospace; }
+  .logbox div { border-bottom: 1px dashed #1a2732; padding: 1px 0; word-break: break-all; }
+  .lg-t { color: #4a6076; }
+  .lg-sys { color: #7d92a6; }
+  .lg-ok { color: var(--accent-2); }
+  .lg-err { color: var(--danger); }
+  .lg-me { color: #7fd0ff; }
+  .lg-op { color: var(--warn); }
+  .lg-push { color: #c79bff; }
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-thumb { background: #25384a; border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  .kv { display: flex; font-size: 11px; padding: 2px 0; }
+  .kv span:first-child { color: var(--dim); width: 92px; flex: none; }
+  .kv span:last-child { color: #a9c2d6; word-break: break-all; font-family: Consolas, monospace; }
+  .hidden { display: none !important; }
+  .notice { font-size: 10px; color: #5d7386; margin-top: 7px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>PVP 真人模拟端</h1>
+  <div class="sub">模拟一名真人玩家与 Cocos 真机匹配对战 · 服务端 <code>ws://127.0.0.1:8001</code></div>
+
+  <div class="grid">
+    <!-- ======== 左栏 ======== -->
+    <div>
+      <div class="card">
+        <h2>连接</h2>
+        <label>WebSocket 地址</label>
+        <input id="wsUrl" value="ws://127.0.0.1:8001" />
+        <label>登录方式</label>
+        <select id="authMode">
+          <option value="uid">测试模式：user_id + character_id</option>
+          <option value="token">token（+ character_id）</option>
+          <option value="account">账号密码 login</option>
+        </select>
+        <div id="fUid">
+          <label>user_id</label>
+          <input id="userId" placeholder="填 Mongo users._id" />
+          <label>character_id</label>
+          <input id="charId" placeholder="填角色 id" />
+        </div>
+        <div id="fToken" class="hidden">
+          <label>token</label>
+          <input id="token" placeholder="登录 token" />
+          <label>character_id（可留空）</label>
+          <input id="charId2" placeholder="可留空" />
+        </div>
+        <div id="fAccount" class="hidden">
+          <label>account</label>
+          <input id="account" placeholder="账号" />
+          <label>password</label>
+          <input id="password" type="password" placeholder="密码" />
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="primary" id="btnConnect">连接并鉴权</button>
+          <button class="ghost" id="btnReload" style="flex:0 0 74px">重载配置</button>
+        </div>
+        <div style="margin-top:10px; display:flex; gap:6px; align-items:center; flex-wrap:wrap">
+          <span class="pill"><i class="dot" id="dotConn"></i><span id="txtConn">未连接</span></span>
+          <span class="pill"><i class="dot" id="dotAuth"></i><span id="txtAuth">未鉴权</span></span>
+        </div>
+        <div class="notice">测试模式下服务端支持直接用 user_id 校验，无需密码。配置会存到浏览器 localStorage。</div>
+      </div>
+
+      <div class="card">
+        <h2>匹配</h2>
+        <button class="primary" id="btnMatch" disabled>发起平匹配</button>
+        <button class="ghost" id="btnCancelMatch" style="margin-top:6px" disabled>取消匹配</button>
+        <div style="margin-top:10px">
+          <div class="kv"><span>room_id</span><span id="kvRoom">—</span></div>
+          <div class="kv"><span>我方 side</span><span id="kvSide">—</span></div>
+          <div class="kv"><span>匹配状态</span><span id="kvMatch">空闲</span></div>
+        </div>
+        <div class="notice">两边都点匹配才会配对成功；5 秒内匹配不到则超时（服务端返回 408）。</div>
+      </div>
+
+      <div class="card">
+        <h2>自动行为（可选）</h2>
+        <label>提交动作后自动打下一回合</label>
+        <select id="autoMode">
+          <option value="off">关闭（手动点）</option>
+          <option value="attack">自动连续攻击</option>
+          <option value="defend">自动连续防御</option>
+          <option value="random">自动随机</option>
+        </select>
+        <label style="margin-top:8px">自动出手间隔 (ms)</label>
+        <input id="autoDelay" type="number" value="1200" />
+        <div class="notice">用于稳定复现「一方攻击、一方挂机」场景：把模拟端设为「关闭」，真机侧一直操作，即可观察挂机方是否收到推送。</div>
+      </div>
+    </div>
+
+    <!-- ======== 右栏 ======== -->
+    <div>
+      <div class="card" style="padding:0; background:none; border:none">
+        <div class="arena">
+          <div class="arena-bar">
+            <span class="arena-title">PVP 战斗台</span>
+            <span class="round-badge" id="roundBadge">回合 —</span>
+          </div>
+
+          <div class="field">
+            <div class="unit">
+              <div class="unit-head">
+                <span class="unit-name" style="color:#8ff0c0">我方（模拟玩家）</span>
+                <span class="unit-tag" id="selfTag">player</span>
+                <span class="unit-hpnum" id="selfHpNum">— / —</span>
+              </div>
+              <div class="bar self"><i id="selfHpBar"></i></div>
+              <div class="stats" id="selfStats"></div>
+            </div>
+
+            <div class="vs">V S</div>
+
+            <div class="unit" style="margin-bottom:4px">
+              <div class="unit-head">
+                <span class="unit-name" style="color:#ffb3ba">敌方（Cocos 真机）</span>
+                <span class="unit-tag" id="enemyTag">enemy</span>
+                <span class="unit-hpnum" id="enemyHpNum">— / —</span>
+              </div>
+              <div class="bar enemy"><i id="enemyHpBar"></i></div>
+              <div class="stats" id="enemyStats"></div>
+            </div>
+          </div>
+
+          <div class="timer-zone">
+            <div class="timerbox" id="timerBox">
+              <div class="tb-head">
+                <span id="timerLabel">剩余时间</span>
+                <b id="timerNum">--</b>
+              </div>
+              <div class="tb-track"><i id="timerBar"></i></div>
+              <div class="tb-hint" id="timerHint">—</div>
+            </div>
+            <div class="idle-hint" id="idleHint">等待进入战斗…</div>
+          </div>
+
+          <div class="actions">
+            <button class="act" data-a="ATTACK" disabled>攻击<small>ATTACK</small></button>
+            <button class="act" data-a="DEFEND" disabled>防御<small>DEFEND</small></button>
+            <button class="act" data-a="ESCAPE" disabled>逃跑<small>ESCAPE</small></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>本回合指令状态</h2>
+        <div class="row tight">
+          <div class="kv"><span>我方已提交</span><span id="kvMyAct">—</span></div>
+          <div class="kv"><span>对方已提交</span><span id="kvOpAct">—</span></div>
+        </div>
+        <div class="kv"><span>接管状态</span><span id="kvAuto">—</span></div>
+        <div class="kv"><span>空窗累积</span><span id="kvNoop">—</span></div>
+      </div>
+
+      <div class="card">
+        <h2>日志</h2>
+        <div class="row tight" style="margin-bottom:8px">
+          <button class="ghost" id="btnClearLog" style="flex:0 0 90px">清空</button>
+          <button class="ghost" id="btnCopyState" style="flex:0 0 130px">复制最新 state</button>
+          <button class="ghost" id="btnResume" style="flex:0 0 90px">恢复房间</button>
+        </div>
+        <div class="logbox" id="log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ===================== 常量 =====================
+  var GRACE_SECONDS = 5;          // 与服务端 GRACE_SECONDS 保持一致（静默观察期）
+  var COMMAND_PHASE_SECONDS = 30; // 与服务端 COMMAND_PHASE_SECONDS 保持一致
+  var LS_KEY = "pvp_sim_cfg_v1";
+
+  // ===================== DOM =====================
+  var $ = function (id) { return document.getElementById(id); };
+  var elLog = $("log");
+
+  // ===================== 日志 =====================
+  function nowStr() {
+    var d = new Date();
+    return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) +
+           ":" + ("0" + d.getSeconds()).slice(-2) + "." + ("00" + d.getMilliseconds()).slice(-3);
+  }
+  function log(msg, cls) {
+    var d = document.createElement("div");
+    d.innerHTML = '<span class="lg-t">' + nowStr() + '</span> <span class="' + (cls || "lg-sys") + '">' +
+                  String(msg).replace(/&/g, "&amp;").replace(/</g, "&lt;") + '</span>';
+    elLog.appendChild(d);
+    elLog.scrollTop = elLog.scrollHeight;
+    while (elLog.childElementCount > 400) elLog.removeChild(elLog.firstChild);
+  }
+  function fmt(obj) { try { return JSON.stringify(obj); } catch (e) { return String(obj); } }
+
+  // ===================== 状态 =====================
+  var ws = null;
+  var authed = false;
+  var uid = null;             // 当前用户 _id
+  var cid = null;             // 当前角色 id
+  var roomId = null;
+  var mySide = null;          // 'player' | 'enemy'（服务端视角 my = view.player，故映射回 internal side）
+  var state = null;           // 最新 state（视角已是「我方 = player」）
+  var matchTimer = null;
+  var matching = false;
+  var myAction = null;        // 本回合我方已提交的动作
+  var oppAction = null;       // 从 state.round_actions.enemy 观察到的对方动作
+  var submittedThisRound = false;
+  var lastSettledRound = 0;
+  var pendingReq = {};        // request_id -> {resolve, reject, route}
+
+  // 空窗倒计时（客户端展示逻辑，硬编码常量仅用于显示，权威时间仍以服务端 remaining_command_seconds 为准）
+  var graceActive = false;
+  var graceLeft = 0;
+  var turnLeft = 0;
+  var tickHandle = null;
+  var lastSnapshotAt = 0;
+
+  // ===================== 配置持久化 =====================
+  function saveCfg() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        wsUrl: $("wsUrl").value,
+        authMode: $("authMode").value,
+        userId: $("userId").value,
+        charId: $("charId").value,
+        token: $("token").value,
+        charId2: $("charId2").value,
+        account: $("account").value,
+        autoMode: $("autoMode").value,
+        autoDelay: $("autoDelay").value
+      }));
+    } catch (e) { /* ignore */ }
+  }
+  function loadCfg() {
+    var raw = null;
+    try { raw = localStorage.getItem(LS_KEY); } catch (e) { return; }
+    if (!raw) { return; }
+    var c;
+    try { c = JSON.parse(raw); } catch (e) { return; }
+    ["wsUrl", "userId", "charId", "token", "charId2", "account", "autoMode", "autoDelay"].forEach(function (k) {
+      if (c[k] !== undefined && $(k)) $(k).value = c[k];
+    });
+    if (c.authMode !== undefined) $("authMode").value = c.authMode;
+    if (c.password) { /* 出于安全不恢复密码 */ }
+    syncAuthForm();
+  }
+  function syncAuthForm() {
+    var m = $("authMode").value;
+    $("fUid").classList.toggle("hidden", m !== "uid");
+    $("fToken").classList.toggle("hidden", m !== "token");
+    $("fAccount").classList.toggle("hidden", m !== "account");
+  }
+
+  // ===================== 连接状态 UI =====================
+  function setDot(el, txtEl, cls, text) {
+    el.className = "dot " + (cls || "");
+    txtEl.textContent = text;
+  }
+  function setConn(s, cls) { setDot($("dotConn"), $("txtConn"), cls, s); }
+  function setAuth(s, cls) { setDot($("dotAuth"), $("txtAuth"), cls, s); }
+
+  // ===================== 发送 =====================
+  function randId() { return Math.random().toString(36).slice(2, 10); }
+
+  /**
+   * 发送请求。
+   * @param type    消息 type
+   * @param body    业务字段
+   * @param waitFor 期望的响应 type。注意服务端有「直发风格」响应不带 request_id，
+   *                例如 login → login_response、select_character → select_character_response、
+   *                auth_request → auth_response。此时靠 route 兜底匹配。
+   */
+  function send(type, body, waitFor) {
+    if (!ws || ws.readyState !== 1) { log("发送失败：未连接", "lg-err"); return Promise.reject(new Error("no ws")); }
+    var msg = Object.assign({ type: type }, body || {});
+    if (uid && !msg.user_id) msg.user_id = uid;
+    if (cid && !msg.character_id) msg.character_id = cid;
+    msg.request_id = msg.request_id || randId();
+    var p = Promise.resolve(null);
+    if (waitFor) {
+      p = new Promise(function (resolve, reject) {
+        var key = msg.request_id;
+        // route 归一化：无论调用方写 "pvp_flat_match" 还是 "pvp_flat_match_response"，统一成 base route
+        var routeBase = String(waitFor || "").replace(/_response$/, "");
+        pendingReq[key] = { resolve: resolve, reject: reject, route: routeBase, routeKey: "@route:" + routeBase };
+        // 同时注册 route 兜底 key（服务端 send_error_response 可能不带 request_id）
+        pendingReq["@route:" + routeBase] = pendingReq[key];
+        setTimeout(function () {
+          if (pendingReq[key]) {
+            delete pendingReq[key];
+            delete pendingReq["@route:" + routeBase];
+            reject(new Error(waitFor + " 响应超时"));
+          }
+        }, 15000);
+      });
+    }
+    ws.send(JSON.stringify(msg));
+    log("→ " + type + " " + fmt(body || {}), "lg-me");
+    return p;
+  }
+
+  // ===================== WebSocket =====================
+  function connect() {
+    if (ws) { try { ws.close(); } catch (e) {} ws = null; }
+    var url = ($("wsUrl").value || "").trim();
+    if (/^localhost/i.test(url)) url = url.replace(/^localhost/i, "127.0.0.1");
+    log("连接中 " + url, "lg-sys");
+    setConn("连接中", "wait");
+    try { ws = new WebSocket(url); } catch (e) {
+      log("WebSocket 构造失败：" + e.message, "lg-err");
+      setConn("失败", "err");
+      return;
+    }
+    ws.onopen = function () {
+      log("socket 已打开，发送握手", "lg-ok");
+      setConn("已连接", "on");
+      // 与 Cocos WebSocketManager 一致的握手
+      send("handshake", { sys: { type: "websocket", version: "1.0.0", dict_version: "" } });
+      // 握手后立即鉴权（测试模式允许 user_id 直验）
+      setTimeout(doAuth, 120);
+    };
+    ws.onmessage = function (ev) {
+      var msg;
+      try { msg = JSON.parse(ev.data); } catch (e) { log("非 JSON 消息：" + String(ev.data).slice(0, 200), "lg-err"); return; }
+      handleMessage(msg);
+    };
+    ws.onerror = function () { log("socket 错误", "lg-err"); setConn("错误", "err"); };
+    ws.onclose = function (ev) {
+      log("socket 关闭 code=" + ev.code + " reason=" + (ev.reason || ""), "lg-err");
+      setConn("已断开", "err");
+      authed = false; setAuth("未鉴权", "");
+      setButtons();
+      stopTick();
+    };
+  }
+
+  function handleMessage(msg) {
+    var t = msg.type || "";
+
+    // 1) 请求响应（标准 xx_response + 直发风格 auth_response）
+    if (/_response$/.test(t) || t === "auth_response") {
+      var rid = msg.request_id;
+      var pr = null, hitKey = null;
+      if (rid && pendingReq[rid]) { pr = pendingReq[rid]; hitKey = rid; }
+      if (!pr) {
+        // 退化：按 route 兜底（服务端 send_error_response 不带 request_id）
+        // ⚠️ 归一化比较：waitFor 可能写成裸 route（"pvp_flat_match"），
+        //    而服务端实际 type 恒为 "<route>_response"，两侧都去掉 _response 再比。
+        var tBase = t.replace(/_response$/, "");
+        for (var k in pendingReq) {
+          var rBase = String(pendingReq[k].route || "").replace(/_response$/, "");
+          if (rBase === tBase) { pr = pendingReq[k]; hitKey = k; break; }
+        }
+      }
+      if (pr) {
+        if (hitKey) delete pendingReq[hitKey];
+        if (rid) delete pendingReq[rid];
+        if (pr.route) delete pendingReq["@route:" + pr.route];
+        if (msg.success === false) {
+          log("← " + t + " 失败 code=" + msg.code + " " + (msg.message || ""), "lg-err");
+          pr.reject(new Error(msg.message || (t + " 失败")));
+        } else {
+          log("← " + t + " OK", "lg-ok");
+          pr.resolve(msg);
+        }
+        return;
+      }
+      if (t === "handshake_response" || t === "handshake_ack") { log("← 握手响应", "lg-sys"); return; }
+      log("← 未被消费的响应 " + t + " " + fmt(msg).slice(0, 260), "lg-sys");
+      return;
+    }
+
+    // 2) 服务端主动推送
+    if (t === "pvp_round_update") {
+      // ⚠️ push_to_user 会把业务载荷包进 data 字段：
+      //    {type, success, code, timestamp, version, data:{room_id, settled_round, state}}
+      //    必须读 msg.data.state，直接读 msg.state 会拿到 undefined（这是挂机方黑屏的经典坑）
+      var body = (msg && typeof msg.data === "object" && msg.data) ? msg.data : msg;
+      log("⇐ 推送 pvp_round_update settled_round=" + body.settled_round, "lg-push");
+      onPvpRoundUpdate(body);
+      return;
+    }
+
+    // 3) 其它
+    log("← " + t + " " + fmt(msg).slice(0, 300), "lg-sys");
+  }
+
+  // ===================== 鉴权 =====================
+  function doAuth() {
+    var m = $("authMode").value;
+    if (m === "account") {
+      var acc = $("account").value.trim(), pwd = $("password").value;
+      if (!acc) { log("请填写账号", "lg-err"); return; }
+      log("登录中…", "lg-sys");
+      // ⚠️ login_response 只返回 user_id，**不含 character_id**
+      //    （服务端 login_handler 第 161-170 行：'user_id': str(current_user_id)）
+      //    拿到 user_id 后必须再走 select_character 才能得到 character_id。
+      send("login", { account: acc, password: pwd }, "login_response").then(function (resp) {
+        uid = resp.user_id || (resp.data && resp.data.user_id) || null;
+        if (resp.token) { $("token").value = resp.token; }
+        log("登录成功 user_id=" + uid + "，接着自动选择角色…", "lg-ok");
+        if (!uid) { log("登录响应缺少 user_id，无法继续", "lg-err"); setAuth("登录失败", "err"); return; }
+        return autoPickCharacter();
+      }).catch(function (e) { setAuth("登录失败", "err"); log("登录失败：" + e.message, "lg-err"); });
+      return;
+    }
+    if (m === "token") {
+      var tk = $("token").value.trim();
+      var c2 = $("charId2").value.trim();
+      if (!tk) { log("请填写 token", "lg-err"); return; }
+      uid = null; cid = c2 || null;
+      send("auth_request", { token: tk, character_id: c2 || undefined }, "auth_response").then(function (resp) {
+        uid = resp.user_id || (resp.data && resp.data.user_id) || uid;
+        cid = resp.character_id || c2 || cid;
+        if (uid && !cid) {
+          log("鉴权成功 user_id=" + uid + "，未带 character_id，自动选择角色…", "lg-ok");
+          return autoPickCharacter();
+        }
+        authed = true; setAuth("已鉴权", "on");
+        log("鉴权成功 user_id=" + uid + " character_id=" + cid, "lg-ok");
+        setButtons();
+      }).catch(function (e) { setAuth("鉴权失败", "err"); log("鉴权失败：" + e.message, "lg-err"); });
+      return;
+    }
+    // uid 测试模式
+    var u = $("userId").value.trim();
+    var c = $("charId").value.trim();
+    if (!u) { log("请填写 user_id", "lg-err"); return; }
+    uid = u; cid = c || null;
+    send("auth_request", { user_id: u, character_id: c || undefined }, "auth_response").then(function (resp) {
+      uid = resp.user_id || uid;
+      if (!cid) {
+        log("鉴权通过 user_id=" + uid + "，自动选择角色…", "lg-ok");
+        return autoPickCharacter();
+      }
+      authed = true; setAuth("已鉴权(测试)", "on");
+      log("测试模式鉴权通过 user_id=" + u + " character_id=" + cid, "lg-ok");
+      setButtons();
+    }).catch(function (e) { setAuth("鉴权失败", "err"); log("鉴权失败：" + e.message, "lg-err"); });
+  }
+
+  /**
+   * 自动领取一个角色：get_all_characters → 取第一个有角色的槽位 → select_character
+   * 为什么必须走这一步：login 与 auth_request 都可能不返回 character_id，
+   * 而 pvp_flat_match 强制要求 character_id（服务端第 38-46 行：无 cid 直接 400）。
+   */
+  function autoPickCharacter() {
+    return send("get_all_characters", { user_id: uid }, "all_characters_response").then(function (resp) {
+      // ⚠️ 实测：角色数据在【根级】resp.characters（服务端 send_direct_response 直发根级字段），
+      // 形状 {"0":{character_id,slot_index,role_name,...}, "1":{...}, "2":null}
+      // 不能只读 resp.data.characters（那里是空的）——这里做多级兜底。
+      var d = (resp && resp.data) || {};
+      var list = (resp && resp.characters) || d.characters || d.characters_data || d.slots || [];
+      var picked = null;
+      if (Array.isArray(list)) {
+        for (var i = 0; i < list.length; i++) {
+          var it = list[i];
+          if (!it) continue;
+          var id = it.character_id || it.characterId;
+          if (id) { picked = { character_id: String(id), slot_index: (it.slot_index != null ? it.slot_index : i) }; break; }
+        }
+      }
+      // 兼容 {characters: {0:{...},1:{...}}} 形式
+      if (!picked && list && typeof list === "object") {
+        for (var k in list) {
+          var v = list[k];
+          if (v && (v.character_id || v.characterId)) {
+            picked = { character_id: String(v.character_id || v.characterId),
+                       slot_index: (v.slot_index != null ? v.slot_index : Number(k)) };
+            break;
+          }
+        }
+      }
+      if (!picked) {
+        log("该账号没有任何角色，无法进入 PVP（请先在客户端创建角色）", "lg-err");
+        setAuth("无角色", "err");
+        return Promise.reject(new Error("无可用角色"));
+      }
+      log("发现角色 character_id=" + picked.character_id + " slot_index=" + picked.slot_index, "lg-sys");
+      return send("select_character",
+        { character_id: picked.character_id, slot_index: picked.slot_index },
+        "select_character_response"
+      ).then(function (r2) {
+        cid = r2.character_id || picked.character_id;
+        authed = true; setAuth("已鉴权", "on");
+        log("选择角色成功 character_id=" + cid, "lg-ok");
+        setButtons();
+      });
+    });
+  }
+
+  // ===================== 按钮状态 =====================
+  function setButtons() {
+    var inBattle = !!(roomId && state && state.status === "in_progress");
+    $("btnMatch").disabled = !(ws && ws.readyState === 1 && authed && !inBattle);
+    $("btnCancelMatch").disabled = !matching;
+    var actable = inBattle && state && state.status === "in_progress" && !myAction && !submittedThisRound;
+    ["ATTACK", "DEFEND", "ESCAPE"].forEach(function (a) {
+      var b = document.querySelector('.act[data-a="' + a + '"]');
+      b.disabled = !actable;
+    });
+  }
+
+  // ===================== 匹配 =====================
+  function startMatch() {
+    if (!authed) { log("请先连接并鉴权", "lg-err"); return; }
+    if (!cid) { log("缺少 character_id，无法匹配", "lg-err"); return; }
+    matching = true;
+    $("kvMatch").textContent = "匹配中…";
+    setButtons();
+    log("发起平匹配（等待真人进入队列，超时 5s）…", "lg-op");
+    send("pvp_flat_match", { character_id: cid }, "pvp_flat_match_response")
+      .then(function (resp) {
+        matching = false;
+        var d = (resp && resp.data) || {};
+        applyMatched(d.room_id, d.state);
+      })
+      .catch(function (e) {
+        matching = false;
+        $("kvMatch").textContent = "匹配失败";
+        log("匹配失败：" + e.message, "lg-err");
+        setButtons();
+      });
+  }
+
+  function applyMatched(ridOut, st) {
+    roomId = ridOut;
+    state = st;
+    mySide = resolveMySide(st);
+    lastSettledRound = Number(st && st.round ? st.round : 0);
+    myAction = null; oppAction = null; submittedThisRound = false;
+    $("kvRoom").textContent = roomId || "—";
+    $("kvSide").textContent = mySide || "—";
+    $("kvMatch").textContent = "已配对";
+    log("★ 匹配成功！room_id=" + roomId + " 我方 internal side=" + mySide, "lg-ok");
+    renderState();
+    enterCommandPhaseFromState();
+    setButtons();
+  }
+
+  // 服务端视图里「我方永远在 player」，这里反推 internal side 便于显示游戏内真实方位
+  function resolveMySide(st) {
+    try {
+      if (st.player_character_id && cid) {
+        if (String(st.player_character_id) === String(cid)) return "player";
+        if (String(st.enemy_character_id) === String(cid)) return "enemy";
+      }
+    } catch (e) {}
+    return "player";
+  }
+
+  // ===================== 渲染 =====================
+  function pct(hp, max) {
+    if (!max || max <= 0) return 0;
+    return Math.max(0, Math.min(100, (hp / max) * 100));
+  }
+  function setBar(el, p) { el.style.width = p.toFixed(1) + "%"; }
+
+  function unitStats(u) {
+    if (!u) return "";
+    var raw = u.raw || {};
+    return "Lv<b>" + (u.level || raw.Level || "?") + "</b>" +
+           " 攻<b>" + Math.round(Number(u.atk || ((raw.CurrentMelee || 0) + (raw.CurrentShooting || 0))) || 0) + "</b>" +
+           " 甲<b>" + Math.round(Number(u.def || raw.CurrentArmor || 0)) + "</b>" +
+           " 段<b>" + (u.attack_count || raw.CurrentAttackCount || 1) + "</b>";
+  }
+
+  function renderState() {
+    if (!state) return;
+    var p = state.player || {};
+    var e = state.enemy || {};
+
+    $("selfTag").textContent = "player" + (mySide === "player" ? " · 我" : " · 对方");
+    $("enemyTag").textContent = "enemy" + (mySide === "enemy" ? " · 我" : " · 对方");
+
+    // 名字：player 位置永远是「我方视角的自己」，为直观起见用 display_self/display_enemy
+    $("selfHpNum").textContent = Math.max(0, Math.round(p.hp || 0)) + " / " + Math.round(p.max_hp || 0);
+    $("enemyHpNum").textContent = Math.max(0, Math.round(e.hp || 0)) + " / " + Math.round(e.max_hp || 0);
+    setBar($("selfHpBar"), pct(p.hp || 0, p.max_hp || 1));
+    setBar($("enemyHpBar"), pct(e.hp || 0, e.max_hp || 1));
+    $("selfStats").innerHTML = unitStats(p);
+    $("enemyStats").innerHTML = unitStats(e);
+
+    $("roundBadge").textContent = "回合 " + (state.round != null ? state.round : "—") +
+      (state.status === "finished" ? " · 已结束" : "");
+
+    // 指令状态
+    var ra = state.round_actions || {};
+    $("kvMyAct").textContent = myAction ? myAction : (ra.player ? String(ra.player) : "未提交");
+    $("kvOpAct").textContent = ra.enemy ? String(ra.enemy) : "未提交";
+
+    // 接管 / 空窗
+    var auto = state.auto_actions || {};
+    var noop = state.noop_rounds || {};
+    $("kvAuto").textContent = "我方=" + (auto.player ? "已接管" : "人工") +
+                              " / 对方=" + (auto.enemy ? "已接管" : "人工");
+    $("kvNoop").textContent = "我方=" + (noop.player != null ? noop.player : 0) +
+                              " / 对方=" + (noop.enemy != null ? noop.enemy : 0);
+
+    if (state.status === "finished") {
+      stopTick();
+      $("idleHint").textContent = "战斗已结束" + (state.result ? "：" + describeResult(state.result) : "");
+      $("idleHint").classList.remove("hidden");
+    }
+  }
+
+  function describeResult(r) {
+    if (!r) return "";
+    var w = r.winner ? ("胜者 " + r.winner) : "";
+    return w + (r.reason ? "（" + r.reason + "）" : "");
+  }
+
+  // ===================== 回合倒计时（镜像客户端两阶段逻辑） =====================
+  function enterCommandPhaseFromState() {
+    // 服务端返回的 remaining_command_seconds 为权威值；无则用常量
+    var rem = state && typeof state.remaining_command_seconds === "number" ? state.remaining_command_seconds : null;
+    graceActive = false;
+    graceLeft = GRACE_SECONDS;
+    turnLeft = rem != null && rem > 0 && rem < COMMAND_PHASE_SECONDS ? rem : COMMAND_PHASE_SECONDS;
+    myAction = null;
+    submittedThisRound = false;
+    lastSnapshotAt = Date.now();
+    $("idleHint").classList.add("hidden");
+    $("timerBox").classList.remove("on", "active");
+    $("timerBox").classList.add("on", "grace");
+    $("timerLabel").textContent = "剩余时间";
+    $("timerHint").textContent = "静默观察期：5 秒内任一方有操作则立即开始倒计时";
+    startTick();
+    log("进入指令阶段（静默观察 " + GRACE_SECONDS + "s）", "lg-op");
+  }
+
+  function activateGraceCountdown() {
+    graceActive = true;
+    turnLeft = COMMAND_PHASE_SECONDS;
+    $("timerBox").classList.add("active");
+    $("timerBox").classList.remove("grace");
+    $("timerHint").textContent = "已激活倒计时：归零后服务端自动普攻";
+    log("倒计时激活（" + COMMAND_PHASE_SECONDS + "s）", "lg-op");
+  }
+
+  function startTick() {
+    stopTick();
+    tickHandle = setInterval(onTick, 100);
+  }
+  function stopTick() {
+    if (tickHandle) { clearInterval(tickHandle); tickHandle = null; }
+  }
+
+  function onTick() {
+    if (!state || state.status !== "in_progress") return;
+
+    if (!graceActive) {
+      graceLeft -= 0.1;
+      if (graceLeft <= 0) activateGraceCountdown();
+    } else {
+      if (!submittedThisRound || myAction) {
+        // 需求2：自己已提交后倒计时继续走（只要对方没提交）
+      }
+      turnLeft -= 0.1;
+      if (turnLeft <= 0) {
+        turnLeft = 0;
+        if (!myAction && !submittedThisRound) {
+          log("倒计时归零，自动提交普攻（服务端权威结算）", "lg-op");
+          submitAction("ATTACK", true);
+        }
+      }
+    }
+    renderTimer();
+  }
+
+  function renderTimer() {
+    var box = $("timerBox");
+    box.classList.add("on");
+    if (!graceActive) {
+      var gp = (graceLeft / GRACE_SECONDS) * 100;
+      $("timerNum").textContent = graceLeft.toFixed(1);
+      setBar($("timerBar"), gp);
+      $("timerLabel").textContent = "静默观察";
+    } else {
+      $("timerNum").textContent = turnLeft.toFixed(1);
+      setBar($("timerBar"), (turnLeft / COMMAND_PHASE_SECONDS) * 100);
+      $("timerLabel").textContent = "剩余时间";
+    }
+  }
+
+  // ===================== 提交动作 =====================
+  var actBtns = document.querySelectorAll(".act");
+  actBtns.forEach(function (b) {
+    b.addEventListener("click", function () { submitAction(b.getAttribute("data-a"), false); });
+  });
+
+  function submitAction(action, isAuto) {
+    if (!roomId) { log("尚未匹配到房间", "lg-err"); return; }
+    if (myAction || submittedThisRound) { log("本回合已提交过", "lg-err"); return; }
+    myAction = action;
+    submittedThisRound = true;
+    // 本地立即进入「已提交等待对方」状态：倒计时继续（需求2）
+    if (!graceActive) activateGraceCountdown();
+    setButtons();
+    log((isAuto ? "[自动] " : "") + "提交 " + action + "，等待对方…（倒计时继续）", "lg-me");
+    send("battle_room_action", { room_id: roomId, action_type: action, character_id: cid }, "battle_room_action_response")
+      .then(function (resp) {
+        var d = (resp && resp.data) || {};
+        var st = d.state;
+        var r = Number(st && st.round ? st.round : 0);
+        if (st && st.status === "finished") { onBattleFinished(st); return; }
+        // 若服务端已结算（回合号前进），说明对方也已提交 → 播放
+        if (r > lastSettledRound) {
+          log("服务端已结算至第 " + r + " 回合（响应）", "lg-push");
+          playRound(st, action);
+        } else {
+          log("已记录我方指令，等待对方提交后由服务端推送结算", "lg-op");
+          state = st || state;
+          renderState();
+        }
+      })
+      .catch(function (e) {
+        log("提交失败：" + e.message, "lg-err");
+        myAction = null; submittedThisRound = false;
+        setButtons();
+      });
+  }
+
+  // ===================== 服务端推送 =====================
+  function onPvpRoundUpdate(msg) {
+    if (!msg || (roomId && msg.room_id && String(msg.room_id) !== String(roomId))) {
+      log("推送房间不匹配，忽略 (room=" + msg.room_id + ")", "lg-sys");
+      return;
+    }
+    var st = msg.state;
+    if (!st) return;
+    var settled = Number(msg.settled_round || 0);
+
+    // 结束
+    if (st.status === "finished") { onBattleFinished(st); return; }
+
+    // 去重：已播放过的回合不再重复
+    if (settled <= lastSettledRound) {
+      log("推送回合 " + settled + " 已播放过，忽略", "lg-sys");
+      return;
+    }
+
+    // 我方提交动作（服务端视角 player 永远是「我」）
+    var ra = st.round_actions || {};
+    var playedMyAction = ra.player || myAction || "ATTACK";
+    playRound(st, playedMyAction);
+  }
+
+  function playRound(st, playedMyAction) {
+    // 记录结算前血量，用于推断伤害
+    var oldSelfHp = state && state.player ? Number(state.player.hp || 0) : null;
+    var oldEnemyHp = state && state.enemy ? Number(state.enemy.hp || 0) : null;
+
+    state = st;
+    lastSettledRound = Math.max(lastSettledRound, Number(st.round || 0));
+
+    var newSelfHp = state.player ? Number(state.player.hp || 0) : 0;
+    var newEnemyHp = state.enemy ? Number(state.enemy.hp || 0) : 0;
+    if (oldSelfHp != null) {
+      var dTaken = Math.max(0, oldSelfHp - newSelfHp);
+      var dDealt = Math.max(0, oldEnemyHp - newEnemyHp);
+      log("▶ 第 " + st.round + " 回合结算：我方[" + playedMyAction + "] 造成 " + dDealt +
+          " 伤害 · 承受 " + dTaken + " 伤害", "lg-ok");
+    }
+
+    myAction = null; submittedThisRound = false;
+    renderState();
+    enterCommandPhaseFromState();
+    setButtons();
+    maybeAutoNext();
+  }
+
+  function onBattleFinished(st) {
+    state = st;
+    lastSettledRound = Math.max(lastSettledRound, Number(st.round || 0));
+    stopTick();
+    renderState();
+    log("◆ 战斗结束 " + describeResult(st.result), "lg-err");
+    roomId = null; mySide = null; myAction = null; submittedThisRound = false;
+    $("kvMatch").textContent = "已结束";
+    $("timerBox").classList.remove("on", "active");
+    setButtons();
+  }
+
+  // 自动行为：用于稳定复现挂机/连打场景
+  function maybeAutoNext() {
+    var mode = $("autoMode").value;
+    if (mode === "off") return;
+    var delay = Math.max(200, Number($("autoDelay").value) || 1200);
+    var action = mode === "attack" ? "ATTACK" : (mode === "defend" ? "DEFEND" :
+      ["ATTACK", "DEFEND", "ESCAPE"][Math.floor(Math.random() * 3)]);
+    setTimeout(function () {
+      if (roomId && state && state.status === "in_progress" && !submittedThisRound) {
+        submitAction(action, true);
+      }
+    }, delay);
+  }
+
+  // ===================== 恢复房间 / 复制 state =====================
+  function resumeRoom() {
+    if (!authed) { log("请先鉴权", "lg-err"); return; }
+    if (!cid) { log("缺少 character_id", "lg-err"); return; }
+    log("请求恢复进行中的战斗房间…", "lg-sys");
+    send("battle_room_resume", { character_id: cid }, "battle_room_resume_response")
+      .then(function (resp) {
+        var d = (resp && resp.data) || {};
+        if (!d.state) { log("没有进行中的战斗", "lg-sys"); return; }
+        applyMatched(d.room_id || d.state.room_id, d.state);
+      })
+      .catch(function (e) { log("恢复失败：" + e.message, "lg-err"); });
+  }
+
+  var lastStateJson = "";
+  window.__pvpLastState = function () { return lastStateJson; };
+  function cacheState() {
+    if (state) { try { lastStateJson = JSON.stringify(state, null, 2); } catch (e) {} }
+    return lastStateJson;
+  }
+
+  // ===================== 绑定 =====================
+  $("btnConnect").addEventListener("click", function () { saveCfg(); connect(); });
+  $("authMode").addEventListener("change", function () { syncAuthForm(); saveCfg(); });
+  $("btnReload").addEventListener("click", function () { loadCfg(); log("已重载本地配置", "lg-sys"); });
+  $("btnMatch").addEventListener("click", startMatch);
+  $("btnCancelMatch").addEventListener("click", function () {
+    matching = false; $("kvMatch").textContent = "已取消（注：队列票据仍在服务端，5s 后自动超时）";
+    log("已取消本地等待（服务端票据 5 秒后超时）", "lg-op");
+    setButtons();
+  });
+  $("btnClearLog").addEventListener("click", function () { elLog.innerHTML = ""; });
+  $("btnCopyState").addEventListener("click", function () {
+    var s = cacheState();
+    if (!s) { log("暂无 state 可复制", "lg-err"); return; }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(s).then(function () { log("已复制最新 state 到剪贴板", "lg-ok"); },
+        function () { log("复制失败（剪贴板被拒绝）", "lg-err"); });
+    } else {
+      log("浏览器不支持剪贴板 API，state 已打印到控制台", "lg-sys");
+      console.log(s);
+    }
+  });
+  $("btnResume").addEventListener("click", resumeRoom);
+  ["wsUrl", "userId", "charId", "token", "charId2", "account", "autoMode", "autoDelay"].forEach(function (k) {
+    var el = $(k);
+    if (el) el.addEventListener("change", saveCfg);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.target && /INPUT|SELECT|TEXTAREA/.test(ev.target.tagName)) return;
+    if (!state || state.status !== "in_progress") return;
+    if (ev.key === "1") submitAction("ATTACK", false);
+    if (ev.key === "2") submitAction("DEFEND", false);
+    if (ev.key === "3") submitAction("ESCAPE", false);
+  });
+
+  // 启动
+  loadCfg();
+  syncAuthForm();
+  log("页面就绪。填写配置后点「连接并鉴权」；快捷键 1=攻击 2=防御 3=逃跑。", "lg-sys");
+  log("联调提示：真机侧也用相同 user_id 规则，两边都点平匹配即可配对。", "lg-sys");
+})();
+</script>
+</body>
+</html>

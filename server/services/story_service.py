@@ -12,7 +12,6 @@
 """
 from __future__ import annotations
 
-import json
 import os
 import time
 import datetime
@@ -20,6 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from bson import ObjectId
 
+from config_loader import load_json_file
 from handlers import utils
 
 _story_progress_col = None
@@ -68,11 +68,8 @@ def _data_dir() -> str:
 
 def load_battle_refs() -> dict:
     global _battle_refs_cache
-    if _battle_refs_cache is not None:
-        return _battle_refs_cache
     path = os.path.join(_data_dir(), "battle_refs.json")
-    with open(path, "r", encoding="utf-8") as f:
-        _battle_refs_cache = json.load(f)
+    _battle_refs_cache, _from_cache = load_json_file(path)
     return _battle_refs_cache
 
 
@@ -84,8 +81,7 @@ def load_map_config(map_code: str) -> Optional[dict]:
         if not fname.endswith(".json"):
             continue
         path = os.path.join(story_dir, fname)
-        with open(path, "r", encoding="utf-8") as f:
-            cfg = json.load(f)
+        cfg, _from_cache = load_json_file(path)
         code = cfg.get("mapCode") or cfg.get("map_code")
         if code == map_code:
             cached = _map_cache.get(map_code)
@@ -792,6 +788,19 @@ async def complete_event(
     progress = await get_or_create_progress(user_id, character_id, map_code)
 
     if _event_completed(progress, event_id):
+        # 传送可重复：已完成后再次触发仍写 position 并回传 applied_effects
+        if ev.get("eventType") == "teleport":
+            server = ev.get("server") or {}
+            applied = await apply_effects(
+                user_id, character_id, progress, map_cfg, server.get("effects") or [], choice_id=choice_id
+            )
+            return True, "already_completed", {
+                **build_state_payload(progress, map_cfg),
+                "applied_effects": applied,
+                "npc_uid": npc_uid,
+                "choice_id": choice_id,
+                "idempotent_replay": True,
+            }
         return True, "already_completed", {
             **build_state_payload(progress, map_cfg),
             "authoritative_battle_verified": ev.get("eventType") == "battle",
@@ -830,7 +839,8 @@ async def complete_event(
         return True, "choice_blocked", build_state_payload(progress, map_cfg)
 
     completed = progress.get("completed_event_ids") or []
-    if event_id not in completed:
+    # 传送不写入 completed，便于反复使用传送点
+    if event_type != "teleport" and event_id not in completed:
         completed.append(event_id)
     progress["completed_event_ids"] = completed
     progress["pending_battle"] = None

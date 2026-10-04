@@ -73,7 +73,7 @@ async def handle_admin_send_mail(websocket, data):
     if not character_id:
         await utils.send_error_response(websocket, "admin_send_mail", "缺少 character_id", code=400, request_data=data)
         return
-    player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({"character_id": character_id}))
+    player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({"character_id": character_id}))
     if not player:
         await utils.send_error_response(websocket, "admin_send_mail", "角色不存在", code=404, request_data=data)
         return

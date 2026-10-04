@@ -1,3 +1,4 @@
+import { Logger } from './Logger';
 /**
  * 路由字典 - 与服务器端 Dictionary 服务对应
  * 用于压缩路由字符串，减少网络传输
@@ -43,7 +44,7 @@ export class RouteDictionary {
         }
         
         this.enabled = true;
-        console.log(`✅ [RouteDictionary] 字典加载成功，版本: ${this.version}，路由数: ${this.routeToId.size}`);
+        Logger.debug(`✅ [RouteDictionary] 字典加载成功，版本: ${this.version}，路由数: ${this.routeToId.size}`);
     }
     
     /**

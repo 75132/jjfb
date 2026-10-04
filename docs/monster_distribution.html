@@ -1,0 +1,1255 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>怪物分布表（官方玩法分区）</title>
+<style>
+:root{color-scheme:light}
+body{background:#f7f8fa;color:#0f172a;font:14px/1.6 "Microsoft YaHei",system-ui,sans-serif;margin:0;padding:24px}
+.wrap{max-width:1200px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px}
+.sub{color:#64748b;font-size:13px;margin-bottom:14px}
+.stat{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.chip{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:5px 14px;font-size:13px}
+.chip b{color:#0f172a}
+input{width:260px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;margin-bottom:12px}
+details.seg{background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:12px;overflow:hidden}
+summary{cursor:pointer;padding:11px 14px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;background:#f8fafc;font-size:13.5px}
+summary::-webkit-details-marker{color:#94a3b8}
+.no{font-weight:700;color:#0f172a;font-variant-numeric:tabular-nums}
+.segname{font-weight:700;color:#0369a1;font-size:15px}
+.meta{color:#64748b}
+.mech{font-weight:600}
+.top{color:#b45309;margin-left:auto}
+.hint{padding:7px 14px;background:#eff6ff;color:#1d4ed8;font-size:12.5px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:6px 12px;text-align:left;border-bottom:1px solid #f1f5f9;white-space:nowrap}
+th{background:#fbfcfe;font-size:12px;color:#475569}
+td.num{font-variant-numeric:tabular-nums;text-align:right;color:#334155}
+td.name{font-weight:600}
+td.form{color:#64748b}
+td.att{font-family:Consolas,monospace;font-size:11.5px;color:#6b7280}
+.pill{display:inline-block;padding:1px 8px;border-radius:10px;color:#fff;font-size:11.5px}
+tr:hover td{background:#f0f9ff}
+.hide{display:none}
+</style></head><body><div class="wrap">
+<h1>怪物分布表 · 官方玩法分区</h1>
+<div class="sub">来源：D:/Desktop/JJFBpojie/monster@monster.txt · 由 <code>////</code> 注释段还原 · 共 61 段 / 462 个唯一 id</div>
+<div class="stat"><div class='chip'>玩法段 <b>61</b></div><div class='chip'>唯一怪物ID <b>469</b></div><div class='chip'>含玩家机甲的段 <b>22</b></div></div>
+<input id="q" placeholder="搜索 段名 / 怪物名 / id …">
+<div id="body">
+<details class="seg" open>
+<summary>
+  <span class="no">#1</span>
+  <span class="segname">(表头·初始机甲与引导怪)</span>
+  <span class="meta">19 只 · ID 0~18</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 卡特(300)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>0</td><td class='name'>铁臂</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>139</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>1</td><td class='name'>铁臂</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>140</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>2</td><td class='name'>铁臂</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>141</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>3</td><td class='name'>鹰眼</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>215</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>4</td><td class='name'>鹰眼</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>216</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>5</td><td class='name'>鹰眼</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>217</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>6</td><td class='name'>钢板</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>109</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>7</td><td class='name'>钢板</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>110</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>8</td><td class='name'>钢板</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>111</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>9</td><td class='name'>凯尔博士</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>135</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>10</td><td class='name'>饥饿腐蚀者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>181</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>11</td><td class='name'>多基态狼</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>195</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>12</td><td class='name'>全能试作机</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>16</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>13</td><td class='name'>全能L型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>37</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>14</td><td class='name'>格斗R型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>34</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>15</td><td class='name'>全能N型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>38</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>16</td><td class='name'>格斗T型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>35</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>17</td><td class='name'>卡罗</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>41</td><td class='att'>200,200,2,2,172,24,96,12,11,82,8,50</td></tr>
+<tr><td class='num'>18</td><td class='name'>卡特</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>39</td><td class='att'>300,300,4,4,167,21,98,7,11,127,6,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#2</span>
+  <span class="segname">尼利亚荒原</span>
+  <span class="meta">25 只 · ID 19~43</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 哈尔(3100)</span>
+</summary>
+<div class='hint'>🗺 敌人等级15~27（danger=3）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>19</td><td class='name'>迅猛</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>58</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>20</td><td class='name'>迅猛</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>59</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>21</td><td class='name'>迅猛</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>60</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>22</td><td class='name'>铁闸</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>112</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>23</td><td class='name'>铁闸</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>113</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>24</td><td class='name'>铁闸</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>114</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>25</td><td class='name'>结晶怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>184</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>26</td><td class='name'>暗夜潜伏蝎</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>192</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>27</td><td class='name'>全能N型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>38</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>28</td><td class='name'>射击G型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>41</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>29</td><td class='name'>格斗T型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>35</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>30</td><td class='name'>量产型努斯-R1</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>169</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>31</td><td class='name'>蝙蝠Ⅰ号</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>163</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>32</td><td class='name'>亚荷-C1</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>166</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>33</td><td class='name'>卡古</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>136</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>34</td><td class='name'>山猫-RT</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>106</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>35</td><td class='name'>量产型努斯-R5</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>170</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>36</td><td class='name'>蝙蝠Ⅳ号</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>164</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>37</td><td class='name'>亚荷-C2</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>167</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>38</td><td class='name'>卡古MK</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>137</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>39</td><td class='name'>多普-I-S3</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>157</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>40</td><td class='name'>山猫-OB</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>107</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>41</td><td class='name'>水银怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>189</td><td class='att'>1000,1000,2,2,162,19,101,2,11,171,3,50</td></tr>
+<tr><td class='num'>42</td><td class='name'>安妮</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>165</td><td class='att'>2400,2400,36,6,178,17,114,5,11,208,10,50</td></tr>
+<tr><td class='num'>43</td><td class='name'>哈尔</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>168</td><td class='att'>3100,3100,38,8,224,15,127,5,11,244,11,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#3</span>
+  <span class="segname">无尽森林</span>
+  <span class="meta">25 只 · ID 44~68</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 莱克(3200)</span>
+</summary>
+<div class='hint'>🗺 敌人等级16~28（danger=2）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>44</td><td class='name'>壁垒</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>31</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>45</td><td class='name'>壁垒</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>32</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>46</td><td class='name'>壁垒</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>33</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>47</td><td class='name'>飞轮</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>73</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>48</td><td class='name'>飞轮</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>74</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>49</td><td class='name'>飞轮</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>75</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>50</td><td class='name'>无序触手怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>199</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>51</td><td class='name'>致命猎杀者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>203</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>52</td><td class='name'>量产型努斯-R5</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>170</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>53</td><td class='name'>蝙蝠Ⅳ号</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>164</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>54</td><td class='name'>亚荷-C2</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>167</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>55</td><td class='name'>野马Ⅲ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>178</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>56</td><td class='name'>沙曼试验机</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>55</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>57</td><td class='name'>基扎原型机</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>58</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>58</td><td class='name'>尤尼-001</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>61</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>59</td><td class='name'>塔克</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>70</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>60</td><td class='name'>多普-I-S5</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>158</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>61</td><td class='name'>沙曼量产机</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>56</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>62</td><td class='name'>基扎特制型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>59</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>63</td><td class='name'>尤尼-03S</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>62</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>64</td><td class='name'>塔克斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>71</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>65</td><td class='name'>野马Ⅶ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>179</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>66</td><td class='name'>剧毒刺蛇</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>185</td><td class='att'>1500,1500,5,5,181,18,105,2,11,181,15,50</td></tr>
+<tr><td class='num'>67</td><td class='name'>萨克斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>36</td><td class='att'>2800,2800,34,4,177,16,118,5,11,217,16,50</td></tr>
+<tr><td class='num'>68</td><td class='name'>莱克</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>42</td><td class='att'>3200,3200,37,8,230,14,131,5,11,253,35,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#4</span>
+  <span class="segname">雷奥斯</span>
+  <span class="meta">25 只 · ID 69~93</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 吴庸(3800)</span>
+</summary>
+<div class='hint'>🗺 敌人等级17~29（danger=4）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>69</td><td class='name'>猩红</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>7</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>70</td><td class='name'>猩红</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>8</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>71</td><td class='name'>猩红</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>9</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>72</td><td class='name'>鱼雷</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>64</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>73</td><td class='name'>鱼雷</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>65</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>74</td><td class='name'>鱼雷</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>66</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>75</td><td class='name'>多界跳跃者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>204</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>76</td><td class='name'>刺针无角虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>197</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>77</td><td class='name'>沙曼量产机</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>56</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>78</td><td class='name'>基扎特制型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>59</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>79</td><td class='name'>尤尼-03S</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>62</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>80</td><td class='name'>塔克斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>71</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>81</td><td class='name'>雷鸟</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>43</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>82</td><td class='name'>雷米-T-03</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>46</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>83</td><td class='name'>灰猫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>49</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>84</td><td class='name'>陆战Ⅱ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>1</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>85</td><td class='name'>沙鱼Ⅲ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>4</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>86</td><td class='name'>雷鸟Ⅳ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>44</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>87</td><td class='name'>陆战Ⅵ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>2</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>88</td><td class='name'>沙鱼改</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>89</td><td class='name'>亲卫队</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>47</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>90</td><td class='name'>天鹰战队</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>50</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>91</td><td class='name'>多角狂暴兽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>202</td><td class='att'>2000,2000,39,9,180,18,110,5,11,190,13,50</td></tr>
+<tr><td class='num'>92</td><td class='name'>张吕</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>180</td><td class='att'>3000,3000,37,8,176,16,123,5,11,226,14,50</td></tr>
+<tr><td class='num'>93</td><td class='name'>吴庸</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>60</td><td class='att'>3800,3800,37,12,252,14,136,5,11,262,48,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#5</span>
+  <span class="segname">尼利亚荒原///补充</span>
+  <span class="meta">4 只 · ID 94~97</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 独眼铁臂(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>94</td><td class='name'>独眼铁臂</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>184</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>95</td><td class='name'>血腥潜伏蝎</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>192</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>96</td><td class='name'>斯多石兽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>184</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>97</td><td class='name'>残暴潜伏蝎</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>192</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#6</span>
+  <span class="segname">无尽森林///补充</span>
+  <span class="meta">4 只 · ID 98~101</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 光能触手怪(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>98</td><td class='name'>光能触手怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>199</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>99</td><td class='name'>双足巨镰</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>203</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>100</td><td class='name'>水晶触手怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>199</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>101</td><td class='name'>血腥收割者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>203</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#7</span>
+  <span class="segname">雷奥斯///补充</span>
+  <span class="meta">4 只 · ID 102~105</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 漆黑污染者(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>102</td><td class='name'>漆黑污染者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>204</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>103</td><td class='name'>环刺无角虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>197</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>104</td><td class='name'>邪恶使徒</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>204</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>105</td><td class='name'>金甲无角虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>197</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#8</span>
+  <span class="segname">兵工厂</span>
+  <span class="meta">29 只 · ID 106~134</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 霸羽(6450)</span>
+</summary>
+<div class='hint'>🗺 敌人等级31~37（danger=4）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>106</td><td class='name'>力士</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>25</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>107</td><td class='name'>力士</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>26</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>108</td><td class='name'>力士</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>27</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>109</td><td class='name'>镭射</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>19</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>110</td><td class='name'>镭射</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>20</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>111</td><td class='name'>镭射</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>21</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>112</td><td class='name'>剧毒刺蛇</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>185</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>113</td><td class='name'>陆行八爪怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>186</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>114</td><td class='name'>獠牙刺蛇</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>185</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>115</td><td class='name'>首脑八爪怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>186</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>116</td><td class='name'>异空刺蛇</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>185</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>117</td><td class='name'>变异八爪怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>186</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>118</td><td class='name'>紫镰毒蜘</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>197</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>119</td><td class='name'>迅猛追杀者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>191</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>120</td><td class='name'>莫赛-06</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>103</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>121</td><td class='name'>无影穿梭者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>196</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>122</td><td class='name'>雷米-T-05</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>47</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>123</td><td class='name'>灰猫-改</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>50</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>124</td><td class='name'>沙鱼改</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>125</td><td class='name'>莫赛-10</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>104</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>126</td><td class='name'>剧毒蜘蛛</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>193</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>127</td><td class='name'>红眼咕噜怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>190</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>128</td><td class='name'>坤立</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>72</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>129</td><td class='name'>战地援护Ⅰ型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>67</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>130</td><td class='name'>战地援护Ⅱ型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>68</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>131</td><td class='name'>影牙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>183</td><td class='att'>3300,3300,28,16,278,12,139,5,11,268,27,50</td></tr>
+<tr><td class='num'>132</td><td class='name'>试验机体</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>3</td><td class='att'>5000,5000,18,13,276,11,153,5,11,366,29,50</td></tr>
+<tr><td class='num'>133</td><td class='name'>霸羽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>138</td><td class='att'>6450,6450,19,5,285,35,182,9,13,414,29,50</td></tr>
+<tr><td class='num'>134</td><td class='name'>陆战Ⅵ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>2</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#9</span>
+  <span class="segname">魔虫洞</span>
+  <span class="meta">28 只 · ID 135~162</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 考夫基(6500)</span>
+</summary>
+<div class='hint'>🗺 敌人等级32~37（danger=3）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>135</td><td class='name'>咒术</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>124</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>136</td><td class='name'>咒术</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>125</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>137</td><td class='name'>咒术</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>126</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>138</td><td class='name'>猛龙</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>172</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>139</td><td class='name'>猛龙</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>173</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>140</td><td class='name'>猛龙</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>174</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>141</td><td class='name'>飞翼掠食者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>182</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>142</td><td class='name'>突变猩猩</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>187</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>143</td><td class='name'>独角掠食者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>182</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>144</td><td class='name'>猩猩坦克手</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>187</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>145</td><td class='name'>飞翼暴龙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>182</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>146</td><td class='name'>生化猩猩</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>187</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>147</td><td class='name'>嗜血哈鲁</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>188</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>148</td><td class='name'>幻影Ⅰ型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>16</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>149</td><td class='name'>水银吞噬者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>189</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>150</td><td class='name'>卡萨-A1</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>163</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>151</td><td class='name'>地狱之狼</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>195</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>152</td><td class='name'>土龙Ⅰ号</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>160</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>153</td><td class='name'>狩猎</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>34</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>154</td><td class='name'>刺杀-C</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>43</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>155</td><td class='name'>幻影Ⅱ型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>17</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>156</td><td class='name'>卡萨-A3</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>164</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>157</td><td class='name'>土龙Ⅷ号</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>161</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>158</td><td class='name'>狩猎-改</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>35</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>159</td><td class='name'>马家部队</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>44</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>160</td><td class='name'>巨大防御者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>198</td><td class='att'>3350,3350,24,14,272,12,143,5,11,317,26,50</td></tr>
+<tr><td class='num'>161</td><td class='name'>贾谷</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>63</td><td class='att'>5100,5100,18,13,276,11,163,5,11,366,31,50</td></tr>
+<tr><td class='num'>162</td><td class='name'>考夫基</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>45</td><td class='att'>6500,6500,24,5,294,35,182,9,13,414,41,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#10</span>
+  <span class="segname">安魂森林</span>
+  <span class="meta">34 只 · ID 163~196</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 玛蒙(8000)</span>
+</summary>
+<div class='hint'>🗺 敌人等级33~37（danger=2）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>163</td><td class='name'>闪影</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>163</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>164</td><td class='name'>闪影</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>164</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>165</td><td class='name'>闪影</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>165</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>166</td><td class='name'>诺谢</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>130</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>167</td><td class='name'>诺谢</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>131</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>168</td><td class='name'>诺谢</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>132</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>169</td><td class='name'>变异食人菇</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>201</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>170</td><td class='name'>魔化植物</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>190</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>171</td><td class='name'>魔化食人菇</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>201</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>172</td><td class='name'>独眼侦查者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>190</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>173</td><td class='name'>灰毛爬行者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>194</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>174</td><td class='name'>甲安-Q-001</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>115</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>175</td><td class='name'>斯特A型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>70</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>176</td><td class='name'>托雷-C1</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>166</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>177</td><td class='name'>丛林侦查型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>4</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>178</td><td class='name'>地狱喽喽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>208</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>179</td><td class='name'>甲安-Q-01W</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>116</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>180</td><td class='name'>飞翼恶魔</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>182</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>181</td><td class='name'>丛林防御型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>182</td><td class='name'>幻境守卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>71</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>183</td><td class='name'>幻境守卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>167</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>184</td><td class='name'>阿斯蒙蒂斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>159</td><td class='att'>3400,3400,24,14,272,12,148,5,11,317,26,50</td></tr>
+<tr><td class='num'>185</td><td class='name'>利维坦</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>48</td><td class='att'>6300,6300,8,8,281,11,163,5,11,366,32,50</td></tr>
+<tr><td class='num'>186</td><td class='name'>萨麦尔</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>120</td><td class='att'>6400,6400,16,6,285,12,172,5,11,395,33,50</td></tr>
+<tr><td class='num'>187</td><td class='name'>玛蒙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>108</td><td class='att'>8000,8000,74,25,364,37,192,19,31,564,76,50</td></tr>
+<tr><td class='num'>188</td><td class='name'>别西卜</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>57</td><td class='att'>2500,2500,10,10,264,12,172,14,14,464,6,50</td></tr>
+<tr><td class='num'>189</td><td class='name'>贝利尔</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>72</td><td class='att'>2600,2600,10,10,264,12,172,14,14,464,6,50</td></tr>
+<tr><td class='num'>190</td><td class='name'>临时机甲</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>67</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>191</td><td class='name'>蠕动的幼虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>214</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>192</td><td class='name'>卡古Ⅰ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>136</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>193</td><td class='name'>刺杀G</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>44</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>194</td><td class='name'>巴尼</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>61</td><td class='att'>680,663,59,59,71,27,25,41,38,42,54</td></tr>
+<tr><td class='num'>195</td><td class='name'>泰森</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>730,710,60,61,77,27,26,43,40,55,55</td></tr>
+<tr><td class='num'>196</td><td class='name'>贾克斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>104</td><td class='att'>485,58,48,48,35,23,22,33,32,35,43</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#11</span>
+  <span class="segname">15格子</span>
+  <span class="meta">3 只 · ID 197~199</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 多隆(700)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>197</td><td class='name'>卡拉多兽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>194</td><td class='att'>10,10,28,28,22,13,73,6,10,126,34</td></tr>
+<tr><td class='num'>198</td><td class='name'>菌檀携带者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>212</td><td class='att'>20,20,38,38,22,23,83,6,10,126,44</td></tr>
+<tr><td class='num'>199</td><td class='name'>多隆</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>69</td><td class='att'>700,700,58,58,136,43,93,6,10,126,59</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#12</span>
+  <span class="segname">30格子</span>
+  <span class="meta">4 只 · ID 200~203</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 白影(2000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>200</td><td class='name'>多壳爬虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>206</td><td class='att'>10,10,5,5,1,4,24,5,11,68,12</td></tr>
+<tr><td class='num'>201</td><td class='name'>灰螳螂</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>209</td><td class='att'>50,50,10,10,1,14,24,5,11,68,17</td></tr>
+<tr><td class='num'>202</td><td class='name'>白影</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>171</td><td class='att'>2000,2000,15,15,268,34,154,5,11,268,62</td></tr>
+<tr><td class='num'>203</td><td class='name'>罗斯特</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>67</td><td class='att'>155,805,39,38,53,19,19,28,25,37,33</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#13</span>
+  <span class="segname">(无名段)</span>
+  <span class="meta">16 只 · ID 204~219</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 虫族女王(20000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>204</td><td class='name'>机甲巡逻兵</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>115</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>205</td><td class='name'>嗜血者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>211</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>206</td><td class='name'>挖掘者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>183</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>207</td><td class='name'>狂暴杀戮者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>51</td><td class='att'>10000,10000,59,59,290,33,190,10,20,460,35,50</td></tr>
+<tr><td class='num'>208</td><td class='name'>幽灵拦截者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>47</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>209</td><td class='name'>守卫者IX</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>104</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>210</td><td class='name'>残暴之力</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>24</td><td class='att'>12000,12000,77,57,299,32,189,9,19,459,39,50</td></tr>
+<tr><td class='num'>211</td><td class='name'>斯诺量产型II</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>28</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>212</td><td class='name'>末日终结者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>54</td><td class='att'>14000,14000,116,56,358,34,199,13,28,558,97,50</td></tr>
+<tr><td class='num'>213</td><td class='name'>傀儡IX</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>22</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>214</td><td class='name'>血腥追踪者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>196</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>215</td><td class='name'>狂暴冲击者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>202</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>216</td><td class='name'>邪恶陆战机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>35</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>217</td><td class='name'>斯诺量产型IIX</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>29</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>218</td><td class='name'>灾难赋予者IIIX</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>186</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>219</td><td class='name'>虫族女王</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>20000,20000,154,94,407,38,208,17,37,607,186,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#14</span>
+  <span class="segname">联盟</span>
+  <span class="meta">4 只 · ID 220~223</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 考夫基分身(1050)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>220</td><td class='name'>劫匪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>170</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>221</td><td class='name'>克雷</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>60</td><td class='att'>900,900,38,18,3,16,26,8,23,33,60</td></tr>
+<tr><td class='num'>222</td><td class='name'>霸洪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>138</td><td class='att'>1000,1000,36,28,1,22,36,5,20,30,38</td></tr>
+<tr><td class='num'>223</td><td class='name'>考夫基分身</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>45</td><td class='att'>1050,1050,41,33,5,32,41,10,25,35,48</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#15</span>
+  <span class="segname">佣兵商店</span>
+  <span class="meta">4 只 · ID 224~227</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 肖恩(607)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>224</td><td class='name'>格雷</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>35</td><td class='att'>362,337,58,20,24,19,18,26,26,26,34</td></tr>
+<tr><td class='num'>225</td><td class='name'>蜜莉雅</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>136</td><td class='att'>415,387,28,59,27,21,20,29,29,29,38</td></tr>
+<tr><td class='num'>226</td><td class='name'>潘家金</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>74</td><td class='att'>537,502,78,30,34,24,23,36,36,36,49</td></tr>
+<tr><td class='num'>227</td><td class='name'>肖恩</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>20</td><td class='att'>607,568,39,81,38,26,25,40,40,40,55</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#16</span>
+  <span class="segname">神圣</span>
+  <span class="meta">3 只 · ID 228~230</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 神圣之拳(325)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>228</td><td class='name'>神圣之拳</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>141</td><td class='att'>325,205,47,15,25,15,12,28,19,14,24</td></tr>
+<tr><td class='num'>229</td><td class='name'>神圣之箭</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>217</td><td class='att'>225,305,20,42,12,23,13,18,23,10,29</td></tr>
+<tr><td class='num'>230</td><td class='name'>神圣之光</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>111</td><td class='att'>265,265,31,32,19,17,16,21,21,20,26</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#17</span>
+  <span class="segname">个人押镖</span>
+  <span class="meta">5 只 · ID 231~235</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 三眼骨虫(120)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>231</td><td class='name'>劫匪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>43</td><td class='att'>10,10,25,5,1,5,35,1,1,11,87</td></tr>
+<tr><td class='num'>232</td><td class='name'>路人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>1</td><td class='att'>10,10,30,10,11,10,45,1,6,16,67</td></tr>
+<tr><td class='num'>233</td><td class='name'>黑店服务员</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>46</td><td class='att'>10,10,35,15,16,15,55,6,11,21,47</td></tr>
+<tr><td class='num'>234</td><td class='name'>土匪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>71</td><td class='att'>10,10,40,20,11,20,65,11,16,26,27,30</td></tr>
+<tr><td class='num'>235</td><td class='name'>三眼骨虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>208</td><td class='att'>120,120,45,25,1,25,75,16,21,31,27,35</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#18</span>
+  <span class="segname">组队押镖</span>
+  <span class="meta">5 只 · ID 236~240</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 三眼骨虫(130)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>236</td><td class='name'>劫匪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>43</td><td class='att'>20,20,35,15,1,15,45,6,11,21,97</td></tr>
+<tr><td class='num'>237</td><td class='name'>路人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>1</td><td class='att'>20,20,40,20,11,20,55,11,16,26,77</td></tr>
+<tr><td class='num'>238</td><td class='name'>黑店服务员</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>46</td><td class='att'>20,20,45,25,16,25,65,16,21,31,57</td></tr>
+<tr><td class='num'>239</td><td class='name'>土匪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>71</td><td class='att'>20,20,50,30,11,30,75,21,26,36,37</td></tr>
+<tr><td class='num'>240</td><td class='name'>三眼骨虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>208</td><td class='att'>130,130,55,35,1,35,85,26,31,41,37</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#19</span>
+  <span class="segname">15组队格子</span>
+  <span class="meta">3 只 · ID 241~243</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 多隆(1200)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>241</td><td class='name'>卡拉多兽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>194</td><td class='att'>20,20,43,43,26,13,83,6,10,126,79</td></tr>
+<tr><td class='num'>242</td><td class='name'>菌檀携带者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>212</td><td class='att'>150,150,53,53,26,23,93,6,10,126,99</td></tr>
+<tr><td class='num'>243</td><td class='name'>多隆</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>69</td><td class='att'>1200,1200,63,63,186,43,103,6,10,126,69</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#20</span>
+  <span class="segname">30组队格子</span>
+  <span class="meta">3 只 · ID 244~246</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 白影(3500)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>244</td><td class='name'>多壳爬虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>206</td><td class='att'>20,20,20,20,1,4,24,5,11,68,12</td></tr>
+<tr><td class='num'>245</td><td class='name'>灰螳螂</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>209</td><td class='att'>120,120,25,25,1,14,24,5,11,68,22</td></tr>
+<tr><td class='num'>246</td><td class='name'>白影</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>171</td><td class='att'>3500,3500,45,45,318,34,154,5,11,268,72</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#21</span>
+  <span class="segname">莱温霍姆野怪</span>
+  <span class="meta">4 只 · ID 247~250</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 变异水银怪(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>247</td><td class='name'>变异水银怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>200</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>248</td><td class='name'>寄生机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>249</td><td class='name'>核心水银怪</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>200</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>250</td><td class='name'>寄生卡古</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#22</span>
+  <span class="segname">跑环补充怪物</span>
+  <span class="meta">3 只 · ID 251~253</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 死亡蜥蜴(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>251</td><td class='name'>死亡蜥蜴</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>194</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>252</td><td class='name'>拉姆</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>149</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>253</td><td class='name'>卡西罗</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>152</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#23</span>
+  <span class="segname">最新机甲</span>
+  <span class="meta">9 只 · ID 254~262</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 卡鲁(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>254</td><td class='name'>卡鲁</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>127</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>255</td><td class='name'>卡鲁</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>128</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>256</td><td class='name'>卡鲁</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>129</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>257</td><td class='name'>吉尼奥</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>145</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>258</td><td class='name'>吉尼奥</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>146</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>259</td><td class='name'>吉尼奥</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>147</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>260</td><td class='name'>克努</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>133</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>261</td><td class='name'>克努</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>134</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>262</td><td class='name'>克努</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>135</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#24</span>
+  <span class="segname">抽奖机甲</span>
+  <span class="meta">5 只 · ID 263~267</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 鬼王(15000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>263</td><td class='name'>阿迈刹</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>144</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>264</td><td class='name'>无人机甲精英</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>167</td><td class='att'>3800,3800,100,100,180,45,180,20,50,450,70</td></tr>
+<tr><td class='num'>265</td><td class='name'>无人机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>164</td><td class='att'>320,320,20,20,120,10,150,25,35,300,15</td></tr>
+<tr><td class='num'>266</td><td class='name'>无人机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>68</td><td class='att'>320,320,20,20,120,10,150,25,35,300,15</td></tr>
+<tr><td class='num'>267</td><td class='name'>鬼王</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>144</td><td class='att'>15000,15000,170,170,350,30,240,70,80,1200,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#25</span>
+  <span class="segname">极北雪原</span>
+  <span class="meta">8 只 · ID 268~275</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 死亡星云(35000)</span>
+</summary>
+<div class='hint'>🗺 20-50级精英（danger=3）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>268</td><td class='name'>守卫IX</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>116</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>269</td><td class='name'>巡查CP</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>176</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>270</td><td class='name'>神风队长</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>69</td><td class='att'>12000,12000,170,170,350,20,240,70,80,1000,150,35</td></tr>
+<tr><td class='num'>271</td><td class='name'>神风队员</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>86</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>272</td><td class='name'>欧普-D34</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>154</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>273</td><td class='name'>欧普-D40</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>155</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>274</td><td class='name'>死亡星云</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>218</td><td class='att'>35000,35000,400,400,800,25,260,100,300,1200,220,50</td></tr>
+<tr><td class='num'>275</td><td class='name'>盖亚</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>90</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#26</span>
+  <span class="segname">(无名段)</span>
+  <span class="meta">8 只 · ID 276~283</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 拉莫利(50000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>276</td><td class='name'>伦卡宇宙型Ⅲ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>10</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>277</td><td class='name'>伦卡宇宙型Ⅴ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>11</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>278</td><td class='name'>伦卡泛用型Ⅳ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>76</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>279</td><td class='name'>伦卡泛用型Ⅵ</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>77</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>280</td><td class='name'>伦卡精英型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>14</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>281</td><td class='name'>拉莫利</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>219</td><td class='att'>50000,50000,1000,1000,1250,40,300,80,150,320,50,55</td></tr>
+<tr><td class='num'>282</td><td class='name'>凯丽</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>12</td><td class='att'>45000,45000,260,260,450,35,270,70,100,800,170,40</td></tr>
+<tr><td class='num'>283</td><td class='name'>智能AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>11</td><td class='att'>20000,20000,80,80,400,40,350,90,200,900,160,40</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#27</span>
+  <span class="segname">拉诺斯</span>
+  <span class="meta">1 只 · ID 284~284</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 拉诺斯(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>284</td><td class='name'>拉诺斯</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>222</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#28</span>
+  <span class="segname">潘多拉</span>
+  <span class="meta">7 只 · ID 285~291</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 扎瓦齐(124125)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>285</td><td class='name'>土著先锋</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>34</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>286</td><td class='name'>土著精英</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>35</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>287</td><td class='name'>土著祭祀</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>36</td><td class='att'>20000,15000,350,350,1500,80,350,100,250,500,130,30</td></tr>
+<tr><td class='num'>288</td><td class='name'>土著死士</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>106</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>289</td><td class='name'>土著神眷者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>107</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>290</td><td class='name'>土著长老</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>108</td><td class='att'>21625,10000,5,5,650,70,400,85,180,180,150,20</td></tr>
+<tr><td class='num'>291</td><td class='name'>扎瓦齐</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>223</td><td class='att'>124125,25000,550,500,900,100,450,80,220,150,200,40</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#29</span>
+  <span class="segname">40级单人格子</span>
+  <span class="meta">4 只 · ID 292~295</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 拟态机器人(25000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>292</td><td class='name'>警卫机器人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>4</td><td class='att'>2000,2000,130,130,500,85,320,30,80,130,150,35</td></tr>
+<tr><td class='num'>293</td><td class='name'>反恐警卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>3000,3000,150,150,550,95,340,35,95,140,160,35</td></tr>
+<tr><td class='num'>294</td><td class='name'>拟态机器人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>224</td><td class='att'>25000,25000,220,220,450,105,360,40,105,900,240,40</td></tr>
+<tr><td class='num'>295</td><td class='name'>迪斯-KZ</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>227</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#30</span>
+  <span class="segname">月球遗迹</span>
+  <span class="meta">9 只 · ID 296~304</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 外星人提利昂(50000)</span>
+</summary>
+<div class='hint'>🗺 50级精英（danger=3）</div>
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>296</td><td class='name'>短路的AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>1</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>297</td><td class='name'>维修机器人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>2</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>298</td><td class='name'>后勤机器人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>2</td><td class='att'>25000,15000,200,200,1000,125,700,150,130,780,200,30</td></tr>
+<tr><td class='num'>299</td><td class='name'>巡逻机器人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>3</td><td class='att'>48000,50000,600,600,1150,120,700,150,120,1020,180,55</td></tr>
+<tr><td class='num'>300</td><td class='name'>战斗用警卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>136</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>301</td><td class='name'>智能AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>137</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>302</td><td class='name'>防御辅助AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>138</td><td class='att'>35000,12000,250,250,1000,130,720,70,110,320,120,55</td></tr>
+<tr><td class='num'>303</td><td class='name'>紧急维修辅助AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>138</td><td class='att'>25000,12000,200,200,1250,130,720,120,105,870,250,55</td></tr>
+<tr><td class='num'>304</td><td class='name'>外星人提利昂</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>228</td><td class='att'>50000,12000,650,650,900,130,720,40,115,1020,150,55</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#31</span>
+  <span class="segname">礼包赠送</span>
+  <span class="meta">1 只 · ID 305~305</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 钢铁巨侠(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>305</td><td class='name'>钢铁巨侠</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>231</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#32</span>
+  <span class="segname">合成</span>
+  <span class="meta">9 只 · ID 306~314</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 刀锋(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>306</td><td class='name'>刀锋</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>232</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>307</td><td class='name'>刀锋</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>233</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>308</td><td class='name'>刀锋</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>234</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>309</td><td class='name'>玫瑰</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>235</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>310</td><td class='name'>玫瑰</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>236</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>311</td><td class='name'>玫瑰</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>237</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>312</td><td class='name'>福萨</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>238</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>313</td><td class='name'>福萨</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>239</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>314</td><td class='name'>福萨</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>240</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#33</span>
+  <span class="segname">61活动怪物</span>
+  <span class="meta">1 只 · ID 315~315</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 糖果大盗(250)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>315</td><td class='name'>糖果大盗</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>210</td><td class='att'>250,250,1,1,20,20,500,70,5,150,25,150</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#34</span>
+  <span class="segname">黄金卡鲁</span>
+  <span class="meta">3 只 · ID 316~318</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 黄金卡鲁(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>316</td><td class='name'>黄金卡鲁</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>241</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>317</td><td class='name'>黄金卡鲁</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>242</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>318</td><td class='name'>黄金卡鲁</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>243</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#35</span>
+  <span class="segname">端午活动</span>
+  <span class="meta">20 只 · ID 319~338</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 机师公会会长(30000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>319</td><td class='name'>卖绳的</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>4</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>320</td><td class='name'>卖墨的</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>321</td><td class='name'>卖药的</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>6</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>322</td><td class='name'>猎犬</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>138</td><td class='att'>200,200,15,15,180,28,100,20,19,90,20,50</td></tr>
+<tr><td class='num'>323</td><td class='name'>猎人</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>9</td><td class='att'>2000,2000,70,40,200,28,120,25,31,210,43,50</td></tr>
+<tr><td class='num'>324</td><td class='name'>啤酒贩子</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>16</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>325</td><td class='name'>洋酒贩子</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>17</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>326</td><td class='name'>红酒贩子</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>19</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>327</td><td class='name'>黄酒贩子</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>20</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>328</td><td class='name'>员工A</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>18</td><td class='att'>6400,6400,70,60,320,30,190,40,46,430,85,50</td></tr>
+<tr><td class='num'>329</td><td class='name'>员工B</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>18</td><td class='att'>6450,6450,75,60,320,53,200,45,49,450,83,50</td></tr>
+<tr><td class='num'>330</td><td class='name'>白酒贩子</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>21</td><td class='att'>8000,8000,130,80,400,55,210,55,67,600,130,50</td></tr>
+<tr><td class='num'>331</td><td class='name'>龙舟保管员</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>22</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>332</td><td class='name'>机师公会临时工</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>25</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>333</td><td class='name'>机师公会清洁工</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>26</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>334</td><td class='name'>机师公会保安</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>28</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>335</td><td class='name'>机师公会厨师</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>29</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>336</td><td class='name'>机师公会精英会员</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>8000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>337</td><td class='name'>机师公会副会长</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>8000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>338</td><td class='name'>机师公会会长</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>30000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#36</span>
+  <span class="segname">联盟守卫1级公会</span>
+  <span class="meta">3 只 · ID 339~341</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>339</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>340</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>341</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#37</span>
+  <span class="segname">联盟守卫2级公会</span>
+  <span class="meta">3 只 · ID 342~344</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>342</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>343</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>344</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#38</span>
+  <span class="segname">联盟守卫3级公会</span>
+  <span class="meta">3 只 · ID 345~347</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>345</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>346</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>347</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#39</span>
+  <span class="segname">联盟守卫4级公会</span>
+  <span class="meta">3 只 · ID 348~350</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>348</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>349</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>350</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#40</span>
+  <span class="segname">联盟守卫5级公会</span>
+  <span class="meta">3 只 · ID 351~353</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>351</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>352</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>353</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#41</span>
+  <span class="segname">联盟守卫6级公会</span>
+  <span class="meta">3 只 · ID 354~356</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>354</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>355</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>356</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#42</span>
+  <span class="segname">联盟守卫7级公会</span>
+  <span class="meta">3 只 · ID 357~359</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>357</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>358</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>359</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#43</span>
+  <span class="segname">联盟守卫8级公会</span>
+  <span class="meta">3 只 · ID 360~362</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>360</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>361</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>362</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#44</span>
+  <span class="segname">联盟守卫9级公会</span>
+  <span class="meta">3 只 · ID 363~365</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>363</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>364</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>365</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#45</span>
+  <span class="segname">联盟守卫10级公会</span>
+  <span class="meta">3 只 · ID 366~368</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>366</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>367</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>368</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#46</span>
+  <span class="segname">联盟守卫11级公会</span>
+  <span class="meta">3 只 · ID 369~371</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>369</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>370</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>371</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#47</span>
+  <span class="segname">联盟守卫12级公会</span>
+  <span class="meta">3 只 · ID 372~374</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 守护神(90000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>372</td><td class='name'>联盟守卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>40000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>373</td><td class='name'>联盟捍卫者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>40000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>374</td><td class='name'>守护神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>90000,5000,200,200,700,250,800,70,110,420,200</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#48</span>
+  <span class="segname">20级</span>
+  <span class="meta">2 只 · ID 375~376</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 黑魔甲(3000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>375</td><td class='name'>魔族量产型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>1000,1000,30,30,180,28,110,20,39,190,30</td></tr>
+<tr><td class='num'>376</td><td class='name'>黑魔甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>244</td><td class='att'>3000,1500,75,45,230,28,135,29,35,250,50</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#49</span>
+  <span class="segname">30级</span>
+  <span class="meta">2 只 · ID 377~378</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 红色诅咒(6400)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>377</td><td class='name'>魔族量产型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>2400,2000,70,40,200,28,125,27,33,230,43</td></tr>
+<tr><td class='num'>378</td><td class='name'>红色诅咒</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>228</td><td class='att'>6400,4000,70,60,320,30,190,40,46,430,85</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#50</span>
+  <span class="segname">40级</span>
+  <span class="meta">2 只 · ID 379~380</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 铁甲魔龙(20000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>379</td><td class='name'>魔族量产型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>5000,5000,70,65,310,28,170,39,45,400,80</td></tr>
+<tr><td class='num'>380</td><td class='name'>铁甲魔龙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>218</td><td class='att'>20000,6000,220,160,450,60,230,60,80,650,250</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#51</span>
+  <span class="segname">50级</span>
+  <span class="meta">3 只 · ID 381~383</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 风魔甲(80000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>381</td><td class='name'>风魔甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>219</td><td class='att'>80000,25000,550,500,900,100,450,80,220,750,200</td></tr>
+<tr><td class='num'>382</td><td class='name'>魔族量产型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>40000,10000,5,5,650,70,400,85,180,800,125</td></tr>
+<tr><td class='num'>383</td><td class='name'>魔族量产型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>35000,15000,350,350,1500,80,350,100,250,100,100</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#52</span>
+  <span class="segname">51级</span>
+  <span class="meta">3 只 · ID 384~386</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 风魔甲(70000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>384</td><td class='name'>风魔甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>219</td><td class='att'>70000,7000,350,350,350,100,450,80,220,500,120</td></tr>
+<tr><td class='num'>385</td><td class='name'>狂暴龙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>223</td><td class='att'>40000,6000,520,520,300,70,400,85,180,500,200</td></tr>
+<tr><td class='num'>386</td><td class='name'>魔族量产型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>40000,6000,400,400,1200,70,400,85,180,800,125</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#53</span>
+  <span class="segname">52级</span>
+  <span class="meta">3 只 · ID 387~389</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 狂暴龙(52000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>387</td><td class='name'>风魔甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>219</td><td class='att'>50500,8000,350,350,1500,70,350,90,200,450,220</td></tr>
+<tr><td class='num'>388</td><td class='name'>狂暴龙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>223</td><td class='att'>52000,8000,500,500,1000,40,300,80,150,320,150</td></tr>
+<tr><td class='num'>389</td><td class='name'>枯骨魔龙</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>224</td><td class='att'>49000,8000,500,500,1100,80,350,100,250,800,100</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#54</span>
+  <span class="segname">7.1任务</span>
+  <span class="meta">21 只 · ID 390~410</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 铠神(94000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>390</td><td class='name'>死灵武士</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>245</td><td class='att'>2000,2000,70,40,200,28,120,25,31,210,40</td></tr>
+<tr><td class='num'>391</td><td class='name'>死灵忍者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>246</td><td class='att'>200,200,15,15,180,28,100,20,19,90,20</td></tr>
+<tr><td class='num'>392</td><td class='name'>精英忍者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>246</td><td class='att'>7200,5400,70,60,320,30,190,40,46,800,85</td></tr>
+<tr><td class='num'>393</td><td class='name'>精英忍者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>246</td><td class='att'>6000,6000,75,60,320,53,200,45,49,450,83</td></tr>
+<tr><td class='num'>394</td><td class='name'>鬼武者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>247</td><td class='att'>8500,7000,220,160,400,55,210,55,67,600,130</td></tr>
+<tr><td class='num'>395</td><td class='name'>精英鬼武者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>247</td><td class='att'>45000,8000,50,50,1000,40,300,80,150,9999,150</td></tr>
+<tr><td class='num'>396</td><td class='name'>精英鬼武者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>247</td><td class='att'>42000,8000,30,30,1100,80,350,100,250,9999,100</td></tr>
+<tr><td class='num'>397</td><td class='name'>铠神</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>248</td><td class='att'>94000,8000,500,500,1500,70,350,90,200,400,220</td></tr>
+<tr><td class='num'>398</td><td class='name'>忍兵陆型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>4</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>399</td><td class='name'>忍兵空型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>5</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>400</td><td class='name'>忍兵海型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>6</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>401</td><td class='name'>指挥官近卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>138</td><td class='att'>200,200,15,15,180,28,100,20,19,90,20,50</td></tr>
+<tr><td class='num'>402</td><td class='name'>中忍指挥官</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>9</td><td class='att'>2000,2000,70,40,200,28,120,25,31,210,43,50</td></tr>
+<tr><td class='num'>403</td><td class='name'>中忍I型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>16</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>404</td><td class='name'>中忍II型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>17</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>405</td><td class='name'>中忍III型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>19</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>406</td><td class='name'>中忍V型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>20</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>407</td><td class='name'>开山重兵I型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>18</td><td class='att'>6400,6400,70,60,320,30,190,40,46,430,85,50</td></tr>
+<tr><td class='num'>408</td><td class='name'>开山重兵II型</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>18</td><td class='att'>6450,6450,75,60,320,53,200,45,49,450,83,50</td></tr>
+<tr><td class='num'>409</td><td class='name'>神速忍</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>21</td><td class='att'>8000,8000,130,80,400,55,210,55,67,600,130,50</td></tr>
+<tr><td class='num'>410</td><td class='name'>弗雷萨</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>150</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#55</span>
+  <span class="segname">黄金吉尼奥</span>
+  <span class="meta">3 只 · ID 411~413</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 黄金吉尼(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>411</td><td class='name'>黄金吉尼</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>249</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>412</td><td class='name'>黄金吉尼</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>250</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>413</td><td class='name'>黄金吉尼</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>251</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#56</span>
+  <span class="segname">黄金克努</span>
+  <span class="meta">3 只 · ID 414~416</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 黄金克努(50)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>414</td><td class='name'>黄金克努</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>252</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>415</td><td class='name'>黄金克努</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>253</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>416</td><td class='name'>黄金克努</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>254</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#57</span>
+  <span class="segname">氪星来客</span>
+  <span class="meta">9 只 · ID 417~425</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 凯尔(140000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>417</td><td class='name'>加斯达</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>255</td><td class='att'>2000,2000,70,40,200,28,120,25,31,210,40</td></tr>
+<tr><td class='num'>418</td><td class='name'>被感染的机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>200,200,15,15,180,28,100,20,19,90,20</td></tr>
+<tr><td class='num'>419</td><td class='name'>桑古鲁斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>256</td><td class='att'>8500,7000,220,160,400,55,210,55,67,600,130</td></tr>
+<tr><td class='num'>420</td><td class='name'>被感染的机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>6000,6000,75,60,320,53,200,45,49,450,83</td></tr>
+<tr><td class='num'>421</td><td class='name'>被感染的机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>7200,5400,70,60,320,30,190,40,46,800,85</td></tr>
+<tr><td class='num'>422</td><td class='name'>加斯达</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>255</td><td class='att'>35000,8000,500,500,1000,70,350,90,200,400,425</td></tr>
+<tr><td class='num'>423</td><td class='name'>桑古鲁斯</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>256</td><td class='att'>60000,8000,500,500,1200,40,300,80,150,9999,150</td></tr>
+<tr><td class='num'>424</td><td class='name'>被感染的机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>42000,8000,30,30,1100,80,350,100,250,9999,100</td></tr>
+<tr><td class='num'>425</td><td class='name'>凯尔</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>257</td><td class='att'>140000,8000,600,600,1100,80,350,200,250,1300,400</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#58</span>
+  <span class="segname">赛博坦的求救</span>
+  <span class="meta">14 只 · ID 426~439</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 魔化女王(170000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>426</td><td class='name'>神秘追踪者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>119</td><td class='att'>2000,2000,15,15,180,28,120,25,31,210,43</td></tr>
+<tr><td class='num'>427</td><td class='name'>不明机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>122</td><td class='att'>3000,3000,20,20,200,28,120,25,31,90,20</td></tr>
+<tr><td class='num'>428</td><td class='name'>神秘机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>78</td><td class='att'>4000,7000,220,160,400,28,120,25,600,210,130</td></tr>
+<tr><td class='num'>429</td><td class='name'>地陷虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>214</td><td class='att'>6000,5400,300,300,200,30,190,40,46,800,85</td></tr>
+<tr><td class='num'>430</td><td class='name'>铁甲虫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>197</td><td class='att'>7000,6000,150,150,800,53,200,45,49,800,85</td></tr>
+<tr><td class='num'>431</td><td class='name'>女王护卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>198</td><td class='att'>40000,6000,500,500,1000,70,350,90,200,400,425</td></tr>
+<tr><td class='num'>432</td><td class='name'>女王护卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>198</td><td class='att'>42000,5000,500,500,1100,40,300,90,150,14950,150</td></tr>
+<tr><td class='num'>433</td><td class='name'>虫族女王</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>60000,7000,600,600,1200,80,350,100,250,14950,100</td></tr>
+<tr><td class='num'>434</td><td class='name'>方舟AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>153</td><td class='att'>20000,100000,550,550,1300,80,350,200,250,1000,110</td></tr>
+<tr><td class='num'>435</td><td class='name'>方舟AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>153</td><td class='att'>20000,100000,550,550,1300,80,350,200,250,1000,110</td></tr>
+<tr><td class='num'>436</td><td class='name'>受伤的黄蜂</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>258</td><td class='att'>130000,5000,600,500,1400,40,300,90,150,500,400</td></tr>
+<tr><td class='num'>437</td><td class='name'>女王近卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>213</td><td class='att'>22000,95000,30,30,1200,80,350,100,250,14950,110</td></tr>
+<tr><td class='num'>438</td><td class='name'>女王近卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>213</td><td class='att'>70000,8000,600,600,1200,80,350,200,250,0,390</td></tr>
+<tr><td class='num'>439</td><td class='name'>魔化女王</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#59</span>
+  <span class="segname">七夕节任务</span>
+  <span class="meta">8 只 · ID 440~447</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 好基友(8000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>440</td><td class='name'>仓景崆</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>226</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>441</td><td class='name'>红蜘蛛</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>102</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>442</td><td class='name'>无辜的野牛</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>50,40,18,18,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>443</td><td class='name'>好基友</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>30</td><td class='att'>8000,8000,300,300,800,250,800,120,105,1200,100</td></tr>
+<tr><td class='num'>444</td><td class='name'>为了部落</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>27</td><td class='att'>8000,8000,280,280,600,250,800,40,115,1020,120</td></tr>
+<tr><td class='num'>445</td><td class='name'>情侣死光光</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>21</td><td class='att'>8000,8000,130,80,400,55,210,55,67,600,130,50</td></tr>
+<tr><td class='num'>446</td><td class='name'>伊修塔尔</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>259</td><td class='att'>50,40,11,25,10,12,11,12,12,12,13</td></tr>
+<tr><td class='num'>447</td><td class='name'>钢索</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>260</td><td class='att'>50,40,30,6,10,12,11,12,12,12,13</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#60</span>
+  <span class="segname">中秋活动怪物</span>
+  <span class="meta">1 只 · ID 448~448</span>
+  <span class="mech" style="color:#059669">机甲:是</span>
+  <span class="top">最高HP 彩灯大盗(250)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>448</td><td class='name'>彩灯大盗</td><td class='form'>-</td><td><span class='pill' style='background:#0d9488'>[机甲]</span></td><td class='num'>211</td><td class='att'>250,250,1,1,20,20,500,70,5,150,25,150</td></tr></tbody></table>
+</details>
+
+<details class="seg" open>
+<summary>
+  <span class="no">#61</span>
+  <span class="segname">黄道十二宫</span>
+  <span class="meta">20 只 · ID 395~461</span>
+  <span class="mech" style="color:#94a3b8">机甲:否</span>
+  <span class="top">最高HP 双子座(170000)</span>
+</summary>
+
+<table><thead><tr><th>id</th><th>名称</th><th>形态</th><th>类型</th><th>imgID</th><th>baseAtt</th></tr></thead>
+<tbody><tr><td class='num'>449</td><td class='name'>白羊座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>248</td><td class='att'>94000,8000,500,500,1500,70,350,90,200,400,220</td></tr>
+<tr><td class='num'>450</td><td class='name'>金牛座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>257</td><td class='att'>140000,8000,600,600,1100,80,350,200,250,1300,400</td></tr>
+<tr><td class='num'>451</td><td class='name'>双子座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>258</td><td class='att'>130000,5000,600,500,1400,40,300,90,150,500,400</td></tr>
+<tr><td class='num'>452</td><td class='name'>双子座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>453</td><td class='name'>巨蟹座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>454</td><td class='name'>狮子座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>455</td><td class='name'>处女座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>456</td><td class='name'>天秤座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>457</td><td class='name'>天蝎座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>458</td><td class='name'>射手座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>459</td><td class='name'>摩羯座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>460</td><td class='name'>水瓶座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>461</td><td class='name'>双鱼座</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>162</td><td class='att'>170000,9000,650,650,1200,80,350,200,250,1000,100</td></tr>
+<tr><td class='num'>437</td><td class='name'>女王近卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>213</td><td class='att'>22000,95000,30,30,1200,80,350,100,250,14950,110</td></tr>
+<tr><td class='num'>438</td><td class='name'>女王近卫</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>213</td><td class='att'>70000,8000,600,600,1200,80,350,200,250,0,390</td></tr>
+<tr><td class='num'>434</td><td class='name'>方舟AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>153</td><td class='att'>20000,100000,550,550,1300,80,350,200,250,1000,110</td></tr>
+<tr><td class='num'>435</td><td class='name'>方舟AI</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>153</td><td class='att'>20000,100000,550,550,1300,80,350,200,250,1000,110</td></tr>
+<tr><td class='num'>395</td><td class='name'>精英鬼武者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>247</td><td class='att'>45000,8000,50,50,1000,40,300,80,150,9999,150</td></tr>
+<tr><td class='num'>396</td><td class='name'>精英鬼武者</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>247</td><td class='att'>42000,8000,30,30,1100,80,350,100,250,9999,100</td></tr>
+<tr><td class='num'>424</td><td class='name'>被感染的机甲</td><td class='form'>-</td><td><span class='pill' style='background:#7c3aed'>[怪/NPC]</span></td><td class='num'>205</td><td class='att'>42000,8000,30,30,1100,80,350,100,250,9999,100</td></tr></tbody></table>
+</details></div>
+</div>
+<script>
+var q=document.getElementById('q');
+q.addEventListener('input',function(){
+  var s=q.value.trim().toLowerCase();
+  document.querySelectorAll('details.seg').forEach(function(d){
+    var hit=false;
+    d.querySelectorAll('tbody tr').forEach(function(tr){
+      var ok=!s||tr.innerText.toLowerCase().indexOf(s)>=0;
+      tr.classList.toggle('hide',!ok); if(ok)hit=true;
+    });
+    var headOk=!s||d.querySelector('summary').innerText.toLowerCase().indexOf(s)>=0;
+    d.classList.toggle('hide', !hit && !headOk);
+    if(s && (hit||headOk)) d.open=true;
+  });
+});
+</script></body></html>

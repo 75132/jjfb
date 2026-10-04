@@ -1,13 +1,21 @@
-System.register(["cc"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context2) {
   "use strict";
 
-  var _cclegacy, PerformanceMonitor, _crd;
+  var _reporterNs, _cclegacy, Logger, PerformanceMonitor, _crd;
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "./Logger", _context2.meta, extras);
+  }
 
   _export("PerformanceMonitor", void 0);
 
   return {
-    setters: [function (_cc) {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
       _cclegacy = _cc.cclegacy;
+    }, function (_unresolved_2) {
+      Logger = _unresolved_2.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -15,8 +23,7 @@ System.register(["cc"], function (_export, _context) {
       _cclegacy._RF.push({}, "a023ckNJixGkLkAg4tId3mx", "PerformanceMonitor", undefined);
 
       /**
-       * 性能监控工具
-       * 用于监控场景跳转和加载性能
+       * 轻量耗时埋点。超过阈值才打一条 warn，避免刷屏。
        */
       _export("PerformanceMonitor", PerformanceMonitor = class PerformanceMonitor {
         constructor() {
@@ -44,16 +51,30 @@ System.register(["cc"], function (_export, _context) {
 
           const duration = Date.now() - startTime;
           this.timers.delete(name);
+
+          if (duration >= PerformanceMonitor.SLOW_MS) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`[Perf] ${name} ${duration}ms`);
+          }
+
           return duration;
         }
 
-        logSceneTransition(fromScene, toScene, duration) {}
+        logSceneTransition(fromScene, toScene, duration) {
+          if (duration >= PerformanceMonitor.SLOW_MS) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`[Perf] scene ${fromScene} -> ${toScene} ${duration}ms`);
+          }
+        }
 
-        logMemoryUsage(context) {}
+        logMemoryUsage(_context) {}
 
       });
 
       PerformanceMonitor.instance = null;
+      PerformanceMonitor.SLOW_MS = 200;
 
       _cclegacy._RF.pop();
 

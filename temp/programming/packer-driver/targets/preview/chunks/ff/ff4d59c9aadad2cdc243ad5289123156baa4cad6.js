@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Sprite, SpriteFrame, UITransform, Size, Button, WebSocketManager, getEnergyBlocksFromPayload, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _crd, ccclass, property, ProfileEntryType, CharacterProfile;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Sprite, SpriteFrame, UITransform, Size, Button, WebSocketManager, getEnergyBlocksFromPayload, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _crd, ccclass, property, ProfileEntryType, CharacterProfile;
 
   function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -17,6 +17,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
   function _reportPossibleCrUseOfgetEnergyBlocksFromPayload(extras) {
     _reporterNs.report("getEnergyBlocksFromPayload", "../global/MessageTypes", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -39,6 +43,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
       getEnergyBlocksFromPayload = _unresolved_3.getEnergyBlocksFromPayload;
+    }, function (_unresolved_4) {
+      Logger = _unresolved_4.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -127,7 +133,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.onPlayerInfo = data => {
             var _responseData$friend_, _responseData$role_na, _responseData$level, _responseData$friend_2, _responseData$class, _responseData$gold, _responseData$robotco, _responseData$Sprite, _responseData$current, _responseData$next_le, _responseData$allianc, _responseData$record, _responseData$rank;
 
-            console.log('[CharacterProfile] 收到 player_info 响应（原始数据）:', JSON.stringify(data, null, 2)); // ✅ 关键修复：支持标准响应格式（数据在 data.data 中）和直接发送格式（数据在根级别）
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 收到 player_info 响应（原始数据）:', JSON.stringify(data, null, 2)); // ✅ 关键修复：支持标准响应格式（数据在 data.data 中）和直接发送格式（数据在根级别）
             // 统一提取响应数据
 
             var responseData = data; // 如果是标准响应格式（使用 send_success_response），数据在 data.data 中
@@ -137,23 +145,37 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
               // ✅ 关键修复：data.data 中的字段优先级更高，覆盖根级别的同名字段
               // 但保留根级别的元数据字段（type, success, code, timestamp, request_id）
               responseData = _extends({}, data, data.data);
-              console.log('[CharacterProfile] ✅ 检测到标准响应格式，合并数据字段');
-              console.log('[CharacterProfile] 原始 data.data:', JSON.stringify(data.data, null, 2));
-              console.log('[CharacterProfile] 合并后的 responseData:', JSON.stringify(responseData, null, 2));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] ✅ 检测到标准响应格式，合并数据字段');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 原始 data.data:', JSON.stringify(data.data, null, 2));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 合并后的 responseData:', JSON.stringify(responseData, null, 2));
             } else {
-              console.log('[CharacterProfile] 使用直接发送格式（数据在根级别）');
-              console.log('[CharacterProfile] 直接格式数据:', JSON.stringify(data, null, 2));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 使用直接发送格式（数据在根级别）');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 直接格式数据:', JSON.stringify(data, null, 2));
             } // 关键修复：验证响应是否属于当前请求
             // 策略：优先使用 request_id 匹配，如果没有 request_id 则通过 is_self 和 isRequesting 判断
 
 
             if (!responseData || !responseData.success) {
               // 无效响应，继续处理以便显示错误
-              console.warn('[CharacterProfile] 收到无效响应或失败响应');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[CharacterProfile] 收到无效响应或失败响应');
             } else if (responseData.request_id !== undefined && responseData.request_id !== null) {
               // 有 request_id 的响应：必须匹配才处理
               if (responseData.request_id !== this.currentRequestId) {
-                console.log('[CharacterProfile] ⏭️ 忽略 request_id 不匹配的响应:', {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[CharacterProfile] ⏭️ 忽略 request_id 不匹配的响应:', {
                   received: responseData.request_id,
                   expected: this.currentRequestId,
                   role_name: responseData.role_name,
@@ -162,7 +184,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
                 return;
               }
 
-              console.log('[CharacterProfile] ✅ request_id 匹配，处理响应，role_name:', responseData.role_name);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] ✅ request_id 匹配，处理响应，role_name:', responseData.role_name);
             } else {
               // 没有 request_id 的响应（可能是 GameCommonData 或其他组件请求的）
               // 只有在以下情况才处理：
@@ -170,39 +194,53 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
               // 2. 当前配置是查看自己（SELF）
               // 3. 响应是 is_self=true（确保是自己的数据）
               if (!this.isRequesting) {
-                console.log('[CharacterProfile] ⏭️ 忽略没有 request_id 且不在请求状态的响应，isRequesting:', this.isRequesting);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[CharacterProfile] ⏭️ 忽略没有 request_id 且不在请求状态的响应，isRequesting:', this.isRequesting);
                 return;
               }
 
               if (!this.currentConfig) {
-                console.log('[CharacterProfile] ⏭️ 忽略没有 request_id 且配置为空的响应');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[CharacterProfile] ⏭️ 忽略没有 request_id 且配置为空的响应');
                 return;
               }
 
               if (this.currentConfig.entryType !== ProfileEntryType.SELF) {
-                console.log('[CharacterProfile] ⏭️ 忽略没有 request_id 且不是查看自己的响应，entryType:', this.currentConfig.entryType);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[CharacterProfile] ⏭️ 忽略没有 request_id 且不是查看自己的响应，entryType:', this.currentConfig.entryType);
                 return;
               }
 
               if (responseData.is_self !== true) {
-                console.log('[CharacterProfile] ⏭️ 忽略没有 request_id 且 is_self 不为 true 的响应，is_self:', responseData.is_self);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[CharacterProfile] ⏭️ 忽略没有 request_id 且 is_self 不为 true 的响应，is_self:', responseData.is_self);
                 return;
               }
 
-              console.log('[CharacterProfile] ✅ 处理没有 request_id 但符合条件的响应（查看自己），role_name:', responseData.role_name);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] ✅ 处理没有 request_id 但符合条件的响应（查看自己），role_name:', responseData.role_name);
             }
 
             this.isRequesting = false; // 请求结束
 
             if (!responseData || !responseData.success) {
-              console.warn('[CharacterProfile] 收到无效的 player_info 响应:', responseData); // 显示错误信息在名称栏，提示用户加载失败
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[CharacterProfile] 收到无效的 player_info 响应:', responseData); // 显示错误信息在名称栏，提示用户加载失败
 
               this.setNumericalValue(this.nameNode, '加载失败');
               this.updateButtonsState(false);
               return;
             }
 
-            console.log('[CharacterProfile] 收到有效的 player_info 响应（request_id匹配）:', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 收到有效的 player_info 响应（request_id匹配）:', {
               request_id: responseData.request_id,
               is_self: responseData.is_self,
               is_friend: responseData.is_friend,
@@ -214,7 +252,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
             if (responseData.is_self !== undefined) {
               this.viewMode = responseData.is_self ? 'self' : 'friend';
-              console.log('[CharacterProfile] 更新 viewMode:', this.viewMode);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 更新 viewMode:', this.viewMode);
             } // 保存好友关系状态和好友ID（用于后续操作）
 
 
@@ -238,7 +278,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             var alliance = (_responseData$allianc = responseData.alliance) != null ? _responseData$allianc : '';
             var record = (_responseData$record = responseData.record) != null ? _responseData$record : '';
             var rank = (_responseData$rank = responseData.rank) != null ? _responseData$rank : '';
-            console.log('[CharacterProfile] 🔍 提取的字段值（调试）:', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 🔍 提取的字段值（调试）:', {
               'responseData.role_name': responseData.role_name,
               'responseData.level': responseData.level,
               'responseData.friend_id': responseData.friend_id,
@@ -265,18 +307,26 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             }); // ✅ 验证关键字段是否存在
 
             if (!name && !fid && level === 0) {
-              console.error('[CharacterProfile] ❌ 警告：关键字段都为空，可能是数据解析失败！');
-              console.error('[CharacterProfile] responseData 完整内容:', JSON.stringify(responseData, null, 2));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[CharacterProfile] ❌ 警告：关键字段都为空，可能是数据解析失败！');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[CharacterProfile] responseData 完整内容:', JSON.stringify(responseData, null, 2));
             } // 关键修复：确保只更新一次，避免重复更新
             // 在更新前再次验证当前配置是否匹配（防止在处理响应时配置已变更）
 
 
             if (!this.currentConfig) {
-              console.warn('[CharacterProfile] 收到响应但当前配置已清空，忽略响应');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[CharacterProfile] 收到响应但当前配置已清空，忽略响应');
               return;
             }
 
-            console.log('[CharacterProfile] 开始更新显示数据，当前配置:', this.currentConfig, 'viewMode:', this.viewMode); // 更新显示数据
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 开始更新显示数据，当前配置:', this.currentConfig, 'viewMode:', this.viewMode); // 更新显示数据
             // ✅ 确保所有字段都有值，空值显示为 '--'
 
             this.setNumericalValue(this.nameNode, name || '--');
@@ -291,7 +341,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             }
 
             this.setNumericalValue(this.robotCountNode, robotCount > 0 ? String(robotCount) : '--');
-            console.log('[CharacterProfile] ✅ 显示数据更新完成，已设置的值:', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] ✅ 显示数据更新完成，已设置的值:', {
               name: name || '(空)',
               level: level || '(空)',
               fid: fid || '(空)',
@@ -377,13 +429,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           // 确保显示在最上层
           if (this.node.parent) {
             this.node.setSiblingIndex(this.node.parent.children.length - 1);
-            console.log('[CharacterProfile] onEnable: 已置顶显示');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] onEnable: 已置顶显示');
           } // 关键修复：区分是通过 show() 方法打开还是直接激活
           // 如果 isShowMethodCalled 为 true，说明是通过 show() 打开的，不应该重置
 
 
           if (this.isShowMethodCalled) {
-            console.log('[CharacterProfile] onEnable: 检测到是通过 show() 方法打开的，跳过自动加载（由 show() 方法处理）');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] onEnable: 检测到是通过 show() 方法打开的，跳过自动加载（由 show() 方法处理）');
             this.isShowMethodCalled = false; // 清除标记，避免下次误判
 
             return;
@@ -391,12 +447,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
           if (this.isRequesting) {
-            console.log('[CharacterProfile] onEnable: 正在请求中，跳过自动加载');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] onEnable: 正在请求中，跳过自动加载');
             return;
           } // 如果是直接激活（如 GameMenu 直接设置 active=true），强制重置为查看自己
 
 
-          console.log('[CharacterProfile] onEnable: 检测到直接激活（非 show() 方法），强制重置为查看自己'); // 清除之前的状态
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] onEnable: 检测到直接激活（非 show() 方法），强制重置为查看自己'); // 清除之前的状态
 
           this.clearState(); // 重置配置为查看自己
 
@@ -417,10 +477,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
         show(config) {
-          console.log('[CharacterProfile] 🔄 show 被调用，配置:', config); // 关键修复：清除之前的状态，避免数据污染
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 🔄 show 被调用，配置:', config); // 关键修复：清除之前的状态，避免数据污染
 
           this.clearState();
-          console.log('[CharacterProfile] ✅ 状态已清除');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] ✅ 状态已清除');
           this.currentConfig = config;
           this.isShowMethodCalled = true; // 标记是通过 show() 方法打开的
 
@@ -431,7 +495,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.node.active = true; // 重置显示（显示加载中状态）
 
           this.resetDisplay();
-          console.log('[CharacterProfile] ✅ 显示已重置为加载状态'); // 设置标题
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] ✅ 显示已重置为加载状态'); // 设置标题
 
           this.updateTitle(config.roleName || '加载中...'); // 根据入口类型更新按钮状态
           // 注意：此时还没拿到详细数据（如 is_self），先根据入口类型做初步判断
@@ -447,7 +513,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
         clearState() {
-          console.log('[CharacterProfile] 🧹 清除状态，之前的状态:', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 🧹 清除状态，之前的状态:', {
             viewMode: this.viewMode,
             isFriend: this.isFriend,
             targetFriendId: this.targetFriendId,
@@ -465,7 +533,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.isShowMethodCalled = false; // 清除标记
           // 注意：不在这里清除 currentConfig，因为 show() 会设置新配置，onEnable() 也会设置
 
-          console.log('[CharacterProfile] 🧹 状态已清除完成');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 🧹 状态已清除完成');
         }
         /**
          * 兼容旧代码：显示好友信息
@@ -495,7 +565,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
         requestData() {
           if (!this.currentConfig) {
-            console.error('[CharacterProfile] requestData: currentConfig 为空，无法发送请求');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[CharacterProfile] requestData: currentConfig 为空，无法发送请求');
             return;
           } // 标记正在请求中，防止重复请求
 
@@ -503,7 +575,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.isRequesting = true; // 生成唯一的请求ID（使用时间戳+随机数确保唯一性）
 
           this.currentRequestId = Date.now() + Math.random();
-          console.log('[CharacterProfile] 🔄 开始新的数据请求，request_id:', this.currentRequestId, 'config:', this.currentConfig); // 构建请求数据
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 🔄 开始新的数据请求，request_id:', this.currentRequestId, 'config:', this.currentConfig); // 构建请求数据
           // 注意：根据 server/router.py，路由名称是 'get_player'
           // server/handlers/player_handler.py 会处理这个请求并返回 type: 'player_info' 的响应
 
@@ -512,7 +586,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             request_id: this.currentRequestId // 添加请求ID用于验证响应
 
           };
-          console.log('[CharacterProfile] 发送请求，request_id:', this.currentRequestId, 'config:', this.currentConfig);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 发送请求，request_id:', this.currentRequestId, 'config:', this.currentConfig);
 
           if (this.currentConfig.entryType === ProfileEntryType.SELF) {
             // 查看自己：使用当前登录角色的 character_id
@@ -521,9 +597,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
             if (currentCharacterId) {
               req.character_id = currentCharacterId;
-              console.log('[CharacterProfile] 请求查看自己的信息 (character_id):', currentCharacterId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 请求查看自己的信息 (character_id):', currentCharacterId);
             } else {
-              console.error('[CharacterProfile] 无法查看自己：缺少当前角色ID');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[CharacterProfile] 无法查看自己：缺少当前角色ID');
               this.setNumericalValue(this.nameNode, '未登录');
               this.isRequesting = false;
               return;
@@ -532,13 +612,19 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             // 查看好友：优先使用 friend_id 查询数据库（性能优化）
             if (this.currentConfig.friendId) {
               req.friend_id = this.currentConfig.friendId;
-              console.log('[CharacterProfile] 请求查看好友信息 (friend_id):', this.currentConfig.friendId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 请求查看好友信息 (friend_id):', this.currentConfig.friendId);
             } else if (this.currentConfig.characterId) {
               // 如果没有 friend_id，回退到使用 character_id
               req.character_id = this.currentConfig.characterId;
-              console.log('[CharacterProfile] 请求查看好友信息 (character_id，回退方案):', this.currentConfig.characterId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 请求查看好友信息 (character_id，回退方案):', this.currentConfig.characterId);
             } else {
-              console.error('[CharacterProfile] 好友模式但没有 friendId 或 characterId', this.currentConfig);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[CharacterProfile] 好友模式但没有 friendId 或 characterId', this.currentConfig);
               this.setNumericalValue(this.nameNode, '数据错误');
               this.isRequesting = false;
               return;
@@ -547,14 +633,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             // 搜索或其他：优先使用 friend_id，如果没有则使用 character_id
             if (this.currentConfig.friendId) {
               req.friend_id = this.currentConfig.friendId;
-              console.log('[CharacterProfile] 请求查看角色信息 (friend_id):', this.currentConfig.friendId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 请求查看角色信息 (friend_id):', this.currentConfig.friendId);
             } else if (this.currentConfig.characterId) {
               req.character_id = this.currentConfig.characterId;
-              console.log('[CharacterProfile] 请求查看角色信息 (character_id):', this.currentConfig.characterId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 请求查看角色信息 (character_id):', this.currentConfig.characterId);
             }
           }
 
-          console.log('[CharacterProfile] 发送 get_player 请求:', req, '当前配置:', this.currentConfig); // 优化：使用request方法，自动生成request_id并匹配响应
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 发送 get_player 请求:', req, '当前配置:', this.currentConfig); // 优化：使用request方法，自动生成request_id并匹配响应
           // 注意：req中已经包含了request_id，request方法会使用它
 
           var requestData = {};
@@ -564,12 +656,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.ws.request('get_player', requestData, response => {
             // 通过request_id匹配的响应回调
             // request方法已经验证了request_id，这里直接处理响应
-            console.log('[CharacterProfile] ✅ 收到request方法回调的响应，request_id:', response.request_id);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] ✅ 收到request方法回调的响应，request_id:', response.request_id);
 
             if (typeof this.onPlayerInfo === 'function') {
               this.onPlayerInfo(response);
             } else {
-              console.error('[CharacterProfile] ❌ onPlayerInfo 回调不存在，忽略本次响应');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[CharacterProfile] ❌ onPlayerInfo 回调不存在，忽略本次响应');
             }
           }, true, // 需要认证
           10000 // 10秒超时
@@ -617,7 +713,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           if (this.viewMode === 'self') {
             this.onlineStatusLabel.node.active = false;
-            console.log('[CharacterProfile] 查看自己，隐藏在线状态');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 查看自己，隐藏在线状态');
           } else {
             // 查看他人时显示在线状态并更新文本
             this.onlineStatusLabel.node.active = true; // 根据状态机状态显示文本
@@ -636,26 +734,34 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             }
 
             this.onlineStatusLabel.string = statusText;
-            console.log('[CharacterProfile] 查看他人，显示状态:', statusText, '状态机状态:', status);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 查看他人，显示状态:', statusText, '状态机状态:', status);
           }
         }
 
         updateButtonsState(visible) {
           // 如果 actionButtonsNode 未绑定，直接返回（允许UI中没有操作按钮）
           if (!this.actionButtonsNode) {
-            console.log('[CharacterProfile] actionButtonsNode 未绑定，跳过按钮状态更新');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] actionButtonsNode 未绑定，跳过按钮状态更新');
             return;
           }
 
           this.actionButtonsNode.active = visible;
 
           if (!visible) {
-            console.log('[CharacterProfile] 隐藏所有操作按钮');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 隐藏所有操作按钮');
             return;
           }
 
           var isSelf = this.viewMode === 'self';
-          console.log('[CharacterProfile] 更新按钮状态:', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 更新按钮状态:', {
             isSelf,
             isFriend: this.isFriend,
             targetFriendId: this.targetFriendId
@@ -667,17 +773,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           if (isSelf) {
             // 查看自己时，不显示好友操作按钮
-            console.log('[CharacterProfile] 查看自己，隐藏所有操作按钮');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[CharacterProfile] 查看自己，隐藏所有操作按钮');
           } else {
             // 查看他人时
             if (this.isFriend) {
               // 是好友：显示删除好友、发送消息
-              console.log('[CharacterProfile] 是好友，显示删除好友和发送消息按钮');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 是好友，显示删除好友和发送消息按钮');
               if (this.deleteFriendButton) this.deleteFriendButton.node.active = true;
               if (this.sendMessageButton) this.sendMessageButton.node.active = true;
             } else {
               // 不是好友：显示添加好友
-              console.log('[CharacterProfile] 不是好友，显示添加好友按钮');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 不是好友，显示添加好友按钮');
               if (this.addFriendButton) this.addFriendButton.node.active = true;
             }
           }
@@ -687,18 +799,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           var _this$currentConfig;
 
           if (!this.targetFriendId) {
-            console.warn('[CharacterProfile] 无法添加好友：缺少目标好友ID');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[CharacterProfile] 无法添加好友：缺少目标好友ID');
             return;
           }
 
           var cid = this.ws.getCharacterId();
 
           if (!cid) {
-            console.warn('[CharacterProfile] 无法添加好友：缺少当前角色ID');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[CharacterProfile] 无法添加好友：缺少当前角色ID');
             return;
           }
 
-          console.log('[CharacterProfile] 请求添加好友:', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 请求添加好友:', {
             character_id: cid,
             target_friend_id: this.targetFriendId
           }); // 使用新的接口参数格式：target_friend_id 和 target_character_id
@@ -710,27 +828,37 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             target_character_id: targetCharacterId || undefined
           }, resp => {
             if (resp && resp.success) {
-              console.log('[CharacterProfile] 好友申请发送成功'); // 更新按钮状态（变成已发送申请的状态，但当前实现中暂不处理）
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 好友申请发送成功'); // 更新按钮状态（变成已发送申请的状态，但当前实现中暂不处理）
             } else {
-              console.warn('[CharacterProfile] 添加好友失败:', resp == null ? void 0 : resp.message);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[CharacterProfile] 添加好友失败:', resp == null ? void 0 : resp.message);
             }
           });
         }
 
         onDeleteFriend() {
           if (!this.targetFriendId) {
-            console.warn('[CharacterProfile] 无法删除好友：缺少目标好友ID');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[CharacterProfile] 无法删除好友：缺少目标好友ID');
             return;
           }
 
           var cid = this.ws.getCharacterId();
 
           if (!cid) {
-            console.warn('[CharacterProfile] 无法删除好友：缺少当前角色ID');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[CharacterProfile] 无法删除好友：缺少当前角色ID');
             return;
           }
 
-          console.log('[CharacterProfile] 请求删除好友:', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 请求删除好友:', {
             character_id: cid,
             friend_id: this.targetFriendId
           });
@@ -739,19 +867,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             friend_id: this.targetFriendId
           }, resp => {
             if (resp && resp.success) {
-              console.log('[CharacterProfile] 删除好友成功');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[CharacterProfile] 删除好友成功');
               this.isFriend = false;
               this.updateButtonsState(true); // 更新按钮状态为"添加好友"
               // 注意：这里不关闭面板，让用户继续查看该角色信息
             } else {
-              console.warn('[CharacterProfile] 删除好友失败:', resp == null ? void 0 : resp.message);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[CharacterProfile] 删除好友失败:', resp == null ? void 0 : resp.message);
             }
           });
         }
 
         onSendMessage() {
           // TODO: 实现跳转到聊天窗口
-          console.log('[CharacterProfile] 点击发送消息'); // 可以通过事件总线通知聊天模块打开与该好友的会话
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[CharacterProfile] 点击发送消息'); // 可以通过事件总线通知聊天模块打开与该好友的会话
         }
 
         setNumericalValue(root, text) {

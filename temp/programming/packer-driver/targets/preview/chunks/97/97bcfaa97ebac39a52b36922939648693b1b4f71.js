@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Node, director, Button, WebSocketManager, BaseSceneController, GameConfig, GameCommonData, ResourceManager, RobotShow, ensureBattleResumeController, ensureStarterMechPicker, TipWindows, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _class3, _crd, ccclass, property, GameControl;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Node, director, Button, WebSocketManager, BaseSceneController, GameConfig, GameCommonData, ResourceManager, RobotShow, ensureBattleResumeController, ensureStarterMechPicker, ensureIntroWorldview, TipWindows, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _class3, _crd, ccclass, property, GameControl;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -41,8 +41,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("ensureStarterMechPicker", "./StarterMechPicker", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfensureIntroWorldview(extras) {
+    _reporterNs.report("ensureIntroWorldview", "../Intro/IntroWorldviewController", _context.meta, extras);
+  }
+
   function _reportPossibleCrUseOfTipWindows(extras) {
     _reporterNs.report("TipWindows", "../global/TipWindows", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -73,7 +81,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_9) {
       ensureStarterMechPicker = _unresolved_9.ensureStarterMechPicker;
     }, function (_unresolved_10) {
-      TipWindows = _unresolved_10.TipWindows;
+      ensureIntroWorldview = _unresolved_10.ensureIntroWorldview;
+    }, function (_unresolved_11) {
+      TipWindows = _unresolved_11.TipWindows;
+    }, function (_unresolved_12) {
+      Logger = _unresolved_12.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -159,13 +171,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
             error: Error()
           }), ensureBattleResumeController) : ensureBattleResumeController)(); // 无机甲时弹出初始三选一（先预热 TipWindows，避免首次确认弹窗被 onLoad 关掉）
+          // 新角色开屏世界观优先于初始机甲选择
 
           (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
             error: Error()
           }), TipWindows) : TipWindows).warmup();
-          (_crd && ensureStarterMechPicker === void 0 ? (_reportPossibleCrUseOfensureStarterMechPicker({
+          (_crd && ensureIntroWorldview === void 0 ? (_reportPossibleCrUseOfensureIntroWorldview({
             error: Error()
-          }), ensureStarterMechPicker) : ensureStarterMechPicker)().checkAndPrompt(); // 延迟初始化非关键操作，避免阻塞场景加载
+          }), ensureIntroWorldview) : ensureIntroWorldview)().tryPlay(() => {
+            (_crd && ensureStarterMechPicker === void 0 ? (_reportPossibleCrUseOfensureStarterMechPicker({
+              error: Error()
+            }), ensureStarterMechPicker) : ensureStarterMechPicker)().checkAndPrompt();
+          }); // 延迟初始化非关键操作，避免阻塞场景加载
           // 先让场景快速显示出来，再初始化其他功能
 
           this.scheduleOnce(() => {
@@ -210,10 +227,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onDataChanged(data) {
           // 处理 GameControl 特有的逻辑
           if (data && typeof data === 'object' && data.reason) {
-            console.log("\uD83D\uDEA8 [GameControl] \u68C0\u6D4B\u5230\u6570\u636E\u53D8\u5316\uFF1A" + data.reason); // 切换角色回选角（清除 characterId），不应按断线处理 Loading/重连
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDEA8 [GameControl] \u68C0\u6D4B\u5230\u6570\u636E\u53D8\u5316\uFF1A" + data.reason); // 切换角色回选角（清除 characterId），不应按断线处理 Loading/重连
 
             if (data.reason === 'character_id_cleared') {
-              console.log('ℹ️ [GameControl] 检测到切换角色（清除角色ID），不触发 Loading'); // 停止监控，准备场景切换
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('ℹ️ [GameControl] 检测到切换角色（清除角色ID），不触发 Loading'); // 停止监控，准备场景切换
 
               this.stopMonitoring();
               return;
@@ -221,7 +242,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (data.reason === 'all_cleared') {
-              console.log('⚠️ [GameControl] 检测到所有数据被清除，停止监控');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('⚠️ [GameControl] 检测到所有数据被清除，停止监控');
               this.stopMonitoring();
               return;
             } // 立即检查数据完整性
@@ -236,7 +259,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var isConnected = wsManager.isConnected(); // 如果任何关键数据缺失，立即显示Loading
 
             if (!isConnected || !hasToken || !hasUserId || !hasCharacterId) {
-              console.log('❌ [GameControl] 数据不完整，立即显示Loading');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('❌ [GameControl] 数据不完整，立即显示Loading');
               this.showLoadingAndReconnect("data_changed: " + data.reason);
               return;
             }
@@ -352,7 +377,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         startMonitoring() {
           // 🔧 检查是否禁用服务器验证
           if (GameControl.DISABLE_SERVER_VALIDATION) {
-            console.log('🚫 服务器验证已禁用，跳过监控启动');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('🚫 服务器验证已禁用，跳过监控启动');
             return;
           }
 
@@ -370,7 +397,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }, this.tokenCheckInterval); // 使用 requestAnimationFrame 优化检查频率（仅在游戏运行时）
           // 这样可以减少不必要的检查，提高性能
 
-          console.log("\uD83D\uDD0D \u6E38\u620F\u72B6\u6001\u76D1\u63A7\u5DF2\u542F\u52A8 - \u68C0\u67E5\u95F4\u9694: " + this.tokenCheckInterval + "ms"); // 立即检查一次
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDD0D \u6E38\u620F\u72B6\u6001\u76D1\u63A7\u5DF2\u542F\u52A8 - \u68C0\u67E5\u95F4\u9694: " + this.tokenCheckInterval + "ms"); // 立即检查一次
 
           this.checkStatus();
         }
@@ -386,7 +415,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           this.isMonitoring = false;
-          console.log('⏹️ 游戏状态监控已停止');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('⏹️ 游戏状态监控已停止');
         }
         /**
          * 检查状态（加强版：立即检测数据缺失）
@@ -396,7 +427,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         checkStatus() {
           // 🔧 如果禁用服务器验证，直接返回
           if (GameControl.DISABLE_SERVER_VALIDATION) {
-            console.log('🚫 服务器验证已禁用，跳过状态检查');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('🚫 服务器验证已禁用，跳过状态检查');
             return;
           }
 
@@ -409,39 +442,51 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance(); // 立即检查：任何数据缺失都立刻显示Loading
 
             if (!wsManager.isConnected()) {
-              console.warn("\u26A0\uFE0F WebSocket\u8FDE\u63A5\u65AD\u5F00 - \u573A\u666F: " + this.currentSceneName);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F WebSocket\u8FDE\u63A5\u65AD\u5F00 - \u573A\u666F: " + this.currentSceneName);
               this.handleConnectionLost();
               return;
             }
 
             if (!this.isTokenValid(currentToken)) {
-              console.warn("\u26A0\uFE0F Token\u5DF2\u5931\u6548 - \u573A\u666F: " + this.currentSceneName);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F Token\u5DF2\u5931\u6548 - \u573A\u666F: " + this.currentSceneName);
               this.handleTokenInvalid();
               return;
             } // Game场景需要完整的验证：Token、UserId和CharacterId都必须存在
 
 
             if (!currentUserId || currentUserId.length === 0) {
-              console.warn("\u26A0\uFE0F \u7528\u6237ID\u7F3A\u5931 - \u573A\u666F: " + this.currentSceneName);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F \u7528\u6237ID\u7F3A\u5931 - \u573A\u666F: " + this.currentSceneName);
               this.handleTokenInvalid();
               return;
             }
 
             if (!currentCharacterId || currentCharacterId.length === 0) {
-              console.warn("\u26A0\uFE0F \u89D2\u8272ID\u7F3A\u5931 - \u573A\u666F: " + this.currentSceneName);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F \u89D2\u8272ID\u7F3A\u5931 - \u573A\u666F: " + this.currentSceneName);
               this.handleTokenInvalid();
               return;
             } // 检查状态是否发生变化
 
 
             if (this.lastToken !== currentToken || this.lastUserId !== currentUserId || this.lastCharacterId !== currentCharacterId) {
-              console.log("\uD83D\uDD04 \u6E38\u620F\u72B6\u6001\u5DF2\u66F4\u65B0 - \u573A\u666F: " + this.currentSceneName);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\uD83D\uDD04 \u6E38\u620F\u72B6\u6001\u5DF2\u66F4\u65B0 - \u573A\u666F: " + this.currentSceneName);
               this.lastToken = currentToken;
               this.lastUserId = currentUserId;
               this.lastCharacterId = currentCharacterId;
             }
           } catch (error) {
-            console.error("\u274C \u6E38\u620F\u72B6\u6001\u68C0\u67E5\u5931\u8D25 - \u573A\u666F: " + this.currentSceneName + ":", error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C \u6E38\u620F\u72B6\u6001\u68C0\u67E5\u5931\u8D25 - \u573A\u666F: " + this.currentSceneName + ":", error);
             this.handleTokenInvalid();
           }
         }
@@ -451,7 +496,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleDataIntegrityFailed(reason) {
-          console.error("\uD83D\uDEA8 [GameControl] \u6570\u636E\u5B8C\u6574\u6027\u5931\u8D25\uFF1A" + reason + "\uFF0C\u7ACB\u5373\u663E\u793ALoading");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).error("\uD83D\uDEA8 [GameControl] \u6570\u636E\u5B8C\u6574\u6027\u5931\u8D25\uFF1A" + reason + "\uFF0C\u7ACB\u5373\u663E\u793ALoading");
 
           if (reason === 'player_not_found_or_unauthorized') {
             // 角色数据不存在/鉴权失效：不重连，直接清会话并回登录。
@@ -480,7 +527,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), WebSocketManager) : WebSocketManager).getInstance();
 
           if (wsManager.isReloginRequiredByIdle()) {
-            console.warn("\u26A0\uFE0F [GameControl] \u5B89\u5168\u9600\u89E6\u53D1\uFF08token_idle_expired\uFF09\uFF0C\u6E05\u4F1A\u8BDD\u5E76\u56DE\u767B\u5F55 - \u573A\u666F: " + this.currentSceneName);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [GameControl] \u5B89\u5168\u9600\u89E6\u53D1\uFF08token_idle_expired\uFF09\uFF0C\u6E05\u4F1A\u8BDD\u5E76\u56DE\u767B\u5F55 - \u573A\u666F: " + this.currentSceneName);
 
             try {
               wsManager.clearAll();
@@ -491,7 +540,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          console.log("\uD83D\uDEA8 Token\u5931\u6548\uFF0C\u663E\u793ALoading\u5E76\u5C1D\u8BD5\u91CD\u8FDE - \u5F53\u524D\u573A\u666F: " + this.currentSceneName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDEA8 Token\u5931\u6548\uFF0C\u663E\u793ALoading\u5E76\u5C1D\u8BD5\u91CD\u8FDE - \u5F53\u524D\u573A\u666F: " + this.currentSceneName);
           this.showLoadingAndReconnect('token_invalid');
         }
         /**
@@ -500,7 +551,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleGameIdsIncomplete() {
-          console.log("\uD83D\uDEA8 \u6E38\u620FID\u4E0D\u5B8C\u6574\uFF0C\u663E\u793ALoading\u5E76\u5C1D\u8BD5\u91CD\u8FDE - \u5F53\u524D\u573A\u666F: " + this.currentSceneName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDEA8 \u6E38\u620FID\u4E0D\u5B8C\u6574\uFF0C\u663E\u793ALoading\u5E76\u5C1D\u8BD5\u91CD\u8FDE - \u5F53\u524D\u573A\u666F: " + this.currentSceneName);
           this.showLoadingAndReconnect('game_ids_incomplete');
         }
         /**
@@ -515,7 +568,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), WebSocketManager) : WebSocketManager).getInstance();
 
           if (wsManager.isReloginRequiredByIdle()) {
-            console.warn("\u26A0\uFE0F [GameControl] \u5B89\u5168\u9600\u89E6\u53D1\uFF08connection_idle_expired\uFF09\uFF0C\u6E05\u4F1A\u8BDD\u5E76\u56DE\u767B\u5F55 - \u573A\u666F: " + this.currentSceneName);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [GameControl] \u5B89\u5168\u9600\u89E6\u53D1\uFF08connection_idle_expired\uFF09\uFF0C\u6E05\u4F1A\u8BDD\u5E76\u56DE\u767B\u5F55 - \u573A\u666F: " + this.currentSceneName);
 
             try {
               wsManager.clearAll();
@@ -526,7 +581,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          console.log("\uD83D\uDD0C WebSocket\u8FDE\u63A5\u4E22\u5931\uFF0C\u663E\u793ALoading\u5E76\u5C1D\u8BD5\u91CD\u8FDE - \u573A\u666F: " + this.currentSceneName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDD0C WebSocket\u8FDE\u63A5\u4E22\u5931\uFF0C\u663E\u793ALoading\u5E76\u5C1D\u8BD5\u91CD\u8FDE - \u573A\u666F: " + this.currentSceneName);
           this.showLoadingAndReconnect('connection_lost');
         }
         /**
@@ -538,7 +595,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         showLoadingAndReconnect(reason) {
           // 如果已经在重连中，不重复处理
           if (this.isReconnecting) {
-            console.log('⏳ 已在重连中，跳过重复请求');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('⏳ 已在重连中，跳过重复请求');
             return;
           }
 
@@ -548,7 +607,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (this.loadingPanel) {
             this.loadingPanel.active = true;
-            console.log('📱 Loading面板已显示');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📱 Loading面板已显示');
           } // 开始重连
 
 
@@ -570,7 +631,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var tryConnect = () => {
             reconnectAttempts++;
-            console.log("\uD83D\uDD04 \u91CD\u8FDE\u5C1D\u8BD5 " + reconnectAttempts + "/" + maxAttempts + "...");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDD04 \u91CD\u8FDE\u5C1D\u8BD5 " + reconnectAttempts + "/" + maxAttempts + "...");
 
             try {
               // 尝试连接
@@ -579,7 +642,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               setTimeout(() => {
                 // 检查是否真正重连成功（需要 WebSocket 连接 + 完整的数据）
                 if (this.isReconnectTrulySuccess()) {
-                  console.log('✅ 重连成功（WebSocket连接 + 数据完整）');
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug('✅ 重连成功（WebSocket连接 + 数据完整）');
                   this.onReconnectSuccess();
                   return;
                 } // 如果还没成功且未超时，继续尝试
@@ -588,12 +653,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 if (reconnectAttempts < maxAttempts) {
                   tryConnect();
                 } else {
-                  console.log('⏰ 重连尝试次数已达上限');
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug('⏰ 重连尝试次数已达上限');
                   this.onReconnectTimeout();
                 }
               }, attemptInterval);
             } catch (error) {
-              console.error('❌ 重连尝试失败:', error);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 重连尝试失败:', error);
 
               if (reconnectAttempts < maxAttempts) {
                 tryConnect();
@@ -608,7 +677,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.reconnectTimer = setTimeout(() => {
             if (this.isReconnecting) {
-              console.log('⏰ 重连超时（3秒），跳转到登录场景');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('⏰ 重连超时（3秒），跳转到登录场景');
               this.onReconnectTimeout();
             }
           }, this.reconnectTimeout);
@@ -624,32 +695,42 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), WebSocketManager) : WebSocketManager).getInstance();
 
           if (!wsManager.isConnected()) {
-            console.log('❌ WebSocket未连接');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('❌ WebSocket未连接');
             return false;
           }
 
           var token = wsManager.getToken();
 
           if (!this.isTokenValid(token)) {
-            console.log('❌ Token无效或不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('❌ Token无效或不存在');
             return false;
           }
 
           var userId = wsManager.getUserId();
 
           if (!userId || userId.length === 0) {
-            console.log('❌ 用户ID缺失');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('❌ 用户ID缺失');
             return false;
           }
 
           var characterId = wsManager.getCharacterId();
 
           if (!characterId || characterId.length === 0) {
-            console.log('❌ 角色ID缺失');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('❌ 角色ID缺失');
             return false;
           }
 
-          console.log('✅ 重连条件满足：WebSocket连接 + Token/用户ID/角色ID均有效');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('✅ 重连条件满足：WebSocket连接 + Token/用户ID/角色ID均有效');
           return true;
         }
         /**
@@ -668,11 +749,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (this.loadingPanel) {
             this.loadingPanel.active = false;
-            console.log('📱 Loading面板已隐藏');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📱 Loading面板已隐藏');
           } // 刷新数据
 
 
-          console.log('🔄 重连成功，刷新数据并重新加载场景...'); // 轻微延迟：给 WebSocketManager 的 auth_request/auth_response 一轮处理时间
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 重连成功，刷新数据并重新加载场景...'); // 轻微延迟：给 WebSocketManager 的 auth_request/auth_response 一轮处理时间
 
           setTimeout(() => {
             this.refreshDataAndReloadScene();
@@ -695,7 +780,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (this.loadingPanel) {
             this.loadingPanel.active = false;
-            console.log('📱 Loading面板已隐藏');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📱 Loading面板已隐藏');
           } // 规范性修复：连接超时但不要清 token
           // 否则“断线/重进”会被当作“登出”，从而失去自动登录链路
 
@@ -716,12 +803,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             (_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
               error: Error()
             }), GameCommonData) : GameCommonData).instance.refreshPlayerInfo().then(() => {
-              console.log('✅ 数据刷新完成');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ 数据刷新完成');
             }).catch(error => {
-              console.error('❌ 数据刷新失败:', error);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 数据刷新失败:', error);
             });
           } else {
-            console.log('⚠️ GameCommonData未初始化');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('⚠️ GameCommonData未初始化');
           }
         }
         /**
@@ -731,20 +824,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         reloadCurrentScene() {
           var sceneName = this.currentSceneName || 'Game';
-          console.log("\uD83D\uDD04 \u91CD\u65B0\u52A0\u8F7D\u573A\u666F: " + sceneName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDD04 \u91CD\u65B0\u52A0\u8F7D\u573A\u666F: " + sceneName);
 
           try {
             director.loadScene(sceneName, error => {
               if (error) {
-                console.error("\u274C \u91CD\u65B0\u52A0\u8F7D\u573A\u666F\u5931\u8D25: " + sceneName, error); // 如果重新加载失败，跳转到登录场景
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C \u91CD\u65B0\u52A0\u8F7D\u573A\u666F\u5931\u8D25: " + sceneName, error); // 如果重新加载失败，跳转到登录场景
 
                 this.jumpToLoginScene();
               } else {
-                console.log("\u2705 \u573A\u666F\u91CD\u65B0\u52A0\u8F7D\u6210\u529F: " + sceneName);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 \u573A\u666F\u91CD\u65B0\u52A0\u8F7D\u6210\u529F: " + sceneName);
               }
             });
           } catch (error) {
-            console.error('❌ 场景重新加载异常:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 场景重新加载异常:', error);
             this.jumpToLoginScene();
           }
         }
@@ -754,7 +855,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         jumpToLoginScene() {
-          console.log("\uD83D\uDD04 \u8DF3\u8F6C\u5230\u767B\u5F55\u573A\u666F - \u6765\u6E90\u573A\u666F: " + this.currentSceneName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDD04 \u8DF3\u8F6C\u5230\u767B\u5F55\u573A\u666F - \u6765\u6E90\u573A\u666F: " + this.currentSceneName);
           super.jumpToLoginScene();
         }
         /**
@@ -769,7 +872,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance();
             return wsManager.getUserId();
           } catch (error) {
-            console.error('❌ 获取用户ID失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 获取用户ID失败:', error);
             return null;
           }
         }
@@ -785,7 +890,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance();
             return wsManager.getCharacterId();
           } catch (error) {
-            console.error('❌ 获取角色ID失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 获取角色ID失败:', error);
             return null;
           }
         }
@@ -803,7 +910,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         manualStatusCheck() {
-          console.log('🔍 手动触发游戏状态检查');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔍 手动触发游戏状态检查');
           this.checkStatus();
         }
         /**
@@ -829,7 +938,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         static setServerValidation(enabled) {
           GameControl.DISABLE_SERVER_VALIDATION = !enabled;
-          console.log("\uD83D\uDD27 \u670D\u52A1\u5668\u9A8C\u8BC1\u5DF2" + (enabled ? '启用' : '禁用'));
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDD27 \u670D\u52A1\u5668\u9A8C\u8BC1\u5DF2" + (enabled ? '启用' : '禁用'));
         }
         /**
          * 🔧 获取服务器验证状态
@@ -852,28 +963,52 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var token = this.getCurrentToken();
             var userId = this.getCurrentUserId();
             var characterId = this.getCurrentCharacterId();
-            console.log("\uD83D\uDCCB \u6E38\u620F\u72B6\u6001\u8BE6\u7EC6\u4FE1\u606F - \u573A\u666F: " + this.currentSceneName + ":");
-            console.log('  - Token存在:', token !== null);
-            console.log('  - 用户ID存在:', userId !== null);
-            console.log('  - 角色ID存在:', characterId !== null);
-            console.log('  - 游戏ID完整:', this.isGameIdsComplete(userId, characterId));
-            console.log('  - WebSocket连接状态:', wsManager.isConnected());
-            console.log('  - 监控状态:', this.isMonitoring);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDCCB \u6E38\u620F\u72B6\u6001\u8BE6\u7EC6\u4FE1\u606F - \u573A\u666F: " + this.currentSceneName + ":");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - Token存在:', token !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 用户ID存在:', userId !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 角色ID存在:', characterId !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 游戏ID完整:', this.isGameIdsComplete(userId, characterId));
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - WebSocket连接状态:', wsManager.isConnected());
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 监控状态:', this.isMonitoring);
 
             if (token) {
-              console.log('  - Token前10位:', token.substring(0, 10));
-              console.log('  - Token后10位:', token.substring(token.length - 10));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token前10位:', token.substring(0, 10));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token后10位:', token.substring(token.length - 10));
             }
 
             if (userId) {
-              console.log('  - 用户ID:', userId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 用户ID:', userId);
             }
 
             if (characterId) {
-              console.log('  - 角色ID:', characterId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 角色ID:', characterId);
             }
           } catch (error) {
-            console.error('❌ 输出详细信息失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 输出详细信息失败:', error);
           }
         }
         /**
@@ -891,10 +1026,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             // 可以在这里显示加载进度（如果需要）
             if (progress % 20 === 0) {
               // 每20%打印一次，避免日志过多
-              console.log("\uD83D\uDCE6 [GameControl] \u8D44\u6E90\u9884\u52A0\u8F7D\u8FDB\u5EA6: " + progress + "%");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\uD83D\uDCE6 [GameControl] \u8D44\u6E90\u9884\u52A0\u8F7D\u8FDB\u5EA6: " + progress + "%");
             }
           }, (successCount, failCount) => {
-            console.log("\u2705 [GameControl] \u6E38\u620F\u6838\u5FC3\u8D44\u6E90\u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + ", \u5931\u8D25 " + failCount);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u2705 [GameControl] \u6E38\u620F\u6838\u5FC3\u8D44\u6E90\u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + ", \u5931\u8D25 " + failCount);
           }); // 方式2：预加载 RobotShow 所需的资源（通过 RobotShow 的预加载方法）
           // 这个方法内部已经实现了陆续加载，不会造成卡顿
           // 注意：由于 RobotShow.preloadResources() 和 preloadGameCoreResources() 会加载相同的资源
@@ -905,7 +1044,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               error: Error()
             }), RobotShow) : RobotShow).preloadResources();
           } catch (error) {
-            console.warn('⚠️ [GameControl] RobotShow 资源预加载失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [GameControl] RobotShow 资源预加载失败:', error);
           }
         }
 
@@ -928,7 +1069,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             wsManager.off('data_changed', this.onDataChanged, this);
           }
 
-          console.log("\uD83C\uDFAE \u6E38\u620F\u573A\u666F\u63A7\u5236\u5668\u9500\u6BC1 - \u573A\u666F: " + this.currentSceneName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83C\uDFAE \u6E38\u620F\u573A\u666F\u63A7\u5236\u5668\u9500\u6BC1 - \u573A\u666F: " + this.currentSceneName);
         }
 
       }, _class3.DISABLE_SERVER_VALIDATION = false, _class3), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "button1", [_dec2], {

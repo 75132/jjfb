@@ -1,0 +1,35 @@
+{
+  "source": "C:\\Users\\Administrator\\Documents\\Games\\Project1",
+  "mapId": 1,
+  "mapName": "MAP001",
+  "width": 30,
+  "height": 34,
+  "pixelWidth": 1440,
+  "pixelHeight": 1632,
+  "tileSize": 48,
+  "tilesetId": 7,
+  "tilesetNames": [
+    "m1_A5",
+    "m1_B",
+    "m1_C",
+    "m1_D",
+    "m1_E"
+  ],
+  "exports": {
+    "zLayers": [
+      "M1_z0.png",
+      "M1_z2.png",
+      "M1_z3.png"
+    ],
+    "bands": [
+      "M1_A5.png",
+      "M1_B.png",
+      "M1_C.png",
+      "M1_D.png",
+      "M1_E.png"
+    ],
+    "merge": "M1.png",
+    "juben": "D:\\jjfbol-cocos\\Juben\\Map\\M1.png"
+  },
+  "note": "z/band 分层供 Cocos 手动叠层；M1.png 并层给 Juben。"
+}

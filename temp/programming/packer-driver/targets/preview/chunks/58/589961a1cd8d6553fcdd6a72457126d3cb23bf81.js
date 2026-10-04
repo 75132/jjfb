@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, EditBox, Button, Sprite, SpriteFrame, ToggleContainer, Label, WebSocketManager, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _crd, ccclass, property, CharacterCreatePanel;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, EditBox, Button, Sprite, SpriteFrame, ToggleContainer, Label, WebSocketManager, Logger, markNewCharacterNeedsIntro, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _crd, ccclass, property, CharacterCreatePanel;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -11,6 +11,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfmarkNewCharacterNeedsIntro(extras) {
+    _reporterNs.report("markNewCharacterNeedsIntro", "../Intro/IntroFlags", _context.meta, extras);
   }
 
   return {
@@ -31,6 +39,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       Label = _cc.Label;
     }, function (_unresolved_2) {
       WebSocketManager = _unresolved_2.WebSocketManager;
+    }, function (_unresolved_3) {
+      Logger = _unresolved_3.Logger;
+    }, function (_unresolved_4) {
+      markNewCharacterNeedsIntro = _unresolved_4.markNewCharacterNeedsIntro;
     }],
     execute: function () {
       _crd = true;
@@ -81,6 +93,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           this.wsManager = null;
           // 修复点：创建角色过程状态标记，防止高频点击导致多次创建请求
           this.isCreating = false;
+          this.initTimer = null;
           // 百家姓（部分示例，可自行扩展）
           this.surnames = ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许', '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏', '陶', '姜', '谢', '邹', '喻', '柏', '水', '窦', '章', '云', '苏', '潘', '葛', '奚', '范', '彭', '郎', '鲁', '韦', '昌', '马', '苗', '凤', '花', '方', '俞', '任', '袁', '柳', '酆', '鲍', '史', '唐', '费', '廉', '岑', '薛', '雷', '贺', '倪', '汤', '滕', '殷', '罗', '毕', '郝', '邬', '安', '常', '乐', '于', '时', '傅', '皮', '卞', '齐', '康', '伍', '余', '元', '卜', '顾', '孟', '平', '黄', '和', '穆', '萧', '尹', '姚', '邵', '湛', '汪', '祁', '毛', '禹', '狄', '米', '贝', '明', '臧', '计', '伏', '成', '戴', '谈', '宋', '茅', '庞', '熊', '纪', '舒', '屈', '项', '祝', '董', '梁'];
           // 常用名字符号（部分示例）
@@ -91,8 +104,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
         start() {
           // 延迟初始化，避免引擎内部错误；组件销毁后不再执行
-          setTimeout(() => {
-            if (!this.isValid) return;
+          this.initTimer = setTimeout(() => {
+            var _this$node;
+
+            this.initTimer = null;
+            if (!((_this$node = this.node) != null && _this$node.isValid)) return;
             this.initializeComponents();
           }, 200);
         }
@@ -113,7 +129,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
                 try {
                   node.on(Node.EventType.TOUCH_END, () => this.onSelectCharacter(idx), this);
                 } catch (error) {
-                  console.error("\u7ED1\u5B9A\u89D2\u8272\u683C\u5B50" + idx + "\u70B9\u51FB\u4E8B\u4EF6\u65F6\u51FA\u9519:", error);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).error("\u7ED1\u5B9A\u89D2\u8272\u683C\u5B50" + idx + "\u70B9\u51FB\u4E8B\u4EF6\u65F6\u51FA\u9519:", error);
                 }
               }
             }); // 绑定返回按钮点击事件
@@ -122,7 +140,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               try {
                 this.backButton.node.on(Button.EventType.CLICK, this.onBackClick, this);
               } catch (error) {
-                console.error('绑定返回按钮事件时出错:', error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('绑定返回按钮事件时出错:', error);
               }
             } // 绑定创建按钮点击事件
 
@@ -131,7 +151,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               try {
                 this.createButton.node.on(Button.EventType.CLICK, this.onCreateClick, this);
               } catch (error) {
-                console.error('绑定创建按钮事件时出错:', error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('绑定创建按钮事件时出错:', error);
               }
             } // 绑定随机名字按钮点击事件
 
@@ -140,19 +162,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               try {
                 this.randomNameBtn.node.on(Button.EventType.CLICK, this.randomName, this);
               } catch (error) {
-                console.error('绑定随机名字按钮事件时出错:', error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('绑定随机名字按钮事件时出错:', error);
               }
             } // 默认选中第一个角色
 
 
             this.onSelectCharacter(0);
           } catch (error) {
-            console.error('CharacterCreatePanel初始化时出错:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('CharacterCreatePanel初始化时出错:', error);
           }
         }
 
         onDestroy() {
-          // 移除监听
+          if (this.initTimer !== null) {
+            clearTimeout(this.initTimer);
+            this.initTimer = null;
+          } // 移除监听
+
+
           if (this.wsManager) {
             this.wsManager.off('create_character_response', this.onCreateCharacterResponse, this);
           }
@@ -170,6 +201,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           var resp = data.data || data;
 
           if (resp.success) {
+            var createdId = resp.character_id || data && data.character_id;
+
+            if (createdId) {
+              (_crd && markNewCharacterNeedsIntro === void 0 ? (_reportPossibleCrUseOfmarkNewCharacterNeedsIntro({
+                error: Error()
+              }), markNewCharacterNeedsIntro) : markNewCharacterNeedsIntro)(String(createdId));
+            }
+
             this.node.active = false;
             this.node.emit('refresh_slots_and_hide_buttons');
             if (this.tipLabel) this.tipLabel.string = '';

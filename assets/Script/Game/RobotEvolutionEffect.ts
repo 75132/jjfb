@@ -1,5 +1,6 @@
 import { _decorator, Component, Node, find, Sprite, SpriteAtlas, SpriteFrame, tween, Vec3, math, resources } from 'cc';
 import { ResourceManager } from './ResourceManager';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -43,7 +44,7 @@ export class RobotEvolutionEffect extends Component {
         // 默认查找 Canvas/RobotJinHua
         const panel = find('Canvas/RobotJinHua');
         if (!panel) {
-            console.warn('[RobotEvolutionEffect] 未找到 RobotJinHua 节点');
+            Logger.warn('[RobotEvolutionEffect] 未找到 RobotJinHua 节点');
             return null;
         }
         let comp = panel.getComponent(RobotEvolutionEffect);
@@ -81,14 +82,14 @@ export class RobotEvolutionEffect extends Component {
         this.init();
         const root = this.rootNode || this.node;
         if (!this.primarySprite) {
-            console.warn('[RobotEvolutionEffect] 缺少 Sprite 组件');
+            Logger.warn('[RobotEvolutionEffect] 缺少 Sprite 组件');
             return;
         }
 
         this.currentOldFrameName = `${oldAniId}-0`;
         this.currentNewFrameName = `${newAniId}-0`;
 
-        console.log('[RobotEvolutionEffect] 请求进化动画', {
+        Logger.debug('[RobotEvolutionEffect] 请求进化动画', {
             oldAniId,
             newAniId,
             oldFrameName: this.currentOldFrameName,
@@ -126,7 +127,7 @@ export class RobotEvolutionEffect extends Component {
 
         // 如果两个帧都已经加载完成，立即开始动画
         if (oldFrame && newFrame) {
-            console.log('[RobotEvolutionEffect] 帧已缓存，立即开始切换动画');
+            Logger.debug('[RobotEvolutionEffect] 帧已缓存，立即开始切换动画');
             this.startSwitchAnimation();
         } else {
             // 异步加载帧（如果还没有）
@@ -197,7 +198,7 @@ export class RobotEvolutionEffect extends Component {
                 const targetFrame = this.useNewFrame ? newF : oldF;
                 this.primarySprite!.spriteFrame = targetFrame;
                 
-                console.log('[RobotEvolutionEffect] ✅ 切换帧', { 
+                Logger.debug('[RobotEvolutionEffect] ✅ 切换帧', { 
                     elapsed: elapsed.toFixed(2), 
                     useNew: this.useNewFrame, 
                     frameName: targetFrame.name 
@@ -212,7 +213,7 @@ export class RobotEvolutionEffect extends Component {
                         this.unschedule(this.switchCallback);
                         this.switchCallback = null;
                     }
-                    console.log('[RobotEvolutionEffect] 切换完成，定格新形态', { frameName: newF.name });
+                    Logger.debug('[RobotEvolutionEffect] 切换完成，定格新形态', { frameName: newF.name });
                     this.showTipAndClose();
                     return;
                 }
@@ -303,7 +304,7 @@ export class RobotEvolutionEffect extends Component {
         //  - 对应 SpriteFrame 资源路径：Robot/xh_L1-0/spriteFrame
         // resources.load 的路径不包含 "resources" 前缀，这里直接加载 SpriteFrame 子资源
         const path = `Robot/${frameName}/spriteFrame`;
-        console.log('[RobotEvolutionEffect] 开始加载帧', { frameName, path });
+        Logger.debug('[RobotEvolutionEffect] 开始加载帧', { frameName, path });
         
         // 使用 ResourceManager 统一管理资源缓存
         ResourceManager.getInstance().loadAsset<SpriteFrame>(path, SpriteFrame, (err, sf) => {
@@ -311,25 +312,25 @@ export class RobotEvolutionEffect extends Component {
             this.loadingFrames.delete(frameName);
             
             if (err || !sf) {
-                console.warn('[RobotEvolutionEffect] 加载帧失败', { frameName, path, err });
+                Logger.warn('[RobotEvolutionEffect] 加载帧失败', { frameName, path, err });
                 return;
             }
             
             // 检查是否还在播放动画（可能在加载过程中动画已停止）
             if (!this.isPlaying) {
-                console.log('[RobotEvolutionEffect] 帧加载完成但动画已停止', { frameName });
+                Logger.debug('[RobotEvolutionEffect] 帧加载完成但动画已停止', { frameName });
                 return;
             }
             
             this.frameCache.set(frameName, sf);
-            console.log('[RobotEvolutionEffect] 加载帧成功', { frameName, path });
+            Logger.debug('[RobotEvolutionEffect] 加载帧成功', { frameName, path });
             
             // 图片加载完成后，如果正在播放动画，立即应用
             if (this.isPlaying && this.primarySprite) {
                 // 如果是旧形态帧且当前没有显示任何帧，立即显示
                 if (frameName === this.currentOldFrameName && !this.primarySprite.spriteFrame) {
                     this.primarySprite.spriteFrame = sf;
-                    console.log('[RobotEvolutionEffect] 应用旧形态帧', { frameName });
+                    Logger.debug('[RobotEvolutionEffect] 应用旧形态帧', { frameName });
                 }
                 // 如果两个帧都加载完成，确保动画已经开始切换
                 const oldF = this.getFrameImmediate(this.currentOldFrameName);
@@ -337,7 +338,7 @@ export class RobotEvolutionEffect extends Component {
                 if (oldF && newF) {
                     if (!this.switchCallback) {
                         // 如果调度器意外停止，重新启动
-                        console.log('[RobotEvolutionEffect] 帧加载完成，重新启动切换动画');
+                        Logger.debug('[RobotEvolutionEffect] 帧加载完成，重新启动切换动画');
                         this.startSwitchAnimation();
                     }
                 }

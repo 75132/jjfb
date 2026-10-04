@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>save-desktop 15/15</title>
+<style>#log{padding:12px;font:13px/1.6 Consolas,monospace;white-space:pre-wrap;color:#ddd;background:#111}
+#fr{width:1680px;height:920px;border:1px solid #444;display:block;margin:12px}</style>
+</head>
+<body>
+<div id="log">  <span style="color:#6ecb8f">[OK]  </span>window.TS 已暴露
+<span style="color:#7ec8ff;font-weight:700">[1] 导出目录指向桌面</span>
+  <span style="color:#6ecb8f">[OK]  </span>exportDir = 桌面\图块工坊导出  C:\Users\Administrator\Desktop\图块工坊导出
+  <span style="color:#6ecb8f">[OK]  </span>前端默认就用它  C:\Users\Administrator\Desktop\图块工坊导出
+<span style="color:#7ec8ff;font-weight:700">[2] 造内容</span>
+  <span style="color:#6ecb8f">[OK]  </span>素材 = map1_7x6.png  7×6
+  <span style="color:#6ecb8f">[OK]  </span>B 槽落了 4 块 = 168 格  168 格
+  <span style="color:#6ecb8f">[OK]  </span>块内 4 个变体都有（none/h/v/hv）
+<span style="color:#7ec8ff;font-weight:700">[3] 落盘到桌面</span>
+  <span style="color:#6ecb8f">[OK]  </span>前缀已设为「桌面试写」  桌面试写
+  <span style="color:#6ecb8f">[OK]  </span>写出 PNG 数 = 1（只有 B 槽有内容）  1 张: C:\Users\Administrator\Desktop\图块工坊导出\桌面试写_B.png
+  <span style="color:#6ecb8f">[OK]  </span>PNG 落在桌面导出目录  C:\Users\Administrator\Desktop\图块工坊导出\桌面试写_B.png
+  <span style="color:#6ecb8f">[OK]  </span>文件名带前缀 + 槽位  C:\Users\Administrator\Desktop\图块工坊导出\桌面试写_B.png
+  <span style="color:#6ecb8f">[OK]  </span>清单 + 通行表导出不抛异常
+<span style="color:#7ec8ff;font-weight:700">[4] 换目录再落一次</span>
+  <span style="color:#6ecb8f">[OK]  </span>切到工具 out 目录  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out
+  <span style="color:#6ecb8f">[OK]  </span>工具目录也能落盘  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\桌面试写_B.png
+  <span style="color:#6ecb8f">[OK]  </span>下拉已跟着切换  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out
+  <span style="color:#6ecb8f">[OK]  </span>切回桌面导出目录  C:\Users\Administrator\Desktop\图块工坊导出
+
+<span style="color:#7ec8ff;font-weight:700">==== 通过 15　失败 0 ====</span></div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* =============================================================
+   导出到桌面：真的往 桌面\图块工坊导出\ 写文件
+   产物交给 _verify_desktop.py 独立复算
+   ============================================================= */
+const OUT = []; let PASS = 0, FAIL = 0;
+function head(s) { OUT.push('<span style="color:#7ec8ff;font-weight:700">' + s + '</span>'); }
+function ck(n, c, e) { if (c) { PASS++; OUT.push('  <span style="color:#6ecb8f">[OK]  </span>' + n + (e ? '  ' + e : '')); } else { FAIL++; OUT.push('  <span style="color:#ff7a72">[FAIL]</span> ' + n + (e ? '  ' + e : '')); } }
+function flush() {
+  document.getElementById('log').innerHTML = OUT.join('\n') +
+    '\n\n<span style="color:#7ec8ff;font-weight:700">==== 通过 ' + PASS + '　失败 ' + FAIL + ' ====</span>';
+  document.title = 'save-desktop ' + PASS + '/' + (PASS + FAIL);
+}
+setTimeout(() => run().catch(e => { ck('run 抛异常', false, e.message + '\n' + (e.stack || '')); flush(); }), 4500);
+
+async function run() {
+  const W = document.getElementById('fr').contentWindow;
+  const T = W.TS, S = T.S;
+  ck('window.TS 已暴露', !!T);
+  if (!T) { flush(); return; }
+
+  const roots = await (await fetch('/api/roots')).json();
+  head('[1] 导出目录指向桌面');
+  ck('exportDir = 桌面\\图块工坊导出', /Desktop/i.test(roots.exportDir) && /图块工坊导出/.test(roots.exportDir),
+    roots.exportDir);
+  ck('前端默认就用它', S.outDir === roots.exportDir, S.outDir);
+
+  head('[2] 造内容');
+  T.SLOTS.forEach(s => S.out[s.id].fill(null));
+  S.curSlot = 'B';
+  T.setBlkFlip('order');
+  S.blockMode = true;
+  const list = await (await fetch('/api/list?dir=' + encodeURIComponent(roots.mapSrc) + '&sizes=1')).json();
+  const map1 = list.items.find(x => x.name === 'map1_7x6.png');
+  await T.openSheetByPath(map1.path, map1.name);
+  ck('素材 = map1_7x6.png', S.sheet.cols === 7 && S.sheet.rows === 6, S.sheet.cols + '×' + S.sheet.rows);
+
+  // 语义标注（跟 _verify_out_block.py 的预期对齐：5=墙面 / 8=不可通行物体 / 20=树冠★）
+  S.tagOf[5] = 'wall'; S.tagOf[8] = 'plant_np'; S.tagOf[20] = 'over';
+  S.sel.clear();
+  for (let i = 0; i < S.sheet.cols * S.sheet.rows; i++) S.sel.add(i);
+  T.doVariants('all');                    // 一变四，B 槽出现 2×2 四块
+  ck('B 槽落了 4 块 = 168 格', S.out.B.filter(Boolean).length === 168,
+    S.out.B.filter(Boolean).length + ' 格');
+  ck('块内 4 个变体都有（none/h/v/hv）',
+    ['none', 'h', 'v', 'hv'].every(tf => S.out.B.some(c => c && c.tf === tf)));
+
+  head('[3] 落盘到桌面');
+  const fi = W.document.querySelector('#prefixInput');
+  if (fi) fi.value = '桌面试写';
+  ck('前缀已设为「桌面试写」', !!fi && fi.value === '桌面试写', fi ? fi.value : '(没有输入框)');
+
+  const written = [];
+  for (const s of T.SLOTS) {
+    const p = await T.savePng(s.id, S.outDir, true);
+    if (p) written.push(p);
+  }
+  ck('写出 PNG 数 = 1（只有 B 槽有内容）', written.length === 1,
+    written.length + ' 张: ' + written.join(' | '));
+  ck('PNG 落在桌面导出目录', written.every(p => p.indexOf(roots.exportDir) === 0), written[0] || '');
+  ck('文件名带前缀 + 槽位', /桌面试写_B\.png$/.test(written[0] || ''), written[0] || '');
+
+  let jsonOk = true;
+  try { await T.saveJson(); await T.saveFlags(); } catch (e) { jsonOk = false; }
+  ck('清单 + 通行表导出不抛异常', jsonOk);
+
+  head('[4] 换目录再落一次');
+  T.setOutDir(roots.toolOut);
+  ck('切到工具 out 目录', S.outDir === roots.toolOut, S.outDir);
+  const p2 = await T.savePng('B', S.outDir, true);
+  ck('工具目录也能落盘', !!p2 && p2.indexOf(roots.toolOut) === 0, p2 || '');
+  ck('下拉已跟着切换', W.document.querySelector('#dirSelect').value === roots.toolOut,
+    W.document.querySelector('#dirSelect').value);
+  T.setOutDir(roots.exportDir);
+  ck('切回桌面导出目录', S.outDir === roots.exportDir, S.outDir);
+
+  window.__SAVED_DESKTOP__ = written;
+  flush();
+}
+</script>
+
+
+</body></html>

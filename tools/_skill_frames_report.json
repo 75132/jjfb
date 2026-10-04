@@ -1,0 +1,666 @@
+[
+ {
+  "gif": "xg1.mrp__files_gunz__buff_xg1.gif",
+  "short": "buff",
+  "frames": 6,
+  "src_size": [
+   2,
+   15
+  ],
+  "out_size": [
+   4,
+   30
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    2,
+    15
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__chongfeng_xg1.gif",
+  "short": "chongfeng",
+  "frames": 6,
+  "src_size": [
+   182,
+   72
+  ],
+  "out_size": [
+   364,
+   144
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    182,
+    72
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__debuff_xg1.gif",
+  "short": "debuff",
+  "frames": 6,
+  "src_size": [
+   2,
+   15
+  ],
+  "out_size": [
+   4,
+   30
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    2,
+    15
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__ganrao_xg1.gif",
+  "short": "ganrao",
+  "frames": 6,
+  "src_size": [
+   60,
+   59
+  ],
+  "out_size": [
+   120,
+   118
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    60,
+    59
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__huiluganrao_xg1.gif",
+  "short": "huiluganrao",
+  "frames": 12,
+  "src_size": [
+   30,
+   55
+  ],
+  "out_size": [
+   60,
+   110
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    30,
+    55
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__jiguang01_xg1.gif",
+  "short": "jiguang01",
+  "frames": 1,
+  "src_size": [
+   79,
+   50
+  ],
+  "out_size": [
+   158,
+   100
+  ],
+  "durs": [
+   100
+  ],
+  "size_set": [
+   [
+    79,
+    50
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__jingsheng_xg1.gif",
+  "short": "jingsheng",
+  "frames": 15,
+  "src_size": [
+   39,
+   41
+  ],
+  "out_size": [
+   78,
+   82
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    39,
+    41
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__jingu_xg1.gif",
+  "short": "jingu",
+  "frames": 3,
+  "src_size": [
+   112,
+   86
+  ],
+  "out_size": [
+   224,
+   172
+  ],
+  "durs": [
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    112,
+    86
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__jinji_xg1.gif",
+  "short": "jinji",
+  "frames": 4,
+  "src_size": [
+   31,
+   28
+  ],
+  "out_size": [
+   62,
+   56
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    31,
+    28
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__jisu_xg1.gif",
+  "short": "jisu",
+  "frames": 2,
+  "src_size": [
+   44,
+   33
+  ],
+  "out_size": [
+   88,
+   66
+  ],
+  "durs": [
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    44,
+    33
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__kuangnu_xg1.gif",
+  "short": "kuangnu",
+  "frames": 4,
+  "src_size": [
+   29,
+   37
+  ],
+  "out_size": [
+   58,
+   74
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    29,
+    37
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__leiting_xg1.gif",
+  "short": "leiting",
+  "frames": 13,
+  "src_size": [
+   79,
+   119
+  ],
+  "out_size": [
+   158,
+   238
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    79,
+    119
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__lianxu_xg1.gif",
+  "short": "lianxu",
+  "frames": 9,
+  "src_size": [
+   49,
+   65
+  ],
+  "out_size": [
+   98,
+   130
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    49,
+    65
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__quan01_xg1.gif",
+  "short": "quan01",
+  "frames": 7,
+  "src_size": [
+   70,
+   63
+  ],
+  "out_size": [
+   140,
+   126
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    70,
+    63
+   ]
+  ]
+ },
+ {
+  "gif": "xg1.mrp__files_gunz__zidong_xg1.gif",
+  "short": "zidong",
+  "frames": 5,
+  "src_size": [
+   58,
+   25
+  ],
+  "out_size": [
+   116,
+   50
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    58,
+    25
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__lizi_xg2.gif",
+  "short": "lizi",
+  "frames": 1,
+  "src_size": [
+   79,
+   156
+  ],
+  "out_size": [
+   158,
+   312
+  ],
+  "durs": [
+   100
+  ],
+  "size_set": [
+   [
+    79,
+    156
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__roubo_xg2.gif",
+  "short": "roubo",
+  "frames": 5,
+  "src_size": [
+   45,
+   55
+  ],
+  "out_size": [
+   90,
+   110
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    45,
+    55
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__ruodian_xg2.gif",
+  "short": "ruodian",
+  "frames": 3,
+  "src_size": [
+   102,
+   97
+  ],
+  "out_size": [
+   204,
+   194
+  ],
+  "durs": [
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    102,
+    97
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__shengmingshequ_xg2.gif",
+  "short": "shengmingshequ",
+  "frames": 11,
+  "src_size": [
+   66,
+   66
+  ],
+  "out_size": [
+   132,
+   132
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    66,
+    66
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__sheshen_xg2.gif",
+  "short": "sheshen",
+  "frames": 5,
+  "src_size": [
+   45,
+   55
+  ],
+  "out_size": [
+   90,
+   110
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    45,
+    55
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__tecshan_xg2.gif",
+  "short": "tecshan",
+  "frames": 6,
+  "src_size": [
+   34,
+   33
+  ],
+  "out_size": [
+   68,
+   66
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    34,
+    33
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__xinniandun_xg2.gif",
+  "short": "xinniandun",
+  "frames": 11,
+  "src_size": [
+   90,
+   60
+  ],
+  "out_size": [
+   180,
+   120
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    90,
+    60
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__xiuli_xg2.gif",
+  "short": "xiuli",
+  "frames": 8,
+  "src_size": [
+   74,
+   70
+  ],
+  "out_size": [
+   148,
+   140
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    74,
+    70
+   ]
+  ]
+ },
+ {
+  "gif": "xg2.mrp__files_gunz__zhaqu_xg2.gif",
+  "short": "zhaqu",
+  "frames": 11,
+  "src_size": [
+   66,
+   66
+  ],
+  "out_size": [
+   132,
+   132
+  ],
+  "durs": [
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100,
+   100
+  ],
+  "size_set": [
+   [
+    66,
+    66
+   ]
+  ]
+ }
+]

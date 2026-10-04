@@ -1,0 +1,631 @@
+[
+  {
+    "name": "zuojia4",
+    "cn": "座驾-宙斯",
+    "mode": "piece_compose",
+    "rect_count": 6,
+    "piece_frames": 14,
+    "out_frames": 14,
+    "frame_sizes": [
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ],
+      [
+        78,
+        77
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 14,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -39,
+        -72,
+        39,
+        5
+      ],
+      "canvas_size": [
+        78,
+        77
+      ]
+    },
+    "parse": {
+      "frame_count": 14,
+      "tail_start": 87,
+      "tail_end": 605,
+      "remaining_bytes": 57
+    },
+    "chroma_changed": 2240
+  },
+  {
+    "name": "zuojia5",
+    "cn": "座驾-阿瑞斯",
+    "mode": "piece_compose",
+    "rect_count": 4,
+    "piece_frames": 14,
+    "out_frames": 14,
+    "frame_sizes": [
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ],
+      [
+        92,
+        74
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 14,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -46,
+        -67,
+        46,
+        7
+      ],
+      "canvas_size": [
+        92,
+        74
+      ]
+    },
+    "parse": {
+      "frame_count": 14,
+      "tail_start": 71,
+      "tail_end": 589,
+      "remaining_bytes": 57
+    },
+    "chroma_changed": 2723
+  },
+  {
+    "name": "zuojia6",
+    "cn": "座驾-波塞冬",
+    "mode": "piece_compose",
+    "rect_count": 5,
+    "piece_frames": 14,
+    "out_frames": 14,
+    "frame_sizes": [
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ],
+      [
+        70,
+        78
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 14,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -35,
+        -60,
+        35,
+        18
+      ],
+      "canvas_size": [
+        70,
+        78
+      ]
+    },
+    "parse": {
+      "frame_count": 14,
+      "tail_start": 79,
+      "tail_end": 533,
+      "remaining_bytes": 93
+    },
+    "chroma_changed": 1206
+  },
+  {
+    "name": "zuojia7",
+    "cn": "座驾-哈迪斯",
+    "mode": "piece_compose",
+    "rect_count": 3,
+    "piece_frames": 14,
+    "out_frames": 14,
+    "frame_sizes": [
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ],
+      [
+        86,
+        73
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 14,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -43,
+        -64,
+        43,
+        9
+      ],
+      "canvas_size": [
+        86,
+        73
+      ]
+    },
+    "parse": {
+      "frame_count": 14,
+      "tail_start": 63,
+      "tail_end": 469,
+      "remaining_bytes": 53
+    },
+    "chroma_changed": 3097
+  },
+  {
+    "name": "zuojia8",
+    "cn": "新座驾5",
+    "mode": "piece_compose",
+    "rect_count": 7,
+    "piece_frames": 14,
+    "out_frames": 14,
+    "frame_sizes": [
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ],
+      [
+        88,
+        78
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 14,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -44,
+        -67,
+        44,
+        11
+      ],
+      "canvas_size": [
+        88,
+        78
+      ]
+    },
+    "parse": {
+      "frame_count": 14,
+      "tail_start": 95,
+      "tail_end": 717,
+      "remaining_bytes": 73
+    },
+    "chroma_changed": 3185
+  },
+  {
+    "name": "zuojia9",
+    "cn": "新座驾6",
+    "mode": "piece_compose",
+    "rect_count": 12,
+    "piece_frames": 16,
+    "out_frames": 16,
+    "frame_sizes": [
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ],
+      [
+        96,
+        66
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 16,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -48,
+        -49,
+        48,
+        17
+      ],
+      "canvas_size": [
+        96,
+        66
+      ]
+    },
+    "parse": {
+      "frame_count": 16,
+      "tail_start": 135,
+      "tail_end": 1023,
+      "remaining_bytes": 57
+    },
+    "chroma_changed": 1770
+  },
+  {
+    "name": "car4",
+    "cn": "神行座驾",
+    "mode": "piece_compose",
+    "rect_count": 7,
+    "piece_frames": 10,
+    "out_frames": 10,
+    "frame_sizes": [
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ],
+      [
+        46,
+        30
+      ]
+    ],
+    "compose": {
+      "mode": "piece_records",
+      "frame_count": 10,
+      "draw_order": "record_order",
+      "anchor_mode": "top_left",
+      "seam_fix": true,
+      "apply_flag_transform": true,
+      "canvas_box": [
+        -23,
+        -30,
+        23,
+        0
+      ],
+      "canvas_size": [
+        46,
+        30
+      ]
+    },
+    "parse": {
+      "frame_count": 10,
+      "tail_start": 92,
+      "tail_end": 478,
+      "remaining_bytes": 49
+    },
+    "chroma_changed": 604
+  }
+]

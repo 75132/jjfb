@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Animation, PlayerAnimBank, _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2, _crd, ccclass, property, PlayerAnimRuntime;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Animation, PlayerAnimBank, Logger, _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2, _crd, ccclass, property, PlayerAnimRuntime;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -11,6 +11,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
   function _reportPossibleCrUseOfPlayerAnimBank(extras) {
     _reporterNs.report("PlayerAnimBank", "./PlayerAnimBank", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -25,6 +29,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       Animation = _cc.Animation;
     }, function (_unresolved_2) {
       PlayerAnimBank = _unresolved_2.PlayerAnimBank;
+    }, function (_unresolved_3) {
+      Logger = _unresolved_3.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -88,6 +94,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           var p = (prefix || '').trim();
           if (!anim || !bank || !p) return false;
 
+          if (p === this._prefix && anim.getState(p + "_idle_down")) {
+            return true;
+          }
+
           var neededNames = this._neededClipNames(p);
 
           var clips = [];
@@ -100,7 +110,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           }
 
           if (missing.length) {
-            console.warn("[PlayerAnimRuntime] \u52A8\u753B\u5E93\u7F3A\u5C11clip: " + missing.join(', '));
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[PlayerAnimRuntime] \u52A8\u753B\u5E93\u7F3A\u5C11clip: " + missing.join(', '));
             return false;
           } // 注入：只保留当前角色8个，避免串号
 
@@ -145,7 +157,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           var st = anim.getState(name);
 
           if (!st) {
-            console.warn("[PlayerAnimRuntime] Animation\u7F3A\u5C11state: " + name + "\uFF08\u8BF7\u5148applyPrefix/applyServerSprite\u6CE8\u51658\u4E2Aclip\uFF09");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[PlayerAnimRuntime] Animation\u7F3A\u5C11state: " + name + "\uFF08\u8BF7\u5148applyPrefix/applyServerSprite\u6CE8\u51658\u4E2Aclip\uFF09");
             return;
           }
 

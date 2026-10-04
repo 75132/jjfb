@@ -2,6 +2,7 @@ import { _decorator, Component, Node, ScrollView, Prefab, instantiate, EditBox, 
 import { WebSocketManager } from '../global/WebSocketManager';
 import { FriendItem, FriendItemMode } from './FriendItem';
 import { CharacterProfile, ProfileEntryType } from './CharacterProfile';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -64,6 +65,12 @@ export class FriendPanel extends Component {
     private currentTab: 'friend' | 'request' = 'friend';
     private currentItems: FriendItem[] = [];
     private addFriendResultItem: FriendItem | null = null;
+    private static readonly LIST_CACHE_TTL_MS = 5000;
+    private cacheOwnerId = '';
+    private listCache: { friend: FriendData[] | null; request: FriendData[] | null } = { friend: null, request: null };
+    private listCacheAt: { friend: number; request: number } = { friend: 0, request: 0 };
+    private renderedTab: 'friend' | 'request' | null = null;
+    private renderedSig = '';
 
     onLoad() {
         this.ws = WebSocketManager.getInstance();
@@ -145,25 +152,68 @@ export class FriendPanel extends Component {
 
     // ====== Tab 切换 ======
     private switchTab(tab: 'friend' | 'request'): void {
-        console.log('[FriendPanel] switchTab 被调用:', tab, '当前tab:', this.currentTab);
-        if (this.currentTab === tab) {
-            console.log('[FriendPanel] 已经是当前tab，不切换');
-            // 即使已经是当前tab，也刷新一次列表（用户可能想刷新数据）
-            this.refreshCurrentList();
-            return;
-        }
+        Logger.debug('[FriendPanel] switchTab 被调用:', tab, '当前tab:', this.currentTab);
         this.currentTab = tab;
-        this.refreshCurrentList();
+        this.refreshCurrentList(false);
     }
 
-    private refreshCurrentList(): void {
-        this.clearContent();
+    private refreshCurrentList(force = false): void {
+        if (!this.ws) this.ws = WebSocketManager.getInstance();
+        this.ensureCacheOwner();
+        if (force) {
+            this.listCache[this.currentTab] = null;
+            this.listCacheAt[this.currentTab] = 0;
+        } else if (this.tryReuseCachedList()) {
+            return;
+        }
+        if (this.renderedTab !== this.currentTab) {
+            this.clearContent();
+            this.renderedTab = null;
+            this.renderedSig = '';
+        }
 
         if (this.currentTab === 'friend') {
             this.requestFriendList();
         } else {
             this.requestFriendRequestList();
         }
+    }
+
+    private ensureCacheOwner(): void {
+        const cid = this.ws?.getCharacterId() || '';
+        if (cid === this.cacheOwnerId) return;
+        this.cacheOwnerId = cid;
+        this.listCache.friend = null;
+        this.listCache.request = null;
+        this.listCacheAt.friend = 0;
+        this.listCacheAt.request = 0;
+        this.renderedTab = null;
+        this.renderedSig = '';
+    }
+
+    private tryReuseCachedList(): boolean {
+        const tab = this.currentTab;
+        const list = this.listCache[tab];
+        if (!list) return false;
+        if (Date.now() - this.listCacheAt[tab] >= FriendPanel.LIST_CACHE_TTL_MS) return false;
+        const mode = tab === 'friend' ? FriendItemMode.FRIEND : FriendItemMode.REQUEST;
+        if (this.renderedTab === tab && this.renderedSig === this.listSignature(list)) return true;
+        this.syncList(list, mode, false);
+        return true;
+    }
+
+    private listSignature(list: FriendData[]): string {
+        return list.map((f) => {
+            const id = `${f.friend_id || ''}|${f.character_id || ''}`;
+            return `${id}:${f.role_name || ''}:${f.Sprite ?? 0}:${f.online ? 1 : 0}`;
+        }).join('\n');
+    }
+
+    private rememberList(list: FriendData[]): void {
+        this.listCache[this.currentTab] = list;
+        this.listCacheAt[this.currentTab] = Date.now();
+        this.renderedTab = this.currentTab;
+        this.renderedSig = this.listSignature(list);
     }
 
     private clearContent(): void {
@@ -174,102 +224,121 @@ export class FriendPanel extends Component {
 
     // ====== 网络请求：好友列表 ======
     private requestFriendList(): void {
-        console.log('[FriendPanel] 发送获取好友列表请求');
+        Logger.debug('[FriendPanel] 发送获取好友列表请求');
         // 检查 WebSocket 连接状态
         if (!this.ws || !this.ws.isConnected()) {
-            console.error('[FriendPanel] WebSocket 未连接，无法获取好友列表');
+            Logger.error('[FriendPanel] WebSocket 未连接，无法获取好友列表');
             return;
         }
         // 检查是否有必要的认证信息
         const token = this.ws.getToken();
         const characterId = this.ws.getCharacterId();
         if (!token || !characterId) {
-            console.error('[FriendPanel] 缺少认证信息，无法获取好友列表', { token: !!token, characterId: !!characterId });
+            Logger.error('[FriendPanel] 缺少认证信息，无法获取好友列表', { token: !!token, characterId: !!characterId });
             return;
         }
         this.ws.request('get_friend_list', {
             character_id: characterId
         }, (resp: any) => {
-            console.log('[FriendPanel] 收到好友列表响应:', resp);
+            if (!this.node?.isValid || this.currentTab !== 'friend') return;
+            Logger.debug('[FriendPanel] 收到好友列表响应:', resp);
             if (!resp || !resp.success) {
-                console.warn('[FriendPanel] 获取好友列表失败:', resp?.message || '未知错误', resp);
+                Logger.warn('[FriendPanel] 获取好友列表失败:', resp?.message || '未知错误', resp);
                 return;
             }
             if (!resp.data) {
-                console.warn('[FriendPanel] 响应中没有data字段:', resp);
+                Logger.warn('[FriendPanel] 响应中没有data字段:', resp);
                 return;
             }
             const list: FriendData[] = resp.data.list || [];
-            console.log('[FriendPanel] 解析到的好友列表:', list.length, '个好友', list);
+            Logger.debug('[FriendPanel] 解析到的好友列表:', list.length, '个好友', list);
             if (list.length === 0) {
-                console.log('[FriendPanel] 好友列表为空');
+                Logger.debug('[FriendPanel] 好友列表为空');
             }
-            this.buildList(list, FriendItemMode.FRIEND);
+            this.syncList(list, FriendItemMode.FRIEND, true);
         });
     }
 
     // ====== 网络请求：好友申请列表 ======
     private requestFriendRequestList(): void {
-        console.log('[FriendPanel] 发送获取好友申请列表请求');
+        Logger.debug('[FriendPanel] 发送获取好友申请列表请求');
         // 检查 WebSocket 连接状态
         if (!this.ws || !this.ws.isConnected()) {
-            console.error('[FriendPanel] WebSocket 未连接，无法获取好友申请列表');
+            Logger.error('[FriendPanel] WebSocket 未连接，无法获取好友申请列表');
             return;
         }
         // 检查是否有必要的认证信息
         const token = this.ws.getToken();
         const characterId = this.ws.getCharacterId();
         if (!token || !characterId) {
-            console.error('[FriendPanel] 缺少认证信息，无法获取好友申请列表', { token: !!token, characterId: !!characterId });
+            Logger.error('[FriendPanel] 缺少认证信息，无法获取好友申请列表', { token: !!token, characterId: !!characterId });
             return;
         }
         this.ws.request('get_friend_requests', {
             character_id: characterId
         }, (resp: any) => {
-            console.log('[FriendPanel] 收到好友申请列表响应:', resp);
+            if (!this.node?.isValid || this.currentTab !== 'request') return;
+            Logger.debug('[FriendPanel] 收到好友申请列表响应:', resp);
             if (!resp || !resp.success || !resp.data) {
-                console.warn('[FriendPanel] 获取好友申请列表失败:', resp?.message);
+                Logger.warn('[FriendPanel] 获取好友申请列表失败:', resp?.message);
                 return;
             }
             const list: FriendData[] = resp.data.list || [];
-            console.log('[FriendPanel] 解析到的好友申请列表:', list.length, '个申请', list);
-            this.buildList(list, FriendItemMode.REQUEST);
+            Logger.debug('[FriendPanel] 解析到的好友申请列表:', list.length, '个申请', list);
+            this.syncList(list, FriendItemMode.REQUEST, true);
         });
     }
 
     // ====== 构建 ScrollView 列表 ======
-    private buildList(list: FriendData[], mode: FriendItemMode): void {
+    private dataKey(f: FriendData): string {
+        return `${f.friend_id || ''}|${f.character_id || ''}`;
+    }
+
+    private itemKey(it: FriendItem): string {
+        return `${it.friendId || ''}|${it.characterId || ''}`;
+    }
+
+    /** 命中相同名单时不拆节点；增删改只动差异行。 */
+    private syncList(list: FriendData[], mode: FriendItemMode, fromNetwork: boolean): void {
         if (!this.friendItemPrefab || !this.content) return;
+        const sig = this.listSignature(list);
+        if (this.renderedTab === this.currentTab && this.renderedSig === sig && this.currentItems.length === list.length) {
+            if (fromNetwork) this.rememberList(list);
+            return;
+        }
 
-        this.content.removeAllChildren();
-        this.currentItems.length = 0;
+        const existing = new Map<string, FriendItem>();
+        for (const it of this.currentItems) {
+            const k = this.itemKey(it);
+            if (k !== '|' && !existing.has(k)) existing.set(k, it);
+        }
 
-        // 第一个好友项的初始位置：x=240, y=-30
         const startX = 240;
         const startY = -30;
-        const itemSpacing = 60; // 每个好友项之间的 y 间距
+        const itemSpacing = 60;
+        const next: FriendItem[] = [];
+        const callbacks = {
+            onOpenSetPanel: (i: FriendItem) => this.handleOpenSetPanel(i),
+            onLeftAction: (i: FriendItem) => this.handleLeftAction(i),
+            onRightAction: (i: FriendItem) => this.handleRightAction(i),
+        };
 
         for (let i = 0; i < list.length; i++) {
             const f = list[i];
-            const node = instantiate(this.friendItemPrefab);
-            
-            // 设置位置：第一个 x=240, y=-30，后续每个 y 减 60
-            const yPos = startY - (i * itemSpacing);
-            node.setPosition(startX, yPos, node.position.z);
-            
-            // 添加到父节点
-            this.content.addChild(node);
-            
-            // 确保节点在父节点的最后（顶层），这样操作窗口不会被其他节点遮挡
-            // 必须在 addChild 之后调用，此时节点已经在 children 数组中
-            const lastIndex = this.content.children.length - 1;
-            if (lastIndex >= 0) {
-                node.setSiblingIndex(lastIndex);
+            const k = this.dataKey(f);
+            let item = k !== '|' ? (existing.get(k) ?? null) : null;
+            if (item) existing.delete(k);
+            if (!item?.node?.isValid) {
+                const node = instantiate(this.friendItemPrefab);
+                this.content.addChild(node);
+                item = node.getComponent(FriendItem);
+                if (!item) {
+                    node.destroy();
+                    continue;
+                }
+            } else if (item.node.parent !== this.content) {
+                this.content.addChild(item.node);
             }
-            
-            const item = node.getComponent(FriendItem);
-            if (!item) continue;
-
             item.init(
                 {
                     characterId: f.character_id,
@@ -279,14 +348,22 @@ export class FriendPanel extends Component {
                     isOnline: !!f.online,
                     mode,
                 },
-                {
-                    onOpenSetPanel: (i) => this.handleOpenSetPanel(i),
-                    onLeftAction: (i) => this.handleLeftAction(i),
-                    onRightAction: (i) => this.handleRightAction(i),
-                }
+                callbacks
             );
+            item.node.setPosition(startX, startY - i * itemSpacing, item.node.position.z);
+            item.node.setSiblingIndex(i);
+            next.push(item);
+        }
 
-            this.currentItems.push(item);
+        const kept = new Set(next);
+        for (const it of this.currentItems) {
+            if (!kept.has(it) && it?.node?.isValid) it.node.destroy();
+        }
+        this.currentItems = next;
+        if (fromNetwork) this.rememberList(list);
+        else {
+            this.renderedTab = this.currentTab;
+            this.renderedSig = sig;
         }
     }
 
@@ -330,7 +407,7 @@ export class FriendPanel extends Component {
      * 查看好友信息
      */
     private viewFriendInfo(item: FriendItem): void {
-        console.log('[FriendPanel] viewFriendInfo 被调用:', {
+        Logger.debug('[FriendPanel] viewFriendInfo 被调用:', {
             mode: item.mode,
             characterId: item.characterId,
             friendId: item.friendId,
@@ -338,13 +415,13 @@ export class FriendPanel extends Component {
         });
         
         if (!this.characterProfileNode) {
-            console.error('[FriendPanel] CharacterProfileNode 未绑定，无法查看好友信息');
+            Logger.error('[FriendPanel] CharacterProfileNode 未绑定，无法查看好友信息');
             return;
         }
         
         const characterProfile = this.characterProfileNode.getComponent(CharacterProfile);
         if (!characterProfile) {
-            console.error('[FriendPanel] CharacterProfileNode 上未找到 CharacterProfile 组件');
+            Logger.error('[FriendPanel] CharacterProfileNode 上未找到 CharacterProfile 组件');
             return;
         }
         
@@ -394,10 +471,10 @@ export class FriendPanel extends Component {
             character_id: item.characterId,
         }, (resp) => {
             if (!resp || !resp.success) {
-                console.warn('[FriendPanel] 删除好友失败:', resp?.message);
+                Logger.warn('[FriendPanel] 删除好友失败:', resp?.message);
                 return;
             }
-            this.refreshCurrentList();
+            this.refreshCurrentList(true);
         });
     }
 
@@ -407,11 +484,13 @@ export class FriendPanel extends Component {
             character_id: item.characterId,
         }, (resp) => {
             if (!resp || !resp.success) {
-                console.warn('[FriendPanel] 同意好友失败:', resp?.message);
+                Logger.warn('[FriendPanel] 同意好友失败:', resp?.message);
                 return;
             }
-            // 同意后：从申请列表移除，并刷新好友列表
-            this.refreshCurrentList();
+            // 同意后：从申请列表移除，并让好友列表缓存失效
+            this.listCache.friend = null;
+            this.listCacheAt.friend = 0;
+            this.refreshCurrentList(true);
         });
     }
 
@@ -421,10 +500,10 @@ export class FriendPanel extends Component {
             character_id: item.characterId,
         }, (resp) => {
             if (!resp || !resp.success) {
-                console.warn('[FriendPanel] 拒绝好友失败:', resp?.message);
+                Logger.warn('[FriendPanel] 拒绝好友失败:', resp?.message);
                 return;
             }
-            this.refreshCurrentList();
+            this.refreshCurrentList(true);
         });
     }
 
@@ -434,13 +513,13 @@ export class FriendPanel extends Component {
             target_character_id: item.characterId,
         }, (resp) => {
             if (!resp || !resp.success) {
-                console.warn('[FriendPanel] 添加好友失败:', resp?.message);
+                Logger.warn('[FriendPanel] 添加好友失败:', resp?.message);
                 return;
             }
             // 添加成功后可以自动切到好友列表
             this.addFriendPanel.active = false;
             this.currentTab = 'friend';
-            this.refreshCurrentList();
+            this.refreshCurrentList(true);
         });
     }
 
@@ -483,7 +562,7 @@ export class FriendPanel extends Component {
      * 显示搜索错误提示
      */
     private showSearchError(message: string): void {
-        console.log('[FriendPanel] 显示错误提示:', message);
+        Logger.debug('[FriendPanel] 显示错误提示:', message);
         // 先清空搜索结果（不隐藏标签）
         this.clearAddFriendResult(false);
         // 然后显示错误文本
@@ -492,14 +571,14 @@ export class FriendPanel extends Component {
             if (label) {
                 label.string = message;
                 label.color = new Color(255, 0, 0, 255); // 大红色
-                console.log('[FriendPanel] 已设置错误文本:', message);
+                Logger.debug('[FriendPanel] 已设置错误文本:', message);
             } else {
-                console.warn('[FriendPanel] Result节点上没有Label组件！');
+                Logger.warn('[FriendPanel] Result节点上没有Label组件！');
             }
             this.addFriendResultLabel.active = true;
-            console.log('[FriendPanel] Result节点已激活');
+            Logger.debug('[FriendPanel] Result节点已激活');
         } else {
-            console.warn('[FriendPanel] addFriendResultLabel 未绑定！');
+            Logger.warn('[FriendPanel] addFriendResultLabel 未绑定！');
         }
     }
 
@@ -508,7 +587,7 @@ export class FriendPanel extends Component {
             this.clearAddFriendResult(true);
 
             if (!resp || !resp.success || !resp.data || !resp.data.friend) {
-                console.warn('[FriendPanel] 未找到该好友:', resp?.message);
+                Logger.warn('[FriendPanel] 未找到该好友:', resp?.message);
                 // 显示"不存在该玩家"文本（大红色）
                 if (this.addFriendResultLabel) {
                     const label = this.addFriendResultLabel.getComponent(Label);

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, UITransform, input, Input, KeyCode, misc, Animation, v3, Vec2, TiledLayer, UIOpacity, Sprite, PlayerAnimRuntime, PlayerStateSync, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _crd, ccclass, property, CELL, MV_BASE_FPS, CLICK_NAV_MAX_SLIDE_PX, PlayerGridMove;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, UITransform, input, Input, KeyCode, misc, Animation, v3, Vec2, TiledLayer, UIOpacity, Sprite, js, PlayerAnimRuntime, MountController, SpriteLayerMap, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _crd, ccclass, property, CELL, MV_BASE_FPS, CLICK_NAV_MAX_SLIDE_PX, PlayerGridMove;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -13,8 +13,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
     _reporterNs.report("PlayerAnimRuntime", "./PlayerAnimRuntime", _context.meta, extras);
   }
 
-  function _reportPossibleCrUseOfPlayerStateSync(extras) {
-    _reporterNs.report("PlayerStateSync", "./PlayerStateSync", _context.meta, extras);
+  function _reportPossibleCrUseOfMountController(extras) {
+    _reporterNs.report("MountController", "./MountController", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfSpriteLayerMap(extras) {
+    _reporterNs.report("SpriteLayerMap", "./SpriteLayerMap", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -38,17 +46,22 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       TiledLayer = _cc.TiledLayer;
       UIOpacity = _cc.UIOpacity;
       Sprite = _cc.Sprite;
+      js = _cc.js;
     }, function (_unresolved_2) {
       PlayerAnimRuntime = _unresolved_2.PlayerAnimRuntime;
     }, function (_unresolved_3) {
-      PlayerStateSync = _unresolved_3.PlayerStateSync;
+      MountController = _unresolved_3.MountController;
+    }, function (_unresolved_4) {
+      SpriteLayerMap = _unresolved_4.SpriteLayerMap;
+    }, function (_unresolved_5) {
+      Logger = _unresolved_5.Logger;
     }],
     execute: function () {
       _crd = true;
 
       _cclegacy._RF.push({}, "7d7beIW2gtIoZPG3uCetU+g", "PlayerGridMove", undefined);
 
-      __checkObsolete__(['_decorator', 'Component', 'Node', 'UITransform', 'input', 'Input', 'EventKeyboard', 'EventTouch', 'KeyCode', 'misc', 'Animation', 'v3', 'Vec2', 'TiledLayer', 'UIOpacity', 'Sprite']);
+      __checkObsolete__(['_decorator', 'Component', 'Node', 'UITransform', 'input', 'Input', 'EventKeyboard', 'EventTouch', 'KeyCode', 'misc', 'Animation', 'v3', 'Vec2', 'TiledLayer', 'UIOpacity', 'Sprite', 'js']);
 
       ({
         ccclass,
@@ -81,30 +94,34 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       }), _dec8 = property({
         tooltip: '严格按 animPrefix 播放。开启后不会回退到 walk_right/idle_right 这类通用名，避免串到别的角色动画。'
       }), _dec9 = property({
-        tooltip: '地图锚点作为格子坐标原点(0,0)。左上锚点(0,1)时，首格中心位于锚点右下半格。'
+        tooltip: '座驾资源 id：car4 / zuojia4~9（对应 resources/ZuoJia/ani）'
       }), _dec10 = property({
-        tooltip: '初始格子列（默认 0）'
+        tooltip: '调试：进场景直接开启座驾（正式座驾 UI 做好后请关掉；运行时也可调 setMountEnabled）'
       }), _dec11 = property({
-        tooltip: '初始格子行（默认 0，左上锚点模式下向下递增）'
+        tooltip: '地图锚点作为格子坐标原点(0,0)。左上锚点(0,1)时，首格中心位于锚点右下半格。'
       }), _dec12 = property({
-        tooltip: '若节点上挂了 PlayerStateSync（服务器权威坐标恢复），则 start() 阶段不强制 placeAtGrid(startGridCol/startGridRow)，避免偶发拿不到 player_info 时被丢到(0,0)看起来像左上角。'
+        tooltip: '初始格子列（默认 0）'
       }), _dec13 = property({
-        tooltip: '等待服务器坐标恢复的超时（秒）。超时仍未恢复时，将使用 fallbackSpawnX/Y 作为兜底，避免角色卡在(0,0)。'
+        tooltip: '初始格子行（默认 0，左上锚点模式下向下递增）'
       }), _dec14 = property({
-        tooltip: '服务器坐标恢复超时后的兜底出生点 X（像素）'
+        tooltip: '若节点上挂了 PlayerStateSync（服务器权威坐标恢复），则 start() 阶段不强制 placeAtGrid(startGridCol/startGridRow)，避免偶发拿不到 player_info 时被丢到(0,0)看起来像左上角。'
       }), _dec15 = property({
-        tooltip: '服务器坐标恢复超时后的兜底出生点 Y（像素）'
+        tooltip: '等待服务器坐标恢复的超时（秒）。超时仍未恢复时，将使用 fallbackSpawnX/Y 作为兜底，避免角色卡在(0,0)。'
       }), _dec16 = property({
-        tooltip: '不可通行图层名（逗号分隔，默认 Wall,items）'
+        tooltip: '服务器坐标恢复超时后的兜底出生点 X（像素）'
       }), _dec17 = property({
-        tooltip: '可通行但可触发效果图层名（逗号分隔，默认 plant）'
+        tooltip: '服务器坐标恢复超时后的兜底出生点 Y（像素）'
       }), _dec18 = property({
-        tooltip: 'Tiled 行号是否以上方为 0（默认 true，Tiled 编辑器常用）'
+        tooltip: '不可通行图层名（逗号分隔）。TiledMap 用层名（默认 Wall,items）；Sprite 分层地图（M1）用 M1_B,M1_E，实际阻挡以 SpriteLayerMap walk flags 为准'
       }), _dec19 = property({
-        tooltip: '处于 plant 草丛时角色透明度（0-255）'
+        tooltip: '可通行但可触发效果图层名（逗号分隔，默认 plant）'
       }), _dec20 = property({
-        tooltip: '透明度过渡速度（每秒变化量）'
+        tooltip: 'Tiled 行号是否以上方为 0（默认 true，Tiled 编辑器常用）'
       }), _dec21 = property({
+        tooltip: '处于 plant 草丛时角色透明度（0-255）'
+      }), _dec22 = property({
+        tooltip: '透明度过渡速度（每秒变化量）'
+      }), _dec23 = property({
         tooltip: '关闭 Sprite 逐帧裁剪框、使用 RAW 尺寸，避免行走帧切换时 UITransform/锚点随 trim 变化造成的像素抖动与形变（像素风推荐开启）'
       }), _dec(_class = (_class2 = class PlayerGridMove extends Component {
         constructor(...args) {
@@ -124,36 +141,41 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           _initializerDefineProperty(this, "strictAnimPrefix", _descriptor7, this);
 
-          _initializerDefineProperty(this, "useAnchorAsGridOrigin", _descriptor8, this);
+          _initializerDefineProperty(this, "mountId", _descriptor8, this);
 
-          _initializerDefineProperty(this, "startGridCol", _descriptor9, this);
+          _initializerDefineProperty(this, "debugEnableMount", _descriptor9, this);
 
-          _initializerDefineProperty(this, "startGridRow", _descriptor10, this);
+          _initializerDefineProperty(this, "useAnchorAsGridOrigin", _descriptor10, this);
 
-          _initializerDefineProperty(this, "deferInitialPlaceToServerRestore", _descriptor11, this);
+          _initializerDefineProperty(this, "startGridCol", _descriptor11, this);
 
-          _initializerDefineProperty(this, "serverRestoreTimeoutSec", _descriptor12, this);
+          _initializerDefineProperty(this, "startGridRow", _descriptor12, this);
 
-          _initializerDefineProperty(this, "fallbackSpawnX", _descriptor13, this);
+          _initializerDefineProperty(this, "deferInitialPlaceToServerRestore", _descriptor13, this);
 
-          _initializerDefineProperty(this, "fallbackSpawnY", _descriptor14, this);
+          _initializerDefineProperty(this, "serverRestoreTimeoutSec", _descriptor14, this);
 
-          _initializerDefineProperty(this, "blockedLayerNames", _descriptor15, this);
+          _initializerDefineProperty(this, "fallbackSpawnX", _descriptor15, this);
 
-          _initializerDefineProperty(this, "passableEffectLayerNames", _descriptor16, this);
+          _initializerDefineProperty(this, "fallbackSpawnY", _descriptor16, this);
 
-          _initializerDefineProperty(this, "tiledRowFromTop", _descriptor17, this);
+          _initializerDefineProperty(this, "blockedLayerNames", _descriptor17, this);
 
-          _initializerDefineProperty(this, "grassOpacity", _descriptor18, this);
+          _initializerDefineProperty(this, "passableEffectLayerNames", _descriptor18, this);
 
-          _initializerDefineProperty(this, "grassOpacityLerpSpeed", _descriptor19, this);
+          _initializerDefineProperty(this, "tiledRowFromTop", _descriptor19, this);
 
-          _initializerDefineProperty(this, "pixelPerfectSprite", _descriptor20, this);
+          _initializerDefineProperty(this, "grassOpacity", _descriptor20, this);
+
+          _initializerDefineProperty(this, "grassOpacityLerpSpeed", _descriptor21, this);
+
+          _initializerDefineProperty(this, "pixelPerfectSprite", _descriptor22, this);
 
           this._ut = null;
           this._anim = null;
           this._uiOpacity = null;
           this._animRt = null;
+          this._mount = null;
           this._serverRestored = false;
           this._restoreTimeoutScheduled = false;
           this._axis = null;
@@ -238,18 +260,75 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this._playIdleAnim(this._facing);
 
           this._bindClickNavigate();
+
+          this._initMount();
+        }
+        /** 开启/关闭座驾（UI 做好后由此调用；无 UI 时可在 Inspector 勾选 debugEnableMount） */
+
+
+        setMountEnabled(on) {
+          const m = this._ensureMount();
+
+          if (!m) return;
+          m.setEnabled(on);
+          if (on) m.syncMoveState(this._facing, this._moving);
+        }
+
+        setMountId(id) {
+          const m = this._ensureMount();
+
+          if (!m) return;
+          m.setMountId(id);
+          this.mountId = id;
+        }
+
+        isMountEnabled() {
+          var _this$_mount;
+
+          return !!((_this$_mount = this._mount) != null && _this$_mount.enabledMount);
+        }
+
+        _initMount() {
+          const m = this._ensureMount();
+
+          if (!m) return;
+          if (this.mountId) m.setMountId(this.mountId);
+          m.startEnabled = false;
+
+          if (this.debugEnableMount) {
+            m.setEnabled(true);
+            m.syncMoveState(this._facing, this._moving);
+          } else {
+            m.setEnabled(false);
+          }
+        }
+
+        _ensureMount() {
+          var _this$_mount2;
+
+          if ((_this$_mount2 = this._mount) != null && _this$_mount2.isValid) return this._mount;
+          this._mount = (_crd && MountController === void 0 ? (_reportPossibleCrUseOfMountController({
+            error: Error()
+          }), MountController) : MountController).ensureOnPlayer(this.node);
+          return this._mount;
+        }
+
+        _syncMountAnim(moving) {
+          const m = this._mount;
+          if (!(m != null && m.enabledMount)) return;
+          m.syncMoveState(this._facing, moving);
         }
         /** PlayerStateSync 可能挂在 GameArea 等父节点，而非 Player 自身。 */
 
 
         _hasDeferredServerRestore() {
           if (!this.deferInitialPlaceToServerRestore) return false;
+          const Cls = js.getClassByName('PlayerStateSync');
+          if (!Cls) return false;
           let n = this.node;
 
           while (n) {
-            if (n.getComponent(_crd && PlayerStateSync === void 0 ? (_reportPossibleCrUseOfPlayerStateSync({
-              error: Error()
-            }), PlayerStateSync) : PlayerStateSync)) return true;
+            if (n.getComponent(Cls)) return true;
             n = n.parent;
           }
 
@@ -566,8 +645,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             this._targetX = this._destCx;
             this._targetY = cur.y;
           } else {
-            // y 轴方向与 row 递增方向无关，按目标点相对当前位置决定朝向
-            this._facing = this._destCy > cur.y ? 'up' : 'down';
+            // 与按键/格子步进一致：上=减小 row（左上锚点），勿仅靠像素 Y 以免与人物动画错位
+            if (this.useAnchorAsGridOrigin) {
+              this._facing = deltaRow < 0 ? 'up' : 'down';
+            } else {
+              this._facing = deltaRow > 0 ? 'up' : 'down';
+            }
+
             this._axis = 'y';
             this._targetY = this._destCy;
             this._targetX = cur.x;
@@ -879,6 +963,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           while (stack.length > 0) {
             const n = stack.pop();
+            if (n !== map && !n.activeInHierarchy) continue;
             updateByNode(n);
 
             for (let i = 0; i < n.children.length; i++) {
@@ -1182,7 +1267,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (!map) return {
             blocked: false,
             effect: false
-          };
+          }; // 优先：分层 Sprite 地图（M1 等，B/E 不可通行）
+
+          const spriteMap = (_crd && SpriteLayerMap === void 0 ? (_reportPossibleCrUseOfSpriteLayerMap({
+            error: Error()
+          }), SpriteLayerMap) : SpriteLayerMap).findActiveUnder(map);
+
+          if (spriteMap) {
+            // flags 异步加载完成前 fail-closed，避免开局穿墙
+            if (!spriteMap.isReady) {
+              void spriteMap.ensureReady();
+              return {
+                blocked: true,
+                effect: false
+              };
+            }
+
+            const blocked = spriteMap.isBlockedAtMapLocal(targetX, targetY);
+            return {
+              blocked,
+              effect: false
+            };
+          }
 
           const layers = this._collectTiledLayers(map);
 
@@ -1223,7 +1329,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           const stack = [root];
 
           while (stack.length > 0) {
-            const n = stack.pop();
+            const n = stack.pop(); // 未激活的拼接块（如 map2 在 map1 时）仍挂在树下，必须跳过，否则 Wall 误挡
+
+            if (n !== root && !n.activeInHierarchy) continue;
             const layer = n.getComponent(TiledLayer);
             if (layer) out.push(layer);
 
@@ -1290,12 +1398,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (!this._animRt) return;
 
           this._animRt.playMove(dir);
+
+          this._syncMountAnim(true);
         }
 
         _playIdleAnim(dir) {
           if (!this._animRt) return;
 
           this._animRt.playIdle(dir, true);
+
+          this._syncMountAnim(false);
         }
 
         _getMoveAnimName(dir) {
@@ -1363,7 +1475,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           const anim = this._anim;
           if (!anim) return;
           const names = (anim.clips || []).map(c => c && c.name).filter(n => !!n);
-          console.warn(`[PlayerGridMove] strictAnimPrefix=ON，但缺少 ${prefix}_* 的完整8个clip。当前已挂载:`, names);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn(`[PlayerGridMove] strictAnimPrefix=ON，但缺少 ${prefix}_* 的完整8个clip。当前已挂载:`, names);
         }
 
       }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "mapRoot", [_dec2], {
@@ -1415,91 +1529,105 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         initializer: function () {
           return true;
         }
-      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "useAnchorAsGridOrigin", [_dec9], {
+      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "mountId", [_dec9], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return 'zuojia7';
+        }
+      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "debugEnableMount", [_dec10], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "startGridCol", [_dec10], {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        initializer: function () {
-          return 0;
-        }
-      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "startGridRow", [_dec11], {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        initializer: function () {
-          return 0;
-        }
-      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "deferInitialPlaceToServerRestore", [_dec12], {
+      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "useAnchorAsGridOrigin", [_dec11], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "serverRestoreTimeoutSec", [_dec13], {
+      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "startGridCol", [_dec12], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return 0;
+        }
+      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "startGridRow", [_dec13], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return 0;
+        }
+      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "deferInitialPlaceToServerRestore", [_dec14], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return true;
+        }
+      }), _descriptor14 = _applyDecoratedDescriptor(_class2.prototype, "serverRestoreTimeoutSec", [_dec15], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 0.8;
         }
-      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnX", [_dec14], {
+      }), _descriptor15 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnX", [_dec16], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 120.0;
         }
-      }), _descriptor14 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnY", [_dec15], {
+      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "fallbackSpawnY", [_dec17], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return -24.0;
         }
-      }), _descriptor15 = _applyDecoratedDescriptor(_class2.prototype, "blockedLayerNames", [_dec16], {
+      }), _descriptor17 = _applyDecoratedDescriptor(_class2.prototype, "blockedLayerNames", [_dec18], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
-          return 'Wall,items';
+          return 'M1_B,M1_E';
         }
-      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "passableEffectLayerNames", [_dec17], {
+      }), _descriptor18 = _applyDecoratedDescriptor(_class2.prototype, "passableEffectLayerNames", [_dec19], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 'plant';
         }
-      }), _descriptor17 = _applyDecoratedDescriptor(_class2.prototype, "tiledRowFromTop", [_dec18], {
+      }), _descriptor19 = _applyDecoratedDescriptor(_class2.prototype, "tiledRowFromTop", [_dec20], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return true;
         }
-      }), _descriptor18 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacity", [_dec19], {
+      }), _descriptor20 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacity", [_dec21], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 170;
         }
-      }), _descriptor19 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacityLerpSpeed", [_dec20], {
+      }), _descriptor21 = _applyDecoratedDescriptor(_class2.prototype, "grassOpacityLerpSpeed", [_dec22], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function () {
           return 720;
         }
-      }), _descriptor20 = _applyDecoratedDescriptor(_class2.prototype, "pixelPerfectSprite", [_dec21], {
+      }), _descriptor22 = _applyDecoratedDescriptor(_class2.prototype, "pixelPerfectSprite", [_dec23], {
         configurable: true,
         enumerable: true,
         writable: true,

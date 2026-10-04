@@ -1,0 +1,408 @@
+[
+  {
+    "id": "player1",
+    "right": "Image/ZuoJia/head/player1_head_right.png",
+    "left": "Image/ZuoJia/head/player1_head_left.png",
+    "rightSize": [
+      33,
+      27
+    ],
+    "leftSize": [
+      33,
+      27
+    ],
+    "cutRight": {
+      "bbox": [
+        8,
+        0,
+        41,
+        47
+      ],
+      "search": [
+        15,
+        33
+      ],
+      "head_peak_y": 12,
+      "head_peak_w": 33,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        33,
+        27
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        7,
+        0,
+        40,
+        47
+      ],
+      "search": [
+        15,
+        33
+      ],
+      "head_peak_y": 12,
+      "head_peak_w": 33,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        33,
+        27
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  },
+  {
+    "id": "player2",
+    "right": "Image/ZuoJia/head/player2_head_right.png",
+    "left": "Image/ZuoJia/head/player2_head_left.png",
+    "rightSize": [
+      24,
+      25
+    ],
+    "leftSize": [
+      24,
+      25
+    ],
+    "cutRight": {
+      "bbox": [
+        12,
+        0,
+        36,
+        47
+      ],
+      "search": [
+        15,
+        33
+      ],
+      "head_peak_y": 7,
+      "head_peak_w": 24,
+      "neck_y": 24,
+      "neck_w": 12,
+      "cut_y": 25,
+      "head_h": 25,
+      "out_size": [
+        24,
+        25
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        12,
+        0,
+        36,
+        47
+      ],
+      "search": [
+        15,
+        33
+      ],
+      "head_peak_y": 7,
+      "head_peak_w": 24,
+      "neck_y": 24,
+      "neck_w": 12,
+      "cut_y": 25,
+      "head_h": 25,
+      "out_size": [
+        24,
+        25
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  },
+  {
+    "id": "player3",
+    "right": "Image/ZuoJia/head/player3_head_right.png",
+    "left": "Image/ZuoJia/head/player3_head_left.png",
+    "rightSize": [
+      28,
+      27
+    ],
+    "leftSize": [
+      28,
+      27
+    ],
+    "cutRight": {
+      "bbox": [
+        9,
+        0,
+        37,
+        47
+      ],
+      "search": [
+        15,
+        33
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 28,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        28,
+        27
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        10,
+        0,
+        38,
+        47
+      ],
+      "search": [
+        15,
+        33
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 28,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        28,
+        27
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  },
+  {
+    "id": "player4",
+    "right": "Image/ZuoJia/head/player4_head_right.png",
+    "left": "Image/ZuoJia/head/player4_head_left.png",
+    "rightSize": [
+      33,
+      32
+    ],
+    "leftSize": [
+      33,
+      32
+    ],
+    "cutRight": {
+      "bbox": [
+        2,
+        0,
+        35,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 15,
+      "head_peak_w": 31,
+      "neck_y": 31,
+      "neck_w": 11,
+      "cut_y": 32,
+      "head_h": 32,
+      "out_size": [
+        33,
+        32
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        13,
+        0,
+        46,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 15,
+      "head_peak_w": 31,
+      "neck_y": 31,
+      "neck_w": 11,
+      "cut_y": 32,
+      "head_h": 32,
+      "out_size": [
+        33,
+        32
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  },
+  {
+    "id": "player5",
+    "right": "Image/ZuoJia/head/player5_head_right.png",
+    "left": "Image/ZuoJia/head/player5_head_left.png",
+    "rightSize": [
+      28,
+      27
+    ],
+    "leftSize": [
+      28,
+      27
+    ],
+    "cutRight": {
+      "bbox": [
+        10,
+        0,
+        38,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 28,
+      "neck_y": 26,
+      "neck_w": 19,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        28,
+        27
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        10,
+        0,
+        38,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 28,
+      "neck_y": 26,
+      "neck_w": 19,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        28,
+        27
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  },
+  {
+    "id": "player6",
+    "right": "Image/ZuoJia/head/player6_head_right.png",
+    "left": "Image/ZuoJia/head/player6_head_left.png",
+    "rightSize": [
+      33,
+      27
+    ],
+    "leftSize": [
+      33,
+      27
+    ],
+    "cutRight": {
+      "bbox": [
+        5,
+        0,
+        38,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 33,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        33,
+        27
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        10,
+        0,
+        43,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 33,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        33,
+        27
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  },
+  {
+    "id": "player7",
+    "right": "Image/ZuoJia/head/player7_head_right.png",
+    "left": "Image/ZuoJia/head/player7_head_left.png",
+    "rightSize": [
+      28,
+      27
+    ],
+    "leftSize": [
+      28,
+      27
+    ],
+    "cutRight": {
+      "bbox": [
+        10,
+        0,
+        38,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 28,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        28,
+        27
+      ]
+    },
+    "cutLeft": {
+      "bbox": [
+        10,
+        0,
+        38,
+        48
+      ],
+      "search": [
+        15,
+        34
+      ],
+      "head_peak_y": 8,
+      "head_peak_w": 28,
+      "neck_y": 26,
+      "neck_w": 13,
+      "cut_y": 27,
+      "head_h": 27,
+      "out_size": [
+        28,
+        27
+      ]
+    },
+    "note": "adaptive neck-pinch; source=Cocos 48x48 no extra scale"
+  }
+]

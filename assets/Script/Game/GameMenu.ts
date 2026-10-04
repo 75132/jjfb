@@ -3,6 +3,7 @@ import { RobotList } from './RobotList';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 import { RobotShow } from './RobotShow';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameMenu')
@@ -36,9 +37,10 @@ export class GameMenu extends Component {
     private panelAnimations: { [key: string]: Tween<Node> } = {};
     private lastOpenTs: number = 0;
     private lastOpenName: string = '';
+    private pendingTimers: ReturnType<typeof setTimeout>[] = [];
     
     start() {
-        console.log('🎮 GameMenu 开始初始化...');
+        Logger.debug('🎮 GameMenu 开始初始化...');
 
         // 资源预热：在主界面就提前把 RobotShow 的资源加载好，战斗/机甲界面打开更快
         // 幂等调用，不会重复加载
@@ -47,11 +49,12 @@ export class GameMenu extends Component {
         } catch {}
 
         // 延迟初始化，避免阻塞场景加载
-        setTimeout(() => {
+        this.pendingTimers.push(setTimeout(() => {
+            if (!this.node?.isValid) return;
             this.initializePanels();
             this.bindButtonEvents();
-            console.log('✅ GameMenu 初始化完成');
-        }, 20); // 延迟20ms初始化
+            Logger.debug('✅ GameMenu 初始化完成');
+        }, 20)); // 延迟20ms初始化
     }
     
     /**
@@ -71,9 +74,9 @@ export class GameMenu extends Component {
             this.confirmDialog.active = false;
         }
         
-        console.log('🎮 GameMenu初始化完成，按钮数量:', this.buttons.length);
-        console.log('📱 所有面板已设置为默认隐藏状态');
-        console.log('🎯 返回按钮绑定弹窗:', this.confirmDialog?.name || '未设置');
+        Logger.debug('🎮 GameMenu初始化完成，按钮数量:', this.buttons.length);
+        Logger.debug('📱 所有面板已设置为默认隐藏状态');
+        Logger.debug('🎯 返回按钮绑定弹窗:', this.confirmDialog?.name || '未设置');
     }
     
     /**
@@ -89,7 +92,7 @@ export class GameMenu extends Component {
                     this.openPanel(panelName);
                 }, this);
 
-                console.log(`🔗 按钮 ${button.node.name} 绑定到面板 ${panelName}`);
+                Logger.debug(`🔗 按钮 ${button.node.name} 绑定到面板 ${panelName}`);
             }
         });
 
@@ -99,7 +102,7 @@ export class GameMenu extends Component {
                 this.showConfirmDialog();
             }, this);
             
-            console.log(`🎯 返回按钮 ${this.returnButton.node.name} 已绑定`);
+            Logger.debug(`🎯 返回按钮 ${this.returnButton.node.name} 已绑定`);
         }
         
         // 绑定确认弹窗按钮
@@ -128,13 +131,13 @@ export class GameMenu extends Component {
         this.lastOpenTs = now;
         const panel = this.panels.find(p => p.name === panelName);
         if (!panel) {
-            console.warn(`⚠️ 未找到面板: ${panelName}`);
+            Logger.warn(`⚠️ 未找到面板: ${panelName}`);
             return;
         }
         
         // 检查实际节点状态，如果已经显示就直接返回
         if (panel.active) {
-            console.log(`🔄 面板 ${panelName} 节点已经是显示状态，无需操作`);
+            Logger.debug(`🔄 面板 ${panelName} 节点已经是显示状态，无需操作`);
             return;
         }
         
@@ -149,7 +152,7 @@ export class GameMenu extends Component {
         if (robotList && typeof (robotList as any).show === 'function') {
             (robotList as any).show(false); // 明确 fromBag=false，保证 Set/设置出战 面板显示
         }
-        console.log(`🚪 打开面板: ${panelName}`);
+        Logger.debug(`🚪 打开面板: ${panelName}`);
     }
     
     /**
@@ -164,7 +167,7 @@ export class GameMenu extends Component {
         this.panelStates[panelName] = false;
         this.activePanel = null;
 
-        console.log(`🚪 隐藏面板: ${panelName}`);
+        Logger.debug(`🚪 隐藏面板: ${panelName}`);
     }
     
     /**
@@ -207,10 +210,14 @@ export class GameMenu extends Component {
             }
         });
         
-        console.log('🔄 面板状态已同步');
+        Logger.debug('🔄 面板状态已同步');
     }
     
     onDestroy() {
+        for (const h of this.pendingTimers) {
+            clearTimeout(h);
+        }
+        this.pendingTimers.length = 0;
         // 清理资源
         this.panelAnimations = {};
         try {
@@ -238,7 +245,7 @@ export class GameMenu extends Component {
     private showConfirmDialog(): void {
         if (this.confirmDialog) {
             this.confirmDialog.active = true;
-            console.log('❓ 显示返回确认弹窗');
+            Logger.debug('❓ 显示返回确认弹窗');
         }
     }
     
@@ -248,7 +255,7 @@ export class GameMenu extends Component {
     private hideConfirmDialog(): void {
         if (this.confirmDialog) {
             this.confirmDialog.active = false;
-            console.log('❌ 隐藏返回确认弹窗');
+            Logger.debug('❌ 隐藏返回确认弹窗');
         }
     }
     
@@ -256,7 +263,7 @@ export class GameMenu extends Component {
      * 确认返回角色选择场景
      */
     private confirmReturnToCharacterSelect(): void {
-        console.log('✅ 用户确认切换角色（返回选角，非账号登出）');
+        Logger.debug('✅ 用户确认切换角色（返回选角，非账号登出）');
         try {
             const wsManager = WebSocketManager.getInstance();
             // 隐藏确认弹窗
@@ -267,18 +274,19 @@ export class GameMenu extends Component {
             }
             wsManager.switchCharacterAndReturnToSelect();
             // 延迟一小段时间确保数据清除完成，然后切换场景
-            setTimeout(() => {
+            this.pendingTimers.push(setTimeout(() => {
+                if (!this.node?.isValid) return;
                 // 返回角色选择场景（不是登录场景）
                 director.loadScene(GameConfig.SCENE_NAMES.CHARACTER_SELECT, (error) => {
                     if (error) {
-                        console.error('❌ 跳转角色选择场景失败:', error);
+                        Logger.error('❌ 跳转角色选择场景失败:', error);
                     } else {
-                        console.log('✅ 已返回角色选择场景');
+                        Logger.debug('✅ 已返回角色选择场景');
                     }
                 });
-            }, 100); // 延迟100ms确保数据清除和事件处理完成
+            }, 100)); // 延迟100ms确保数据清除和事件处理完成
         } catch (error) {
-            console.error('❌ 返回选角流程异常:', error);
+            Logger.error('❌ 返回选角流程异常:', error);
             this.hideConfirmDialog();
         }
     }

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Prefab, instantiate, Label, ScrollView, UITransform, Layout, WebSocketManager, GameConfig, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _crd, ccclass, property, AnnouncementPanel;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Prefab, instantiate, Label, ScrollView, UITransform, Layout, WebSocketManager, GameConfig, Logger, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _crd, ccclass, property, AnnouncementPanel;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -15,6 +15,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
   function _reportPossibleCrUseOfGameConfig(extras) {
     _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -37,6 +41,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
       GameConfig = _unresolved_3.GameConfig;
+    }, function (_unresolved_4) {
+      Logger = _unresolved_4.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -79,7 +85,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            * 网络连接成功回调（MMO最佳实践：连接成功后再加载数据）
            */
           this.onNetworkConnect = () => {
-            console.log('🔄 [AnnouncementPanel] 网络连接成功，尝试加载聊天记录');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('🔄 [AnnouncementPanel] 网络连接成功，尝试加载聊天记录');
             this.tryLoadHistory();
           };
 
@@ -89,7 +97,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.onDataChanged = data => {
             // 当 token 或 characterId 被设置时，尝试加载聊天记录
             if (data && (data.token || data.characterId)) {
-              console.log('🔄 [AnnouncementPanel] 检测到登录数据变化，尝试加载聊天记录');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('🔄 [AnnouncementPanel] 检测到登录数据变化，尝试加载聊天记录');
               this.tryLoadHistory();
             }
           };
@@ -139,7 +149,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
           if (!this.wsManager || !this.wsManager.isConnected()) {
-            console.log('⏳ [AnnouncementPanel] WebSocket未连接，等待连接...');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('⏳ [AnnouncementPanel] WebSocket未连接，等待连接...');
             return;
           } // 检查是否有必要的凭证（登录后才有）
 
@@ -147,12 +159,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           const token = (_this$wsManager$getTo = (_this$wsManager = this.wsManager).getToken) == null ? void 0 : _this$wsManager$getTo.call(_this$wsManager);
 
           if (!token) {
-            console.log('⏳ [AnnouncementPanel] 未登录，等待登录...');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('⏳ [AnnouncementPanel] 未登录，等待登录...');
             return;
           } // 连接成功且已登录，加载聊天记录
 
 
-          console.log('📥 [AnnouncementPanel] 开始加载聊天记录');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 [AnnouncementPanel] 开始加载聊天记录');
           this.hasRequestedHistory = true; // 优化：使用request方法，自动生成request_id并匹配响应
 
           this.wsManager.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
@@ -211,7 +227,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         }
 
         onChatHistory(data) {
-          console.log('📥 [AnnouncementPanel] 收到chat_history响应:', data); // 兼容服务器返回的格式：可能是 data.messages 或 data.list 或 data.data.messages
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 [AnnouncementPanel] 收到chat_history响应:', data); // 兼容服务器返回的格式：可能是 data.messages 或 data.list 或 data.data.messages
 
           let list = [];
 
@@ -225,12 +243,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           this.chatList = list;
           this.chatLoaded = true;
-          console.log(`✅ [AnnouncementPanel] 聊天历史已加载，共 ${list.length} 条`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ [AnnouncementPanel] 聊天历史已加载，共 ${list.length} 条`);
           this.renderCombinedHistory();
         }
 
         onAnnouncementList(data) {
-          console.log('📥 [AnnouncementPanel] 收到announcement_list响应:', data); // 兼容服务器返回的格式：可能是 data.announcements 或 data.list 或 data.data.announcements
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 [AnnouncementPanel] 收到announcement_list响应:', data); // 兼容服务器返回的格式：可能是 data.announcements 或 data.list 或 data.data.announcements
 
           let list = [];
 
@@ -244,7 +266,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           this.annList = list;
           this.annLoaded = true;
-          console.log(`✅ [AnnouncementPanel] 公告列表已加载，共 ${list.length} 条`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ [AnnouncementPanel] 公告列表已加载，共 ${list.length} 条`);
           this.renderCombinedHistory();
         }
 

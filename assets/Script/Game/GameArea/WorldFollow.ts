@@ -23,6 +23,8 @@ export class WorldFollow extends Component {
     autoResolvePlayer = true;
 
     private _tmp = v3();
+    private gaUt: UITransform | null = null;
+    private pUt: UITransform | null = null;
 
     onLoad() {
         if (!this.autoResolvePlayer || this.player) {
@@ -42,6 +44,15 @@ export class WorldFollow extends Component {
         this.player = n;
     }
 
+    start() {
+        this.refreshFollowTransforms();
+    }
+
+    private refreshFollowTransforms() {
+        this.gaUt = this.gameArea?.isValid ? this.gameArea.getComponent(UITransform) : null;
+        this.pUt = this.player?.isValid ? this.player.getComponent(UITransform) : null;
+    }
+
     lateUpdate() {
         const player = this.player;
         const gameArea = this.gameArea;
@@ -50,8 +61,11 @@ export class WorldFollow extends Component {
             return;
         }
 
-        const gaUt = gameArea.getComponent(UITransform);
-        const pUt = player.getComponent(UITransform);
+        if (!this.gaUt?.isValid || this.gaUt.node !== gameArea || !this.pUt?.isValid || this.pUt.node !== player) {
+            this.refreshFollowTransforms();
+        }
+        const gaUt = this.gaUt;
+        const pUt = this.pUt;
         if (!gaUt || !pUt) {
             return;
         }
@@ -148,6 +162,7 @@ export class WorldFollow extends Component {
 
         while (stack.length > 0) {
             const n = stack.pop()!;
+            if (n !== mapRoot && !n.activeInHierarchy) continue;
             const ut = n.getComponent(UITransform);
             if (ut) {
                 const w = ut.width;

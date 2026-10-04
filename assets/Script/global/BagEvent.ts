@@ -1,3 +1,4 @@
+import { Logger } from './Logger';
 /**
  * 背包领域事件（任务/成就等可订阅）。保持轻量，避免与具体 UI 耦合。
  */
@@ -33,7 +34,7 @@ export class BagEventHub {
             try {
                 fn(payload);
             } catch (e) {
-                console.warn('[BagEvent]', evt, e);
+                Logger.warn('[BagEvent]', evt, e);
             }
         }
     }

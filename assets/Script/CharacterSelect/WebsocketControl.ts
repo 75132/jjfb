@@ -2,6 +2,7 @@ import { _decorator, Component, director, Button, Node } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { BaseSceneController } from '../global/BaseSceneController';
 import { GameConfig } from '../global/GameConfig';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -44,7 +45,7 @@ export class WebSocketControl extends BaseSceneController {
      * 清除Token按钮点击事件
      */
     private onClearTokenClick(): void {
-        console.log('🧪 测试：手动清除Token');
+        Logger.debug('🧪 测试：手动清除Token');
         this.handleTokenInvalid();
     }
 
@@ -65,14 +66,14 @@ export class WebSocketControl extends BaseSceneController {
             
             // 检查WebSocket连接状态（优先检查）
             if (!wsManager.isConnected()) {
-                console.warn(`⚠️ WebSocket连接断开 - 场景: ${this.currentSceneName}`);
+                Logger.warn(`⚠️ WebSocket连接断开 - 场景: ${this.currentSceneName}`);
                 this.handleConnectionLost();
                 return;
             }
 
             // 检查Token是否失效
             if (!this.isTokenValid(currentToken)) {
-                console.warn(`⚠️ Token已失效 - 场景: ${this.currentSceneName}`);
+                Logger.warn(`⚠️ Token已失效 - 场景: ${this.currentSceneName}`);
                 this.handleTokenInvalid();
                 return;
             }
@@ -80,21 +81,21 @@ export class WebSocketControl extends BaseSceneController {
             // 角色选择场景需要验证UserId（已登录账号必须有账号数据）
             const currentUserId = wsManager.getUserId();
             if (!currentUserId || currentUserId.length === 0) {
-                console.warn(`⚠️ 用户ID缺失 - 场景: ${this.currentSceneName}，已登录账号必须有账号数据`);
+                Logger.warn(`⚠️ 用户ID缺失 - 场景: ${this.currentSceneName}，已登录账号必须有账号数据`);
                 this.handleTokenInvalid();
                 return;
             }
 
             // 检查Token是否发生变化
             if (this.lastToken !== currentToken) {
-                console.log(`🔄 Token已更新 - 场景: ${this.currentSceneName}`);
+                Logger.debug(`🔄 Token已更新 - 场景: ${this.currentSceneName}`);
                 this.lastToken = currentToken;
             }
 
             // 角色选择场景不需要验证CharacterId（因为这是选择角色的场景，还没有选择角色）
 
         } catch (error) {
-            console.error(`❌ Token状态检查失败 - 场景: ${this.currentSceneName}:`, error);
+            Logger.error(`❌ Token状态检查失败 - 场景: ${this.currentSceneName}:`, error);
             this.handleTokenInvalid();
         }
     }
@@ -106,14 +107,14 @@ export class WebSocketControl extends BaseSceneController {
         // 安全阀：离线/未鉴权超过阈值 => 直接重登并清理本地会话（不做重连恢复）
         const wsManager = WebSocketManager.getInstance();
         if (wsManager.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [WebSocketControl] 安全阀触发（token_idle_expired），清会话并回登录`);
+            Logger.warn(`⚠️ [WebSocketControl] 安全阀触发（token_idle_expired），清会话并回登录`);
             try { wsManager.clearAll(); } catch {}
             this.stopMonitoring();
             this.jumpToLoginScene();
             return;
         }
 
-        console.log(`🚨 Token失效，显示Loading并尝试恢复 - 当前场景: ${this.currentSceneName}`);
+        Logger.debug(`🚨 Token失效，显示Loading并尝试恢复 - 当前场景: ${this.currentSceneName}`);
         this.showLoadingAndRecover('token_invalid');
     }
 
@@ -124,14 +125,14 @@ export class WebSocketControl extends BaseSceneController {
         // 安全阀：离线/未鉴权超过阈值 => 直接重登并清理本地会话（不做重连恢复）
         const wsManager = WebSocketManager.getInstance();
         if (wsManager.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [WebSocketControl] 安全阀触发（connection_idle_expired），清会话并回登录`);
+            Logger.warn(`⚠️ [WebSocketControl] 安全阀触发（connection_idle_expired），清会话并回登录`);
             try { wsManager.clearAll(); } catch {}
             this.stopMonitoring();
             this.jumpToLoginScene();
             return;
         }
 
-        console.log(`🔌 WebSocket连接丢失，显示Loading并尝试恢复 - 场景: ${this.currentSceneName}`);
+        Logger.debug(`🔌 WebSocket连接丢失，显示Loading并尝试恢复 - 场景: ${this.currentSceneName}`);
         this.showLoadingAndRecover('connection_lost');
     }
     
@@ -174,7 +175,7 @@ export class WebSocketControl extends BaseSceneController {
             try {
                 wsManager.connect();
             } catch (error) {
-                console.error('❌ [WebSocketControl] 恢复连接异常:', error);
+                Logger.error('❌ [WebSocketControl] 恢复连接异常:', error);
             }
             
             setTimeout(() => {
@@ -222,7 +223,7 @@ export class WebSocketControl extends BaseSceneController {
     }
     
     private onRecoverFailed(reason: string): void {
-        console.warn(`⚠️ [WebSocketControl] 恢复失败，回登录: ${reason}`);
+        Logger.warn(`⚠️ [WebSocketControl] 恢复失败，回登录: ${reason}`);
         if (this.reconnectTimer !== -1) {
             clearTimeout(this.reconnectTimer);
             this.reconnectTimer = -1;
@@ -249,7 +250,7 @@ export class WebSocketControl extends BaseSceneController {
      * 手动触发Token检查（调试用）
      */
     public manualTokenCheck(): void {
-        console.log('🔍 手动触发Token检查');
+        Logger.debug('🔍 手动触发Token检查');
         this.checkStatus();
     }
 
@@ -277,29 +278,29 @@ export class WebSocketControl extends BaseSceneController {
             const userId = wsManager.getUserId();
             const characterId = wsManager.getCharacterId();
             
-            console.log(`📋 Token详细信息 - 场景: ${this.currentSceneName}:`);
-            console.log('  - Token存在:', token !== null);
-            console.log('  - Token长度:', token ? token.length : 0);
-            console.log('  - 用户ID存在:', userId !== null);
-            console.log('  - 角色ID存在:', characterId !== null);
-            console.log('  - 游戏ID完整:', wsManager.hasGameIds());
-            console.log('  - WebSocket连接状态:', wsManager.isConnected());
-            console.log('  - 监控状态:', this.isMonitoring);
+            Logger.debug(`📋 Token详细信息 - 场景: ${this.currentSceneName}:`);
+            Logger.debug('  - Token存在:', token !== null);
+            Logger.debug('  - Token长度:', token ? token.length : 0);
+            Logger.debug('  - 用户ID存在:', userId !== null);
+            Logger.debug('  - 角色ID存在:', characterId !== null);
+            Logger.debug('  - 游戏ID完整:', wsManager.hasGameIds());
+            Logger.debug('  - WebSocket连接状态:', wsManager.isConnected());
+            Logger.debug('  - 监控状态:', this.isMonitoring);
             
             if (token) {
-                console.log('  - Token前10位:', token.substring(0, 10));
-                console.log('  - Token后10位:', token.substring(token.length - 10));
+                Logger.debug('  - Token前10位:', token.substring(0, 10));
+                Logger.debug('  - Token后10位:', token.substring(token.length - 10));
             }
             
             if (userId) {
-                console.log('  - 用户ID:', userId);
+                Logger.debug('  - 用户ID:', userId);
             }
             
             if (characterId) {
-                console.log('  - 角色ID:', characterId);
+                Logger.debug('  - 角色ID:', characterId);
             }
         } catch (error) {
-            console.error('❌ 输出Token详细信息失败:', error);
+            Logger.error('❌ 输出Token详细信息失败:', error);
         }
     }
 
@@ -320,6 +321,6 @@ export class WebSocketControl extends BaseSceneController {
             }
         } catch {}
 
-        console.log(`🎮 后台场景控制器销毁 - 场景: ${this.currentSceneName}`);
+        Logger.debug(`🎮 后台场景控制器销毁 - 场景: ${this.currentSceneName}`);
     }
 }

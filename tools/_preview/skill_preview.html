@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>JJFB 技能特效预览（33）</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#111114; color:#e8e8ee;
+         font:14px/1.6 "Microsoft YaHei",system-ui,sans-serif; }
+  header { position:sticky; top:0; z-index:9; background:#17171bdd; backdrop-filter:blur(8px);
+            border-bottom:1px solid #2a2a31; padding:14px 22px; display:flex;
+            align-items:center; gap:16px; flex-wrap:wrap; }
+  h1 { font-size:17px; margin:0; font-weight:700; letter-spacing:.5px; }
+  .sub { color:#8a8a96; font-size:12px; }
+  .chip { background:#22222a; color:#c9c9d4; border:1px solid #33333d; border-radius:999px;
+           padding:5px 14px; font-size:13px; cursor:pointer; transition:.15s; }
+  .chip:hover { border-color:#4a4a58; }
+  .chip.on { background:#3a3a48; color:#fff; border-color:#5a5a70; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr));
+          gap:18px; padding:22px; }
+  .card { margin:0; background:#1a1a1f; border:1px solid #26262e; border-radius:12px;
+           overflow:hidden; transition:.15s; }
+  .card:hover { border-color:#3c3c4a; transform:translateY(-2px); }
+  .card > img.main { display:block; width:100%; height:auto; background:#2b2b31; }
+  .slow { display:flex; align-items:center; gap:10px; padding:0 12px 12px; }
+  .slow img { width:44%; height:auto; border-radius:8px; border:1px solid #2e2e38; }
+  .slow span { color:#8a8a96; font-size:11px; }
+  figcaption { padding:10px 12px 12px; display:flex; align-items:center;
+                gap:8px; flex-wrap:wrap; }
+  figcaption b { font-size:14px; }
+  .badge { font-size:11px; color:#fff; border-radius:4px; padding:1px 7px; }
+  .meta { color:#7e7e8c; font-size:11px; margin-left:auto; font-family:Consolas,monospace; }
+  .card.hide { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>JJFB 技能特效预览</h1>
+  <span class="sub">33 个技能 · 39 个 AnimationClip · 点标签筛选 · 7 个快动画附慢放版</span>
+  <span style="flex:1"></span>
+  <button class="chip on" data-f="全部">全部</button><button class="chip" data-f="格斗">格斗</button><button class="chip" data-f="射击">射击</button><button class="chip" data-f="全能">全能</button><button class="chip" data-f="通用">通用</button>
+</header>
+<main>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/肉搏攻击.gif" alt="肉搏攻击" loading="lazy">
+      <figcaption>
+        <b>肉搏攻击</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">quan01 · 7帧 · 0.70s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/光刃斩.gif" alt="光刃斩" loading="lazy">
+      <figcaption>
+        <b>光刃斩</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">guangrenzhan · 5帧 · 0.33s</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/光刃斩.gif" alt="光刃斩 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/超能拳.gif" alt="超能拳" loading="lazy">
+      <figcaption>
+        <b>超能拳</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">chaonengquan · 5帧 · 0.33s</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/超能拳.gif" alt="超能拳 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/雷霆震慑.gif" alt="雷霆震慑" loading="lazy">
+      <figcaption>
+        <b>雷霆震慑</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">leitingzhenshe · 10帧 · 0.67s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/火焰风暴.gif" alt="火焰风暴" loading="lazy">
+      <figcaption>
+        <b>火焰风暴</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">kuangnu · 4帧 · 0.40s · ×3</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/火焰风暴.gif" alt="火焰风暴 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/冲锋.gif" alt="冲锋" loading="lazy">
+      <figcaption>
+        <b>冲锋</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">chongfeng · 6帧 · 0.60s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/狂怒一击.gif" alt="狂怒一击" loading="lazy">
+      <figcaption>
+        <b>狂怒一击</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">kuangnu · 4帧 · 0.40s · ×3</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/狂怒一击.gif" alt="狂怒一击 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="格斗">
+      <img class="main" src="skill_gifs/连续攻击.gif" alt="连续攻击" loading="lazy">
+      <figcaption>
+        <b>连续攻击</b>
+        <span class="badge" style="background:#e0533d">格斗</span>
+        <span class="meta">lianxu · 9帧 · 0.90s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/雷霆冲击.gif" alt="雷霆冲击" loading="lazy">
+      <figcaption>
+        <b>雷霆冲击</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">leitingchongji · 12帧 · 0.80s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/离子激光.gif" alt="离子激光" loading="lazy">
+      <figcaption>
+        <b>离子激光</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">lizijiguang · 13帧 · 0.87s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/等离子弹幕.gif" alt="等离子弹幕" loading="lazy">
+      <figcaption>
+        <b>等离子弹幕</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">denglizidanmu · 16帧 · 1.07s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/虚空导弹.gif" alt="虚空导弹" loading="lazy">
+      <figcaption>
+        <b>虚空导弹</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">xukongdaodan · 64帧 · 4.27s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/能量爆破.gif" alt="能量爆破" loading="lazy">
+      <figcaption>
+        <b>能量爆破</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">nengliangbaopo · 26帧 · 1.73s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/电磁风暴.gif" alt="电磁风暴" loading="lazy">
+      <figcaption>
+        <b>电磁风暴</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">diancifengbao · 44帧 · 2.93s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/精神攻击.gif" alt="精神攻击" loading="lazy">
+      <figcaption>
+        <b>精神攻击</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">jingsheng · 15帧 · 1.50s · ×3</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/禁锢.gif" alt="禁锢" loading="lazy">
+      <figcaption>
+        <b>禁锢</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">jingu · 3帧 · 0.30s</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/禁锢.gif" alt="禁锢 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/舍身一击.gif" alt="舍身一击" loading="lazy">
+      <figcaption>
+        <b>舍身一击</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">sheshen · 5帧 · 0.50s · ×3</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="射击">
+      <img class="main" src="skill_gifs/弱点攻击.gif" alt="弱点攻击" loading="lazy">
+      <figcaption>
+        <b>弱点攻击</b>
+        <span class="badge" style="background:#3d8de0">射击</span>
+        <span class="meta">ruodian · 3帧 · 0.30s</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/弱点攻击.gif" alt="弱点攻击 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/时空扭曲.gif" alt="时空扭曲" loading="lazy">
+      <figcaption>
+        <b>时空扭曲</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">shikongniuqu · 20帧 · 1.33s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/能量护盾.gif" alt="能量护盾" loading="lazy">
+      <figcaption>
+        <b>能量护盾</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">xinniandun · 11帧 · 1.10s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/引力压制.gif" alt="引力压制" loading="lazy">
+      <figcaption>
+        <b>引力压制</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">yinliyazhi · 29帧 · 1.93s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/等离子屏障.gif" alt="等离子屏障" loading="lazy">
+      <figcaption>
+        <b>等离子屏障</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">denglizipingzhang · 37帧 · 2.47s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/虚空冲击.gif" alt="虚空冲击" loading="lazy">
+      <figcaption>
+        <b>虚空冲击</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">xukongchongji · 62帧 · 4.13s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/干扰攻击.gif" alt="干扰攻击" loading="lazy">
+      <figcaption>
+        <b>干扰攻击</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">ganrao · 6帧 · 0.60s · ×3</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/回路干扰.gif" alt="回路干扰" loading="lazy">
+      <figcaption>
+        <b>回路干扰</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">huiluganrao · 12帧 · 1.20s · ×3</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/信念盾.gif" alt="信念盾" loading="lazy">
+      <figcaption>
+        <b>信念盾</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">xinniandun · 11帧 · 1.10s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="全能">
+      <img class="main" src="skill_gifs/纳米攻击.gif" alt="纳米攻击" loading="lazy">
+      <figcaption>
+        <b>纳米攻击</b>
+        <span class="badge" style="background:#a05fe0">全能</span>
+        <span class="meta">leiting · 13帧 · 1.30s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="通用">
+      <img class="main" src="skill_gifs/紧急修理.gif" alt="紧急修理" loading="lazy">
+      <figcaption>
+        <b>紧急修理</b>
+        <span class="badge" style="background:#35a86b">通用</span>
+        <span class="meta">xiuli · 8帧 · 0.80s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="通用">
+      <img class="main" src="skill_gifs/急速攻击.gif" alt="急速攻击" loading="lazy">
+      <figcaption>
+        <b>急速攻击</b>
+        <span class="badge" style="background:#35a86b">通用</span>
+        <span class="meta">jisu · 2帧 · 0.20s · ×3</span>
+      </figcaption>
+      <div class="slow">
+        <img src="skill_gifs/slow/急速攻击.gif" alt="急速攻击 慢放" loading="lazy">
+        <span>慢放 ×4</span>
+      </div>
+    </figure>
+    <figure class="card" data-type="通用">
+      <img class="main" src="skill_gifs/生命摄取.gif" alt="生命摄取" loading="lazy">
+      <figcaption>
+        <b>生命摄取</b>
+        <span class="badge" style="background:#35a86b">通用</span>
+        <span class="meta">shengmingshequ · 11帧 · 1.10s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="通用">
+      <img class="main" src="skill_gifs/能量榨取.gif" alt="能量榨取" loading="lazy">
+      <figcaption>
+        <b>能量榨取</b>
+        <span class="badge" style="background:#35a86b">通用</span>
+        <span class="meta">zhaqu · 11帧 · 1.10s · ×2</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="通用">
+      <img class="main" src="skill_gifs/生命恢复.gif" alt="生命恢复" loading="lazy">
+      <figcaption>
+        <b>生命恢复</b>
+        <span class="badge" style="background:#35a86b">通用</span>
+        <span class="meta">shengminghuifu · 19帧 · 1.27s</span>
+      </figcaption>
+    </figure>
+    <figure class="card" data-type="通用">
+      <img class="main" src="skill_gifs/能量恢复.gif" alt="能量恢复" loading="lazy">
+      <figcaption>
+        <b>能量恢复</b>
+        <span class="badge" style="background:#35a86b">通用</span>
+        <span class="meta">nenglianghuifu · 17帧 · 1.13s</span>
+      </figcaption>
+    </figure>
+</main>
+<script>
+  document.querySelectorAll('.chip').forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll('.chip').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.dataset.f;
+      document.querySelectorAll('.card').forEach(function (c) {
+        c.classList.toggle('hide', f !== '全部' && c.dataset.type !== f);
+      });
+    };
+  });
+</script>
+</body>
+</html>

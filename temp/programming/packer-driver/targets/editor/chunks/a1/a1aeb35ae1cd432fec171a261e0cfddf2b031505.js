@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, director, Button, Node, WebSocketManager, BaseSceneController, GameConfig, _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2, _crd, ccclass, property, WebSocketControl;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, director, Button, Node, WebSocketManager, BaseSceneController, GameConfig, Logger, _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2, _crd, ccclass, property, WebSocketControl;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -21,6 +21,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -38,6 +42,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       BaseSceneController = _unresolved_3.BaseSceneController;
     }, function (_unresolved_4) {
       GameConfig = _unresolved_4.GameConfig;
+    }, function (_unresolved_5) {
+      Logger = _unresolved_5.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -96,7 +102,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onClearTokenClick() {
-          console.log('🧪 测试：手动清除Token');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：手动清除Token');
           this.handleTokenInvalid();
         } // 移除重复的监控方法，继承自基类
 
@@ -121,14 +129,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance(); // 检查WebSocket连接状态（优先检查）
 
             if (!wsManager.isConnected()) {
-              console.warn(`⚠️ WebSocket连接断开 - 场景: ${this.currentSceneName}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ WebSocket连接断开 - 场景: ${this.currentSceneName}`);
               this.handleConnectionLost();
               return;
             } // 检查Token是否失效
 
 
             if (!this.isTokenValid(currentToken)) {
-              console.warn(`⚠️ Token已失效 - 场景: ${this.currentSceneName}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ Token已失效 - 场景: ${this.currentSceneName}`);
               this.handleTokenInvalid();
               return;
             } // 角色选择场景需要验证UserId（已登录账号必须有账号数据）
@@ -137,19 +149,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             const currentUserId = wsManager.getUserId();
 
             if (!currentUserId || currentUserId.length === 0) {
-              console.warn(`⚠️ 用户ID缺失 - 场景: ${this.currentSceneName}，已登录账号必须有账号数据`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ 用户ID缺失 - 场景: ${this.currentSceneName}，已登录账号必须有账号数据`);
               this.handleTokenInvalid();
               return;
             } // 检查Token是否发生变化
 
 
             if (this.lastToken !== currentToken) {
-              console.log(`🔄 Token已更新 - 场景: ${this.currentSceneName}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`🔄 Token已更新 - 场景: ${this.currentSceneName}`);
               this.lastToken = currentToken;
             } // 角色选择场景不需要验证CharacterId（因为这是选择角色的场景，还没有选择角色）
 
           } catch (error) {
-            console.error(`❌ Token状态检查失败 - 场景: ${this.currentSceneName}:`, error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error(`❌ Token状态检查失败 - 场景: ${this.currentSceneName}:`, error);
             this.handleTokenInvalid();
           }
         }
@@ -165,7 +183,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), WebSocketManager) : WebSocketManager).getInstance();
 
           if (wsManager.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [WebSocketControl] 安全阀触发（token_idle_expired），清会话并回登录`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`⚠️ [WebSocketControl] 安全阀触发（token_idle_expired），清会话并回登录`);
 
             try {
               wsManager.clearAll();
@@ -176,7 +196,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          console.log(`🚨 Token失效，显示Loading并尝试恢复 - 当前场景: ${this.currentSceneName}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🚨 Token失效，显示Loading并尝试恢复 - 当前场景: ${this.currentSceneName}`);
           this.showLoadingAndRecover('token_invalid');
         }
         /**
@@ -191,7 +213,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), WebSocketManager) : WebSocketManager).getInstance();
 
           if (wsManager.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [WebSocketControl] 安全阀触发（connection_idle_expired），清会话并回登录`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`⚠️ [WebSocketControl] 安全阀触发（connection_idle_expired），清会话并回登录`);
 
             try {
               wsManager.clearAll();
@@ -202,7 +226,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          console.log(`🔌 WebSocket连接丢失，显示Loading并尝试恢复 - 场景: ${this.currentSceneName}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🔌 WebSocket连接丢失，显示Loading并尝试恢复 - 场景: ${this.currentSceneName}`);
           this.showLoadingAndRecover('connection_lost');
         }
         /**
@@ -257,7 +283,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             try {
               wsManager.connect();
             } catch (error) {
-              console.error('❌ [WebSocketControl] 恢复连接异常:', error);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ [WebSocketControl] 恢复连接异常:', error);
             }
 
             setTimeout(() => {
@@ -309,7 +337,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onRecoverFailed(reason) {
-          console.warn(`⚠️ [WebSocketControl] 恢复失败，回登录: ${reason}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn(`⚠️ [WebSocketControl] 恢复失败，回登录: ${reason}`);
 
           if (this.reconnectTimer !== -1) {
             clearTimeout(this.reconnectTimer);
@@ -340,7 +370,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         manualTokenCheck() {
-          console.log('🔍 手动触发Token检查');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔍 手动触发Token检查');
           this.checkStatus();
         }
         /**
@@ -372,29 +404,55 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             const token = this.getCurrentToken();
             const userId = wsManager.getUserId();
             const characterId = wsManager.getCharacterId();
-            console.log(`📋 Token详细信息 - 场景: ${this.currentSceneName}:`);
-            console.log('  - Token存在:', token !== null);
-            console.log('  - Token长度:', token ? token.length : 0);
-            console.log('  - 用户ID存在:', userId !== null);
-            console.log('  - 角色ID存在:', characterId !== null);
-            console.log('  - 游戏ID完整:', wsManager.hasGameIds());
-            console.log('  - WebSocket连接状态:', wsManager.isConnected());
-            console.log('  - 监控状态:', this.isMonitoring);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`📋 Token详细信息 - 场景: ${this.currentSceneName}:`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - Token存在:', token !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - Token长度:', token ? token.length : 0);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 用户ID存在:', userId !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 角色ID存在:', characterId !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 游戏ID完整:', wsManager.hasGameIds());
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - WebSocket连接状态:', wsManager.isConnected());
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 监控状态:', this.isMonitoring);
 
             if (token) {
-              console.log('  - Token前10位:', token.substring(0, 10));
-              console.log('  - Token后10位:', token.substring(token.length - 10));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token前10位:', token.substring(0, 10));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token后10位:', token.substring(token.length - 10));
             }
 
             if (userId) {
-              console.log('  - 用户ID:', userId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 用户ID:', userId);
             }
 
             if (characterId) {
-              console.log('  - 角色ID:', characterId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 角色ID:', characterId);
             }
           } catch (error) {
-            console.error('❌ 输出Token详细信息失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 输出Token详细信息失败:', error);
           }
         }
 
@@ -415,7 +473,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
           } catch {}
 
-          console.log(`🎮 后台场景控制器销毁 - 场景: ${this.currentSceneName}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🎮 后台场景控制器销毁 - 场景: ${this.currentSceneName}`);
         }
 
       }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "clearTokenBtn", [_dec2], {

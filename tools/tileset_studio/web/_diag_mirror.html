@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>diag mirror running</title>
+<style>
+  body { background:#111; color:#ddd; font:12px/1.5 Consolas,"Microsoft YaHei",monospace; margin:0; padding:10px; }
+  #log { white-space:pre-wrap; margin-bottom:8px; }
+  #fr { width:1600px; height:900px; border:1px solid #333; position:absolute; left:-4000px; }
+  .h { color:#7ec8ff; font-weight:700; }
+  .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+  canvas { image-rendering: pixelated; border:1px solid #444; }
+  .row { display:flex; gap:10px; align-items:flex-start; margin:6px 0; }
+  .cellbox { text-align:center; color:#9ad; }
+</style>
+</head>
+<body>
+<div id="log">running…</div>
+<div id="shots"></div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* 诊断：镜像到底对不对（真实素材 map1_7x6.png） */
+const OUT=[]; let PASS=0, FAIL=0;
+function head(s){OUT.push('<span class="h">'+s+'</span>');}
+function ck(n,c,e){ if(c){PASS++;OUT.push('  <span class="ok">[OK]  </span>'+n+(e?'  '+e:''));}
+                   else {FAIL++;OUT.push('  <span class="bad">[FAIL]</span> '+n+(e?'  '+e:''));} }
+function flush(){document.getElementById('log').innerHTML=OUT.join('\n')+
+  '\n<span class="h">==== 通过 '+PASS+'　失败 '+FAIL+' ====</span>';
+  document.title='diag mirror '+PASS+'/'+(PASS+FAIL);}
+
+setTimeout(()=>{ run().catch(e=>{ck('run 抛异常',false,e.message); flush();}); },4500);
+
+function same(da,i,db,j){
+  if(da[i+3]!==db[j+3]) return false;
+  if(da[i+3]===0) return true;
+  return da[i]===db[j]&&da[i+1]===db[j+1]&&da[i+2]===db[j+2];
+}
+
+async function run(){
+  const fr=document.getElementById('fr'), W=fr.contentWindow, D=fr.contentDocument;
+  const T=W.TS, S=T.S;
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const roots=await (await fetch('/api/roots')).json();
+  const list=await (await fetch('/api/list?dir='+encodeURIComponent(roots.mapSrc)+'&sizes=1')).json();
+  const map1=list.items.find(x=>x.name==='map1_7x6.png');
+  await T.openSheetByPath(map1.path,map1.name);
+  ck('素材 map1_7x6.png 7×6', S.sheet&&S.sheet.cols===7&&S.sheet.rows===6);
+
+  const SL='B'; S.curSlot=SL;
+  const slot=()=>T.SLOT_BY_ID[S.curSlot];
+  const COLS=()=>slot().cols;
+  const IDX=(c,r)=>r*COLS()+c;
+  ck('B 槽几何', COLS()>0, COLS()+' 列 × '+slot().rows+' 行');
+
+  function region(slotId,c0,r0,w,h){
+    const full=T.slotToCanvas(slotId);
+    const c=document.createElement('canvas'); c.width=w*48; c.height=h*48;
+    const g=c.getContext('2d'); g.imageSmoothingEnabled=false;
+    g.drawImage(full,c0*48,r0*48,w*48,h*48, 0,0,w*48,h*48);
+    return c;
+  }
+  function px(cv){ return cv.getContext('2d').getImageData(0,0,cv.width,cv.height).data; }
+  /* 期望的「整块左右翻转」：列序倒 + 每格自身左右翻 */
+  function expectMirrorH(cellTiles,w,h){
+    const c=document.createElement('canvas'); c.width=w*48; c.height=h*48;
+    const g=c.getContext('2d'); g.imageSmoothingEnabled=false;
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+      const t=cellTiles[y][w-1-x];
+      T.drawCell(g,t.snap,'h',x*48,y*48,48);
+    }
+    return c;
+  }
+  function shot(title,list){
+    const box=document.createElement('div'); box.className='row';
+    list.forEach(it=>{
+      const d=document.createElement('div'); d.className='cellbox';
+      const cv=it.cv; cv.style.width=(cv.width*3)+'px'; cv.style.height=(cv.height*3)+'px';
+      d.appendChild(cv);
+      const s=document.createElement('div'); s.textContent=it.label; d.appendChild(s);
+      box.appendChild(d);
+    });
+    const t=document.createElement('div'); t.innerHTML='<span class="h">'+title+'</span>';
+    document.getElementById('shots').appendChild(t);
+    document.getElementById('shots').appendChild(box);
+  }
+
+  const cv=D.querySelector('#outCanvas');
+  function mouseAt(type,c,r,mods){
+    const rect=cv.getBoundingClientRect(); const cs=48*S.outZoom;
+    cv.dispatchEvent(new W.MouseEvent(type,Object.assign({bubbles:true,cancelable:true,
+      clientX:rect.left+(c+.5)*cs, clientY:rect.top+(r+.5)*cs, button:0},mods||{})));
+  }
+  function selDrag(c0,r0,c1,r1,mods){
+    S.outSel.clear(); S.outSelRect=null;
+    mouseAt('mousedown',c0,r0,mods); mouseAt('mousemove',c1,r1,mods); mouseAt('mouseup',c1,r1,mods);
+  }
+
+  /* ================= A：2×2 源块 → 整块贴 → 框选 → 镜像(H) ================= */
+  head('A. 源选 2×2 = [26,27,33,34]　整块贴 → 框选整块 → 镜像(H)');
+  S.sel.clear(); [26,27,33,34].forEach(i=>S.sel.add(i));
+  const b=T.selBlock();
+  ck('源块 2×2', b&&b.w===2&&b.h===2, b?b.w+'×'+b.h+' cells='+JSON.stringify(b.cells):'');
+
+  S.out.B.fill(null); S.outSel.clear(); S.outSelRect=null;
+  T.setMode('block');
+  const res=T.stampBlock(S.out.B, slot(), 0,0, b, 'none', b.w, b.h);
+  ck('整块贴入 4 格', res.placed===4, 'placed='+res.placed);
+  const cellTiles=[[S.out.B[IDX(0,0)],S.out.B[IDX(1,0)]],[S.out.B[IDX(0,1)],S.out.B[IDX(1,1)]]];
+  ck('四格都在 (0,0)(1,0)(0,1)(1,1)', cellTiles.flat().every(Boolean),
+     JSON.stringify(cellTiles.flat().map(c=>c&&c.src?c.src.index:null)));
+  ck('这四格都挂在同一个 blk 上', new Set(cellTiles.flat().map(c=>c.blk&&c.blk.id)).size===1);
+
+  const before=region('B',0,0,2,2);
+  T.setOutMode('select');
+  selDrag(0,0,1,1); await wait(30);
+  ck('框选得到 2×2 选区', S.outSel.size===4 && JSON.stringify(T.selRectOut())==='{"c0":0,"r0":0,"w":2,"h":2}',
+     S.outSel.size+' 格 '+JSON.stringify(T.selRectOut()));
+
+  T.transformOut('h'); await wait(30);
+  const after=region('B',0,0,2,2);
+  const exp=expectMirrorH(cellTiles,2,2);
+  const A=px(after),E=px(exp),BF=px(before);
+  let badM=0,badO=0;
+  for(let k=0;k<E.length;k+=4){ if(!same(A,k,E,k))badM++; if(!same(A,k,BF,k))badO++; }
+  ck('★ 镜像结果 == 逐像素「整块左右翻转」', badM===0, '不符像素 '+badM+'/'+(E.length/4));
+  ck('（对照）确实翻过去了 ≠ 原样', badO>0, '与原样相同像素 '+badO+'/'+(E.length/4));
+  ck('四格 tf 全 = h', [0,1,0.1].length&&[[0,0],[1,0],[0,1],[1,1]].every(([c,r])=>S.out.B[IDX(c,r)].tf==='h'));
+  const g0=[[0,0],[1,0],[0,1],[1,1]].map(([c,r])=>S.out.B[IDX(c,r)].src.index);
+  ck('排列也反了：左列 ← 源块右列(27/34)', g0[0]===27&&g0[2]===34, JSON.stringify(g0)+'（贴入原序 [26,27,33,34]）');
+  shot('A：左=贴入原样　中=期望(整块左右翻转)　右=工坊实际',
+       [{cv:before,label:'贴入原样'},{cv:exp,label:'期望·整块镜像H'},{cv:after,label:'实际结果'}]);
+
+  /* ================= B：1×2 竖选（w=1）两次 H ================= */
+  head('B. 只框 1 列 2 行（w=1）→ 连续两次镜像(H)');
+  S.out.B.fill(null); S.outSel.clear(); S.outSelRect=null;
+  T.stampBlock(S.out.B, slot(), 0,0, b, 'none', 2,2);
+  const colBefore=region('B',0,0,1,2);
+  selDrag(0,0,0,1); await wait(30);
+  ck('得到 1×2 选区', S.outSel.size===2&&T.selRectOut().w===1&&T.selRectOut().h===2, JSON.stringify(T.selRectOut()));
+  T.transformOut('h'); await wait(30);
+  const col1=region('B',0,0,1,2);
+  const tf1=[S.out.B[IDX(0,0)],S.out.B[IDX(0,1)]].map(c=>c?c.tf:'-');
+  ck('第一次 H → 每格 tf=h', tf1.every(t=>t==='h'), JSON.stringify(tf1));
+  selDrag(0,0,0,1); await wait(30);
+  T.transformOut('h'); await wait(30);
+  const tf2=[S.out.B[IDX(0,0)],S.out.B[IDX(0,1)]].map(c=>c?c.tf:'-');
+  ck('第二次 H → tf 回到 none（叠加语义）', tf2.every(t=>t==='none'), JSON.stringify(tf2));
+  shot('B：1×2 竖选（左=第一次镜像后　右=第二次镜像后）',
+       [{cv:colBefore,label:'未镜像'},{cv:col1,label:'第一次H'},{cv:region('B',0,0,1,2),label:'第二次H'}]);
+
+  /* ================= C：块 1×2，但框选 2×2（外接矩形 > 块） ================= */
+  head('C. 块只有 1×2，框选却拉成 2×2 → 整块镜像后「块搬家」，黄框还在旧位置？');
+  S.out.B.fill(null); S.outSel.clear(); S.outSelRect=null;
+  const one=T.stampBlock(S.out.B, slot(), 0,0,
+      {c0:b.c0,r0:b.r0,w:1,h:2,cells:[[b.cells[0][0]],[b.cells[1][0]]],holes:0,count:2}, 'none', 1,2);
+  ck('造出 1×2 块 @(0,0)-(0,1)', one.placed===2&&!!S.out.B[IDX(0,0)]&&!!S.out.B[IDX(0,1)]&&!S.out.B[IDX(1,0)]);
+  const cBefore=region('B',0,0,2,2);
+  selDrag(0,0,1,1); await wait(30);
+  ck('框选矩形 = 2×2（比块宽）', JSON.stringify(T.selRectOut())==='{"c0":0,"r0":0,"w":2,"h":2}', JSON.stringify(T.selRectOut()));
+  T.transformOut('h'); await wait(30);
+  const cAfter=region('B',0,0,2,2);
+  const nowLeft=!!S.out.B[IDX(0,0)], nowRight=!!S.out.B[IDX(1,0)];
+  ck('内容搬到了右列', !nowLeft&&nowRight, '左列有内容='+nowLeft+' 右列有内容='+nowRight);
+  const bk=S.out.B[IDX(1,0)]&&S.out.B[IDX(1,0)].blk;
+  ck('★ blk 外框坐标是否跟着搬到 c0=1', !!bk&&bk.c0===1, bk?'blk.c0='+bk.c0+' w='+bk.w:'无 blk');
+  shot('C：1×2 块被 2×2 框选后镜像（左=前　右=后）',
+       [{cv:cBefore,label:'镜像前'},{cv:cAfter,label:'镜像后'}]);
+
+  flush();
+}
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@ System.register(["cc"], function (_export, _context) {
           super(...args);
           this.sceneLoadStartTime = 0;
           this.componentInitTimes = new Map();
+          this.initCheckTimer = null;
         }
 
         static getInstance() {
@@ -49,9 +50,20 @@ System.register(["cc"], function (_export, _context) {
         }
 
         monitorComponentInitialization() {
-          setTimeout(() => {
+          this.initCheckTimer = setTimeout(() => {
+            var _this$node;
+
+            this.initCheckTimer = null;
+            if (!((_this$node = this.node) != null && _this$node.isValid)) return;
             this.checkComponentInitialization();
           }, 500);
+        }
+
+        onDestroy() {
+          if (this.initCheckTimer !== null) {
+            clearTimeout(this.initCheckTimer);
+            this.initCheckTimer = null;
+          }
         }
 
         checkComponentInitialization() {

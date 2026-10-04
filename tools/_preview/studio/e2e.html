@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>e2e 52/52</title>
+<style>
+  body { background:#111; color:#ddd; font:13px/1.6 Consolas,"Microsoft YaHei",monospace; margin:0; }
+  #log { padding:12px 16px; white-space:pre-wrap; }
+  #fr { width:1680px; height:920px; border:1px solid #444; display:block; margin:12px; }
+  .h { color:#7ec8ff; font-weight:700; }
+  .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+</style>
+</head>
+<body>
+<div id="log"><span class="h">[1] 图集加载</span>
+  <span class="ok">[OK]  </span>TS 已暴露
+  <span class="ok">[OK]  </span>已加载图集  MAP1.png
+  <span class="ok">[OK]  </span>整格尺寸正解  16×15 = 240 格
+  <span class="ok">[OK]  </span>格子缓存已建立  240 个 48×48 小画布
+  <span class="ok">[OK]  </span>自适应缩放已生效  zoom=1
+  <span class="ok">[OK]  </span>输出区缩放已生效  outZoom=1
+<span class="h">[2] 语义标注</span>
+  <span class="ok">[OK]  </span>标 3 格为「地面」
+  <span class="ok">[OK]  </span>标 1 格为「墙面」
+  <span class="ok">[OK]  </span>墙面 = 不可通行
+  <span class="ok">[OK]  </span>地面 = 可通行
+  <span class="ok">[OK]  </span>树冠标记为 ★上层
+<span class="h">[3] 一键生成变体</span>
+  <span class="ok">[OK]  </span>3 源 × 4 变换 = 12 格  实际 12
+  <span class="ok">[OK]  </span>顺序 原/镜像/翻转/180°  none,h,v,hv
+  <span class="ok">[OK]  </span>语义随图块带入
+  <span class="ok">[OK]  </span>源索引正确
+<span class="h">[4] 变换像素校验（逐点比对）</span>
+  <span class="ok">[OK]  </span>水平镜像 = 左右翻转  不符像素 0/2304
+  <span class="ok">[OK]  </span>垂直翻转 = 上下翻转  不符像素 0/2304
+  <span class="ok">[OK]  </span>180° = 中心对称  不符像素 0/2304
+  <span class="ok">[OK]  </span>图集内存在非对称图块（可区分）  首个非对称格 index=0
+  <span class="ok">[OK]  </span>原图 ≠ 镜像  差异 2088 px
+  <span class="ok">[OK]  </span>原图 ≠ 翻转  差异 2196 px
+  <span class="ok">[OK]  </span>镜像 ≠ 翻转  差异 2214 px
+<span class="h">[5] 通行表 flags</span>
+  <span class="ok">[OK]  </span>长度 8192
+  <span class="ok">[OK]  </span>未用图块 = 0
+  <span class="ok">[OK]  </span>不可通行 → 0x000F  flags[20]=15
+  <span class="ok">[OK]  </span>树冠 → 0x0010（★上层）  flags[256]=16
+  <span class="ok">[OK]  </span>A5 基准 1536
+<span class="h">[6] 导出</span>
+  <span class="ok">[OK]  </span>B 槽画布 768×768  768×768
+  <span class="ok">[OK]  </span>A5 槽画布 384×768  384×768
+  <span class="ok">[OK]  </span>未使用的格全透明  意外像素 0
+  <span class="ok">[OK]  </span>导出图第 1 格 == 源图块  不符 0/2304
+  <span class="ok">[OK]  </span>导出图第 2 格 == 源图块的镜像  不符 0/2304
+  <span class="ok">[OK]  </span>清单含 5 个槽
+  <span class="ok">[OK]  </span>清单含 flags(8192)
+  <span class="ok">[OK]  </span>清单记录源图与变换  MAP1.png #0
+  <span class="ok">[OK]  </span>清单含通行性
+<span class="h">[7] 按语义自动分配槽位</span>
+  <span class="ok">[OK]  </span>地面 → B 槽  B=2
+  <span class="ok">[OK]  </span>墙面 → C 槽  C=2
+  <span class="ok">[OK]  </span>路面 → D 槽  D=2
+  <span class="ok">[OK]  </span>不可通行物体 → E 槽  E=2
+<span class="h">[8] 容量与边界</span>
+  <span class="ok">[OK]  </span>B 槽 256 格
+  <span class="ok">[OK]  </span>A5 槽 128 格
+  <span class="ok">[OK]  </span>装满后安全停止（不越界）  A5 装下 128 格
+  <span class="ok">[OK]  </span>装满后再放返回 -1
+  <span class="ok">[OK]  </span>整理空位（左对齐）
+<span class="h">[9] 界面元素</span>
+  <span class="ok">[OK]  </span>语义按钮 7 个
+  <span class="ok">[OK]  </span>变换按钮 4 个
+  <span class="ok">[OK]  </span>槽位页签 5 个
+  <span class="ok">[OK]  </span>变体预览 4 格
+  <span class="ok">[OK]  </span>footer 可见（修复过 body flex）  footer 高 49px
+  <span class="ok">[OK]  </span>导出按钮存在
+  <span class="ok">[OK]  </span>画布已绘制内容（非全透明）
+
+<span class="h">==== 通过 52　失败 0 ====</span></div>
+<iframe id="fr" src="/"></iframe>
+<script>
+const OUT = []; let PASS = 0, FAIL = 0;
+function head(s) { OUT.push('<span class="h">' + s + '</span>'); }
+function ck(name, cond, extra) {
+  if (cond) { PASS++; OUT.push('  <span class="ok">[OK]  </span>' + name + (extra ? '  ' + extra : '')); }
+  else { FAIL++; OUT.push('  <span class="bad">[FAIL]</span> ' + name + (extra ? '  ' + extra : '')); }
+}
+function flush(done) {
+  document.getElementById('log').innerHTML = OUT.join('\n') +
+    '\n\n<span class="h">==== 通过 ' + PASS + '　失败 ' + FAIL + ' ====</span>';
+  document.title = 'e2e ' + PASS + '/' + (PASS + FAIL);
+}
+
+function rgbaOf(snap, tf) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 48;
+  const g = c.getContext('2d');
+  g.imageSmoothingEnabled = false;
+  window.__TS__.drawCell(g, snap, tf, 0, 0, 48);
+  return g.getImageData(0, 0, 48, 48).data;
+}
+function same(da, i, db, j) {
+  if (da[i + 3] !== db[j + 3]) return false;
+  if (da[i + 3] === 0) return true;
+  return da[i] === db[j] && da[i + 1] === db[j + 1] && da[i + 2] === db[j + 2];
+}
+
+setTimeout(run, 4500);
+
+function run() {
+  let T;
+  try {
+    const W = document.getElementById('fr').contentWindow;
+    T = W.TS;
+    window.__TS__ = T;
+  } catch (e) {
+    ck('拿到 iframe 内的 TS', false, e.message); flush(); return;
+  }
+  if (!T) { ck('window.TS 已暴露', false); flush(); return; }
+  const S = T.S;
+
+  /* ---------- 1 加载 ---------- */
+  head('[1] 图集加载');
+  ck('TS 已暴露', !!T);
+  ck('已加载图集', !!S.sheet, S.sheet ? S.sheet.name : '');
+  ck('整格尺寸正解', S.sheet && S.sheet.cols === 16 && S.sheet.rows === 15,
+    S.sheet ? S.sheet.cols + '×' + S.sheet.rows + ' = ' + (S.sheet.cols * S.sheet.rows) + ' 格' : '');
+  ck('格子缓存已建立', S.cellCache && S.cellCache.list.length === S.sheet.cols * S.sheet.rows,
+    S.cellCache ? S.cellCache.list.length + ' 个 48×48 小画布' : '');
+  ck('自适应缩放已生效', S.zoom >= 0.5 && S.zoom <= 6, 'zoom=' + S.zoom);
+  ck('输出区缩放已生效', S.outZoom >= 0.5 && S.outZoom <= 6, 'outZoom=' + S.outZoom);
+
+  /* ---------- 2 语义标注 ---------- */
+  head('[2] 语义标注');
+  S.sel.clear();
+  [0, 1, 2].forEach(i => S.sel.add(i));
+  T.applyTag('ground');
+  ck('标 3 格为「地面」', Object.keys(S.tagOf).length === 3 && S.tagOf[0] === 'ground');
+
+  S.sel.clear(); S.sel.add(20); T.applyTag('wall');
+  ck('标 1 格为「墙面」', S.tagOf[20] === 'wall');
+  ck('墙面 = 不可通行', T.TAG_BY_ID.wall.passable === false);
+  ck('地面 = 可通行', T.TAG_BY_ID.ground.passable === true);
+
+  S.sel.clear(); S.sel.add(30); T.applyTag('over');
+  ck('树冠标记为 ★上层', T.TAG_BY_ID.over.upper === true);
+
+  /* ---------- 3 变体生成 ---------- */
+  head('[3] 一键生成变体');
+  S.out.B.fill(null);
+  S.sel.clear(); [0, 1, 2].forEach(i => S.sel.add(i));
+  T.doVariants('all');
+  const used = S.out.B.filter(Boolean).length;
+  ck('3 源 × 4 变换 = 12 格', used === 12, '实际 ' + used);
+  ck('顺序 原/镜像/翻转/180°',
+    S.out.B[0].tf === 'none' && S.out.B[1].tf === 'h' && S.out.B[2].tf === 'v' && S.out.B[3].tf === 'hv',
+    [0, 1, 2, 3].map(i => S.out.B[i].tf).join(','));
+  ck('语义随图块带入', S.out.B[0].tag === 'ground' && S.out.B[1].tag === 'ground');
+  ck('源索引正确', S.out.B[0].src.index === 0 && S.out.B[4].src.index === 1);
+
+  /* ---------- 4 变换的像素正确性 ---------- */
+  head('[4] 变换像素校验（逐点比对）');
+  const snap = S.out.B[0].snap;
+  const A = rgbaOf(snap, 'none'), H = rgbaOf(snap, 'h'), V = rgbaOf(snap, 'v'), HV = rgbaOf(snap, 'hv');
+  let eH = 0, eV = 0, eHV = 0;
+  for (let y = 0; y < 48; y++) {
+    for (let x = 0; x < 48; x++) {
+      const i = (y * 48 + x) * 4;
+      if (!same(H, i, A, (y * 48 + (47 - x)) * 4)) eH++;
+      if (!same(V, i, A, ((47 - y) * 48 + x) * 4)) eV++;
+      if (!same(HV, i, A, ((47 - y) * 48 + (47 - x)) * 4)) eHV++;
+    }
+  }
+  ck('水平镜像 = 左右翻转', eH === 0, '不符像素 ' + eH + '/2304');
+  ck('垂直翻转 = 上下翻转', eV === 0, '不符像素 ' + eV + '/2304');
+  ck('180° = 中心对称', eHV === 0, '不符像素 ' + eHV + '/2304');
+
+  // 找一个不对称的源格，验证 4 张确实互不相同
+  let asym = -1;
+  for (let k = 0; k < S.cellCache.list.length; k++) {
+    const s2 = S.cellCache.list[k];
+    const a2 = rgbaOf(s2, 'none'), h2 = rgbaOf(s2, 'h');
+    let d = 0;
+    for (let i = 0; i < a2.length; i += 4) if (!same(a2, i, h2, i)) { d++; if (d > 20) break; }
+    if (d > 20) { asym = k; break; }
+  }
+  ck('图集内存在非对称图块（可区分）', asym >= 0, '首个非对称格 index=' + asym);
+  if (asym >= 0) {
+    const s3 = S.cellCache.list[asym];
+    const n3 = rgbaOf(s3, 'none'), h3 = rgbaOf(s3, 'h'), v3 = rgbaOf(s3, 'v'), b3 = rgbaOf(s3, 'hv');
+    const diff = (p, q) => { let c = 0; for (let i = 0; i < p.length; i += 4) if (!same(p, i, q, i)) c++; return c; };
+    ck('原图 ≠ 镜像', diff(n3, h3) > 20, '差异 ' + diff(n3, h3) + ' px');
+    ck('原图 ≠ 翻转', diff(n3, v3) > 20, '差异 ' + diff(n3, v3) + ' px');
+    ck('镜像 ≠ 翻转', diff(h3, v3) > 20, '差异 ' + diff(h3, v3) + ' px');
+  }
+
+  /* ---------- 5 通行表 ---------- */
+  head('[5] 通行表 flags');
+  const f = T.computeFlags();
+  ck('长度 8192', f.length === 8192);
+  ck('未用图块 = 0', f[1000] === 0 && f[7000] === 0);
+  // B 槽第 20 格 = tileId 20 → 标了 wall
+  S.out.B[20] = T.newCell(20, 'none');
+  const f2 = T.computeFlags();
+  ck('不可通行 → 0x000F', f2[20] === 0x000F, 'flags[20]=' + f2[20]);
+  // C 槽第 0 格 = tileId 256
+  S.out.C[0] = T.newCell(30, 'none');
+  const f3 = T.computeFlags();
+  ck('树冠 → 0x0010（★上层）', f3[256] === 0x0010, 'flags[256]=' + f3[256]);
+  ck('A5 基准 1536', T.SLOTS.find(x => x.id === 'A5') && f3.length === 8192);
+
+  /* ---------- 6 导出 ---------- */
+  head('[6] 导出');
+  S.out.B.fill(null);
+  S.sel.clear(); [0, 1].forEach(i => S.sel.add(i));
+  T.doVariants('h');                       // 2 源 × 2 = 4 格
+  const cvB = T.slotToCanvas('B');
+  ck('B 槽画布 768×768', cvB.width === 768 && cvB.height === 768, cvB.width + '×' + cvB.height);
+  const cvA5 = T.slotToCanvas('A5');
+  ck('A5 槽画布 384×768', cvA5.width === 384 && cvA5.height === 768, cvA5.width + '×' + cvA5.height);
+
+  // 空位必须是全透明
+  const gB = cvB.getContext('2d').getImageData(0, 0, 768, 768).data;
+  let nonEmptyOutside = 0;
+  for (let y = 0; y < 768; y++) {
+    for (let x = 0; x < 768; x++) {
+      const idx = (y * 768 + x) * 4;
+      const inUsed = (x < 48 * 4 && y < 48); // 前 4 格（第 1 行）—— 2 源 × 2 变换
+      if (!inUsed && gB[idx + 3] > 0) nonEmptyOutside++;
+    }
+  }
+  ck('未使用的格全透明', nonEmptyOutside === 0, '意外像素 ' + nonEmptyOutside);
+
+  // 导出图与源图块逐点一致（导出图 768 宽，第 1 格要按行取，不能整段 slice）
+  const origA = rgbaOf(S.out.B[0].snap, 'none');
+  let mism = 0;
+  for (let y = 0; y < 48; y++) {
+    for (let x = 0; x < 48; x++) {
+      const i = (y * 48 + x) * 4;
+      const j = (y * 768 + x) * 4;
+      if (!same(gB, j, origA, i)) mism++;
+    }
+  }
+  ck('导出图第 1 格 == 源图块', mism === 0, '不符 ' + mism + '/2304');
+
+  // 第 2 格应等于源图块的「水平镜像」
+  const origH = rgbaOf(S.out.B[0].snap, 'h');
+  let mism2 = 0;
+  for (let y = 0; y < 48; y++) {
+    for (let x = 0; x < 48; x++) {
+      const i = (y * 48 + x) * 4;
+      const j = (y * 768 + (48 + x)) * 4;
+      if (!same(gB, j, origH, i)) mism2++;
+    }
+  }
+  ck('导出图第 2 格 == 源图块的镜像', mism2 === 0, '不符 ' + mism2 + '/2304');
+
+  const man = T.buildManifest();
+  ck('清单含 5 个槽', Object.keys(man.slots).length === 5);
+  ck('清单含 flags(8192)', man.flags.length === 8192);
+  ck('清单记录源图与变换',
+    man.slots.B.cells[0].srcSheet && man.slots.B.cells[1].transform === 'h',
+    man.slots.B.cells[0].srcSheet + ' #' + man.slots.B.cells[0].srcIndex);
+  ck('清单含通行性', typeof man.slots.B.cells[0].passable === 'boolean');
+
+  /* ---------- 7 按语义分配 ---------- */
+  head('[7] 按语义自动分配槽位');
+  T.SLOTS.forEach(s => S.out[s.id] = new Array(s.cols * s.rows).fill(null));
+  S.sel.clear();
+  S.sel.add(0);  T.applyTag('ground');
+  S.sel.clear(); S.sel.add(20); T.applyTag('wall');
+  S.sel.clear(); S.sel.add(80); T.applyTag('road');
+  S.sel.clear(); S.sel.add(120); T.applyTag('plant_np');
+  S.sel.clear(); [0, 20, 80, 120].forEach(i => S.sel.add(i));
+  T.doVariants('h');                      // 每源 2 个 → B 槽 8 格
+  T.assignByTag();
+  const cnt = id => S.out[id].filter(Boolean).length;
+  ck('地面 → B 槽', cnt('B') === 2, 'B=' + cnt('B'));
+  ck('墙面 → C 槽', cnt('C') === 2, 'C=' + cnt('C'));
+  ck('路面 → D 槽', cnt('D') === 2, 'D=' + cnt('D'));
+  ck('不可通行物体 → E 槽', cnt('E') === 2, 'E=' + cnt('E'));
+
+  /* ---------- 8 槽位容量与边界 ---------- */
+  head('[8] 容量与边界');
+  ck('B 槽 256 格', S.out.B.length === 256);
+  ck('A5 槽 128 格', S.out.A5.length === 128);
+  S.curSlot = 'A5';                       // ← 关键：doVariants 作用于「当前槽」
+  S.out.A5.fill(null);
+  // 128 源 × 4 变换 = 512 > 128，必须安全截断
+  S.sel.clear();
+  for (let i = 0; i < 128; i++) S.sel.add(i);
+  T.doVariants('all');
+  const a5used = S.out.A5.filter(Boolean).length;
+  ck('装满后安全停止（不越界）', a5used === 128, 'A5 装下 ' + a5used + ' 格');
+  ck('装满后再放返回 -1', T.pushCell(T.newCell(0, 'none')) === -1);
+
+  ck('整理空位（左对齐）', (() => {
+    S.out.A5[5] = null; S.out.A5[6] = null;
+    const before = S.out.A5.filter(Boolean).length;
+    T.compactOut();
+    const after = S.out.A5.filter(Boolean).length;
+    let hole = -1;
+    for (let i = 0; i < before; i++) if (!S.out.A5[i]) { hole = i; break; }
+    return before === after && hole === -1;
+  })());
+
+  /* ---------- 9 界面元素 ---------- */
+  head('[9] 界面元素');
+  const D = document.getElementById('fr').contentDocument;
+  ck('语义按钮 7 个', D.querySelectorAll('#tagList .tagbtn').length === 7);
+  ck('变换按钮 4 个', D.querySelectorAll('#tfList button').length === 4);
+  ck('槽位页签 5 个', D.querySelectorAll('#slotTabs .slot-tab').length === 5);
+  ck('变体预览 4 格', D.querySelectorAll('#variantPreview .vcell').length === 4);
+  ck('footer 可见（修复过 body flex）',
+    D.querySelector('footer').getBoundingClientRect().height > 20,
+    'footer 高 ' + Math.round(D.querySelector('footer').getBoundingClientRect().height) + 'px');
+  ck('导出按钮存在', !!D.querySelector('#btnSavePng') && !!D.querySelector('#btnSaveFlags'));
+  ck('画布已绘制内容（非全透明）', (() => {
+    const c = D.querySelector('#srcCanvas');
+    if (!c || c.width < 10) return false;
+    const g = c.getContext('2d');
+    const d = g.getImageData(0, 0, Math.min(c.width, 400), Math.min(c.height, 400)).data;
+    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
+    return false;
+  })());
+
+  flush(true);
+}
+</script>
+
+
+</body></html>

@@ -13,6 +13,7 @@ import {
 } from 'cc';
 import { PlayerGridMove } from './PlayerGridMove';
 import { BattleScene } from '../BattleScene';
+import { Logger } from '../../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -53,6 +54,9 @@ export class BattleTriggerOnContact extends Component {
     private _playerMove: PlayerGridMove | null = null;
     private _playerBox: BoxCollider2D | null = null;
     private _lastPlayerResolveAt = 0;
+    private _lastPollAt = 0;
+    private _lastPollX = Number.NaN;
+    private _lastPollY = Number.NaN;
     private _touchBeganThisFrame = false;
 
     onLoad() {
@@ -64,7 +68,7 @@ export class BattleTriggerOnContact extends Component {
         this._triggerBox = box;
         this._collider = (box as unknown as Collider2D) || this.getComponent(Collider2D);
         if (this.debugLog) {
-            console.log(
+            Logger.debug(
                 `[BattleTriggerOnContact] onLoad trigger=${this.node?.name} collider=${this._collider?.constructor?.name || 'null'} battleRootActive=${Boolean(this.battleRoot?.active)}`
             );
         }
@@ -72,7 +76,7 @@ export class BattleTriggerOnContact extends Component {
             this._collider.on(Contact2DType.BEGIN_CONTACT, this._onBeginContact, this);
             this._collider.on(Contact2DType.END_CONTACT, this._onEndContact, this);
         } else if (this.debugLog) {
-            console.warn(`[BattleTriggerOnContact] collider not found on node=${this.node?.name}`);
+            Logger.warn(`[BattleTriggerOnContact] collider not found on node=${this.node?.name}`);
         }
 
         input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this);
@@ -113,7 +117,7 @@ export class BattleTriggerOnContact extends Component {
         // 触碰“开始这一帧”且当前不在战斗、不处于 pendingEnter：自动开战
         if (this.pollingEnabled && this._touchBeganThisFrame && !battleActive && !this._pendingEnter) {
             if (this.debugLog) {
-                console.log(`[BattleTriggerOnContact] >>> POLL START BATTLE (trigger=${this.node.name})`);
+                Logger.debug(`[BattleTriggerOnContact] >>> POLL START BATTLE (trigger=${this.node.name})`);
             }
             this._tryStartBattle();
         }
@@ -153,7 +157,7 @@ export class BattleTriggerOnContact extends Component {
         this._playerTouching = true;
 
         if (this.debugLog) {
-            console.log(
+            Logger.debug(
                 `[BattleTriggerOnContact] BEGIN (player=${playerMove.node.name}, trigger=${this.node.name}, pendingEnter=${this._pendingEnter}, battleActive=${Boolean(this.battleRoot?.active)})`
             );
         }
@@ -181,7 +185,7 @@ export class BattleTriggerOnContact extends Component {
         this._wasTouchingWhenBattleStarted = false;
 
         if (this.debugLog) {
-            console.log(
+            Logger.debug(
                 `[BattleTriggerOnContact] END (player=${playerMove.node.name}, trigger=${this.node.name})`
             );
         }
@@ -204,7 +208,23 @@ export class BattleTriggerOnContact extends Component {
     }
 
     private _pollTouchOverlap() {
+        if (this.battleRoot?.active) return;
         this._resolveLocalPlayerOnce();
+        const pos = this._playerMove?.node?.position;
+        const now = Date.now();
+        if (
+            pos &&
+            pos.x === this._lastPollX &&
+            pos.y === this._lastPollY &&
+            now - this._lastPollAt < 100
+        ) {
+            return;
+        }
+        this._lastPollAt = now;
+        if (pos) {
+            this._lastPollX = pos.x;
+            this._lastPollY = pos.y;
+        }
         if (!this._triggerBox || !this._playerBox) return;
 
         const a = this._triggerBox.worldAABB;
@@ -237,7 +257,7 @@ export class BattleTriggerOnContact extends Component {
         if (this.battleRoot.active) return;
 
         if (this.debugLog) {
-            console.log(`[BattleTriggerOnContact] >>> START BATTLE (trigger=${this.node.name})`);
+            Logger.debug(`[BattleTriggerOnContact] >>> START BATTLE (trigger=${this.node.name})`);
         }
 
         // 关键：记录战斗开始时玩家是否仍在碰撞框内

@@ -2,11 +2,17 @@
 机甲升级模块
 负责机甲经验增加、等级计算、属性计算等功能
 """
-import json
 import os
 import re
 import random
 from typing import Dict, Tuple, Optional, List
+
+try:  # 允许在 tools/ 下单文件导入本模块做自测
+    from services import skill_level_service as skill_level_svc
+except ImportError:  # pragma: no cover
+    import sys as _sys
+    _sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from services import skill_level_service as skill_level_svc
 
 # 机甲最大等级
 MAX_ROBOT_LEVEL = 60
@@ -63,16 +69,16 @@ ROBOT_LEVEL_TOTAL_EXP = [
     2088021,    # 48
     2410000,    # 49
     2580000,    # 50
-    4696700,    # 51
-    8550000,    # 52
-    12220000,   # 53
-    15890000,   # 54
-    19560000,   # 55
-    19877424,   # 56
-    20200000,   # 57
-    20448471,   # 58
-    20700000,   # 59
-    20950000,   # 60
+    3096000,    # 51   ← v3 平滑：原 4,696,700(1.82x断层) 改为 1.20x 递推
+    3715200,    # 52   ← 原 8,550,000(1.82x断层)
+    4458200,    # 53
+    5349800,    # 54
+    6419800,    # 55
+    7703800,    # 56   ← 原 19,877,424（原曲线 L56+ 几乎停滞，改为持续增长）
+    9244600,    # 57
+    11093500,   # 58
+    13312200,   # 59
+    15974600,   # 60
 ]
 
 # 属性映射表（公式中的字母 -> 数据库字段名）
@@ -92,7 +98,7 @@ ATTRIBUTE_MAPPING = {
     'l': 'Counterattack',       # 反击
     'm': 'Block',               # 格挡
     'n': 'ArmorPenetration',    # 护甲穿透
-    'o': 'ParticleShield',      # 粒子护盾
+    'o': 'AttackCount',      # 攻击次数
 }
 
 # Current前缀属性映射（用于当前值）
@@ -110,7 +116,7 @@ CURRENT_ATTRIBUTE_MAPPING = {
     'l': 'CurrentCounterattack',
     'm': 'CurrentBlock',
     'n': 'CurrentArmorPenetration',
-    'o': 'CurrentParticleShield',
+    'o': 'CurrentAttackCount',
 }
 
 # 机器人类型定义
@@ -162,9 +168,10 @@ class RobotUpgradeManager:
     def _load_classes_data(self):
         """加载Classes.json数据"""
         try:
-            with open(self.classes_json_path, 'r', encoding='utf-8') as f:
-                self.classes_data = json.load(f)
-            print(f'✅ 成功加载Classes.json，共 {len(self.classes_data)} 个职业')
+            from config_loader import load_json_file
+            self.classes_data, from_cache = load_json_file(self.classes_json_path)
+            if not from_cache:
+                print(f'✅ 成功加载Classes.json，共 {len(self.classes_data)} 个职业')
         except Exception as e:
             print(f'❌ 加载Classes.json失败: {e}')
             self.classes_data = []
@@ -177,9 +184,10 @@ class RobotUpgradeManager:
             
             coefficient_path = os.path.join(parent_dir, 'data', 'ClassCoefficient.json')
             if os.path.exists(coefficient_path):
-                with open(coefficient_path, 'r', encoding='utf-8') as f:
-                    self.coefficient_data = json.load(f)
-                print(f'✅ 成功加载ClassCoefficient.json，共 {len(self.coefficient_data)} 个机甲系数')
+                from config_loader import load_json_file
+                self.coefficient_data, from_cache = load_json_file(coefficient_path)
+                if not from_cache:
+                    print(f'✅ 成功加载ClassCoefficient.json，共 {len(self.coefficient_data)} 个机甲系数')
             else:
                 print(f'⚠️ ClassCoefficient.json文件不存在: {coefficient_path}，将使用默认系数')
                 self.coefficient_data = None
@@ -448,7 +456,7 @@ class RobotUpgradeManager:
         # 获取基础属性（从robot_pet或updated_attrs中获取）
         base_attrs = {}
         attr_fields = ['HP', 'MaxHP', 'MP', 'MaxMP', 'Melee', 'Accuracy', 'Armor', 
-                      'Corrosion', 'Initiative', 'Block', 'ParticleShield', 
+                      'Corrosion', 'Initiative', 'Block', 'AttackCount', 
                       'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 
                       'Resistance', 'Counterattack']
         
@@ -613,11 +621,13 @@ class RobotUpgradeManager:
         
         return updated_attrs
     
-    def add_exp_to_robot(self, robot_pet: Dict, exp_amount: int) -> Tuple[int, int, int, Dict]:
+    def add_exp_to_robot(self, robot_pet: Dict, exp_amount: int,
+                         skill_ups_out: Optional[List] = None) -> Tuple[int, int, int, Dict]:
         """
         给机甲增加经验并计算升级
         :param robot_pet: 机甲宠物数据字典
         :param exp_amount: 要增加的经验值
+        :param skill_ups_out: 可选，传入 list 时会追加本次技能自动升级记录（供客户端提示）
         :return: (新等级, 新总经验, 升级次数, 更新后的属性字典)
         """
         current_exp = robot_pet.get('EXP', 0)
@@ -680,10 +690,88 @@ class RobotUpgradeManager:
             
             # 应用独特成长值
             updated_attrs = self.apply_unique_growth(robot_pet, updated_attrs)
-        
+
+            # 技能自动升级：机甲每升 1 级，逐个已学技能判定（悟性/100×0.1，封顶 Lv4）
+            if level_up_count > 0:
+                updated_attrs = self._apply_skill_level_ups(
+                    robot_pet, level_up_count, updated_attrs, skill_ups_out)
+
+            # 升级即满血满蓝（用户口径）：放在升星/成长/技能之后，用最终 Max 值补满
+            if level_up_count > 0:
+                updated_attrs = self.apply_level_up_full_restore(updated_attrs)
+
         return new_level, new_exp, level_up_count, updated_attrs
-    
-    def add_exp_to_robot_atomic(self, robotpet_col, pet_object_id, user_id, exp_amount: int) -> Tuple[int, int, int, Dict]:
+
+    def apply_level_up_full_restore(self, updated_attrs: Dict) -> Dict:
+        """机甲**升级后**血蓝加满：CurrentHP = MaxHP、CurrentMP = MaxMP。
+
+        口径（用户拍板）：升级必须加满血满蓝 —— 无论升级前是否残血/空蓝，
+        只要发生升级就把当前值补满（并随本次属性一起落库）。
+
+        ⚠ 只在**升级**时调用；缺 Max 字段时不动（避免把 0 误写成满）。
+        ⚠ 必须放在 add_star_bonus / apply_unique_growth **之后**，用的是最终 Max 值。
+        """
+        out = dict(updated_attrs or {})
+
+        max_hp = out.get('MaxHP')
+        if max_hp is None:
+            max_hp = out.get('HP')
+        if max_hp is not None:
+            try:
+                out['CurrentHP'] = max(0, int(max_hp))
+            except (TypeError, ValueError):
+                pass
+
+        max_mp = out.get('MaxMP')
+        if max_mp is None:
+            max_mp = out.get('MP')
+        if max_mp is not None:
+            try:
+                out['CurrentMP'] = max(0, int(max_mp))
+            except (TypeError, ValueError):
+                pass
+
+        return out
+
+    def _apply_skill_level_ups(
+        self,
+        pet: Dict,
+        level_up_count: int,
+        updated_attrs: Dict,
+        skill_ups_out: Optional[List] = None,
+    ) -> Dict:
+        """机甲升级后的「技能自动升级」：把新等级表并入 updated_attrs（落库用）。
+
+        规则：机甲每升 1 级判定一次，概率 = 悟性 / 100 × 0.1（悟性 40~100 → 4%~10%），
+              Lv4 封顶；只有 `lv_auto` 的技能参与（被动/自动触发技不升）。
+
+        ⚠ 技能升级 UI 未开放时（ENABLE_SKILL_LEVEL_PROGRESSION=False）直接跳过。
+        ⚠ 技能升级失败**绝不影响机甲升级主流程**（整体 try 包住）。
+        ⚠ 没有「已学技能」字段（敌方怪物 / 老数据）→ 不做任何事。
+        """
+        if not skill_level_svc.ENABLE_SKILL_LEVEL_PROGRESSION:
+            return updated_attrs
+        try:
+            levels, ups = skill_level_svc.roll_auto_upgrade(pet, level_up_count)
+        except Exception as exc:  # noqa: BLE001 — 表现层/数据异常不能拖垮机甲升级
+            print(f'⚠️ [技能升级] 判定异常（已忽略）: {exc}')
+            return updated_attrs
+        if not ups:
+            return updated_attrs
+        out = dict(updated_attrs or {})
+        out[skill_level_svc.LEVELS_FIELD] = levels
+        name = pet.get('RobotName', '未知')
+        for u in ups:
+            print(f'[技能升级] 机甲 {name}: 「{u["name"]}」 Lv{u["from_level"]} -> Lv{u["to_level"]}')
+        if skill_ups_out is not None:
+            try:
+                skill_ups_out.extend(ups)
+            except AttributeError:
+                pass
+        return out
+
+    def add_exp_to_robot_atomic(self, robotpet_col, pet_object_id, user_id, exp_amount: int,
+                                skill_ups_out: Optional[List] = None) -> Tuple[int, int, int, Dict]:
         """
         原子性地给机甲增加经验并计算升级（使用MongoDB原子操作避免并发问题）
         这个方法使用 $inc 操作符原子性地增加经验，避免了并发情况下的竞态条件
@@ -692,6 +780,7 @@ class RobotUpgradeManager:
         :param pet_object_id: 机甲ObjectId
         :param user_id: 用户ID（用于安全验证）
         :param exp_amount: 要增加的经验值
+        :param skill_ups_out: 可选，传入 list 时会追加本次技能自动升级记录（供客户端提示）
         :return: (新等级, 新总经验, 升级次数, 更新后的属性字典)
         """
         from bson import ObjectId
@@ -770,7 +859,16 @@ class RobotUpgradeManager:
             
             # 应用独特成长值
             updated_attrs = self.apply_unique_growth(result, updated_attrs)
-            
+
+            # 技能自动升级：机甲每升 1 级，逐个已学技能判定（悟性/100×0.1，封顶 Lv4）
+            if level_up_count > 0:
+                updated_attrs = self._apply_skill_level_ups(
+                    result, level_up_count, updated_attrs, skill_ups_out)
+
+            # 升级即满血满蓝（用户口径）：放在升星/成长/技能之后，用最终 Max 值补满
+            if level_up_count > 0:
+                updated_attrs = self.apply_level_up_full_restore(updated_attrs)
+
             # 准备更新数据 - 确保等级和经验都更新（虽然经验已经通过$inc更新了，但这里确保同步）
             update_data = {
                 'Level': new_level,

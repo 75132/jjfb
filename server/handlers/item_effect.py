@@ -2,7 +2,6 @@
 物品效果系统
 处理物品使用后的各种效果：经验、HP、MP、获得物品、获得机甲等
 """
-import json
 import os
 import random
 from typing import Dict, Optional, List
@@ -19,20 +18,9 @@ def get_effect_manager():
     return _effect_manager
 
 def load_items_json():
-    """加载 Items.json"""
-    base_dir = os.path.dirname(os.path.dirname(__file__))  # server
-    possible_paths = [
-        os.path.join(base_dir, 'data', 'Items.json'),
-        os.path.join(os.path.dirname(__file__), 'json', 'Items.json'),
-        os.path.join(base_dir, 'assets', 'resources', 'json', 'Items.json'),
-        'assets/resources/json/Items.json',
-    ]
-    
-    for path in possible_paths:
-        if os.path.exists(path):
-            with open(path, 'r', encoding='utf-8') as f:
-                return json.load(f)
-    return []
+    """加载 Items.json（路径与缓存见 config_loader）"""
+    from config_loader import load_items_json as _load
+    return _load()
 
 def load_equipment_json():
     """加载所有装备JSON文件（Weapon, Gun, Wing, Dun, Armor）"""
@@ -41,14 +29,14 @@ def load_equipment_json():
     
     equipment_files = ['Weapon.json', 'Gun.json', 'Wing.json', 'Dun.json', 'Armor.json']
     all_equipment = []
-    
+    from config_loader import load_json_file
+
     for filename in equipment_files:
         filepath = os.path.join(data_dir, filename)
         if os.path.exists(filepath):
             try:
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    equipment = json.load(f)
-                    all_equipment.extend(equipment)
+                equipment, _from_cache = load_json_file(filepath)
+                all_equipment.extend(equipment)
             except Exception as e:
                 print(f'⚠️ [ItemEffect] 加载 {filename} 失败: {e}')
     
@@ -208,10 +196,10 @@ class ItemEffectManager:
         if exp_amount <= 0:
             return {'success': False, 'error': '经验值必须大于0'}
         
-        player = utils.players_col.find_one({
+        player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
             'user_id': user_id,
             'character_id': character_id
-        })
+        }))
         if not player:
             return {'success': False, 'error': '角色不存在'}
         
@@ -219,10 +207,10 @@ class ItemEffectManager:
         from ws_server import add_exp_to_player
         new_level, new_exp, level_up_count = add_exp_to_player(player, exp_amount)
         
-        utils.players_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.players_col.update_one(
             {'user_id': user_id, 'character_id': character_id},
             {'$set': {'level': new_level, 'exp': new_exp}}
-        )
+        ))
         
         return {
             'success': True,
@@ -255,10 +243,10 @@ class ItemEffectManager:
                 return {'success': False, 'error': f'无效的HP值: {params}'}
         
         if target_type == 'Player':
-            player = utils.players_col.find_one({
+            player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
                 'user_id': user_id,
                 'character_id': character_id
-            })
+            }))
             if not player:
                 return {'success': False, 'error': '角色不存在'}
             
@@ -273,10 +261,10 @@ class ItemEffectManager:
             new_hp = min(current_hp + restore, max_hp)
             actual_restore = new_hp - current_hp
             
-            utils.players_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                 {'user_id': user_id, 'character_id': character_id},
                 {'$set': {'CurrentHP': new_hp}}
-            )
+            ))
             
             return {
                 'success': True,
@@ -298,11 +286,11 @@ class ItemEffectManager:
             except Exception:
                 return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
             
-            pet = utils.robotpet_col.find_one({
+            pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
                 '_id': pet_object_id,
                 'user_id': user_id,
                 'character_id': character_id
-            })
+            }))
             if not pet:
                 return {'success': False, 'error': '机甲不存在'}
             
@@ -317,10 +305,10 @@ class ItemEffectManager:
             new_hp = min(current_hp + restore, max_hp)
             actual_restore = new_hp - current_hp
             
-            utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
                 {'$set': {'CurrentHP': new_hp}}
-            )
+            ))
             
             return {
                 'success': True,
@@ -353,10 +341,10 @@ class ItemEffectManager:
                 return {'success': False, 'error': f'无效的MP值: {params}'}
         
         if target_type == 'Player':
-            player = utils.players_col.find_one({
+            player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
                 'user_id': user_id,
                 'character_id': character_id
-            })
+            }))
             if not player:
                 return {'success': False, 'error': '角色不存在'}
             
@@ -371,10 +359,10 @@ class ItemEffectManager:
             new_mp = min(current_mp + restore, max_mp)
             actual_restore = new_mp - current_mp
             
-            utils.players_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                 {'user_id': user_id, 'character_id': character_id},
                 {'$set': {'CurrentMP': new_mp}}
-            )
+            ))
             
             return {
                 'success': True,
@@ -396,11 +384,11 @@ class ItemEffectManager:
             except Exception:
                 return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
             
-            pet = utils.robotpet_col.find_one({
+            pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
                 '_id': pet_object_id,
                 'user_id': user_id,
                 'character_id': character_id
-            })
+            }))
             if not pet:
                 return {'success': False, 'error': '机甲不存在'}
             
@@ -415,10 +403,10 @@ class ItemEffectManager:
             new_mp = min(current_mp + restore, max_mp)
             actual_restore = new_mp - current_mp
             
-            utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
                 {'$set': {'CurrentMP': new_mp}}
-            )
+            ))
             
             return {
                 'success': True,
@@ -451,6 +439,8 @@ class ItemEffectManager:
         from bson import ObjectId
         
         upgrade_manager = RobotUpgradeManager()
+        # 技能自动升级记录（机甲升级时逐技能判定）—— 附带在返回里供客户端提示
+        skill_level_ups: list = []
         
         # add_exp_to_robot_atomic 返回 tuple: (新等级, 新总经验, 升级次数, 更新后的属性字典)
         try:
@@ -459,7 +449,8 @@ class ItemEffectManager:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
         
         new_level, new_exp, level_up_count, updated_attrs = upgrade_manager.add_exp_to_robot_atomic(
-            utils.robotpet_col, pet_object_id, user_id, exp_amount
+            utils.robotpet_col, pet_object_id, user_id, exp_amount,
+            skill_ups_out=skill_level_ups,
         )
         
         # 检查是否成功（如果返回 None 表示失败）
@@ -476,10 +467,10 @@ class ItemEffectManager:
                 'EXP': new_exp,
                 **updated_attrs
             }
-            utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
                 {'$set': update_data}
-            )
+            ))
         
         return {
             'success': True,
@@ -488,6 +479,7 @@ class ItemEffectManager:
                 'new_level': new_level,
                 'new_exp': new_exp,
                 'level_up_count': level_up_count,
+                'skill_level_ups': skill_level_ups,
                 'updated_attrs': updated_attrs
             }
         }
@@ -522,10 +514,10 @@ class ItemEffectManager:
         
         # 获取背包
         from .bag_handler import merge_inventory_items, split_inventory_items
-        doc = utils.inventory_col.find_one({
+        doc = await utils.async_mongo_operation_read(lambda: utils.inventory_col.find_one({
             'user_id': user_id,
             'character_id': character_id
-        })
+        }))
         items = merge_inventory_items(doc) if doc else []
         
         # 使用现有的堆叠逻辑
@@ -598,11 +590,11 @@ class ItemEffectManager:
         inventory_data['character_id'] = character_id
         
         # 更新数据库
-        utils.inventory_col.replace_one(
+        await utils.async_mongo_operation(lambda: utils.inventory_col.replace_one(
             {'user_id': user_id, 'character_id': character_id},
             inventory_data,
             upsert=True
-        )
+        ))
         
         return {
             'success': True,
@@ -658,7 +650,7 @@ class ItemEffectManager:
                                       target_type: str, pet_id: Optional[str], item_id: Optional[int]) -> Dict:
         """添加随机机甲"""
         # 从 RobotBase 随机选择
-        sample = utils.safe_mongo_operation(
+        sample = await utils.async_mongo_operation_read(
             lambda: list(utils.robotbase_col.aggregate([{'$sample': {'size': 1}}]))
         )
         
@@ -671,10 +663,10 @@ class ItemEffectManager:
         
         # 更新机甲数量
         robot_count = utils.compute_robot_count(user_id, character_id)
-        utils.players_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.players_col.update_one(
             {'user_id': user_id, 'character_id': character_id},
             {'$set': {'robotcount': robot_count}}
-        )
+        ))
         
         return {
             'success': True,
@@ -703,11 +695,11 @@ class ItemEffectManager:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
         
         # 获取机甲数据
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user_id,
             'character_id': character_id
-        })
+        }))
         
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
@@ -740,11 +732,11 @@ class ItemEffectManager:
             'HP', 'MaxHP', 'CurrentHP', 'MP', 'MaxMP', 'CurrentMP',
             'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
             'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-            'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+            'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
             'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
             'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
             'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-            'CurrentArmorPenetration', 'CurrentParticleShield',
+            'CurrentArmorPenetration', 'CurrentAttackCount',
             'Growth', 'Comprehension'
         ]
         
@@ -757,10 +749,10 @@ class ItemEffectManager:
         update_data['UniqueGrowthValue'] = backup.get('UniqueGrowthValue', 0)
         
         # 更新数据库
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': update_data}
-        )
+        ))
         
         return {
             'success': True,
@@ -795,11 +787,11 @@ class ItemEffectManager:
         except Exception:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
         
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user_id,
             'character_id': character_id
-        })
+        }))
         
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
@@ -856,10 +848,10 @@ class ItemEffectManager:
             'AniID': new_aniid,
         })
         
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': update_data}
-        )
+        ))
 
         try:
             from . import bag_handler
@@ -897,11 +889,11 @@ class ItemEffectManager:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
         
         # 获取机甲数据
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user_id,
             'character_id': character_id
-        })
+        }))
         
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
@@ -920,7 +912,7 @@ class ItemEffectManager:
             return {'success': False, 'error': '机甲缺少基础数据ID，无法重生'}
         
         # 从 RobotBase 获取基础数据
-        base_robot = utils.robotbase_col.find_one({'_id': ObjectId(robot_base_id)})
+        base_robot = await utils.async_mongo_operation_read(lambda: utils.robotbase_col.find_one({'_id': ObjectId(robot_base_id)}))
         if not base_robot:
             return {'success': False, 'error': '找不到机甲基础数据'}
         
@@ -954,7 +946,7 @@ class ItemEffectManager:
             'HP', 'MaxHP', 'MP', 'MaxMP',
             'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
             'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-            'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+            'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
             'RobotID', 'RobotName', 'Class', 'Form', 'AniID'
         ]
         
@@ -968,7 +960,7 @@ class ItemEffectManager:
             'HP', 'MaxHP', 'MP', 'MaxMP',
             'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
             'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-            'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield'
+            'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount'
         ]
         
         for attr in randomize_attrs:
@@ -985,7 +977,7 @@ class ItemEffectManager:
             'CurrentCorrosion': 'Corrosion',
             'CurrentInitiative': 'Initiative',
             'CurrentBlock': 'Block',
-            'CurrentParticleShield': 'ParticleShield',
+            'CurrentAttackCount': 'AttackCount',
             'CurrentArmorPenetration': 'ArmorPenetration',
             'CurrentShooting': 'Shooting',
             'CurrentEvasion': 'Evasion',
@@ -1021,11 +1013,11 @@ class ItemEffectManager:
             'HP', 'MaxHP', 'CurrentHP', 'MP', 'MaxMP', 'CurrentMP',
             'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
             'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-            'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+            'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
             'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
             'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
             'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-            'CurrentArmorPenetration', 'CurrentParticleShield',
+            'CurrentArmorPenetration', 'CurrentAttackCount',
             'Growth', 'Comprehension', 'StarLevel', 'Level', 'EXP',
             'RobotID', 'RobotName', 'Class', 'Form', 'AniID'
         ]
@@ -1037,10 +1029,10 @@ class ItemEffectManager:
         update_data['RobotPet_backup'] = robot_pet_backup
         
         # 更新数据库
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': update_data}
-        )
+        ))
         
         return {
             'success': True,
@@ -1065,11 +1057,11 @@ class ItemEffectManager:
             pet_object_id = ObjectId(pet_id)
         except Exception:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user_id,
             'character_id': character_id,
-        })
+        }))
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
         from .robot_handler import assert_can_remove_robot_pet
@@ -1113,11 +1105,11 @@ class ItemEffectManager:
             pet_object_id = ObjectId(pet_id)
         except Exception:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user_id,
             'character_id': character_id,
-        })
+        }))
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
         from .robot_handler import assert_can_remove_robot_pet
@@ -1202,11 +1194,11 @@ class ItemEffectManager:
             return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
         
         # 获取机甲数据
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user_id,
             'character_id': character_id
-        })
+        }))
         
         if not pet:
             return {'success': False, 'error': '机甲不存在'}
@@ -1238,7 +1230,7 @@ class ItemEffectManager:
             'counterattack': 'Counterattack',
             'block': 'Block',
             'armorPenetration': 'ArmorPenetration',
-            'particleShield': 'ParticleShield',
+            'attackCount': 'AttackCount',
             'energyRecovery': 'EnergyRecovery',
             'lifeRecovery': 'LifeRecovery',
             'attackTimes': 'AttackTimes'
@@ -1280,10 +1272,10 @@ class ItemEffectManager:
             return {'success': True, 'message': '装备无属性加成', 'data': {}}
         
         # 更新数据库
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': attribute_updates}
-        )
+        ))
         
         # 生成属性加成描述
         attr_descriptions = []
@@ -1293,7 +1285,7 @@ class ItemEffectManager:
                 'Armor': '护甲', 'Evasion': '闪避', 'Accuracy': '命中', 'Lethality': '致命',
                 'Corrosion': '腐蚀', 'Resistance': '抗性', 'Initiative': '先攻',
                 'Counterattack': '反击', 'Block': '格挡', 'ArmorPenetration': '穿透',
-                'ParticleShield': '粒子护盾', 'EnergyRecovery': '能量恢复',
+                'AttackCount': '攻击次数', 'EnergyRecovery': '能量恢复',
                 'LifeRecovery': '生命恢复', 'AttackTimes': '攻击次数'
             }
             attr_name = attr_name_map.get(db_key, db_key)

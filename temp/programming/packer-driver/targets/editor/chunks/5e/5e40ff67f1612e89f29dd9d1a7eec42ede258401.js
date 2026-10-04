@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, instantiate, Label, ScrollView, UITransform, Layout, EditBox, Button, Sprite, Color, WebSocketManager, GameConfig, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _class3, _crd, ccclass, property, ChatRoomFull;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, instantiate, Label, ScrollView, UITransform, Layout, EditBox, Button, Sprite, Color, WebSocketManager, GameConfig, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _class3, _crd, ccclass, property, ChatRoomFull;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -15,6 +15,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
   function _reportPossibleCrUseOfGameConfig(extras) {
     _reporterNs.report("GameConfig", "../../global/GameConfig", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -40,6 +44,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
       GameConfig = _unresolved_3.GameConfig;
+    }, function (_unresolved_4) {
+      Logger = _unresolved_4.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -110,7 +116,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            */
           this.onAuthResponse = data => {
             if (data && data.success) {
-              console.log('✅ [ChatRoomFull] 认证成功，准备请求聊天历史'); // 认证成功后，延迟一小段时间确保服务器端current_user_id已设置
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [ChatRoomFull] 认证成功，准备请求聊天历史'); // 认证成功后，延迟一小段时间确保服务器端current_user_id已设置
 
               this.scheduleOnce(() => {
                 if (!this.historyLoaded && this.node && this.node.active) {
@@ -187,13 +195,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (this.messageTemplate) {
             // 隐藏模板节点，避免在场景中显示（但保留用于克隆）
             this.messageTemplate.active = false;
-            console.log('[ChatRoomFull] 使用手动绑定的 Message 模板节点');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[ChatRoomFull] 使用手动绑定的 Message 模板节点');
             return;
           } // 如果没有手动绑定，尝试自动查找（兼容旧代码）
 
 
           if (!this.content) {
-            console.warn('[ChatRoomFull] content 节点不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[ChatRoomFull] content 节点不存在');
             return;
           }
 
@@ -205,7 +217,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
               if (this.messageTemplate) {
                 this.messageTemplate.active = false;
-                console.log('[ChatRoomFull] 自动找到 Message 模板节点');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[ChatRoomFull] 自动找到 Message 模板节点');
               }
 
               break;
@@ -213,7 +227,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           }
 
           if (!this.messageTemplate) {
-            console.error('[ChatRoomFull] 未找到 Message 模板节点，请在编辑器中手动绑定 messageTemplate 属性');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] 未找到 Message 模板节点，请在编辑器中手动绑定 messageTemplate 属性');
           }
         }
 
@@ -330,7 +346,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         }
 
         onChatHistory(data) {
-          console.log('📥 [ChatRoomFull] 收到chat_history响应:', data); // 兼容服务器返回的格式：可能是 data.messages 或 data.list 或 data.data.messages
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 [ChatRoomFull] 收到chat_history响应:', data); // 兼容服务器返回的格式：可能是 data.messages 或 data.list 或 data.data.messages
 
           let list = [];
 
@@ -344,12 +362,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           this.chatList = list;
           this.chatLoaded = true;
-          console.log(`✅ [ChatRoomFull] 聊天历史已加载，共 ${list.length} 条`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ [ChatRoomFull] 聊天历史已加载，共 ${list.length} 条`);
           this.renderCombinedHistory();
         }
 
         onAnnouncementList(data) {
-          console.log('📥 [ChatRoomFull] 收到announcement_list响应:', data); // 兼容服务器返回的格式：可能是 data.announcements 或 data.list 或 data.data.announcements
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 [ChatRoomFull] 收到announcement_list响应:', data); // 兼容服务器返回的格式：可能是 data.announcements 或 data.list 或 data.data.announcements
 
           let list = [];
 
@@ -363,7 +385,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           this.annList = list;
           this.annLoaded = true;
-          console.log(`✅ [ChatRoomFull] 公告列表已加载，共 ${list.length} 条`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ [ChatRoomFull] 公告列表已加载，共 ${list.length} 条`);
           this.renderCombinedHistory();
         }
 
@@ -371,7 +395,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
          * 请求历史记录（优化：使用request方法，自动生成request_id并匹配响应）
          */
         requestHistory() {
-          console.log('📤 [ChatRoomFull] 发送请求: get_chat_history, get_announcements_history'); // 优化：使用request方法，自动生成request_id并匹配响应
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📤 [ChatRoomFull] 发送请求: get_chat_history, get_announcements_history'); // 优化：使用request方法，自动生成request_id并匹配响应
 
           this.ws.request('get_chat_history', {
             limit: 8
@@ -477,7 +503,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
         addMessage(text, scrollTop) {
           if (!this.content || !this.messageTemplate) {
-            console.warn('[ChatRoomFull] addMessage: content 或 messageTemplate 不存在', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[ChatRoomFull] addMessage: content 或 messageTemplate 不存在', {
               hasContent: !!this.content,
               hasTemplate: !!this.messageTemplate
             });
@@ -506,7 +534,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           }
 
           if (!templateTextNode) {
-            console.error('[ChatRoomFull] 模板中未找到 Text 子节点');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] 模板中未找到 Text 子节点');
 
             if (!wasActive) {
               this.messageTemplate.active = false;
@@ -519,7 +549,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           const templateTextUT = templateTextNode.getComponent(UITransform);
 
           if (!templateTextUT) {
-            console.error('[ChatRoomFull] Text 节点没有 UITransform 组件');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] Text 节点没有 UITransform 组件');
 
             if (!wasActive) {
               this.messageTemplate.active = false;
@@ -542,7 +574,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           }
 
           if (!messageNode) {
-            console.error('[ChatRoomFull] 克隆 Message 模板失败');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] 克隆 Message 模板失败');
             return;
           } // 确保克隆的节点及其所有子节点都是激活的（先激活父节点，再递归激活子节点）
 
@@ -557,25 +591,35 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             for (let i = 0; i < children.length; i++) {
               if (children[i].getComponent(Label)) {
                 textNode = children[i];
-                console.log(`[ChatRoomFull] 通过搜索找到 Text 节点: ${textNode.name}`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug(`[ChatRoomFull] 通过搜索找到 Text 节点: ${textNode.name}`);
                 break;
               }
             }
           }
 
           if (!textNode) {
-            console.error('[ChatRoomFull] 未找到 Text 子节点，Message 节点下必须有带 Label 组件的 Text 子节点');
-            console.error('[ChatRoomFull] Message 节点的子节点:', messageNode.children.map(c => c.name));
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] 未找到 Text 子节点，Message 节点下必须有带 Label 组件的 Text 子节点');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] Message 节点的子节点:', messageNode.children.map(c => c.name));
             messageNode.destroy();
             return;
           }
 
-          console.log(`[ChatRoomFull] 找到 Text 节点: ${textNode.name}`); // Text 节点本身就有 Label 组件
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`[ChatRoomFull] 找到 Text 节点: ${textNode.name}`); // Text 节点本身就有 Label 组件
 
           const label = textNode.getComponent(Label);
 
           if (!label) {
-            console.error('[ChatRoomFull] Text 节点没有 Label 组件');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[ChatRoomFull] Text 节点没有 Label 组件');
             messageNode.destroy();
             return;
           } // 关键修复：在插入到 content 之前，完全恢复模板的原始属性
@@ -616,7 +660,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           label.overflow = Label.Overflow.RESIZE_HEIGHT;
           label.enableWrapText = true;
           label.verticalAlign = Label.VerticalAlign.TOP;
-          console.log(`[ChatRoomFull] 准备添加消息: ${text.substring(0, 20)}...`); // 关键修复：根据最佳实践，在插入到 content 之前暂时禁用 Layout 组件
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`[ChatRoomFull] 准备添加消息: ${text.substring(0, 20)}...`); // 关键修复：根据最佳实践，在插入到 content 之前暂时禁用 Layout 组件
           // 这样可以防止 Layout 在插入节点时自动调整子节点位置
 
           const layout = this.content.getComponent(Layout);
@@ -628,7 +674,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
           this.content.insertChild(messageNode, 0);
-          console.log(`[ChatRoomFull] 消息节点已插入，content 子节点数: ${this.content.children.length}`); // 初始化消息项的图片显示状态：默认隐藏图片（未选中状态）
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`[ChatRoomFull] 消息节点已插入，content 子节点数: ${this.content.children.length}`); // 初始化消息项的图片显示状态：默认隐藏图片（未选中状态）
 
           this.setMessageImageVisible(messageNode, false); // 为消息项添加点击事件，实现选中功能
 
@@ -671,7 +719,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           this.scheduleOnce(() => {
             if (!label.isValid || !messageNode.isValid || !textNode.isValid) {
-              console.warn('[ChatRoomFull] 节点已失效，跳过高度调整');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[ChatRoomFull] 节点已失效，跳过高度调整');
               return;
             }
 
@@ -701,7 +751,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
               labelUT.anchorX = textAnchorX;
               labelUT.anchorY = textAnchorY;
               textNode.setPosition(textLocalPos.x, -14, textLocalPos.z);
-              console.log(`[ChatRoomFull] 调整 Message 高度: 文本高度=${textHeight}, Message高度=${messageHeight}, Text位置=(${textLocalPos.x}, -14)`); // 恢复 Layout 并更新布局
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[ChatRoomFull] 调整 Message 高度: 文本高度=${textHeight}, Message高度=${messageHeight}, Text位置=(${textLocalPos.x}, -14)`); // 恢复 Layout 并更新布局
 
               if (layout && layoutWasEnabled) {
                 layout.enabled = true;
@@ -822,9 +874,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             // 通过request_id匹配的响应回调
             if (!response || !response.success) {
               const errorMsg = (response == null ? void 0 : response.error) || (response == null ? void 0 : response.message) || '发送失败';
-              console.error(`❌ [ChatRoomFull] 发送聊天消息失败: ${errorMsg}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error(`❌ [ChatRoomFull] 发送聊天消息失败: ${errorMsg}`);
             } else {
-              console.log('✅ [ChatRoomFull] 聊天消息发送成功');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [ChatRoomFull] 聊天消息发送成功');
             }
           }, true, // 需要认证
           10000 // 10秒超时

@@ -1,5 +1,6 @@
 import { _decorator, Component, Label } from 'cc';
 import { GameCommonData } from './GameCommonData';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
 
 /**
@@ -47,7 +48,7 @@ export class TopRole extends Component {
         
         // 如果有升级，可以在这里播放升级特效等
         if (data.levelUpCount && data.levelUpCount > 0) {
-            console.log(`[TopRole] 角色升级了 ${data.levelUpCount} 级！`);
+            Logger.debug(`[TopRole] 角色升级了 ${data.levelUpCount} 级！`);
         }
     }
 

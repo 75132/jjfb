@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>e2e folder 49/49</title>
+<style>
+  body { background:#111; color:#ddd; font:12px/1.55 Consolas,"Microsoft YaHei",monospace; margin:0; padding:10px; }
+  #log { white-space:pre-wrap; }
+  #fr { width:1600px; height:900px; border:1px solid #333; position:absolute; left:-4000px; }
+  .h { color:#7ec8ff; font-weight:700; } .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+</style>
+</head>
+<body>
+<div id="log">  <span class="ok">[OK]  </span>导出根切到 D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest
+<span class="h">[1] 存工程 = 建一个以工程名命名的文件夹，包放里面</span>
+  <span class="ok">[OK]  </span>素材 map1_7x6.png 已载入
+  <span class="ok">[OK]  </span>B 槽放了 2 格
+  <span class="ok">[OK]  </span>存工程成功  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811.tsproj
+  <span class="ok">[OK]  </span>★ 路径 = &lt;导出根&gt;/&lt;工程名&gt;/&lt;工程名&gt;.tsproj  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811.tsproj
+  <span class="ok">[OK]  </span>★ 后端起了一个专门的文件夹  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811
+  <span class="ok">[OK]  </span>★ 文件夹真的落在磁盘上（能列到）
+  <span class="ok">[OK]  </span>前端记住了这个文件夹  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811
+  <span class="ok">[OK]  </span>工程名 = 文件夹名  我的地图工程_20261002_000811
+<span class="h">[2] 导出 PNG / flags / manifest 都进这个文件夹，前缀 = 工程名</span>
+  <span class="ok">[OK]  </span>只导出有内容的槽（1 张 B）  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_B.png
+  <span class="ok">[OK]  </span>★ PNG 落在工程文件夹里  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_B.png
+  <span class="ok">[OK]  </span>★ 文件名 = &lt;工程名&gt;_&lt;槽&gt;.png  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_B.png
+  <span class="ok">[OK]  </span>★ flags 落在工程文件夹里，名字带工程名  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_flags.json
+  <span class="ok">[OK]  </span>★ manifest 落在工程文件夹里，名字带工程名  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_manifest.json
+  <span class="ok">[OK]  </span>★ 包 / PNG / flags / manifest 四个文件都真的在磁盘上  包 22276 / PNG 16550 / flags 16385 / manifest 59976 字节
+  <span class="ok">[OK]  </span>★ 都在这一个文件夹里（路径前缀一致）
+<span class="h">[3] 图层名互不重复</span>
+  <span class="ok">[OK]  </span>导出 5 张（五槽都有内容）  5 张
+  <span class="ok">[OK]  </span>★ 5 个文件名两两不同  我的地图工程_20261002_000811_A5.png, 我的地图工程_20261002_000811_B-2.png, 我的地图工程_20261002_000811_C.png, 我的地图工程_20261002_000811_D.png, 我的地图工程_20261002_000811_E.png
+  <span class="ok">[OK]  </span>★ 名字里带槽位（A5/B/C/D/E）  我的地图工程_20261002_000811_A5.png, 我的地图工程_20261002_000811_B-2.png, 我的地图工程_20261002_000811_C.png, 我的地图工程_20261002_000811_D.png, 我的地图工程_20261002_000811_E.png
+  <span class="ok">[OK]  </span>★ 文件夹里没有任何重名文件  6 个文件
+<span class="h">[4] ★ 再导一次：自动改名 -2，不覆盖旧的</span>
+  <span class="ok">[OK]  </span>再导一次仍是 5 张  5 张
+  <span class="ok">[OK]  </span>★ 新文件名都带序号（-2 / -3 …）  我的地图工程_20261002_000811_A5-2.png, 我的地图工程_20261002_000811_B-3.png, 我的地图工程_20261002_000811_C-2.png, 我的地图工程_20261002_000811_D-2.png, 我的地图工程_20261002_000811_E-2.png
+  <span class="ok">[OK]  </span>★ 新名字和旧名字完全不同
+  <span class="ok">[OK]  </span>★ 老文件一个字节都没动（没被覆盖）  16550 → 16550
+  <span class="ok">[OK]  </span>★ 每个槽都攒下了自己的历史版本（B×3，A5/C/D/E×2 = 11 张）  A5:2 B:3 C:2 D:2 E:2　共 11 个 PNG
+  <span class="ok">[OK]  </span>★ 老名字仍全在  我的地图工程_20261002_000811_A5-2.png, 我的地图工程_20261002_000811_A5.png, 我的地图工程_20261002_000811_B-2.png, 我的地图工程_20261002_000811_B-3.png, 我的地图工程_20261002_000811_B.png, 我的地图工程_20261002_000811_C-2.png, 我的地图工程_20261002_000811_C.png, 我的地图工程_20261002_000811_D-2.png, 我的地图工程_20261002_000811_D.png, 我的地图工程_20261002_000811_E-2.png, 我的地图工程_20261002_000811_E.png
+  <span class="ok">[OK]  </span>★ flags 重名也改名，不覆盖  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_flags-2.json
+  <span class="ok">[OK]  </span>★ manifest 重名也改名，不覆盖  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\我的地图工程_20261002_000811\我的地图工程_20261002_000811_manifest-2.json
+  <span class="ok">[OK]  </span>★ 第一份 flags / manifest 还在
+<span class="h">[5] 第二个工程 = 另一个文件夹，互不干扰</span>
+  <span class="ok">[OK]  </span>第二个工程存成功  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\第二个工程_20261002_000811\第二个工程_20261002_000811.tsproj
+  <span class="ok">[OK]  </span>★ 落在另一个文件夹  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\第二个工程_20261002_000811
+  <span class="ok">[OK]  </span>★ 两个文件夹同时在
+  <span class="ok">[OK]  </span>★ 在新工程文件夹里导出，前缀换成新工程名  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\第二个工程_20261002_000811\第二个工程_20261002_000811_B.png
+  <span class="ok">[OK]  </span>★ 老工程文件夹里的东西没被新工程碰到  11 个文件
+  <span class="ok">[OK]  </span>★ 新工程文件夹是独立的一份  第二个工程_20261002_000811_B.png
+  <span class="ok">[OK]  </span>★ 两个文件夹内容不同（同名文件各在各家）
+<span class="h">[6] 导入弹层：子文件夹里的包也要列出来</span>
+  <span class="ok">[OK]  </span>★ 本次两个包都被列到（目录里还有历次累积的，不影响）  18 个包
+  <span class="ok">[OK]  </span>★ 每个包都带「所在工程文件夹」标记（= 它的子文件夹名）  我的地图工程, 我的地图工程_20261001_235442, 我的地图工程_20261001_235451 …
+  <span class="ok">[OK]  </span>★ 本次两个包的 folder 正好是本次两个工程名
+  <span class="ok">[OK]  </span>★ 每个包都能取到源图名
+  <span class="ok">[OK]  </span>★ 弹层列出卡片（≥2 张，来自各个子文件夹）  18 张
+<span class="h">[7] 底栏提示写明「导出根 ▸ 工程文件夹」</span>
+  <span class="ok">[OK]  </span>★ 提示含当前工程文件夹名  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest  ▸  第二个工程_20261002_000811\
+  <span class="ok">[OK]  </span>★ 提示里有 ▸ 分隔  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest  ▸  第二个工程_20261002_000811\
+  <span class="ok">[OK]  </span>★ hover 说明含完整落盘路径  每次导出都落这里：D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\第二个工程_20261002_000811
+文件夹里的文件重名会自动加 -2，不会被覆盖
+  <span class="ok">[OK]  </span>★ hover 说明讲清「重名自动加 -2，不覆盖」  每次导出都落这里：D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\第二个工程_20261002_000811
+文件夹里的文件重名会自动加 -2，不会被覆盖
+<span class="h">[8] 换素材图集后：工程文件夹名跟着换（没存过工程时用源图名）</span>
+  <span class="ok">[OK]  </span>★ 新工程文件夹名 = 新源图名  map4_8x7
+  <span class="ok">[OK]  </span>★ ensureProjDir 建出的是新文件夹  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_foldertest\map4_8x7
+  <span class="ok">[OK]  </span>★ 老工程的文件夹原封不动
+<span class="h">[9] 写交班文件 out/_folder_case.json（复算脚本靠它定位本次产物）</span>
+  <span class="ok">[OK]  </span>交班文件写成功  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_folder_case.json
+<span class="h">==== 通过 49　失败 0 ====</span></div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* =============================================================
+   用户要求：「每个工程一个文件夹，导出时必须不要重名，且新建一个
+   文件夹，里面的图层名也不要重复。」
+
+     [1] 存工程 → 建出 <导出根>/<工程名>/，包在里面
+     [2] 导出 PNG / flags / manifest → 同一个文件夹，前缀 = 工程名
+     [3] 图层名互不重复（5 个槽 5 个名字）
+     [4] ★ 重名不覆盖：再导一次 → -2、-3，老文件原封不动
+     [5] 两个工程 → 两个文件夹，互不干扰
+     [6] 导入弹层能列到子文件夹里的包（也能列到老口径裸放的包）
+     [7] 底栏提示写明「导出根 ▸ 工程文件夹」
+   ============================================================= */
+const OUT=[]; let PASS=0, FAIL=0;
+function head(s){OUT.push('<span class="h">'+s+'</span>');}
+function ck(n,c,e){ if(c){PASS++;OUT.push('  <span class="ok">[OK]  </span>'+n+(e?'  '+e:''));}
+                   else {FAIL++;OUT.push('  <span class="bad">[FAIL]</span> '+n+(e?'  '+e:''));} }
+function flush(){document.getElementById('log').innerHTML=OUT.join('\n')+
+  '\n<span class="h">==== 通过 '+PASS+'　失败 '+FAIL+' ====</span>';
+  document.title='e2e folder '+PASS+'/'+(PASS+FAIL);}
+
+setTimeout(()=>{ run().catch(e=>{ck('run 抛异常',false,e.message+'\n'+(e.stack||'')); flush();}); },4500);
+
+async function run(){
+  const fr=document.getElementById('fr'), W=fr.contentWindow, D=fr.contentDocument;
+  const T=W.TS, S=T.S;
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const roots=await (await fetch('/api/roots')).json();
+  const BASE=roots.toolOut+'\\_foldertest';        // 自测都落这里，不碰桌面
+  // ★ 工程名每次带时间戳：这样每次跑都是全新文件夹，
+  //   「-2/-3 序号连续」这类断言才不会被上一轮的残留带偏（也就**不需要删任何东西**）
+  const TAG=(()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');
+    return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+
+           p(d.getHours())+p(d.getMinutes())+p(d.getSeconds());})();
+  const NAME='我的地图工程_'+TAG;
+  const NAME2='第二个工程_'+TAG;
+  const list=d=>fetch('/api/list?dir='+encodeURIComponent(d)).then(r=>r.json());
+  const exists=async p=>{ const j=await list(p.split('\\').slice(0,-1).join('\\'));
+                          return (j.items||[]).some(it=>it.name===p.split('\\').pop()); };
+  // /api/info 对「任何」文件都可用（/api/list 只列图片，不列 json）→ 用它判存在 + 取字节数
+  const bytesOf=async p=>{ try { const j=await (await fetch('/api/info?path='+encodeURIComponent(p))).json();
+                                return j.ok ? (j.info.bytes||0) : -1; } catch(e){ return -1; } };
+  const dirFiles=async d=>((await list(d)).items||[]).map(x=>x.name);
+
+  T.setOutDir(BASE);
+  ck('导出根切到 '+BASE, S.outDir===BASE, S.outDir);
+
+  /* ---------- [1] 存工程 → 建文件夹 ---------- */
+  head('[1] 存工程 = 建一个以工程名命名的文件夹，包放里面');
+  const lm=await list(roots.mapSrc);
+  const map1=lm.items.find(x=>x.name==='map1_7x6.png');
+  await T.openSheetByPath(map1.path,map1.name);
+  ck('素材 map1_7x6.png 已载入', S.sheet&&S.sheet.cols===7&&S.sheet.rows===6);
+
+  // 造点内容：B 槽两格
+  S.out.B.fill(null);
+  S.out.B[0]=T.newCell(1,'none'); S.out.B[1]=T.newCell(2,'h');
+  ck('B 槽放了 2 格', S.out.B.filter(Boolean).length===2);
+
+  const pr=await T.saveProject(NAME, BASE);
+  await wait(120);
+  ck('存工程成功', !!pr&&pr.ok, pr?pr.path:'(null)');
+  ck('★ 路径 = <导出根>/<工程名>/<工程名>.tsproj',
+     !!pr && pr.path===BASE+'\\'+NAME+'\\'+NAME+'.tsproj', pr?pr.path:'');
+  ck('★ 后端起了一个专门的文件夹', !!pr && pr.dir===BASE+'\\'+NAME, pr?pr.dir:'');
+  ck('★ 文件夹真的落在磁盘上（能列到）', await exists(BASE+'\\'+NAME));
+  ck('前端记住了这个文件夹', T.getProjDir()===BASE+'\\'+NAME, T.getProjDir());
+  ck('工程名 = 文件夹名', T.projFolderName()===NAME, T.projFolderName());
+
+  /* ---------- [2] 导出落进工程文件夹 ---------- */
+  head('[2] 导出 PNG / flags / manifest 都进这个文件夹，前缀 = 工程名');
+  const pngs=[];
+  for(const s of T.SLOTS){ const p=await T.savePng(s.id,null,true); if(p) pngs.push(p); }
+  ck('只导出有内容的槽（1 张 B）', pngs.length===1, pngs.join(' | '));
+  ck('★ PNG 落在工程文件夹里', pngs.every(p=>p.indexOf(BASE+'\\'+NAME+'\\')===0), pngs[0]||'');
+  ck('★ 文件名 = <工程名>_<槽>.png', pngs[0]===BASE+'\\'+NAME+'\\'+NAME+'_B.png', pngs[0]||'');
+
+  const fp=await T.saveFlags();
+  const mp=await T.saveJson();
+  await wait(80);
+  ck('★ flags 落在工程文件夹里，名字带工程名',
+     fp===BASE+'\\'+NAME+'\\'+NAME+'_flags.json', fp||'');
+  ck('★ manifest 落在工程文件夹里，名字带工程名',
+     mp===BASE+'\\'+NAME+'\\'+NAME+'_manifest.json', mp||'');
+  ck('★ 包 / PNG / flags / manifest 四个文件都真的在磁盘上',
+     (await bytesOf(pr.path))>0 && (await bytesOf(pngs[0]))>0 &&
+     (await bytesOf(fp))>0 && (await bytesOf(mp))>0,
+     '包 '+await bytesOf(pr.path)+' / PNG '+await bytesOf(pngs[0])+
+     ' / flags '+await bytesOf(fp)+' / manifest '+await bytesOf(mp)+' 字节');
+  ck('★ 都在这一个文件夹里（路径前缀一致）',
+     [pr.path,pngs[0],fp,mp].every(p=>p.indexOf(BASE+'\\'+NAME+'\\')===0));
+
+  /* ---------- [3] 图层名互不重复 ---------- */
+  head('[3] 图层名互不重复');
+  S.out.A5.fill(null); S.out.C.fill(null); S.out.D.fill(null); S.out.E.fill(null);
+  S.out.A5[0]=T.newCell(3,'none'); S.out.C[0]=T.newCell(4,'none');
+  S.out.D[0]=T.newCell(5,'none'); S.out.E[0]=T.newCell(6,'none');
+  const all=[];
+  for(const s of T.SLOTS){ const p=await T.savePng(s.id,null,true); if(p) all.push(p); }
+  const short=all.map(p=>p.split('\\').pop());
+  ck('导出 5 张（五槽都有内容）', all.length===5, all.length+' 张');
+  ck('★ 5 个文件名两两不同', new Set(short).size===5, short.join(', '));
+  ck('★ 名字里带槽位（A5/B/C/D/E）',
+     ['A5','B','C','D','E'].every(k=>short.some(n=>new RegExp('^'+NAME+'_'+k+'(-\\d+)?\\.png$').test(n))),
+     short.join(', '));
+  const f2=await dirFiles(BASE+'\\'+NAME);
+  ck('★ 文件夹里没有任何重名文件',
+     new Set(f2).size===f2.length, f2.length+' 个文件');
+
+  /* ---------- [4] 重名不覆盖 ---------- */
+  head('[4] ★ 再导一次：自动改名 -2，不覆盖旧的');
+  const bSize=await bytesOf(BASE+'\\'+NAME+'\\'+NAME+'_B.png');
+  const again=[];
+  for(const s of T.SLOTS){ const p=await T.savePng(s.id,null,true); if(p) again.push(p); }
+  const againShort=again.map(p=>p.split('\\').pop());
+  ck('再导一次仍是 5 张', again.length===5, again.length+' 张');
+  ck('★ 新文件名都带序号（-2 / -3 …）',
+     againShort.every(n=>/-[2-9]\d*\.png$/.test(n)), againShort.join(', '));
+  ck('★ 新名字和旧名字完全不同', again.every(p=>all.indexOf(p)<0));
+  const aSize=await bytesOf(BASE+'\\'+NAME+'\\'+NAME+'_B.png');
+  ck('★ 老文件一个字节都没动（没被覆盖）', aSize===bSize&&aSize>0, bSize+' → '+aSize);
+  const f3=await dirFiles(BASE+'\\'+NAME);
+  // B 被导过 3 次（[2][3][4]）→ B/B-2/B-3；其余槽各 2 次 → 3 + 4×2 = 11
+  const vOf=k=>f3.filter(n=>new RegExp('^'+NAME+'_'+k+'(-\\d+)?\\.png$').test(n)).length;
+  ck('★ 每个槽都攒下了自己的历史版本（B×3，A5/C/D/E×2 = 11 张）',
+     vOf('B')===3 && ['A5','C','D','E'].every(k=>vOf(k)===2),
+     'A5:'+vOf('A5')+' B:'+vOf('B')+' C:'+vOf('C')+' D:'+vOf('D')+' E:'+vOf('E')+
+     '　共 '+f3.filter(n=>/\.png$/i.test(n)).length+' 个 PNG');
+  ck('★ 老名字仍全在', ['A5','B','C','D','E'].every(k=>f3.indexOf(NAME+'_'+k+'.png')>=0), f3.join(', '));
+
+  // flags / manifest 也要不覆盖
+  const fp2=await T.saveFlags(); const mp2=await T.saveJson(); await wait(80);
+  ck('★ flags 重名也改名，不覆盖',
+     fp2===BASE+'\\'+NAME+'\\'+NAME+'_flags-2.json', fp2||'');
+  ck('★ manifest 重名也改名，不覆盖',
+     mp2===BASE+'\\'+NAME+'\\'+NAME+'_manifest-2.json', mp2||'');
+  ck('★ 第一份 flags / manifest 还在',
+     (await bytesOf(BASE+'\\'+NAME+'\\'+NAME+'_flags.json'))>0 &&
+     (await bytesOf(BASE+'\\'+NAME+'\\'+NAME+'_manifest.json'))>0);
+
+  /* ---------- [5] 两个工程互不干扰 ---------- */
+  head('[5] 第二个工程 = 另一个文件夹，互不干扰');
+  const pr2=await T.saveProject(NAME2, BASE);
+  await wait(120);
+  ck('第二个工程存成功', !!pr2&&pr2.ok, pr2?pr2.path:'');
+  ck('★ 落在另一个文件夹', !!pr2 && pr2.dir===BASE+'\\'+NAME2, pr2?pr2.dir:'');
+  ck('★ 两个文件夹同时在', (await exists(BASE+'\\'+NAME))&&(await exists(BASE+'\\'+NAME2)));
+  const p2=await T.savePng('B',null,true);
+  ck('★ 在新工程文件夹里导出，前缀换成新工程名',
+     p2===BASE+'\\'+NAME2+'\\'+NAME2+'_B.png', p2||'');
+  const g1=await dirFiles(BASE+'\\'+NAME), g2=await dirFiles(BASE+'\\'+NAME2);
+  ck('★ 老工程文件夹里的东西没被新工程碰到',
+     g1.indexOf(NAME+'_B.png')>=0, g1.length+' 个文件');
+  ck('★ 新工程文件夹是独立的一份', g2.length>=1, g2.join(', '));
+  ck('★ 两个文件夹内容不同（同名文件各在各家）',
+     g2.indexOf(NAME2+'_B.png')>=0 && g1.indexOf(NAME2+'_B.png')<0);
+
+  /* ---------- [6] 导入弹层能列到子文件夹里的包 ---------- */
+  head('[6] 导入弹层：子文件夹里的包也要列出来');
+  T.setOutDir(BASE);
+  const jl=await (await fetch('/api/proj/list?dir='+encodeURIComponent(BASE))).json();
+  const items=jl.items||[];
+  ck('★ 本次两个包都被列到（目录里还有历次累积的，不影响）',
+     items.some(x=>x.name===NAME+'.tsproj') && items.some(x=>x.name===NAME2+'.tsproj'),
+     items.length+' 个包');
+  ck('★ 每个包都带「所在工程文件夹」标记（= 它的子文件夹名）',
+     items.every(x=>!!x.folder), items.map(x=>x.folder).slice(0,3).join(', ')+' …');
+  ck('★ 本次两个包的 folder 正好是本次两个工程名',
+     items.filter(x=>x.name===NAME+'.tsproj').every(x=>x.folder===NAME) &&
+     items.filter(x=>x.name===NAME2+'.tsproj').every(x=>x.folder===NAME2));
+  ck('★ 每个包都能取到源图名', items.every(x=>x.sheet==='map1_7x6.png'));
+
+  T.openProjDialog(); await wait(250);
+  const cards=D.querySelectorAll('#projList .projcard');
+  ck('★ 弹层列出卡片（≥2 张，来自各个子文件夹）', cards.length>=2, cards.length+' 张');
+  D.querySelector('#projClose').click();
+
+  /* ---------- [7] UI 提示 ---------- */
+  head('[7] 底栏提示写明「导出根 ▸ 工程文件夹」');
+  T.updateExportHint();
+  const hint=D.querySelector('#outDirHint');
+  // 此刻的工程是「第二个工程」（[5] 刚存过）
+  ck('★ 提示含当前工程文件夹名', (hint.textContent||'').indexOf(NAME2)>=0, hint.textContent);
+  ck('★ 提示里有 ▸ 分隔', (hint.textContent||'').indexOf('▸')>=0, hint.textContent);
+  ck('★ hover 说明含完整落盘路径', (hint.title||'').indexOf(BASE+'\\'+NAME2)>=0, hint.title||'');
+  ck('★ hover 说明讲清「重名自动加 -2，不覆盖」',
+     (hint.title||'').indexOf('不覆盖')>=0 || (hint.title||'').indexOf('-2')>=0, hint.title||'');
+
+  /* ---------- [8] 换源图 → 工程文件夹要重算 ---------- */
+  head('[8] 换素材图集后：工程文件夹名跟着换（没存过工程时用源图名）');
+  S.proj={path:'',name:''}; T.resetProjDir();
+  const lm2=await list(roots.mapSrc);
+  const m4=lm2.items.find(x=>x.name==='map4_8x7.png');
+  await T.openSheetByPath(m4.path,m4.name);
+  await wait(120);
+  ck('★ 新工程文件夹名 = 新源图名', T.projFolderName()==='map4_8x7', T.projFolderName());
+  const d4=await T.ensureProjDir();
+  ck('★ ensureProjDir 建出的是新文件夹', d4===BASE+'\\map4_8x7', d4);
+  ck('★ 老工程的文件夹原封不动', await exists(BASE+'\\'+NAME));
+
+  /* ---------- 交班给 _verify_folder.py（把本次工程名写下来，它才知道要验谁） ---------- */
+  head('[9] 写交班文件 out/_folder_case.json（复算脚本靠它定位本次产物）');
+  const casePath=roots.toolOut+'\\_folder_case.json';
+  try {
+    const cr=await fetch('/api/saveText',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({path:casePath, text:JSON.stringify({
+        base:BASE, name:NAME, name2:NAME2, tag:TAG,
+        mapSrc:roots.mapSrc, srcName:'map1_7x6.png'}, null, 1)})}).then(r=>r.json());
+    ck('交班文件写成功', !!cr&&cr.ok, cr?(cr.path||''):'(失败)');
+  } catch(e){ ck('交班文件写成功', false, e.message); }
+
+  window.__FOLDER_TEST__={base:BASE, name:NAME, name2:NAME2, tag:TAG};
+  flush();
+}
+</script>
+
+
+</body></html>

@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Label, Button, tween, Tween, Vec3, UITransform, Sprite, SpriteAtlas, SpriteFrame, Color } from 'cc';
+import { _decorator, Component, Node, Label, Button, tween, Tween, Vec3, UITransform, Sprite, SpriteAtlas, SpriteFrame, Color, resources, JsonAsset } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 import { DataCacheManager } from '../global/DataCacheManager';
@@ -12,6 +12,9 @@ import {
 } from './battle-entry-intent';
 import { validateBattleRestoreState } from './battle-restore';
 import type { StoryBattleFinishedResult } from './story-runtime-mode';
+import { Logger } from '../global/Logger';
+import * as SkillData from './SkillData';
+import { SkillSelectPanel } from './SkillSelectPanel';
 
 const { ccclass, property } = _decorator;
 
@@ -30,12 +33,120 @@ interface BattleUnit {
     level: number;
     maxHp: number;
     hp: number;
+    /** 能量上限（MaxMP）。被动「能量恢复」回的就是它；老数据无 MP 时为 0 */
+    maxMp: number;
+    /** 当前能量（CurrentMP） */
+    mp: number;
     attack: number;
     defense: number;
     initiative: number;
+    /** 攻击次数 AttackCount（= 一次攻击拆成几段，默认 1）。 */
+    attackTimes: number;
     petId?: string;
     rawData: any;   // 原始 robot_pet_info，用于 RobotShow
 }
+
+/**
+ * 解析单位的「攻击次数」AttackCount（= 一次攻击拆成几段，默认 1）。
+ * 语义（用户口径）：AttackCount 就是装备那个攻击次数值，默认 1；
+ *   AttackCount = 1 → 单段；= 2 → 拆 2 段；以此类推。
+ * 取值优先级（非常重要）：
+ *   1) CurrentAttackCount / currentAttackCount —— **装备加成后的最终段数**（服务端已把
+ *      「机甲基础 AttackCount + 装备 attackCount 加成」写入 CurrentAttackCount）；
+ *      真实玩家机甲的顶层 AttackCount 恒为 1，装备效果只在 CurrentAttackCount 里，
+ *      所以必须优先读它，否则装备「攻击次数」永远不生效（PVP/PVE 都一样）。
+ *   2) 顶层 AttackCount / attackCount（服务端已聚合的直传字段，老数据兼容）
+ *   3) info.equipment 各槽位的 attackCount 字段累加 / effecttext「攻击次数+N」
+ *   4) 兜底 1
+ */
+function resolveAttackTimes(info: any): number {
+    if (!info) return 1;
+
+    const pick = (v: any): number | null => {
+        if (v === undefined || v === null || v === '') return null;
+        const n = Number(v);
+        return (!Number.isNaN(n) && n >= 1) ? Math.floor(n) : null;
+    };
+
+    // 1) 装备加成后的最终段数（服务端权威）
+    const current = pick(info.CurrentAttackCount ?? info.currentAttackCount);
+    if (current !== null) return current;
+
+    // 2) 兼容老结构：顶层直传
+    const direct = pick(info.AttackCount ?? info.attackCount);
+    if (direct !== null) return direct;
+
+    // 3) 装备累加：每件装备的 attackCount 为"该装备提供的段数加成"（0/1/2），
+    //   总段数 = 1 + Σ(装备加成)
+    const equip = info.equipment || info?.data?.equipment;
+    if (equip && typeof equip === 'object') {
+        let sum = 0;
+        let found = false;
+        for (const slot of Object.keys(equip)) {
+            const item = equip[slot];
+            if (!item) continue;
+            if (item.attackCount !== undefined && item.attackCount !== null) {
+                sum += Number(item.attackCount) || 0;
+                found = true;
+                continue;
+            }
+            const text: string = item?.effecttext || item?.effect_text || '';
+            const m = /攻击次数\s*\+\s*(\d+)/.exec(text || '');
+            if (m) { sum += Number(m[1]); found = true; }
+        }
+        if (found) return Math.max(1, 1 + sum);
+    }
+    return 1;
+}
+
+/**
+ * 「攻击次数」机制（设计见 docs/攻击次数机制设计.md）
+ * ---------------------------------------------------------------
+ * 规则（用户口径）：
+ *   - 一次攻击的总伤害不变（仍是 damage = 攻击 − 防御）；
+ *   - 把这一次攻击**拆成 N 段**：N = attackCount（AttackCount 字段，默认 1）；
+ *   - 每段带小幅区间波动（如单段暴击 +X%），但**N 段总和相对单次伤害最多 +20%**，不离谱；
+ *   - 默认倾向「不超发」：多数情况总伤 ≈ 原伤害（0%~+20% 区间内浮动）。
+ *
+ * @param attackCount 总段数（= 单位的 AttackCount 字段，默认 1）
+ * 返回每段伤害数组（已取整，至少 1）；调用方依次扣血/弹数字。
+ */
+function computeAttackSegments(baseDamage: number, attackCount: number, rng?: () => number): number[] {
+    const total = Math.max(1, Math.floor(baseDamage));
+    const segN = Math.max(1, Math.floor(attackCount || 1));
+    if (segN <= 1) {
+        return [total];
+    }
+    const rand = rng || Math.random;
+
+    // 总体提升上限 20%：本轮实际提升量在 [0, 0.20] 内随机（偏向低值，避免每次都满 20%）
+    const boost = Math.pow(rand(), 1.6) * 0.20;
+    let grand = total * (1 + boost);
+
+    // 每段权重大致均分，带 ±35% 的小幅波动（体现“每段有区间小变化”）
+    const weights: number[] = [];
+    let wsum = 0;
+    for (let i = 0; i < segN; i++) {
+        const w = (1.0 / segN) * (0.65 + rand() * 0.70); // 0.65 ~ 1.35 相对权重
+        weights.push(w);
+        wsum += w;
+    }
+    // 归一化 + 取整，最后一段吸收舍入误差，保证总和 == floor(grand)
+    const segs: number[] = [];
+    let acc = 0;
+    const targetTotal = Math.max(1, Math.floor(grand));
+    for (let i = 0; i < segN; i++) {
+        if (i === segN - 1) {
+            segs.push(Math.max(1, targetTotal - acc));
+        } else {
+            const v = Math.max(1, Math.round(targetTotal * (weights[i] / wsum)));
+            segs.push(v);
+            acc += v;
+        }
+    }
+    return segs;
+}
+
 
 type ActionType = 'ATTACK' | 'DEFEND' | 'ESCAPE' | 'ITEM' | 'SKILL';
 
@@ -83,6 +194,14 @@ export class BattleScene extends Component {
 
     @property({ type: Button, tooltip: '返回（仅切换操作面板显示，不退出战斗）' })
     backButton: Button | null = null;
+
+    // ========= 新增：战斗内「技能」按钮 + 技能选择面板（SkillSelect） =========
+    // 两者都可以留空：运行时按名字在场景里找（Skill / SkillSelect），找到后再兜底 addComponent。
+    @property({ type: Button, tooltip: '技能按钮（BattleSelectButton/Skill）——点击打开技能选择面板' })
+    skillButton: Button | null = null;
+
+    @property({ type: SkillSelectPanel, tooltip: '技能选择面板（场景内的 SkillSelect；选中技能后才出现「确认」）' })
+    skillSelectPanel: SkillSelectPanel | null = null;
 
     // 倒计时显示（Time/Number）
     @property({ type: Label, tooltip: '倒计时文本（Time/Number）' })
@@ -153,8 +272,24 @@ export class BattleScene extends Component {
     private readonly TURN_TIME_LIMIT = 30;
     private turnTimeLeft: number = 0;
 
+    // 「空窗挽回期」：进入指令阶段后先静默观察 GRACE_SECONDS 秒，任一方/双方无操作才显示并启动倒计时
+    private readonly GRACE_SECONDS = 5;
+    /** 本回合空窗观察剩余秒数（>0 表示还在静默期，倒计时面板隐藏） */
+    private graceTimeLeft: number = 0;
+    /** 倒计时是否已激活（激活后才显示「剩余时间」面板） */
+    private graceActive: boolean = false;
+
+    /** PVP：已播放过动画的最大回合号，用于对服务端 pvp_round_update 推送去重 */
+    private _lastPlayedPvpRound: number = 0;
+    /** PVP：自己已提交本回合指令、正在等待对方（此期间倒计时继续显示，便于判断对方是否挂机） */
+    private _waitingOpponent: boolean = false;
+    /** PVP：倒计时归零后等待服务器推送的累计时长（秒），超过兜底自行提交普攻 */
+    private _afterZeroWait: number = 0;
+
     // 动画控制
     private isAnimating: boolean = false;
+    /** 看门狗计时：ANIMATING 状态持续时长（秒），超阈值强制恢复，防止死锁 */
+    private animWatchdog: number = 0;
 
     // 当前回合双方的指令（先选指令，再按先后手结算）
     private pendingPlayerAction: BattleAction | null = null;
@@ -220,7 +355,7 @@ export class BattleScene extends Component {
         if (this._roomStateApplied) return;
         // 仅在服务端房间战斗模式下启用该兜底
         if (!this.useServerRoomBattle) return;
-        console.error('[BattleScene] 进入战斗房间超时：未能应用完整 room state，自动退出面板避免卡死');
+        Logger.error('[BattleScene] 进入战斗房间超时：未能应用完整 room state，自动退出面板避免卡死');
         const storyCb = this._storyBattleCallback;
         if (storyCb) {
             this._storyBattleCallback = null;
@@ -277,6 +412,49 @@ export class BattleScene extends Component {
         if (this.backButton) {
             this.backButton.node.on(Button.EventType.CLICK, this.onBackClicked, this);
         }
+
+        // 技能按钮（BattleSelectButton/Skill）→ 打开技能选择面板。
+        //   没在 Inspector 挂也没关系：按名字在战斗操作面板下找。
+        const skillBtn = this.resolveSkillButton();
+        if (skillBtn) {
+            skillBtn.node.on(Button.EventType.CLICK, this.onSkillClicked, this);
+        }
+        // 技能选择面板：先确保组件在（找不到就 addComponent），并初始关闭（场景里可能留着显示状态）
+        this.ensureSkillSelectPanel();
+        this.closeSkillSelectPanel();
+
+        // 监听服务端主动推送的「PVP 回合结算」消息：
+        //   挂机方从不发请求，靠该推送才能拿到新 state 并播放整回合动画（含自己被攻击）。
+        this.ws.on(GameConfig.MESSAGE_TYPES.PVP_ROUND_UPDATE, this.onPvpRoundUpdate, this);
+
+        // 技能目录：技能名 / 特效名 / 能量消耗 / 可施放列表都从 Skills.json 读（服务端同源副本）
+        this.loadSkillCatalog();
+    }
+
+    /**
+     * 加载技能目录（`assets/resources/json/Skills.json`，v5）并注入 SkillData。
+     *
+     * 注入后 `SkillData` 才能提供：技能名/特效名查询、能量消耗、可施放技能列表（供后续技能面板接入）。
+     * ⚠ 加载失败不影响战斗：结算与表现的全部权威数据都由服务端 state.round_events 下发，
+     *   目录只用于「名称/特效/UI 列表」这类展示信息。
+     */
+    private loadSkillCatalog(): void {
+        try {
+            resources.load('json/Skills', JsonAsset, (err: Error | null, asset: JsonAsset | null) => {
+                if (err || !asset) {
+                    Logger.warn('[BattleScene] 技能目录 json/Skills 加载失败（仅影响技能名/列表展示）:', err);
+                    return;
+                }
+                const data: any = (asset as any).json || null;
+                SkillData.setSkillCatalog(data);
+                Logger.info(
+                    `[BattleScene] 技能目录已注入：v${data?.version} / ` +
+                    `${Array.isArray(data?.skills) ? data.skills.length : 0} 条`
+                );
+            });
+        } catch (err) {
+            Logger.warn('[BattleScene] 技能目录加载异常:', err);
+        }
     }
 
     /** 修复点：onDestroy 解绑按钮，避免节点销毁后仍触发事件导致泄漏或报错 */
@@ -293,6 +471,10 @@ export class BattleScene extends Component {
         if (this.backButton?.node) {
             this.backButton.node.off(Button.EventType.CLICK, this.onBackClicked, this);
         }
+        if (this.skillButton?.node) {
+            this.skillButton.node.off(Button.EventType.CLICK, this.onSkillClicked, this);
+        }
+        this.ws.off(GameConfig.MESSAGE_TYPES.PVP_ROUND_UPDATE, this.onPvpRoundUpdate, this);
         this.clearPlayerInfoListener();
         this.clearEnemyInfoListener();
         try {
@@ -306,8 +488,15 @@ export class BattleScene extends Component {
 
         // resume：状态已由 restoreFromServerState 同步应用，禁止 create / resume 网络请求
         if (action === 'resume-ready') {
-            if (this.battleSelectPanel && this.state !== BattleState.WAITING_COMMANDS) {
-                // 恢复路径已设置面板；此处仅做轻量 UI 对齐
+            // 加固：恢复战斗时，若当前状态卡在「动画中」等中间态，强制回到指令阶段，
+            //   避免残留的 ANIMATING 状态导致面板不可操作、无法退出。
+            //   注意：FINISHED 是合法终态（战斗已结束），不能强制恢复。
+            if (this.state !== BattleState.WAITING_COMMANDS && this.state !== BattleState.FINISHED) {
+                Logger.warn(`[BattleScene] resume-ready 状态异常(state=${this.state})，强制恢复指令阶段`);
+                this.isAnimating = false;
+                this.isRequestingAction = false;
+                this.animWatchdog = 0;
+                this.startCommandPhase();
             }
             this._syncBattlePortraitVisibility();
             return;
@@ -329,12 +518,16 @@ export class BattleScene extends Component {
         this.pendingPlayerAction = null;
         this.pendingEnemyAction = null;
         this.turnTimeLeft = this.TURN_TIME_LIMIT;
+        this.graceActive = false;
+        this.graceTimeLeft = this.GRACE_SECONDS;
         this.lastRoundPlayerHp = 0;
         this.lastRoundEnemyHp = 0;
         this.lastRoundPlayerAction = null;
+        this._lastPlayedPvpRound = 0;
 
         if (this.battleSelectPanel) this.battleSelectPanel.active = false;
         if (this.timerRoot) this.timerRoot.active = false;
+        this.closeSkillSelectPanel();
 
         this.prepareRobotShowsForNewBattle();
         this._syncBattlePortraitVisibility();
@@ -356,10 +549,17 @@ export class BattleScene extends Component {
     }
 
     onDisable() {
-        // 清理状态
-        this.state = BattleState.FINISHED;
+        // 关键修复：关闭面板 ≠ 战斗结束。此前把 state 设为 FINISHED，会导致再次打开时
+        //   onEnable 的 resume-ready 分支带着 FINISHED 状态进入，入场动画播完后
+        //   startCommandPhase() 因 `state === FINISHED` 直接 return → 战斗卡死且退不出。
+        //   这里只清理动画/请求锁（保留 FINISHED 供结算逻辑判断），状态复位交由 onEnable 分支处理。
         this.isAnimating = false;
         this.isRequestingAction = false;
+        this.animWatchdog = 0;
+        // 若当前不是「战斗结束」，说明是中途关闭面板，复位为 INIT，避免下次打开带着脏状态
+        if (this.state !== BattleState.FINISHED) {
+            this.state = BattleState.INIT;
+        }
         if (this.playerRobotShow) this.playerRobotShow.setBattleBarsVisible(false);
         if (this.enemyRobotShow) this.enemyRobotShow.setBattleBarsVisible(false);
 
@@ -413,7 +613,7 @@ export class BattleScene extends Component {
     private startPvpFlatMatchFlow(): void {
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
-            console.error('[BattleScene] PVP 匹配：未获取到 characterId');
+            Logger.error('[BattleScene] PVP 匹配：未获取到 characterId');
             this.node.active = false;
             return;
         }
@@ -486,7 +686,7 @@ export class BattleScene extends Component {
             skipServerAuth: opts.skipServerAuth,
         });
         if (validated.ok === false) {
-            console.error('[BattleScene] 剧情战拒绝创建:', validated.reason);
+            Logger.error('[BattleScene] 剧情战拒绝创建:', validated.reason);
             opts.onFinished({
                 won: false,
                 roomId: '',
@@ -519,7 +719,7 @@ export class BattleScene extends Component {
 
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
-            console.error('[BattleScene] 剧情战：未获取 characterId');
+            Logger.error('[BattleScene] 剧情战：未获取 characterId');
             opts.onFinished({
                 won: false,
                 roomId: '',
@@ -544,7 +744,7 @@ export class BattleScene extends Component {
             (createResp: any) => {
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
                 if (isActiveRoomConflict(createResp)) {
-                    console.log('[BattleScene] 剧情 create 冲突：转统一恢复');
+                    Logger.debug('[BattleScene] 剧情 create 冲突：转统一恢复');
                     this._storyBattleCallback = null;
                     this._storyContext = null;
                     this._entryIntent = null;
@@ -554,7 +754,7 @@ export class BattleScene extends Component {
                 }
                 if (!createResp?.success || !createResp.data?.state) {
                     const msg = createResp?.message || '剧情战斗房间创建失败';
-                    console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
+                    Logger.error('[BattleScene] 剧情战斗房间创建失败', createResp);
                     this._storyBattleCallback?.({
                         won: false,
                         roomId: '',
@@ -583,7 +783,7 @@ export class BattleScene extends Component {
     private enterBattleRoom() {
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) {
-            console.error('[BattleScene] 未获取到 characterId，无法进入战斗房间');
+            Logger.error('[BattleScene] 未获取到 characterId，无法进入战斗房间');
             return;
         }
 
@@ -594,13 +794,13 @@ export class BattleScene extends Component {
             (createResp: any) => {
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
                 if (isActiveRoomConflict(createResp)) {
-                    console.log('[BattleScene] create 冲突：已有活动房间，转 BattleResumeController');
+                    Logger.debug('[BattleScene] create 冲突：已有活动房间，转 BattleResumeController');
                     this.node.active = false;
                     ensureBattleResumeController().scheduleCheck('create_conflict');
                     return;
                 }
                 if (!createResp?.success || !createResp.data?.state) {
-                    console.error('[BattleScene] 创建战斗房间失败:', createResp?.message || createResp);
+                    Logger.error('[BattleScene] 创建战斗房间失败:', createResp?.message || createResp);
                     this.roomId = null;
                     this.state = BattleState.FINISHED;
                     this.pendingPlayerAction = null;
@@ -628,7 +828,7 @@ export class BattleScene extends Component {
         const validated = validateBattleRestoreState(state, characterId);
         if (validated.ok === false) {
             const rejectReason = validated.reason;
-            console.error(`[BattleScene] restore rejected: ${rejectReason}`);
+            Logger.error(`[BattleScene] restore rejected: ${rejectReason}`);
             return false;
         }
 
@@ -643,7 +843,7 @@ export class BattleScene extends Component {
                 this.roomId = prevRoomId;
                 this._appliedRestoreRoomId = prevApplied;
                 this._entryIntent = prevIntent;
-                console.error('[BattleScene] restore apply did not set roomId');
+                Logger.error('[BattleScene] restore apply did not set roomId');
                 return false;
             }
             this.log('已恢复战斗连接，状态已同步');
@@ -652,7 +852,7 @@ export class BattleScene extends Component {
             this.roomId = prevRoomId;
             this._appliedRestoreRoomId = prevApplied;
             this._entryIntent = prevIntent;
-            console.error('[BattleScene] restore apply exception', e);
+            Logger.error('[BattleScene] restore apply exception', e);
             return false;
         }
     }
@@ -669,7 +869,7 @@ export class BattleScene extends Component {
         const incomingRoomId = roomIdOf(state as BattleRoomStateLike);
         // 同一 room 已恢复过：仅同步数据，不重复入场动画
         if (!forRoundAnimation && !isNewRoom && incomingRoomId && this._appliedRestoreRoomId === incomingRoomId && this._roomStateApplied) {
-            console.log(`[BattleScene] skip duplicate restore animation room_id=${incomingRoomId}`);
+            Logger.debug(`[BattleScene] skip duplicate restore animation room_id=${incomingRoomId}`);
             return;
         }
 
@@ -693,7 +893,7 @@ export class BattleScene extends Component {
         const playerActor = state.player;
         const enemyActor = state.enemy;
         if (!playerActor || !enemyActor) {
-            console.error('[BattleScene] 房间状态缺少 player/enemy');
+            Logger.error('[BattleScene] 房间状态缺少 player/enemy');
             return;
         }
 
@@ -718,10 +918,12 @@ export class BattleScene extends Component {
             enemyActor.name || '敌方机甲'
         );
 
-        // 覆盖实时 HP / 攻防 / 出手值
+        // 覆盖实时 HP / MP / 攻防 / 出手值
         if (this.playerUnit) {
             this.playerUnit.maxHp = Number(playerActor.max_hp ?? playerActor.maxHp ?? this.playerUnit.maxHp);
             this.playerUnit.hp = Number(playerActor.hp ?? this.playerUnit.hp);
+            this.playerUnit.maxMp = Number(playerActor.max_mp ?? playerActor.maxMp ?? this.playerUnit.maxMp);
+            this.playerUnit.mp = Number(playerActor.mp ?? this.playerUnit.mp);
             this.playerUnit.attack = Number(playerActor.attack ?? this.playerUnit.attack);
             this.playerUnit.defense = Number(playerActor.defense ?? this.playerUnit.defense);
             this.playerUnit.initiative = Number(playerActor.initiative ?? this.playerUnit.initiative);
@@ -729,6 +931,8 @@ export class BattleScene extends Component {
         if (this.enemyUnit) {
             this.enemyUnit.maxHp = Number(enemyActor.max_hp ?? enemyActor.maxHp ?? this.enemyUnit.maxHp);
             this.enemyUnit.hp = Number(enemyActor.hp ?? this.enemyUnit.hp);
+            this.enemyUnit.maxMp = Number(enemyActor.max_mp ?? enemyActor.maxMp ?? this.enemyUnit.maxMp);
+            this.enemyUnit.mp = Number(enemyActor.mp ?? this.enemyUnit.mp);
             this.enemyUnit.attack = Number(enemyActor.attack ?? this.enemyUnit.attack);
             this.enemyUnit.defense = Number(enemyActor.defense ?? this.enemyUnit.defense);
             this.enemyUnit.initiative = Number(enemyActor.initiative ?? this.enemyUnit.initiative);
@@ -803,10 +1007,10 @@ export class BattleScene extends Component {
             this.pendingPlayerAction = null;
             this.pendingEnemyAction = { side: 'enemy', type: 'ATTACK' };
 
-            // 修复点：恢复战斗时使用服务器剩余时间，不重置为 30 秒（支持多种字段名与回合开始时间推算）
-            let remainingSec = this._getRemainingCommandSecondsFromState(state);
-            this.turnTimeLeft = remainingSec;
-            this.updateTimerLabel();
+            // 恢复战斗：按服务器 state 还原「空窗挽回期」状态与剩余时间，不重置为 30 秒
+            //   - grace_active=True  → 倒计时已在跑，显示面板并从服务器剩余秒数续跑；
+            //   - grace_active=False → 仍在 5 秒静默观察期，隐藏面板（若服务器给了 grace 剩余则用它）。
+            this.restoreGraceWindowFromState(state);
             if (this.battleSelectPanel) {
                 this.battleSelectPanel.active = true;
             }
@@ -815,18 +1019,24 @@ export class BattleScene extends Component {
         }
     }
 
-    /** 战斗时显示双方局内血条并刷新为当前 HP（与机甲属性面板一致） */
+    /** 战斗时显示双方局内血条并刷新为当前 HP / MP（与机甲属性面板一致） */
     private refreshBattleBarsVisibilityAndValue(): void {
         if (this.playerRobotShow) {
             this.playerRobotShow.setBattleBarsVisible(true);
             if (this.playerUnit) {
-                this.playerRobotShow.updateBattleBars(this.playerUnit.hp, this.playerUnit.maxHp);
+                this.playerRobotShow.updateBattleBars(
+                    this.playerUnit.hp, this.playerUnit.maxHp,
+                    this.playerUnit.mp, this.playerUnit.maxMp,
+                );
             }
         }
         if (this.enemyRobotShow) {
             this.enemyRobotShow.setBattleBarsVisible(true);
             if (this.enemyUnit) {
-                this.enemyRobotShow.updateBattleBars(this.enemyUnit.hp, this.enemyUnit.maxHp);
+                this.enemyRobotShow.updateBattleBars(
+                    this.enemyUnit.hp, this.enemyUnit.maxHp,
+                    this.enemyUnit.mp, this.enemyUnit.maxMp,
+                );
             }
         }
     }
@@ -860,6 +1070,42 @@ export class BattleScene extends Component {
     }
 
     /**
+     * 从服务器 state 还原「空窗挽回期」状态：
+     *   - grace_active=True  → 倒计时已激活：显示面板，turnTimeLeft 续用服务器剩余秒数；
+     *   - grace_active=False → 仍在静默观察期：隐藏面板，graceTimeLeft 用服务器 grace 截止时间推算（无则重置为满）。
+     */
+    private restoreGraceWindowFromState(state: any) {
+        const n = (v: any) => (v != null && typeof v === 'number' && !Number.isNaN(v) ? v : null);
+        this._waitingOpponent = false;
+        this._afterZeroWait = 0;
+        const activeRaw = state?.grace_active;
+        const active = activeRaw === true || activeRaw === 1 || activeRaw === 'true' || activeRaw === '1';
+        if (active) {
+            this.graceActive = true;
+            this.turnTimeLeft = this._getRemainingCommandSecondsFromState(state);
+            if (this.timerRoot) this.timerRoot.active = true;
+            this.updateTimerLabel();
+            return;
+        }
+        // 静默期
+        this.graceActive = false;
+        this.turnTimeLeft = this.TURN_TIME_LIMIT;
+        let graceLeft = this.GRACE_SECONDS;
+        const graceDl = n(state?.grace_deadline_ts);
+        if (graceDl != null) {
+            graceLeft = Math.max(0, (graceDl - Date.now()) / 1000);
+        } else {
+            const startTs = n(state?.command_phase_start_ts);
+            if (startTs != null) {
+                graceLeft = Math.max(0, this.GRACE_SECONDS - (Date.now() - startTs) / 1000);
+            }
+        }
+        this.graceTimeLeft = graceLeft;
+        if (this.timerRoot) this.timerRoot.active = false;
+        this.updateTimerLabel();
+    }
+
+    /**
      * 直接将机甲设置到战斗位置（用于恢复房间时，不需要动画）
      */
     private setBattlePositionsDirectly() {
@@ -870,7 +1116,7 @@ export class BattleScene extends Component {
         // 确保位置已缓存
         this.cacheEntranceAndBattlePositionsIfNeeded();
         if (!this.battlePlayerPos || !this.battleEnemyPos) {
-            console.warn('[BattleScene] 战斗位置未缓存，使用默认位置');
+            Logger.warn('[BattleScene] 战斗位置未缓存，使用默认位置');
             return;
         }
 
@@ -905,7 +1151,7 @@ export class BattleScene extends Component {
 
     /** 本地模拟战（useServerRoomBattle=false）无法开战时关闭面板 */
     private _abortBattleEntry(errMsg: string): void {
-        console.error('[BattleScene]', errMsg);
+        Logger.error('[BattleScene]', errMsg);
         this.node.active = false;
     }
 
@@ -931,7 +1177,7 @@ export class BattleScene extends Component {
 
         // 如果缓存为空，先请求机甲列表数据
         if (!pets || pets.length === 0) {
-            console.log('[BattleScene] 机甲列表缓存为空，正在请求数据...');
+            Logger.debug('[BattleScene] 机甲列表缓存为空，正在请求数据...');
             this.requestRobotPetsAndStart();
             return;
         }
@@ -971,7 +1217,7 @@ export class BattleScene extends Component {
             true
         );
 
-        console.log('[BattleScene] 已发送机甲列表请求，等待响应...');
+        Logger.debug('[BattleScene] 已发送机甲列表请求，等待响应...');
     }
 
     /**
@@ -999,7 +1245,7 @@ export class BattleScene extends Component {
             return;
         }
 
-        console.log('[BattleScene] 机甲列表数据已更新，开始战斗');
+        Logger.debug('[BattleScene] 机甲列表数据已更新，开始战斗');
         this.startNewBattle();
     };
 
@@ -1054,7 +1300,7 @@ export class BattleScene extends Component {
                 const dataForShow = { ...info, pet_id: petId };
                 this.playerRobotShow.updateFromRobotData(dataForShow);
             } catch (e) {
-                console.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
+                Logger.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
             }
         }
 
@@ -1070,6 +1316,9 @@ export class BattleScene extends Component {
         this.logClear();
         this.state = BattleState.INIT;
         this.turnTimeLeft = this.TURN_TIME_LIMIT;
+        this.graceActive = false;
+        this.graceTimeLeft = this.GRACE_SECONDS;
+        this._lastPlayedPvpRound = 0;
         this.updateTimerLabel();
 
         // 每次开战都先把双方位置重置到入场起点
@@ -1078,6 +1327,7 @@ export class BattleScene extends Component {
         if (this.battleSelectPanel) {
             this.battleSelectPanel.active = false; // 初始先隐藏，等轮到玩家时再显示
         }
+        this.closeSkillSelectPanel();
 
         // 刷新“玩家/敌人角色形象+名字”
         this.refreshPlayerAndEnemyShows();
@@ -1096,7 +1346,7 @@ export class BattleScene extends Component {
     private beginBattleAfterReady() {
         // 再次检查双方单位是否都初始化完成
         if (!this.playerUnit || !this.enemyUnit) {
-            console.error('[BattleScene] 双方单位未完全初始化，无法开始战斗');
+            Logger.error('[BattleScene] 双方单位未完全初始化，无法开始战斗');
             return;
         }
 
@@ -1115,7 +1365,7 @@ export class BattleScene extends Component {
         const enemyNode = this.enemyRobotShow?.node;
 
         if (!playerNode || !enemyNode) {
-            console.warn('[BattleScene] 入场动画：缺少 RobotShow 节点，跳过动画直接开始战斗');
+            Logger.warn('[BattleScene] 入场动画：缺少 RobotShow 节点，跳过动画直接开始战斗');
             this.startCommandPhase();
             return;
         }
@@ -1144,11 +1394,22 @@ export class BattleScene extends Component {
         let enemyAnimDone = false;
 
         const checkAllDone = () => {
+            this.log(`[入场动画] playerDone=${playerAnimDone} enemyDone=${enemyAnimDone}`);
             if (playerAnimDone && enemyAnimDone) {
                 // 动画完成，开始第一回合的指令选择
                 this.startCommandPhase();
             }
         };
+
+        // 超时保底：入场动画 1s，若 2.5s 后仍未进入指令阶段（tween 回调丢失），强制开始，避免卡死
+        this.scheduleOnce(() => {
+            if (!(playerAnimDone && enemyAnimDone)) {
+                Logger.warn('[BattleScene] 入场动画超时未回调，强制进入指令阶段');
+                playerAnimDone = true;
+                enemyAnimDone = true;
+                checkAllDone();
+            }
+        }, 2.5);
 
         // 玩家平移动画
         tween(playerNode)
@@ -1204,11 +1465,11 @@ export class BattleScene extends Component {
                 return;
             }
             const { petId, firstPet } = picked;
-            console.log(`[BattleScene] 使用机甲: ${petId}`);
+            Logger.debug(`[BattleScene] 使用机甲: ${petId}`);
 
             let info = this.cacheManager.getRobotPetInfoCache(petId);
             if (!info) {
-                console.warn('[BattleScene] 未找到机甲详情缓存，正在请求详情数据...');
+                Logger.warn('[BattleScene] 未找到机甲详情缓存，正在请求详情数据...');
                 this.requestRobotPetInfoAndInit(petId, firstPet);
                 return;
             }
@@ -1231,7 +1492,7 @@ export class BattleScene extends Component {
                     return;
                 }
                 if (!resp?.success) {
-                    console.warn('[BattleScene] GET_BATTLE_TEAM 失败，尝试缓存/列表回退:', resp?.message);
+                    Logger.warn('[BattleScene] GET_BATTLE_TEAM 失败，尝试缓存/列表回退:', resp?.message);
                 }
                 finishPick(cachedTeam.length > 0 ? cachedTeam : []);
             },
@@ -1260,7 +1521,7 @@ export class BattleScene extends Component {
             10000
         );
 
-        console.log(`[BattleScene] 已发送机甲详情请求 (pet_id: ${petId})，等待响应...`);
+        Logger.debug(`[BattleScene] 已发送机甲详情请求 (pet_id: ${petId})，等待响应...`);
     }
 
     /**
@@ -1273,7 +1534,7 @@ export class BattleScene extends Component {
 
         const success = data.success === true || data.success === 'true';
         if (!success) {
-            console.warn('[BattleScene] 获取机甲详情失败，使用列表基础数据:', data.message || data.data?.message);
+            Logger.warn('[BattleScene] 获取机甲详情失败，使用列表基础数据:', data.message || data.data?.message);
             this.initPlayerUnitWithFallback();
             if (this.playerUnit) {
                 this.initEnemyUnit();
@@ -1292,7 +1553,7 @@ export class BattleScene extends Component {
             this.cacheManager.setRobotPetInfoCache(String(petId), data);
         }
 
-        console.log('[BattleScene] 机甲详情数据已更新，重新初始化玩家单位');
+        Logger.debug('[BattleScene] 机甲详情数据已更新，重新初始化玩家单位');
         // 数据已更新，重新初始化
         this.initPlayerUnit();
         // 如果玩家单位初始化成功，继续初始化敌人单位
@@ -1326,7 +1587,7 @@ export class BattleScene extends Component {
         }
 
         const { petId, firstPet } = picked;
-        console.warn('[BattleScene] 使用列表中的基础数据构建玩家单位（可能缺少完整属性）');
+        Logger.warn('[BattleScene] 使用列表中的基础数据构建玩家单位（可能缺少完整属性）');
         this.playerUnit = this.buildUnitFromRobotInfo('player', petId, firstPet, '玩家机甲');
 
         if (this.playerRobotShow) {
@@ -1334,7 +1595,7 @@ export class BattleScene extends Component {
                 const dataForShow = { ...firstPet, pet_id: petId };
                 this.playerRobotShow.updateFromRobotData(dataForShow);
             } catch (e) {
-                console.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
+                Logger.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
             }
         }
 
@@ -1351,7 +1612,7 @@ export class BattleScene extends Component {
      */
     private initEnemyUnit() {
         if (!this.playerUnit) {
-            console.error('[BattleScene] 玩家单位未初始化，无法构建敌人单位');
+            Logger.error('[BattleScene] 玩家单位未初始化，无法构建敌人单位');
             return;
         }
 
@@ -1368,12 +1629,12 @@ export class BattleScene extends Component {
                 this.isEnemyGenerating = false;
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
                 if (!resp || resp.success === false) {
-                    console.error('[BattleScene] 生成敌人失败:', resp?.message || resp?.error || resp);
+                    Logger.error('[BattleScene] 生成敌人失败:', resp?.message || resp?.error || resp);
                     return;
                 }
                 const enemy = resp.enemy || resp.data?.enemy || null;
                 if (!enemy) {
-                    console.error('[BattleScene] 生成敌人失败：响应缺少 enemy 字段', resp);
+                    Logger.error('[BattleScene] 生成敌人失败：响应缺少 enemy 字段', resp);
                     return;
                 }
 
@@ -1382,7 +1643,12 @@ export class BattleScene extends Component {
                 const armor = Number(enemy.CurrentArmor ?? enemy.Armor ?? 0);
                 const maxHp = Number(enemy.MaxHP ?? 1000);
                 const hp = Number(enemy.CurrentHP ?? maxHp);
+                const maxMp = Number(enemy.MaxMP ?? 0);
+                const mp = Number(enemy.CurrentMP ?? maxMp);
                 const initiative = Number(enemy.CurrentInitiative ?? enemy.Initiative ?? 10);
+
+                // 攻击次数：与玩家/在线路径一致，敌方也要带 attackTimes，否则 computeAttackSegments 只能按 1 段处理
+                const attackTimes = resolveAttackTimes(enemy);
 
                 this.enemyUnit = {
                     side: 'enemy',
@@ -1390,9 +1656,12 @@ export class BattleScene extends Component {
                     level: Number(enemy.Level || 1),
                     maxHp,
                     hp,
+                    maxMp,
+                    mp,
                     attack: melee + shoot,
                     defense: armor,
                     initiative,
+                    attackTimes,
                     petId: undefined,
                     rawData: enemy,
                 };
@@ -1401,7 +1670,7 @@ export class BattleScene extends Component {
                     try {
                         this.enemyRobotShow.updateFromRobotData(enemy);
                     } catch (e) {
-                        console.error('[BattleScene] 更新敌人 RobotShow 失败:', e);
+                        Logger.error('[BattleScene] 更新敌人 RobotShow 失败:', e);
                     }
                 }
 
@@ -1421,6 +1690,9 @@ export class BattleScene extends Component {
         // 属性字段命名尽量兼容现有 MechAttributeTEST 使用的键
         const maxHp = Number(info?.MaxHP ?? info?.max_hp ?? info?.hp ?? 100);
         const hp = Number(info?.CurrentHP ?? info?.current_hp ?? maxHp);
+        // 能量：老数据可能没有 MP 字段 → 0（该单位不参与「能量恢复」）
+        const maxMp = Number(info?.MaxMP ?? info?.max_mp ?? 0);
+        const mp = Number(info?.CurrentMP ?? info?.current_mp ?? maxMp);
         const melee = Number(info?.Melee ?? info?.melee ?? 0);
         const shoot = Number(info?.Shooting ?? info?.shoot ?? 0);
         const armor = Number(info?.Armor ?? info?.armor ?? 0);
@@ -1429,15 +1701,21 @@ export class BattleScene extends Component {
         const defense = armor;
         const initiative = Number(info?.Initiative ?? info?.initiative ?? 10);
 
+        // 攻击次数：优先直接字段，其次从装备累加（装备「攻击次数+N」已在服务端写入属性或 equipment）
+        const attackTimes = resolveAttackTimes(info);
+
         return {
             side,
             name,
             level,
             maxHp,
             hp,
+            maxMp,
+            mp,
             attack,
             defense,
             initiative,
+            attackTimes,
             petId,
             rawData: info,
         };
@@ -1450,46 +1728,126 @@ export class BattleScene extends Component {
 
     /**
      * 指令选择阶段：双方都先选指令（当前敌方默认普攻，但不会提前出手）
+     *
+     * 「空窗挽回期」：进入指令阶段后**不立即倒计时**，先静默观察 GRACE_SECONDS 秒；
+     *   任一方/双方无操作满 5 秒才显示并启动「剩余时间」倒计时（见 update）。
      */
     private startCommandPhase() {
-        if (this.state === BattleState.FINISHED) return;
+        if (this.state === BattleState.FINISHED) {
+            this.log('[指令阶段] 被跳过：战斗已结束');
+            return;
+        }
         this.state = BattleState.WAITING_COMMANDS;
         this.pendingPlayerAction = null;
         // 敌方 AI：默认普攻（后续可扩展技能/物品）
         this.pendingEnemyAction = { side: 'enemy', type: 'ATTACK' };
 
-        this.turnTimeLeft = this.TURN_TIME_LIMIT;
-        this.updateTimerLabel();
+        // 空窗挽回期：先进入静默观察，不显示倒计时
+        this.enterGraceWindow();
 
         if (this.battleSelectPanel) {
             this.battleSelectPanel.active = true;
         }
         this.setButtonsInteractable(true);
         this.refreshBattleBarsVisibilityAndValue();
-        this.log('请选择指令（普攻 / 逃跑）。30 秒未操作则自动选择普攻。');
+        this.log(`[指令阶段] 已恢复操作，按钮可点=${!!this.attackButton?.interactable}，面板=${!!this.battleSelectPanel?.active}`);
+    }
+
+    /**
+     * 进入空窗观察期：隐藏「剩余时间」面板，开始静默 GRACE_SECONDS 秒
+     */
+    private enterGraceWindow() {
+        this.graceActive = false;
+        this.graceTimeLeft = this.GRACE_SECONDS;
+        this.turnTimeLeft = this.TURN_TIME_LIMIT;
+        this._waitingOpponent = false;
+        this._afterZeroWait = 0;
+        // 静默期不显示倒计时面板
+        if (this.timerRoot) this.timerRoot.active = false;
+        this.updateTimerLabel();
+    }
+
+    /**
+     * 激活倒计时：空窗满 5 秒后调用，显示「剩余时间」面板并开始计时
+     */
+    private activateGraceCountdown() {
+        if (this.graceActive) return;
+        this.graceActive = true;
+        this.turnTimeLeft = this.TURN_TIME_LIMIT;
+        this._afterZeroWait = 0;
+        if (this.timerRoot) this.timerRoot.active = true;
+        this.updateTimerLabel();
+        this.log('[空窗] 无操作满 5 秒，开始倒计时');
     }
 
     update(dt: number) {
-        if (this.state === BattleState.WAITING_COMMANDS) {
-            this.turnTimeLeft -= dt;
-            if (this.turnTimeLeft <= 0) {
-                this.turnTimeLeft = 0;
-                this.updateTimerLabel();
-                // 超时自动普攻（仅触发一次）
-                if (!this.isAnimating) {
-                    if (this.useServerRoomBattle && this.roomId) {
-                        this.log('超时未操作，自动选择普攻');
-                        this.sendBattleRoomAction('ATTACK');
-                    } else {
-                        this.log('超时未操作，自动选择普攻');
-                        if (!this.pendingPlayerAction) {
-                            this.pendingPlayerAction = { side: 'player', type: 'ATTACK' };
-                        }
-                        this.tryResolveRound();
-                    }
+        // 看门狗：ANIMATING 状态若长时间未推进（回调链断裂），强制恢复到指令阶段，避免战斗死锁
+        //   注意：请求等待（isRequestingAction）期间也计时，但阈值更宽松（20s），防止请求永不返回时死锁
+        if (this.state === BattleState.ANIMATING) {
+            this.animWatchdog += dt;
+            // 请求等待期（isRequestingAction）的阈值需覆盖服务端「空窗挽回期」最坏耗时：
+            //   PVP = 空窗静默 5s + 倒计时 30s = 35s，故 PVP 取 45s；PVE 无空窗，20s 足够。
+            let limit = 12;
+            if (this.isRequestingAction) {
+                limit = this.currentBattleMode === 'pvp' ? 45 : 20;
+            }
+            if (this.animWatchdog > limit) {
+                Logger.warn(`[BattleScene] 看门狗：ANIMATING 超时(${limit}s)，强制恢复指令阶段`);
+                this.log('[看门狗] 动画超时未推进，强制恢复操作');
+                this.animWatchdog = 0;
+                this.isAnimating = false;
+                this.isRequestingAction = false;
+                this._waitingOpponent = false;
+                this.startCommandPhase();
+            }
+        } else {
+            this.animWatchdog = 0;
+        }
+
+        // 等待指令阶段，或「自己已提交、正在等对方」期间 —— 都需要推进空窗/倒计时。
+        //   后者保证：自己 5 秒后点了操作，但对方仍未动时，倒计时继续走完，玩家能看到对方是否挂机。
+        const tickingCommands =
+            this.state === BattleState.WAITING_COMMANDS ||
+            (this.state === BattleState.ANIMATING && this.isRequestingAction && this._waitingOpponent);
+
+        if (tickingCommands) {
+            if (!this.graceActive) {
+                // 阶段一：空窗静默观察期（不显示倒计时）。任一方/双方无操作满 5 秒才激活倒计时。
+                this.graceTimeLeft -= dt;
+                if (this.graceTimeLeft <= 0) {
+                    this.graceTimeLeft = 0;
+                    this.activateGraceCountdown();
                 }
             } else {
-                this.updateTimerLabel();
+                // 阶段二：倒计时已激活，正常倒计时
+                this.turnTimeLeft -= dt;
+                if (this.turnTimeLeft <= 0) {
+                    this.turnTimeLeft = 0;
+                    this.updateTimerLabel();
+                    // 倒计时归零：技能选择面板一并关掉（游戏原机制 —— 到点就关面板、改走普通攻击）
+                    this.closeSkillSelectPanel();
+                    // 服务器制 PVP：倒计时归零后的「自动补普攻」由服务端权威执行，
+                    //   并通过 pvp_round_update 主动推送回双方。客户端优先等待推送，
+                    //   避免自行发送的 ATTACK 被写进「下一回合」（玩家未决策却自动出招）。
+                    if (!this.isAnimating && !this._waitingOpponent && this.state === BattleState.WAITING_COMMANDS) {
+                        if (this.useServerRoomBattle && this.roomId) {
+                            // 兜底：推送最多再等 3 秒；仍无响应则自行提交普攻，防止网络丢包导致永久卡住。
+                            this._afterZeroWait += dt;
+                            if (this._afterZeroWait >= 3) {
+                                this.log('倒计时结束且未收到服务器推送，兜底自动普攻');
+                                this.sendBattleRoomAction('ATTACK');
+                            }
+                        } else {
+                            this.log('超时未操作，自动选择普攻');
+                            if (!this.pendingPlayerAction) {
+                                this.pendingPlayerAction = { side: 'player', type: 'ATTACK' };
+                            }
+                            this.tryResolveRound();
+                        }
+                    }
+                } else {
+                    this.updateTimerLabel();
+                }
             }
         }
     }
@@ -1497,9 +1855,13 @@ export class BattleScene extends Component {
     private updateTimerLabel() {
         if (!this.timerLabel) return;
         this.timerLabel.string = `${Math.ceil(this.turnTimeLeft)}`;
-        // 在等待指令阶段显示倒计时
+        // 显示条件：等待指令 + 倒计时已激活；或自己已提交、正等对方（此期间倒计时继续可见）
         if (this.timerRoot) {
-            this.timerRoot.active = this.state === BattleState.WAITING_COMMANDS;
+            const show =
+                this.graceActive &&
+                (this.state === BattleState.WAITING_COMMANDS ||
+                    (this.state === BattleState.ANIMATING && this.isRequestingAction && this._waitingOpponent));
+            this.timerRoot.active = show;
         }
     }
 
@@ -1507,7 +1869,9 @@ export class BattleScene extends Component {
         if (this.attackButton) this.attackButton.interactable = enable;
         if (this.defendButton) this.defendButton.interactable = enable;
         if (this.escapeButton) this.escapeButton.interactable = enable;
-        if (this.backButton) this.backButton.interactable = enable;
+        if (this.skillButton) this.skillButton.interactable = enable;
+        // 返回键始终可点：保证任何时候都有逃生通道（卡死时也能恢复/退出）
+        if (this.backButton) this.backButton.interactable = true;
     }
 
     // ========== 按钮事件 ==========
@@ -1548,14 +1912,135 @@ export class BattleScene extends Component {
         }
     }
 
+    // ====== 技能按钮 / 技能选择面板（SkillSelect） ======
+
+    /** 找「技能」按钮：优先 Inspector 绑定，其次在战斗操作面板里按名字找（BattleSelectButton/Skill） */
+    private resolveSkillButton(): Button | null {
+        if (this.skillButton && this.skillButton.isValid) return this.skillButton;
+        const root = this.battleSelectPanel || this.node;
+        const node: Node | null = root
+            ? (root.getChildByName('Skill') || this.findChildByName(root, 'Skill'))
+            : null;
+        const btn = node ? node.getComponent(Button) : null;
+        if (btn) {
+            this.skillButton = btn;
+            Logger.info('[BattleScene] 技能按钮已由运行时查找绑定：' + node!.name);
+        } else {
+            Logger.warn('[BattleScene] 没找到技能按钮（期望 BattleSelectButton/Skill）');
+        }
+        return btn;
+    }
+
+    /**
+     * 确保技能选择面板组件存在。
+     * 面板节点 = `BattleScene/SkillSelect`（场景里已搭好）；组件没挂就运行时 `addComponent` 兜底
+     * （与机甲面板 `MechSkillPanel` 的零挂载风格一致）。
+     */
+    private ensureSkillSelectPanel(): SkillSelectPanel | null {
+        if (this.skillSelectPanel && this.skillSelectPanel.isValid) return this.skillSelectPanel;
+        const node = this.findChildByName(this.node, 'SkillSelect');
+        if (!node) {
+            Logger.warn('[BattleScene] 没找到技能选择面板节点（期望 BattleScene/SkillSelect）');
+            return null;
+        }
+        let comp = node.getComponent(SkillSelectPanel);
+        if (!comp) comp = node.addComponent(SkillSelectPanel);
+        this.skillSelectPanel = comp;
+        // 场景里可能留着显示状态 → 战斗未开始/未点技能前一律不显示
+        if (node.active) node.active = false;
+        return comp;
+    }
+
+    /** 关闭技能选择面板（幂等；`notify=false` 不触发 onClosed，避免与战斗流程互相递归） */
+    private closeSkillSelectPanel(): void {
+        const panel = this.skillSelectPanel;
+        if (panel && panel.isValid && panel.isOpen()) panel.close(false);
+    }
+
+    /**
+     * 点「技能」按钮 → 打开 / 收起技能选择面板。
+     *
+     * 面板里的技能来自服务端 `skill_list`（该机甲**已学且可主动施放**的技能，含能量消耗与可用性）；
+     * 面板内部「点技能槽 = 选中 → 出现确认 → 确认即施放」，确认后回调 `castSkill()`。
+     * 打开期间倒计时照常走（游戏原有机制），归零由 `update()` 关面板并自动普攻。
+     */
+    private onSkillClicked() {
+        if (this.state !== BattleState.WAITING_COMMANDS || this.isAnimating || this.isRequestingAction) {
+            Logger.warn(`[BattleScene] 技能按钮被忽略：state=${this.state}`);
+            return;
+        }
+        const panel = this.ensureSkillSelectPanel();
+        if (!panel) return;
+        // 已打开 → 再点一次收起（等同「返回」）
+        if (panel.isOpen()) {
+            panel.close();
+            return;
+        }
+        const petId = this.playerUnit?.petId || null;
+        if (!petId) {
+            this.log('未找到出战机甲，暂时无法选择技能');
+            Logger.warn('[BattleScene] 技能面板打开失败：playerUnit.petId 为空');
+            return;
+        }
+        panel.open(petId, {
+            // 确认 → 用该技能提交本回合指令（服务端校验「已学 + 能量足够 + 主动技」）
+            onConfirm: (skillKey: string) => {
+                Logger.info(`[BattleScene] 技能面板确认，施放「${skillKey}」`);
+                this.castSkill(skillKey);
+            },
+        });
+        this.log('打开技能选择面板');
+    }
+
+    /**
+     * 【技能指令入口】提交一次技能施放（供后续技能面板 / UI 调用）。
+     *
+     * 与服务端同口径：`{ type: 'SKILL', skill_key }`，服务端会校验「已学 + 能量足够 + 是主动技」。
+     * 返回 true 表示已发出请求；false 表示当前不在指令阶段（或缺少 skill_key）。
+     *
+     * @param skillKey 技能 key / 中文名 / 技能书 id 均可（客户端会先归一成 key）
+     */
+    public castSkill(skillKey: unknown): boolean {
+        if (this.state !== BattleState.WAITING_COMMANDS || this.isAnimating || this.isRequestingAction) {
+            Logger.warn(`[BattleScene] castSkill 被忽略：state=${this.state}`);
+            return false;
+        }
+        const key = SkillData.resolveSkillRef(skillKey) ?? (skillKey == null ? null : String(skillKey));
+        if (!key) {
+            Logger.warn('[BattleScene] castSkill 缺少有效 skill_key:', skillKey);
+            return false;
+        }
+        if (this.useServerRoomBattle && this.roomId) {
+            this.sendBattleRoomAction('SKILL', key);
+            return true;
+        }
+        // 本地模拟模式：保留旧逻辑（本地模拟暂不结算技能，按待机处理）
+        Logger.warn('[BattleScene] 本地模拟模式暂不结算技能，本回合按待机处理');
+        this.pendingPlayerAction = { side: 'player', type: 'SKILL' };
+        this.tryResolveRound();
+        return true;
+    }
+
     /**
      * 房间制：向服务器提交一次指令，并用返回的新 state 刷新 UI + 播放本地动画
      * 伤害和胜负全部以服务器为准，本地只负责表现。
+     *
+     * @param action  ATTACK / DEFEND / ESCAPE / SKILL
+     * @param skillKey 仅 SKILL 需要（key / 名称 / 技能书 id，会被归一成 key）
      */
-    private sendBattleRoomAction(action: ActionType) {
+    private sendBattleRoomAction(action: ActionType, skillKey?: string) {
         if (!this.roomId || this.isRequestingAction) return;
         const characterId = this.ws.getCharacterId?.();
         if (!characterId) return;
+
+        // 【空窗挽回期】玩家主动操作 → 通知服务端解除本方关窗计数（_clear_side_noop）。
+        //   但「剩余时间」面板不隐藏：若自己已提交、对方仍未操作，倒计时继续走完，
+        //   让玩家能直观看到对方是否挂机（走完由服务端自动补普攻结算）。
+        this._waitingOpponent = true;
+        if (!this.graceActive) {
+            // 自己是在 5 秒静默期内操作的：对方此前可能也一直没动 → 立即激活倒计时展示
+            this.activateGraceCountdown();
+        }
 
         // 记录本回合开始前的 HP 快照和玩家动作
         if (this.playerUnit && this.enemyUnit) {
@@ -1570,22 +2055,45 @@ export class BattleScene extends Component {
 
         this.isRequestingAction = true;
         this.setButtonsInteractable(false);
-        // 修复点：提交指令时关闭操作面板，与本地模式 tryResolveRound 行为一致，避免动画期间面板仍显示
+        // 进入动画等待态并启动看门狗计时，保证后续任何一环断链都能被 update() 兜底恢复
+        this.state = BattleState.ANIMATING;
+        this.isAnimating = true;
+        this.animWatchdog = 0;
+        // 关闭操作面板（已提交本回合指令，无需再点）；但「剩余时间」面板保持可见并可继续倒计时，
+        //   让玩家能看到对方是否仍在挂机（需求：自己操作后倒计时继续，直到对方也操作）。
         if (this.battleSelectPanel) this.battleSelectPanel.active = false;
+        this.closeSkillSelectPanel();   // 已提交指令 → 技能面板一并收起
+        if (this.timerRoot) this.timerRoot.active = this.graceActive;
+
+        // 组包：技能指令额外带 skill_key（服务端归一后校验「已学 + 能量足够 + 主动技」）
+        const payload: any = {
+            room_id: this.roomId,
+            action_type: action,
+            character_id: characterId,
+        };
+        if (action === 'SKILL') {
+            const key = skillKey ? (SkillData.resolveSkillRef(skillKey) ?? skillKey) : null;
+            if (!key) {
+                // 兜底：技能 key 丢失时按普攻提交，避免服务端 400 后本回合彻底卡住
+                Logger.warn('[BattleScene] 技能指令缺少可识别的 skill_key，已改为提交普攻');
+                payload.action_type = 'ATTACK';
+            } else {
+                payload.skill_key = key;
+            }
+        }
 
         const sessionId = this._sessionId;
         this.ws.request(
             GameConfig.MESSAGE_TYPES.BATTLE_ROOM_ACTION,
-            {
-                room_id: this.roomId,
-                action_type: action,
-                character_id: characterId,
-            },
+            payload,
             (resp: any) => {
                 this.isRequestingAction = false;
+                this._waitingOpponent = false;
                 if (!this.node?.isValid || this._sessionId !== sessionId) return;
                 if (!resp?.success || !resp.data?.state) {
-                    console.error('[BattleScene] battle_room_action 失败:', resp?.message || resp);
+                    Logger.error('[BattleScene] battle_room_action 失败:', resp?.message || resp);
+                    this.state = BattleState.WAITING_COMMANDS;
+                    this.isAnimating = false;
                     this.setButtonsInteractable(true);
                     // 修复点：请求失败时恢复操作面板显示，便于玩家重试
                     if (this.battleSelectPanel) this.battleSelectPanel.active = true;
@@ -1593,51 +2101,63 @@ export class BattleScene extends Component {
                 }
 
                 const state = resp.data.state;
-                const playerActor = state.player;
-                const enemyActor = state.enemy;
-
-                // 服务器结算后的最终 HP
-                const targetPlayerHp = Number(playerActor?.hp ?? this.playerUnit?.hp ?? 0);
-                const targetEnemyHp = Number(enemyActor?.hp ?? this.enemyUnit?.hp ?? 0);
-
-                // 修复点：只同步单位/展示数据，不调 finishBattle、不显示面板；击杀时先播完本回合双方动画，再在 playServerRoundAnimation 收尾时调 finishBattle
-                this.applyServerRoomState(state, false, true);
 
                 if (!this.playerUnit || !this.enemyUnit || this.lastRoundPlayerAction == null) {
-                    return; // 缺快照或单位，直接用静态 UI
+                    // 关键兜底：缺快照/单位时绝不能直接 return —— 那会让 state 永远停在 ANIMATING，
+                    //   面板不显示、按钮不可点、退不出（战斗卡死）。
+                    Logger.warn(
+                        `[BattleScene] 回合数据缺失，跳过动画直接恢复操作：` +
+                        `playerUnit=${!!this.playerUnit} enemyUnit=${!!this.enemyUnit} lastAction=${this.lastRoundPlayerAction}`
+                    );
+                    this.applyServerRoomState(state, false, true);
+                    this.state = BattleState.INIT;
+                    this.isAnimating = false;
+                    this.isRequestingAction = false;
+                    this.animWatchdog = 0;
+                    if (this.node?.isValid) this.startCommandPhase();
+                    return;
                 }
 
-                // 按服务器结果计算本回合掉血量（不能为负）
-                const damageToPlayer = Math.max(0, this.lastRoundPlayerHp - targetPlayerHp);
-                const damageToEnemy = Math.max(0, this.lastRoundEnemyHp - targetEnemyHp);
+                // 标记本回合已由自己路径播放，避免随后的 pvp_round_update 推送重复播
+                const respRound = Number(state?.round ?? 0);
+                if (this.currentBattleMode === 'pvp' && respRound > 0) {
+                    this._lastPlayedPvpRound = Math.max(this._lastPlayedPvpRound, respRound - 1);
+                }
 
-                // 为了播动画，把本地 HP 暂时“回滚”到回合开始前
-                this.playerUnit.hp = this.lastRoundPlayerHp;
-                this.enemyUnit.hp = this.lastRoundEnemyHp;
-                this.syncUnitHpToRawData(this.playerUnit);
-                this.syncUnitHpToRawData(this.enemyUnit);
-                this.refreshPlayerMechAttributeUI(true);
-
-                // 用服务器伤害驱动一轮动画，播完再落到服务器最终 HP
-                this.playServerRoundAnimation(
-                    this.lastRoundPlayerAction,
-                    damageToPlayer,
-                    damageToEnemy,
-                    targetPlayerHp,
-                    targetEnemyHp,
+                // 共用「按服务器 state 播整回合动画」的逻辑
+                this.playRoundFromServerState(
                     state,
+                    this.lastRoundPlayerAction,
+                    this.lastRoundPlayerHp,
+                    this.lastRoundEnemyHp,
                 );
             },
             true,
-            this.currentBattleMode === 'pvp' ? 35000 : 10000
+            // PVP 最坏情况：空窗静默 5s + 倒计时 30s = 35s，服务器才结算返回。
+            //   请求超时必须大于该上限（留 10s 余量），否则会在服务器结算前被客户端提前判超时。
+            this.currentBattleMode === 'pvp' ? 45000 : 10000
         );
     }
 
     private onBackClicked() {
-        // 只在指令选择阶段允许开关面板
-        if (this.state !== BattleState.WAITING_COMMANDS) return;
-        if (!this.battleSelectPanel) return;
-        this.battleSelectPanel.active = !this.battleSelectPanel.active;
+        // 【联动】技能选择面板开着时，返回键先关技能面板（不退出战斗、也不切换操作面板）
+        const skillPanel = this.skillSelectPanel;
+        if (skillPanel && skillPanel.isValid && skillPanel.isOpen()) {
+            skillPanel.close();
+            return;
+        }
+        // 正常情况：只在指令选择阶段开关面板
+        if (this.state === BattleState.WAITING_COMMANDS) {
+            if (!this.battleSelectPanel) return;
+            this.battleSelectPanel.active = !this.battleSelectPanel.active;
+            return;
+        }
+        // 逃生通道：非指令阶段（动画卡住 / 状态异常）时，点返回键强制恢复操作，避免彻底无法操作
+        Logger.warn(`[BattleScene] 返回键在非指令阶段被点击（state=${this.state}），强制恢复指令阶段`);
+        this.isAnimating = false;
+        this.isRequestingAction = false;
+        this.animWatchdog = 0;
+        this.startCommandPhase();
     }
 
     // ========== 战斗核心 ==========
@@ -1649,6 +2169,27 @@ export class BattleScene extends Component {
     private getOpponent(side: Side): BattleUnit | null {
         return side === 'player' ? this.enemyUnit : this.playerUnit;
         }
+
+    /**
+     * 伤害数字的弧形方向：向**受击者身后**（被击退的方向）抛出。
+     * 攻击方在左 → 受击者在右 → 数字向右（+）；
+     * 攻击方在右 → 受击者在左 → 数字向左（−）。
+     * 自己方受击同理（数字从自己身上向自己身后飞出，远离攻击方）。
+     * 返回的 y 仅作兼容占位（弧线由 RobotShow 内的重力自动生成）。
+     */
+    private damageDriftFor(attackerSide: Side): { x: number; y: number } {
+        const attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+        const defenderShow = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow;
+        const aNode = attackerShow?.node;
+        const dNode = defenderShow?.node;
+        // 用屏幕世界坐标判断左右（UI 下 worldPosition 即屏幕坐标）
+        const ax = aNode ? aNode.worldPosition.x : 0;
+        const dx = dNode ? dNode.worldPosition.x : 0;
+        // 受击者在攻击者屏幕右侧 → +1（数字向右飞）；左侧 → −1
+        const dir = dx >= ax ? 1 : -1;
+        Logger.warn(`[方向诊断] 攻方=${attackerSide} 攻屏幕x=${ax.toFixed(0)} 守屏幕x=${dx.toFixed(0)} → 期望屏幕方向=${dir}`);
+        return { x: dir, y: 0 };
+    }
 
     private performAttack(attackerSide: Side, onDone: () => void) {
         const attacker = this.getUnit(attackerSide);
@@ -1662,15 +2203,39 @@ export class BattleScene extends Component {
 
         const rawDamage = attacker.attack - defender.defense;
         const damage = Math.max(1, rawDamage);
-        defender.hp = Math.max(0, defender.hp - damage);
-        this.syncUnitHpToRawData(defender);
-        // 只在“玩家机甲”受伤时刷新属性面板（敌方不显示面板）
-        if (defender.side === 'player') {
-            this.refreshPlayerMechAttributeUI(true);
-        }
+        // 伤害数字漂移方向：远离攻击方（与击退方向一致），形成"连续冒出→旧的后退消失"的轨迹
+        const drift = this.damageDriftFor(attackerSide);
+        // 「攻击次数」：把这一次攻击拆成 N 段（总伤上限 +20%），逐段扣血/弹数字
+        const segments = computeAttackSegments(damage, attacker.attackTimes);
+        const applySegments = (onApplied: () => void) => {
+            let i = 0;
+            const defenderShowRef = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow;
+            let applied = false;
+            const step = () => {
+                if (i < segments.length) {
+                    defender.hp = Math.max(0, defender.hp - segments[i]);
+                    if (defenderShowRef) {
+                        defenderShowRef.showDamageNumber(segments[i], false, drift.x, drift.y);
+                    }
+                    this.syncUnitHpToRawData(defender);
+                    i++;
+                    if (i < segments.length) {
+                        // 包匿名闭包：避免同一 callback 引用被 Cocos 去重导致调度丢失
+                        this.scheduleOnce(() => step(), 0.18);
+                        return;
+                    }
+                }
+                if (applied) return;
+                applied = true;
+                onApplied();
+            };
+            step();
+        };
 
         this.log(
-            `${attackerSide === 'player' ? '玩家' : '敌人'} 普攻造成 ${damage} 点伤害（攻击 ${attacker.attack} - 防御 ${defender.defense}）`
+            `${attackerSide === 'player' ? '玩家' : '敌人'} 普攻造成 ${damage} 点伤害` +
+            (segments.length > 1 ? `（攻击 ${attacker.attack} - 防御 ${defender.defense}，分 ${segments.length} 段）` :
+                `（攻击 ${attacker.attack} - 防御 ${defender.defense}）`)
         );
 
         // 判定是否为“远程攻击”（是否装备枪械）
@@ -1680,7 +2245,17 @@ export class BattleScene extends Component {
         // 播放攻击动画（根据是否有枪械区分远程/近战）
         const attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
         const defenderShow = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow;
-        this.playAttackAnimation(attackerShow, defenderShow, attackerHasGun, () => {
+        // 结算与收尾解耦：
+        //   · 逐段扣血 + 弹伤害数字 → 挂在「接触到对方」的瞬间启动（onImpact）
+        //   · 死亡判定 / 解锁 → 必须等「动画播完」且「分段结算完」两者到齐
+        let segStarted = false;
+        let segDone = false;
+        let animFinished = false;
+        const afterAll = () => {
+            if (!segDone || !animFinished) return;
+            if (defender.side === 'player') {
+                this.refreshPlayerMechAttributeUI(true);
+            }
             // 检查是否有人死亡
             if (defender.hp <= 0) {
                 const winner = attacker.side;
@@ -1693,15 +2268,71 @@ export class BattleScene extends Component {
                 }
                 return;
             }
-
             // 单次攻击完成
             this.isAnimating = false;
             onDone();
-        });
+        };
+        const startSegments = () => {
+            if (segStarted) return;
+            segStarted = true;
+            try {
+                applySegments(() => {
+                    segDone = true;
+                    afterAll();
+                });
+            } catch (e) {
+                Logger.error('[BattleScene] 本地段结算异常，强制收尾:', e);
+                segDone = true;
+                this.isAnimating = false;
+                onDone();
+            }
+        };
+
+        this.playAttackAnimation(
+            attackerShow, defenderShow, attackerHasGun,
+            // onComplete：动画播完（兜底启动分段结算 + 补齐收尾条件）
+            () => {
+                animFinished = true;
+                startSegments();
+                afterAll();
+            },
+            // onImpact：接触到对方的瞬间 —— 只弹伤害数字（**普攻不播技能特效**，2026-09-30 用户要求去掉）
+            () => {
+                startSegments();
+            },
+        );
     }
 
     /** 关闭面板后延迟多久再开始动作（秒），提升“点击→收面板→再开打”的节奏感 */
     private readonly ACTION_DELAY_AFTER_PANEL_CLOSE = 1.0;
+
+    /**
+     * 回合结束被动恢复（生命恢复 / 能量恢复）多条效果之间的间隔（秒）。
+     * 一次回合最多 2 条（生命 + 能量），0.6s 足以看清特效与治疗数字。
+     */
+    private static readonly PASSIVE_EFFECT_GAP = 0.6;
+
+    /**
+     * 「服务端出手明细」（round_events）两条事件之间的间隔（秒）。
+     * 服务端一份 state 里会给出本回合每一次出手（先手方 + 后手方），
+     * 逐条播完才能看清「谁先打、谁后打」。
+     */
+    private static readonly ROUND_EVENT_GAP = 0.55;
+
+    /**
+     * 近战「接触间隔」（像素）：攻击方贴身位置 = 受击方当前 x ∓ 该值。
+     * 普攻近战与「近身技」共用同一口径，保证两种出招的贴身距离一致。
+     */
+    private static readonly MELEE_CONTACT_GAP = 30;
+
+    /** 受击方被击退的位移量（像素）。普攻近战与近身技共用。 */
+    private static readonly KNOCKBACK_DELTA = 30;
+
+    /**
+     * 近身技「打完归位」的位移用时（秒）。
+     * 近身技流程：位移贴到目标身前 → 播技能特效 → **特效一结束即滑回原位**（不等伤害数字）。
+     */
+    private static readonly MELEE_RETURN_TIME = 0.14;
 
     /**
      * 如果双方指令都已选择，则按 Initiative 结算本回合
@@ -1715,6 +2346,7 @@ export class BattleScene extends Component {
         if (this.battleSelectPanel) {
             this.battleSelectPanel.active = false;
         }
+        this.closeSkillSelectPanel();
         this.setButtonsInteractable(false);
 
         // 延迟一段时间再执行动作，让玩家有“确认选择→收板→再开打”的体验
@@ -1797,6 +2429,12 @@ export class BattleScene extends Component {
         serverState: any,
     ) {
         if (!this.playerUnit || !this.enemyUnit) {
+            Logger.warn(`[BattleScene] playServerRoundAnimation 单位缺失，直接恢复操作 playerUnit=${!!this.playerUnit} enemyUnit=${!!this.enemyUnit}`);
+            this.state = BattleState.INIT;
+            this.isAnimating = false;
+            this.isRequestingAction = false;
+            this.animWatchdog = 0;
+            if (this.node?.isValid) this.startCommandPhase();
             return;
         }
 
@@ -1822,6 +2460,7 @@ export class BattleScene extends Component {
                 done();
                 return;
             }
+            Logger.warn(`[攻击诊断] runAction side=${side} state=${this.state}`);
 
             if (side === 'player') {
                 if (playerAction === 'ATTACK' && damageToEnemy > 0) {
@@ -1830,6 +2469,7 @@ export class BattleScene extends Component {
                     this.log('玩家选择了防御/待机（本回合不行动）');
                     this.scheduleOnce(done, 0.15);
                 } else {
+                    Logger.warn(`[攻击诊断] 玩家攻击被跳过：playerAction=${playerAction} damageToEnemy=${damageToEnemy}`);
                     this.scheduleOnce(done, 0.1);
                 }
             } else {
@@ -1849,42 +2489,715 @@ export class BattleScene extends Component {
                 if (this.state === BattleState.FINISHED) return;
                 runAction(order[1], () => {
                     if (this.state === BattleState.FINISHED) return;
-
-                    // 动画播完后，将 HP 校准到服务器最终值
-                    if (this.playerUnit) {
-                        this.playerUnit.hp = targetPlayerHp;
-                        this.syncUnitHpToRawData(this.playerUnit);
-                    }
-                    if (this.enemyUnit) {
-                        this.enemyUnit.hp = targetEnemyHp;
-                        this.syncUnitHpToRawData(this.enemyUnit);
-                    }
-                    this.refreshPlayerMechAttributeUI(true);
-
-                    // 根据服务器结果收尾：击杀/胜负在双方动画都播完后才结束战斗，符合回合制常规体验
-                    if (serverState?.status === 'finished' && serverState.result) {
-                        const winner: Side = serverState.result.winner === 'player' ? 'player' : 'enemy';
-                        const reason: any = serverState.result.reason === 'escape' ? 'escape' : 'ko';
-                        // 胜负已定：为被击破的一方播放同款击破动画（敌我一致），再结束战斗
-                        const defeatedShow = winner === 'player' ? this.enemyRobotShow : this.playerRobotShow;
-                        if (defeatedShow) {
-                            this.playDefeatAnimation(defeatedShow, () => {
-                                if (this.state !== BattleState.FINISHED) this.finishBattle(winner, reason);
-                            });
-                        } else {
-                            this.scheduleOnce(() => {
-                                if (this.state !== BattleState.FINISHED) this.finishBattle(winner, reason);
-                            }, 0.5);
-                        }
-                    } else {
-                        // 修复点：双方动画都结束后再延迟一小段时间才显示操作面板，避免「动作未播完就出按钮」
-                        this.scheduleOnce(() => {
-                            if (this.state !== BattleState.FINISHED) this.startCommandPhase();
-                        }, this.COMMAND_PANEL_DELAY_AFTER_ANIMATIONS);
-                    }
+                    this.finishRoundPresentation(serverState, targetPlayerHp, targetEnemyHp);
                 });
             }, 1.0);
         });
+    }
+
+    /**
+     * 回合收尾（两条演绎路径共用）：
+     *   1) 把 HP 落到「攻击结算后、被动恢复前」的值；
+     *   2) 播回合结束被动恢复（生命恢复 / 能量恢复）；
+     *   3) 按服务器结果判胜负（播击破动画）或回到指令阶段。
+     *
+     * ⚠ 服务端给的 hp 是「攻击结算 + 被动恢复」后的最终值，算伤害前必须先把恢复量剥掉，
+     *   否则本回合伤害会被少算（伤害数字偏小、与真实掉血不符）。
+     */
+    private finishRoundPresentation(serverState: any, targetPlayerHp: number, targetEnemyHp: number): void {
+        const peList = (side: Side): any[] => {
+            const l = serverState?.round_passive_effects?.[side];
+            return Array.isArray(l) ? l : [];
+        };
+        const hpBack = (side: Side, finalHp: number): number =>
+            Math.max(0, finalHp - peList(side).reduce(
+                (s: number, e: any) => s + (e?.attr === 'hp' ? (Number(e.value) || 0) : 0), 0));
+
+        if (this.playerUnit) {
+            this.playerUnit.hp = hpBack('player', targetPlayerHp);
+            this.syncUnitHpToRawData(this.playerUnit);
+        }
+        if (this.enemyUnit) {
+            this.enemyUnit.hp = hpBack('enemy', targetEnemyHp);
+            this.syncUnitHpToRawData(this.enemyUnit);
+        }
+        this.refreshPlayerMechAttributeUI(true);
+
+        // 回合结束被动恢复表现（生命恢复 / 能量恢复）：特效 + 治疗数字 + 血/蓝条
+        this.playPassiveRecoverEffects(serverState, () => {
+            if (this.state === BattleState.FINISHED) return;
+
+            // 根据服务器结果收尾：击杀/胜负在双方动画都播完后才结束战斗，符合回合制常规体验
+            if (serverState?.status === 'finished' && serverState.result) {
+                const winner: Side = serverState.result.winner === 'player' ? 'player' : 'enemy';
+                const reason: any = serverState.result.reason === 'escape' ? 'escape' : 'ko';
+                // 胜负已定：为被击破的一方播放同款击破动画（敌我一致），再结束战斗
+                const defeatedShow = winner === 'player' ? this.enemyRobotShow : this.playerRobotShow;
+                if (defeatedShow) {
+                    this.playDefeatAnimation(defeatedShow, () => {
+                        if (this.state !== BattleState.FINISHED) this.finishBattle(winner, reason);
+                    });
+                } else {
+                    this.scheduleOnce(() => {
+                        if (this.state !== BattleState.FINISHED) this.finishBattle(winner, reason);
+                    }, 0.5);
+                }
+            } else {
+                // 修复点：双方动画都结束后再延迟一小段时间才显示操作面板，避免「动作未播完就出按钮」
+                this.scheduleOnce(() => {
+                    if (this.state !== BattleState.FINISHED) this.startCommandPhase();
+                }, this.COMMAND_PANEL_DELAY_AFTER_ANIMATIONS);
+            }
+        });
+    }
+
+    // ========== 服务端出手明细（round_events）演绎 ==========
+
+    /**
+     * 按服务端「出手明细」`serverState.round_events` 演绎一整个回合。
+     *
+     * 与「HP 差值反推」路径相比，事件路径能精确表达：
+     *   - 本回合每一次出手用的技能 / 要播的特效（`anim`）；
+     *   - 每次出手的伤害、暴击、治疗，而不是只拿到一个「掉血总量」；
+     *   - 施放失败（技能不存在 / 能量不足 / 未实装）这类没有数值变化的出手。
+     *
+     * ⚠ 服务端是唯一权威：本方法**只做表现**，不重算任何伤害；单位最终 HP/MP 一律取 state。
+     *   服务端没给 round_events（老版本 / 空回合）时，调用方自动回落到 HP 差值路径。
+     */
+    private playRoundEvents(
+        serverState: any,
+        events: any[],
+        targetPlayerHp: number,
+        targetEnemyHp: number,
+    ): void {
+        let i = 0;
+        const step = () => {
+            if (!this.node?.isValid || this.state === BattleState.FINISHED) return;
+            if (i >= events.length) {
+                this.finishRoundPresentation(serverState, targetPlayerHp, targetEnemyHp);
+                return;
+            }
+            const ev = events[i++];
+            this.playOneRoundEvent(ev, () => {
+                if (!this.node?.isValid || this.state === BattleState.FINISHED) return;
+                // 包一层匿名闭包：Cocos 以 target+callback 为唯一键，同一函数引用会被去重
+                this.scheduleOnce(() => step(), BattleScene.ROUND_EVENT_GAP);
+            });
+        };
+        step();
+    }
+
+    /**
+     * 演绎一次出手（一条 round_event）。
+     *
+     * 事件结构（服务端 `battle_room_service._exec_action`，view 已按视角交换）：
+     *   { side, action, skill_key, skill_name, anim, level, repeats, mp_cost, mp_after,
+     *     targets: [{ side, kind, damage, crit, hp_after, mp_after, drained }],
+     *     heals:   [{ side, attr, value, cur, max, from }],
+     *     effects: [], pending_effects: [], failed }
+     */
+    private playOneRoundEvent(ev: any, done: () => void): void {
+        if (!ev || typeof ev !== 'object') {
+            done();
+            return;
+        }
+
+        const side: Side = ev.side === 'enemy' ? 'enemy' : 'player';
+        const who = side === 'player' ? '你' : '敌方';
+        const atype = String(ev.action || '').toUpperCase();
+        const skillKey = SkillData.resolveSkillRef(ev.skill_key);
+        const skillName = String(ev.skill_name || '') || SkillData.roundEventLabel(ev) || '普通攻击';
+        const level = Math.max(1, Number(ev.level) || 1);
+
+        // 施放失败（技能不存在 / 能量不足 / 未实装）：只提示，不改任何数值
+        if (ev.failed) {
+            this.log(`${who} 的「${skillName}」未能施放：${ev.failed}`);
+            this.scheduleOnce(done, 0.15);
+            return;
+        }
+
+        // 防御：本回合不出手，只进入防御姿态（「伤害减半」由服务端 applyGuard 算完）
+        if (atype === 'DEFEND') {
+            this.log(`${who} 进入防御姿态`);
+            this.scheduleOnce(done, 0.15);
+            return;
+        }
+
+        if (atype !== 'ATTACK' && atype !== 'SKILL') {
+            done();
+            return;
+        }
+
+        const targets: any[] = Array.isArray(ev.targets) ? ev.targets : [];
+        const totalDamage = targets.reduce(
+            (s: number, t: any) => s + Math.max(0, Number(t?.damage) || 0), 0);
+
+        // ---- 普攻：沿用既有动画链路（远程/近战判定 + 按攻击次数拆段弹数字）----
+        if (atype === 'ATTACK') {
+            if (totalDamage <= 0) {
+                this.log(`${who} 的普通攻击未造成伤害`);
+                this.applyRoundEventHeals(ev);
+                this.scheduleOnce(done, 0.15);
+                return;
+            }
+            this.performAttackWithDamage(side, totalDamage, () => {
+                this.applyRoundEventHeals(ev);
+                done();
+            });
+            return;
+        }
+
+        // ---- 技能 ----
+        // 1) 能量：以服务端 mp_after 为权威（扣蓝已由服务端在结算时落地）
+        const attackerUnit = this.getUnit(side);
+        if (attackerUnit) {
+            const mpAfter = Number(ev.mp_after);
+            if (Number.isFinite(mpAfter)) {
+                attackerUnit.mp = Math.max(0, Math.min(attackerUnit.maxMp, mpAfter));
+                this.syncUnitMpToRawData(attackerUnit);
+            }
+        }
+        const cost = Math.max(0, Number(ev.mp_cost) || 0);
+        this.log(
+            `${who} 施放「${skillName}」` +
+            (level > 1 ? `（Lv${level}）` : '') +
+            (cost > 0 ? ` −${cost} 能量` : '') +
+            (totalDamage > 0 ? ` → ${totalDamage} 点伤害` : '') +
+            (totalDamage > 0 && (this.getUnit(side)?.attackTimes || 1) > 1
+                ? `（攻击次数 ${this.getUnit(side)?.attackTimes}）`
+                : '')
+        );
+
+        // 2) 特效打在「本次出手的目标」身上；自身 / 己方技能（护盾、修理）打在自己身上
+        const t0 = targets[0]?.side;
+        const effectSide: Side = t0 === 'enemy' ? 'enemy' : (t0 === 'player' ? 'player' : side);
+        const effectShow = effectSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+        const anim = String(ev.anim || '')
+            || (skillKey ? String(SkillData.getSkillDef(skillKey)?.anim || '') : '');
+
+        // 2.5) 距离：近身技必须先位移贴到目标身前再出招；远程技原地出招。
+        //    口径 = Skills.json 的 `range`（melee/ranged/dynamic/none），见 tools/skill_range_todo.md。
+        //    dynamic 按「是否持枪」判定（与普攻同口径）；自身/己方技能（护盾、修理）不以敌人为目标 → 不位移。
+        //    ⚠ 读不到技能定义（目录加载失败 / 技能不在目录）时**按普攻口径兜底**（持枪=远程，否则近身），
+        //      绝不默认成「远程」—— 否则近身技会一直在原地出招（2026-10-01 实测事故）。
+        const skillDef = skillKey ? SkillData.getSkillDef(skillKey) : null;
+        const attackerShow = side === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+        const rawAny: any = attackerUnit?.rawData;
+        const attackerHasGun = SkillData.hasGunEquipped(
+            SkillData.equipmentOf(rawAny) || SkillData.equipmentOf(rawAny?.data));
+        const skillRanged = SkillData.isRangedSkill(skillDef, attackerHasGun);
+        const meleeMove = (!skillRanged && effectShow && effectShow !== attackerShow)
+            ? this.moveInForMeleeSkill(attackerShow, effectShow, skillName)
+            : null;
+        Logger.warn(
+            `[近身技] 「${skillName}」(key=${skillKey || '-'}) ` +
+            (skillDef ? `range=${skillDef.range || '缺失'}` : '目录未命中→按普攻口径') +
+            ` 持枪=${attackerHasGun} → ${skillRanged ? '远程/原地' : (meleeMove ? '近身/位移' : '近身/无需位移')}`
+        );
+
+        /** 近身技：技能动画一结束就归位，不等伤害数字播完。 */
+        const startMeleeRestore = () => {
+            meleeMove?.restore(() => {});
+        };
+
+        const afterEffect = () => {
+            startMeleeRestore();
+            if (!this.node?.isValid || this.state === BattleState.FINISHED) {
+                done();
+                return;
+            }
+            this.applyRoundEventDamage(ev, side, targets, () => {
+                this.applyRoundEventHeals(ev);
+                this.refreshPlayerMechAttributeUI(true);
+                done();
+            });
+        };
+
+        if (effectShow && anim) {
+            let fired = false;
+            const fire = () => {
+                if (fired) return;
+                fired = true;
+                afterEffect();
+            };
+            try {
+                effectShow.playSkillEffect(anim, 1, fire);
+            } catch (err) {
+                Logger.warn(`[BattleScene] 技能特效播放失败 ${anim}:`, err);
+            }
+            // 兜底：Skill 节点缺该动画 / 回调丢失时也要推进，避免战斗卡死
+            this.scheduleOnce(fire, 1.0);
+        } else {
+            this.scheduleOnce(afterEffect, 0.15);
+        }
+    }
+
+    /** 把一次出手的伤害落到单位身上（弹伤害数字 + 写 HP/MP + 刷血条）。
+     *
+     * 技能与普攻同口径：
+     *   - 总伤来自服务端（已含技能 `repeats` 多次公式求和）；
+     *   - 客户端再按攻击方 **AttackCount（攻击次数）** 拆段展示（`computeAttackSegments`）；
+     *   - **整次出手只击退一次**（首段 HP 伤害时抖动），多段只弹数字、不再重复击退。
+     * 技能特效 / 近身贴脸是**前置表现**，不替代本段击退。
+     */
+    private applyRoundEventDamage(
+        ev: any,
+        attackerSide: Side,
+        targets: any[],
+        onDone: () => void,
+    ): void {
+        const attacker = this.getUnit(attackerSide);
+        const attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+        const attackTimes = Math.max(1, Math.floor(Number(attacker?.attackTimes) || 1));
+        const drift = this.damageDriftFor(attackerSide);
+
+        type Job = {
+            unit: BattleUnit;
+            show: RobotShow | null;
+            value: number;
+            isMp: boolean;
+            /** 仅首段 HP 伤害：整次出手击退一次 */
+            shake: boolean;
+        };
+        const jobs: Job[] = [];
+        for (const t of targets) {
+            const tSide: Side | null = t?.side === 'enemy' ? 'enemy' : (t?.side === 'player' ? 'player' : null);
+            if (!tSide) continue;
+            const unit = this.getUnit(tSide);
+            if (!unit) continue;
+            const show = tSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+            const kind = String(t?.kind || 'hp_damage');
+            const isMp = kind === 'mp_damage' || kind === 'mp_drain';
+            const dmg = Math.max(0, Number(t?.damage) || 0);
+            if (dmg <= 0) {
+                // 无伤害（护盾 / 纯 buff）：仍要把服务端权威血蓝对齐
+                this.clampUnitToServer(unit, t);
+                this.syncUnitHpToRawData(unit);
+                this.syncUnitMpToRawData(unit);
+                if (show) show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+                continue;
+            }
+            // HP：按攻击次数拆段（与普攻 performAttackWithDamage 同口径）
+            // MP：无攻击次数语义，仍均分到 skill.repeats（至少 1）
+            if (isMp) {
+                const repeats = Math.max(1, Math.floor(Number(ev?.repeats) || 1));
+                for (const seg of this.splitEvenly(dmg, repeats)) {
+                    jobs.push({ unit, show, value: seg, isMp: true, shake: false });
+                }
+            } else {
+                const segs = computeAttackSegments(dmg, attackTimes);
+                for (let si = 0; si < segs.length; si++) {
+                    // 每个目标整次出手只击退一次（首段）
+                    jobs.push({ unit, show, value: segs[si], isMp: false, shake: si === 0 });
+                }
+            }
+            // 逐段取整可能与服务端总量差 1~2 点 → 该目标最后用服务端 hp_after/mp_after 兜底
+            jobs.push({ unit, show, value: -1, isMp, shake: false });
+        }
+
+        if (jobs.length === 0) {
+            onDone();
+            return;
+        }
+
+        let i = 0;
+        const step = () => {
+            if (!this.node?.isValid || this.state === BattleState.FINISHED) {
+                onDone();
+                return;
+            }
+            if (i >= jobs.length) {
+                onDone();
+                return;
+            }
+            const job = jobs[i++];
+            if (job.value < 0) {
+                // 哨兵：用服务端给的 hp_after / mp_after 对齐（避免分段取整误差累积）
+                this.clampUnitToServer(job.unit, null);
+                this.syncUnitHpToRawData(job.unit);
+                this.syncUnitMpToRawData(job.unit);
+                if (job.show) {
+                    job.show.updateBattleBars(job.unit.hp, job.unit.maxHp, job.unit.mp, job.unit.maxMp);
+                }
+                this.scheduleOnce(() => step(), 0.05);
+                return;
+            }
+
+            if (job.isMp) {
+                job.unit.mp = Math.max(0, job.unit.mp - job.value);
+            } else {
+                job.unit.hp = Math.max(0, job.unit.hp - job.value);
+                if (job.show) job.show.showDamageNumber(job.value, false, drift.x, drift.y);
+            }
+            this.syncUnitHpToRawData(job.unit);
+            this.syncUnitMpToRawData(job.unit);
+            if (job.show) {
+                job.show.updateBattleBars(job.unit.hp, job.unit.maxHp, job.unit.mp, job.unit.maxMp);
+            }
+
+            // 整次出手只在首段 HP 伤害时击退一次
+            if (job.shake) {
+                this.playDefenderHitShake(job.show, attackerShow, () => {
+                    this.scheduleOnce(() => step(), 0.06);
+                });
+                return;
+            }
+            this.scheduleOnce(() => step(), Math.max(0.12, BattleScene.ROUND_EVENT_GAP / 3));
+        };
+        step();
+    }
+
+    /**
+     * 受击方「击退一小段再拉回」——普攻接触 / 技能段伤共用。
+     * 只动受击节点；攻击方站位由近身技前置位移单独管。
+     */
+    private playDefenderHitShake(
+        defenderShow: RobotShow | null,
+        attackerShow: RobotShow | null,
+        onDone?: () => void,
+    ): void {
+        const dNode = defenderShow?.node;
+        if (!dNode?.isValid) {
+            onDone?.();
+            return;
+        }
+        const aNode = attackerShow?.node;
+        let attackerOnLeft = defenderShow === this.enemyRobotShow;
+        if (aNode?.isValid) {
+            attackerOnLeft = aNode.worldPosition.x < dNode.worldPosition.x;
+        }
+        const home = dNode.position.clone();
+        const delta = attackerOnLeft ? BattleScene.KNOCKBACK_DELTA : -BattleScene.KNOCKBACK_DELTA;
+        const knockPos = new Vec3(home.x + delta, home.y, home.z);
+
+        let fired = false;
+        const once = () => {
+            if (fired) return;
+            fired = true;
+            onDone?.();
+        };
+        try {
+            Tween.stopAllByTarget(dNode);
+            tween(dNode)
+                .to(0.08, { position: knockPos })
+                .to(0.12, { position: home })
+                .call(once)
+                .start();
+            this.scheduleOnce(once, 0.35);
+        } catch (err) {
+            Logger.warn('[BattleScene] 受击抖动失败:', err);
+            if (dNode.isValid) dNode.setPosition(home);
+            once();
+        }
+    }
+
+    /**
+     * 落地一次出手的治疗 / 吸血 / 回蓝（`ev.heals`）。
+     * 服务端已在结算时把成长量写进 actor，这里只做表现 + 本地数值同步。
+     */
+    private applyRoundEventHeals(ev: any): void {
+        const list = Array.isArray(ev?.heals) ? ev.heals : [];
+        for (const h of list) {
+            const hSide: Side | null = h?.side === 'enemy' ? 'enemy' : (h?.side === 'player' ? 'player' : null);
+            if (!hSide) continue;
+            const unit = this.getUnit(hSide);
+            if (!unit) continue;
+            const show = hSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+            const attr = String(h?.attr || '');
+            const value = Math.max(0, Number(h?.value) || 0);
+            if (value <= 0) continue;
+
+            if (attr === 'hp') {
+                unit.hp = Math.min(unit.maxHp, unit.hp + value);
+                if (show) show.showDamageNumber(value, true);   // isHeal → 治疗样式
+            } else if (attr === 'mp') {
+                unit.mp = Math.min(unit.maxMp, unit.mp + value);
+            } else {
+                continue;
+            }
+            this.syncUnitHpToRawData(unit);
+            this.syncUnitMpToRawData(unit);
+            if (show) show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+            const who = hSide === 'player' ? '你' : '敌方';
+            this.log(`${who} 恢复 ${value} 点${attr === 'hp' ? '生命' : '能量'}`);
+        }
+    }
+
+    /**
+     * 用服务端给的血蓝落地值对齐单位（`target` 为 null 时按当前单位自身上限夹取）。
+     * ⚠ 「死亡空血优先」：显式判 NaN，绝不用 `||`（`0 || maxHp` 会静默满血复活）。
+     */
+    private clampUnitToServer(unit: BattleUnit, target: any): void {
+        const hpAfter = target ? Number(target.hp_after) : NaN;
+        if (Number.isFinite(hpAfter)) {
+            unit.hp = Math.max(0, Math.min(unit.maxHp, hpAfter));
+        } else {
+            unit.hp = Math.max(0, Math.min(unit.maxHp, unit.hp));
+        }
+        const mpAfter = target ? Number(target.mp_after) : NaN;
+        if (Number.isFinite(mpAfter)) {
+            unit.mp = Math.max(0, Math.min(unit.maxMp, mpAfter));
+        } else {
+            unit.mp = Math.max(0, Math.min(unit.maxMp, unit.mp));
+        }
+    }
+
+    /**
+     * 把总伤害平均拆成 n 段（末段吸收余数），保证 Σ段 === total。
+     * 只影响「跳几次数、每次多少」的打击感，不改总伤（对比：普攻用 computeAttackSegments 的加权拆段）。
+     */
+    private splitEvenly(total: number, n: number): number[] {
+        const count = Math.max(1, Math.floor(n || 1));
+        const amount = Math.max(0, Math.floor(total));
+        if (count === 1 || amount === 0) return [amount];
+        const base = Math.floor(amount / count);
+        const out: number[] = [];
+        for (let i = 0; i < count; i++) out.push(base);
+        out[count - 1] += amount - base * count;
+        return out.filter((v) => v > 0);
+    }
+
+    /**
+     * 回合结束被动恢复表现（生命恢复 / 能量恢复）。
+     *
+     * 权威在服务端：服务端在「死亡判定**之后**」结算，并把结果放进
+     * `serverState.round_passive_effects`（按 side 分组，view 已按视角交换）。
+     * 这里只做表现、不重复判定 —— 空血单位服务端根本不会下发恢复效果；
+     * 客户端若自作主张补判，反而会与权威状态不一致。
+     *
+     * 每条效果：播对应动画（shengminghuifu / nenglianghuifu）+ 治疗数字 + 刷新血/蓝条；
+     * 多条之间按 PASSIVE_EFFECT_GAP 秒依次播，全部播完再回调（战斗收尾等它）。
+     */
+    private playPassiveRecoverEffects(serverState: any, onDone: () => void): void {
+        const jobs: Array<() => void> = [];
+
+        const collect = (side: Side, show: RobotShow | null) => {
+            const list = serverState?.round_passive_effects?.[side];
+            if (!Array.isArray(list) || list.length === 0) return;
+            const unit = side === 'player' ? this.playerUnit : this.enemyUnit;
+            if (!unit) return;
+
+            for (const e of list) {
+                const attr = String(e?.attr || '');
+                const healed = Number(e?.value) || 0;
+                const cur = Number(e?.cur ?? NaN);
+                const anim = String(e?.anim || '');
+                const skillName = String(e?.name || '被动技能');
+                if (healed <= 0) continue;
+
+                jobs.push(() => {
+                    // 特效（名字须在 Skill 节点播放列表里），出错不影响战斗结算
+                    if (show && anim) {
+                        try {
+                            show.playSkillEffect(anim, 1);
+                        } catch (err) {
+                            Logger.warn(`[BattleScene] 被动恢复特效播放失败 ${anim}:`, err);
+                        }
+                    }
+
+                    const who = side === 'player' ? '你' : '敌方';
+                    if (attr === 'hp') {
+                        unit.hp = Number.isFinite(cur)
+                            ? Math.min(unit.maxHp, cur)
+                            : Math.min(unit.maxHp, unit.hp + healed);
+                        this.syncUnitHpToRawData(unit);
+                        if (show) {
+                            show.showDamageNumber(healed, true);   // isHeal = true → 治疗样式
+                            show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+                        }
+                        this.log(`${who}的「${skillName}」恢复 ${healed} 点生命（${unit.hp}/${unit.maxHp}）`);
+                    } else if (attr === 'mp') {
+                        unit.mp = Number.isFinite(cur)
+                            ? Math.min(unit.maxMp, cur)
+                            : Math.min(unit.maxMp, unit.mp + healed);
+                        if (show) show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+                        this.log(`${who}的「${skillName}」恢复 ${healed} 点能量（${unit.mp}/${unit.maxMp}）`);
+                    }
+                });
+            }
+        };
+
+        collect('player', this.playerRobotShow);
+        collect('enemy', this.enemyRobotShow);
+
+        if (jobs.length === 0) {
+            onDone();
+            return;
+        }
+
+        let i = 0;
+        const step = () => {
+            if (!this.node?.isValid) {
+                onDone();
+                return;
+            }
+            if (i >= jobs.length) {
+                this.refreshPlayerMechAttributeUI(true);
+                onDone();
+                return;
+            }
+            const job = jobs[i++];
+            try {
+                job();
+            } catch (err) {
+                // 表现层出错绝不吞掉战斗流程
+                Logger.error('[BattleScene] 被动恢复表现异常（已吞掉，不影响战斗流程）:', err);
+            }
+            this.scheduleOnce(step, BattleScene.PASSIVE_EFFECT_GAP);
+        };
+        step();
+    }
+
+    /**
+     * 用一份服务器 state 演绎一整个回合（含双方攻击动画、伤害数字、血条）。
+     *
+     * 供两条路径共用：
+     *   1) 自己提交动作后 battle_room_action 的回调；
+     *   2) 服务端主动推送的 pvp_round_update（自己挂机时也能看到整回合）。
+     *
+     * playerAction：本回合「自己」的动作（用于决定是否播自己的攻击动画）。
+     *      推送到挂机方时是 'ATTACK'（服务器代打普攻），因此挂机方也能看到自己的攻击动画。
+     * basePlayerHp/baseEnemyHp：本回合开始前的 HP 快照（用于算伤害差）。
+     */
+    private playRoundFromServerState(
+        serverState: any,
+        playerAction: ActionType,
+        basePlayerHp: number,
+        baseEnemyHp: number,
+    ) {
+        if (!this.playerUnit || !this.enemyUnit) {
+            Logger.warn(
+                `[BattleScene] playRoundFromServerState 单位缺失，直接恢复操作 ` +
+                `playerUnit=${!!this.playerUnit} enemyUnit=${!!this.enemyUnit}`
+            );
+            this.state = BattleState.INIT;
+            this.isAnimating = false;
+            this.isRequestingAction = false;
+            this.animWatchdog = 0;
+            if (this.node?.isValid) this.startCommandPhase();
+            return;
+        }
+
+        const targetPlayerHp = Number(serverState?.player?.hp ?? this.playerUnit.hp ?? 0);
+        const targetEnemyHp = Number(serverState?.enemy?.hp ?? this.enemyUnit.hp ?? 0);
+
+        // 回合结束被动恢复（生命恢复 / 能量恢复）—— 服务端在「死亡判定之后」算好再下发。
+        // ⚠ 服务端给的 hp 是「攻击结算 + 被动恢复」后的最终值，算伤害时必须先把恢复量剥掉，
+        //   否则本回合伤害会被少算（伤害数字偏小、动画表现与真实掉血不符）。
+        const recoverHp = (side: Side): number => {
+            const list = serverState?.round_passive_effects?.[side];
+            if (!Array.isArray(list)) return 0;
+            return list.reduce(
+                (sum: number, e: any) => sum + (e?.attr === 'hp' ? (Number(e.value) || 0) : 0),
+                0,
+            );
+        };
+        const hpAfterAttackPlayer = Math.max(0, targetPlayerHp - recoverHp('player'));
+        const hpAfterAttackEnemy = Math.max(0, targetEnemyHp - recoverHp('enemy'));
+
+        // 攻击不改能量 → 回合开始前的 MP 就是被动恢复的动画起点
+        const basePlayerMp = this.playerUnit.mp;
+        const baseEnemyMp = this.enemyUnit.mp;
+
+        this.animWatchdog = 0;
+        this.state = BattleState.ANIMATING;
+        this.isAnimating = true;
+        this.setButtonsInteractable(false);
+        if (this.battleSelectPanel) this.battleSelectPanel.active = false;
+        this.closeSkillSelectPanel();
+        if (this.timerRoot) this.timerRoot.active = false;
+
+        // 同步单位/展示数据（不结束战斗、不显示面板）
+        this.applyServerRoomState(serverState, false, true);
+
+        // 按服务器结果计算本回合掉血量（不能为负）。基于「攻击后、被动恢复前」的 HP
+        const damageToPlayer = Math.max(0, basePlayerHp - hpAfterAttackPlayer);
+        const damageToEnemy = Math.max(0, baseEnemyHp - hpAfterAttackEnemy);
+        Logger.warn(
+            `[攻击诊断] 服务器回合结果: 玩家HP ${basePlayerHp}→${hpAfterAttackPlayer}(伤${damageToPlayer}) ` +
+            `敌人HP ${baseEnemyHp}→${hpAfterAttackEnemy}(伤${damageToEnemy}) 玩家动作=${playerAction} ` +
+            `被动恢复 玩家+${recoverHp('player')}/敌人+${recoverHp('enemy')}`
+        );
+
+        // 为了播动画，把本地 HP 暂时「回滚」到回合开始前（MP 同样回到回合开始值，
+        // 这样被动恢复能演出「涨上去」的过程；攻击不改 MP，回滚不会丢信息）
+        this.playerUnit.hp = basePlayerHp;
+        this.enemyUnit.hp = baseEnemyHp;
+        this.playerUnit.mp = basePlayerMp;
+        this.enemyUnit.mp = baseEnemyMp;
+        this.syncUnitHpToRawData(this.playerUnit);
+        this.syncUnitHpToRawData(this.enemyUnit);
+        this.refreshPlayerMechAttributeUI(true);
+
+        // 演绎本回合：
+        //   ① 服务端给了「出手明细」（round_events）→ 走事件路径，逐次出手演绎（技能/普攻/防御、暴击、治疗都能还原）；
+        //   ② 没给（老服务端 / 空回合）→ 回落到「按 HP 差值反推」的旧路径，保证不回归。
+        const events: any[] = Array.isArray(serverState?.round_events) ? serverState.round_events : [];
+        if (events.length > 0) {
+            this.playRoundEvents(serverState, events, targetPlayerHp, targetEnemyHp);
+        } else {
+            // 用服务器伤害驱动一轮动画，播完再落到服务器最终 HP
+            this.playServerRoundAnimation(
+                playerAction,
+                damageToPlayer,
+                damageToEnemy,
+                targetPlayerHp,
+                targetEnemyHp,
+                serverState,
+            );
+        }
+    }
+
+    /**
+     * 服务端主动推送「PVP 回合已结算」：
+     *   解决挂机方从不发请求 → 永远拿不到新 state → 看不到动画/血条不更新的缺陷。
+     *
+     * 去重：仅当推送的 settled_round >= 自己已知的回合数、且当前不在播同一回合时才处理。
+     */
+    private onPvpRoundUpdate(msg: any) {
+        if (!this.node?.isValid) return;
+        const data = msg?.data ?? msg;
+        const state = data?.state;
+        if (!state) return;
+
+        // 只处理本房间的推送
+        const incomingRoomId = state.room_id || state.roomId || data?.room_id || null;
+        if (this.roomId && incomingRoomId && incomingRoomId !== this.roomId) return;
+
+        const settledRound = Number(data?.settled_round ?? state.round ?? 0);
+
+        // 去重：同一回合的推送只处理一次
+        if (settledRound > 0 && settledRound <= this._lastPlayedPvpRound) {
+            Logger.debug(`[BattleScene] 忽略重复的 pvp_round_update round=${settledRound}`);
+            return;
+        }
+
+        // 正在播自己的动作动画（请求还没回来）时，交给请求回调处理，避免重复播
+        if (this.isRequestingAction) {
+            Logger.debug('[BattleScene] 请求进行中，忽略 pvp_round_update（由请求回调统一处理）');
+            return;
+        }
+        // 正在播动画（同一回合）时不打断
+        if (this.isAnimating) {
+            Logger.debug('[BattleScene] 动画进行中，忽略 pvp_round_update');
+            return;
+        }
+        if (state.status === 'finished' && this.state === BattleState.FINISHED) return;
+
+        this._lastPlayedPvpRound = settledRound > 0 ? settledRound : this._lastPlayedPvpRound;
+
+        // 推送里「自己」的动作由自己的 round_actions 决定（视角已交换）：
+        //   取不到时按 ATTACK 处理（服务器补普攻的场景）。
+        const myAction: ActionType =
+            (state.round_actions?.player as ActionType) ||
+            (state.my_action as ActionType) ||
+            'ATTACK';
+
+        const basePlayerHp = this.playerUnit?.hp ?? Number(state.player?.hp ?? 0);
+        const baseEnemyHp = this.enemyUnit?.hp ?? Number(state.enemy?.hp ?? 0);
+
+        this.log('[PVP] 收到服务器回合推送，播放整回合动画');
+        this.playRoundFromServerState(state, myAction, basePlayerHp, baseEnemyHp);
     }
 
     /**
@@ -1894,11 +3207,14 @@ export class BattleScene extends Component {
     private performAttackWithDamage(attackerSide: Side, damage: number, onDone: () => void) {
         const attacker = this.getUnit(attackerSide);
         const defender = this.getOpponent(attackerSide);
+        Logger.warn(`[攻击诊断] 进入 performAttackWithDamage side=${attackerSide} damage=${damage} attacker=${!!attacker} defender=${!!defender}`);
         if (!attacker || !defender) {
+            Logger.warn('[攻击诊断] attacker/defender 缺失，直接 onDone');
             onDone();
             return;
         }
         if (this.state === BattleState.FINISHED) {
+            Logger.warn('[攻击诊断] state=FINISHED，直接 onDone');
             onDone();
             return;
         }
@@ -1909,8 +3225,14 @@ export class BattleScene extends Component {
 
         damage = Math.max(1, Math.floor(damage));
 
+        // 「攻击次数」：服务端给的是整次伤害，客户端按攻击次数拆段展示（总伤上限 +20%）
+        const segments = computeAttackSegments(damage, attacker.attackTimes);
+        const totalApplied = segments.reduce((a, b) => a + b, 0);
+        const drift = this.damageDriftFor(attackerSide);
+
         this.log(
-            `${attackerSide === 'player' ? '玩家' : '敌人'} 造成 ${damage} 点伤害（按服务器结果）`
+            `${attackerSide === 'player' ? '玩家' : '敌人'} 造成 ${totalApplied} 点伤害（按服务器结果）` +
+            (segments.length > 1 ? `，分 ${segments.length} 段` : '')
         );
 
         const attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
@@ -1920,40 +3242,102 @@ export class BattleScene extends Component {
         const attackerEquip = attacker.rawData?.equipment || attacker.rawData?.data?.equipment || {};
         const attackerHasGun = !!(attackerEquip && attackerEquip.Gun && attackerEquip.Gun.item_id);
 
-        this.playAttackAnimation(attackerShow, defenderShow, attackerHasGun, () => {
-            this.isAnimating = false;
-            // 动画结束后再扣血、弹伤害数字（此时不刷新任何血条，等伤害数字一起）
-            defender.hp = Math.max(0, defender.hp - damage);
-            this.syncUnitHpToRawData(defender);
-            if (defenderShow) {
-                defenderShow.showDamageNumber(damage, false);
-            }
-            // 等伤害数字弹出后，上面战斗血条和底下属性面板血条一起更新，再结束本动作
-            this.scheduleOnce(() => {
-                if (this.state !== BattleState.FINISHED) {
+        Logger.warn(`[攻击诊断] 段数=${segments.length} 总伤=${totalApplied} attackerShow=${!!attackerShow} defenderShow=${!!defenderShow} 远程=${attackerHasGun}`);
+        // 逐段扣血、弹伤害数字（此时不刷新任何血条，等伤害数字一起）。
+        //   「攻击次数」：一次攻击的整段伤害拆成 N 段，间隔 0.18s 逐段弹出。
+        //   注意：绝不能用 `scheduleOnce(step, ...)` 递归调度同一个函数引用 —— Cocos 以
+        //   target+callback 为唯一键，同一函数重入时会被去重/覆盖（日志报
+        //   "Selector already scheduled"），导致第 2 段后再也不执行、战斗卡死。
+        //   这里每次调度都包一层新的匿名闭包，保证 callback 引用唯一。
+        let segStarted = false;
+        const startSegments = () => {
+            // 幂等：接触瞬间与动画结束都会调用，保证只启动一次
+            if (segStarted) return;
+            segStarted = true;
+            Logger.warn(`[攻击诊断] 开始逐段结算 segments=${segments.length}`);
+            let i = 0;
+            const step = () => {
+                Logger.warn(`[攻击诊断] step 执行 i=${i} 总段=${segments.length}`);
+                if (i < segments.length) {
+                    const segVal = segments[i];
+                    defender.hp = Math.max(0, defender.hp - segVal);
+                    this.syncUnitHpToRawData(defender);
+                    Logger.warn(`[攻击诊断] 段 ${i + 1}/${segments.length} -${segVal} 剩余HP=${defender.hp}/${defender.maxHp} defenderShow=${!!defenderShow}`);
                     if (defenderShow) {
-                        defenderShow.updateBattleBars(defender.hp, defender.maxHp);
+                        defenderShow.showDamageNumber(segVal, false, drift.x, drift.y);
                     }
-                    if (defender.side === 'player') {
-                        this.refreshPlayerMechAttributeUI(true);
+                    i++;
+                    if (i < segments.length) {
+                        // 关键：包一层匿名闭包，避免同一 callback 引用被 Cocos 去重而丢失调度
+                        this.scheduleOnce(() => step(), 0.18);
+                        return;
                     }
                 }
-                onDone();
-            }, 0.35);
-        });
+                // 全部段落结束：等伤害数字弹出后，血条与属性面板一起更新，再结束本动作
+                this.scheduleOnce(() => {
+                    Logger.warn(`[攻击诊断] 段结算收尾更新血条 defenderHP=${defender.hp}/${defender.maxHp}`);
+                    if (this.state !== BattleState.FINISHED) {
+                        if (defenderShow) {
+                            defenderShow.updateBattleBars(
+                                defender.hp, defender.maxHp, defender.mp, defender.maxMp,
+                            );
+                        }
+                        if (defender.side === 'player') {
+                            this.refreshPlayerMechAttributeUI(true);
+                        }
+                    }
+                    if (this.node?.isValid) {
+                        Logger.warn('[攻击诊断] 调用 onDone 解除锁定');
+                        onDone();
+                    }
+                }, 0.35);
+            };
+            step();
+        };
+
+        this.playAttackAnimation(
+            attackerShow, defenderShow, attackerHasGun,
+            // onComplete：动画播完（兜底启动分段结算 + 解锁）
+            () => {
+                Logger.warn(`[攻击诊断] 攻击动画回调已触发（onComplete）segments=${segments.length}`);
+                this.isAnimating = false;
+                startSegments();
+            },
+            // onImpact：接触到对方的瞬间 —— 只弹伤害数字（**普攻不播技能特效**，2026-09-30 用户要求去掉）
+            () => {
+                startSegments();
+            },
+        );
     }
 
     private playAttackAnimation(
         attackerShow: RobotShow | null,
         defenderShow: RobotShow | null,
         isRanged: boolean,
-        onComplete: () => void
+        onComplete: () => void,
+        /**
+         * 「接触瞬间」回调：攻击方触及受击者的那一刻触发（近战=瞬移到位即接触；远程=子弹命中击退开始）。
+         * 伤害数字/扣血由调用方挂在这里，做到「一打到就弹数字」，不等整段动画播完。
+         */
+        onImpact?: () => void
     ) {
         const attackerNode: Node | null = attackerShow?.node || null;
         const defenderNode: Node | null = defenderShow?.node || null;
 
+        Logger.warn(`[攻击诊断] playAttackAnimation 进入 attackerNode=${!!attackerNode} defenderNode=${!!defenderNode} 远程=${isRanged}`);
+
+        // 接触回调幂等：tween 回调与兜底可能都触发，保证只结算一次
+        let impactFired = false;
+        const fireImpact = () => {
+            if (impactFired) return;
+            impactFired = true;
+            Logger.warn('[攻击诊断] onImpact 接触瞬间触发');
+            onImpact?.();
+        };
+
         if (!attackerNode || !defenderNode) {
-            console.warn('[BattleScene] 攻击动画：缺少 RobotShow 节点，跳过动画');
+            Logger.warn('[BattleScene] 攻击动画：缺少 RobotShow 节点，跳过动画');
+            fireImpact();   // 无动画也要先结算伤害
             onComplete();
             return;
         }
@@ -1963,21 +3347,44 @@ export class BattleScene extends Component {
 
         // 敌人被击退方向：始终远离攻击方
         const attackerOnLeft = attackerNode.worldPosition.x < defenderNode.worldPosition.x;
-        const knockbackDelta = attackerOnLeft ? 30 : -30; // 击退 30 像素
+        const knockbackDelta = attackerOnLeft ? BattleScene.KNOCKBACK_DELTA : -BattleScene.KNOCKBACK_DELTA; // 击退像素（与近身技共用）
         const knockbackPos = new Vec3(defenderStart.x + knockbackDelta, defenderStart.y, defenderStart.z);
 
         // 为了避免双方动作重叠，这里统一用“全部 tween 结束后再回调”的计数逻辑
         let activeTweens = 0;
+        let animDone = false;
+        let animFallback: (() => void) | null = null;
+        const fireComplete = () => {
+            if (animDone) return;   // 单次守卫：防止 tween 与兜底重复触发造成伤害重复结算
+            animDone = true;
+            // 兜底：极端情况下接触回调未触发（tween 丢回调等），此处补发，保证伤害一定结算
+            fireImpact();
+            // 动画已正常完成：清掉兜底调度，避免每次攻击都往 scheduler 里堆积一个 2.2s 定时器
+            if (animFallback) {
+                this.unschedule(animFallback);
+                animFallback = null;
+            }
+            Logger.warn('[攻击诊断] playAttackAnimation 动画完成（fireComplete）');
+            onComplete();
+        };
         const onTweenStart = () => {
             activeTweens += 1;
         };
         const onTweenDone = () => {
             activeTweens -= 1;
+            Logger.warn(`[攻击诊断] onTweenDone 剩余 activeTweens=${activeTweens}`);
             if (activeTweens <= 0) {
                 // 所有本次攻击相关的 tween 都完成，才能开始下一方行为
-                onComplete();
+                fireComplete();
             }
         };
+        // 兜底：tween 若因节点失效/引擎原因丢回调，2.2s 后强制推进，避免战斗死锁
+        animFallback = () => {
+            if (animDone) return;
+            Logger.warn('[攻击诊断] playAttackAnimation 2.2s 兜底触发');
+            fireComplete();
+        };
+        this.scheduleOnce(animFallback, 2.2);
 
         // 远程（射击）：攻击方「后坐 + 回位」+ 敌人「中弹击退 + 拉回」，错开时序让“先开火→再中弹”更清晰
         if (isRanged) {
@@ -1993,14 +3400,18 @@ export class BattleScene extends Component {
             tween(defenderNode)
                 .delay(0.05)
                 .to(0.08, { position: knockbackPos })
+                // 子弹命中（击退到位）的瞬间即视为「接触」，立即弹出伤害数字
+                .call(() => {
+                    fireImpact();
+                })
                 .to(0.12, { position: defenderStart })
                 .call(onTweenDone)
                 .start();
             return;
         }
 
-        // 近战：攻击方瞬移到对方面前（间隔 30 的 X），两者一起产生击退/拉回效果，然后攻击方快速回位
-        const meleeGap = 30;
+        // 近战：攻击方瞬移到对方面前（间隔 MELEE_CONTACT_GAP 的 X），两者一起产生击退/拉回效果，然后攻击方快速回位
+        const meleeGap = BattleScene.MELEE_CONTACT_GAP;
         const meleeContactX = attackerOnLeft
             ? defenderStart.x - meleeGap
             : defenderStart.x + meleeGap;
@@ -2008,6 +3419,8 @@ export class BattleScene extends Component {
 
         // 瞬移到近战位置
         attackerNode.setPosition(meleeContactPos);
+        // 瞬移到位即「接触到对方」——立刻弹出伤害数字，不留等待
+        fireImpact();
 
         // 敌人击退 + 拉回，同时攻击方稍微跟随一点拉回感，然后回原位
         onTweenStart();
@@ -2032,9 +3445,76 @@ export class BattleScene extends Component {
             .start();
     }
 
-    /** 新一场战斗开始前：恢复击破动画后的透明度，并清理上一场 schedule/tween */
+    /**
+     * 【近身技位移】把攻击方挪到目标身前（间隔 {@link MELEE_CONTACT_GAP} 像素，与普攻近战同口径）。
+     * 只做贴脸前置，**不在此处击退**——受击击退统一在伤害结算时打一次（见 {@link playDefenderHitShake}）。
+     *
+     * 调用方拿到的 `restore(cb)`：技能特效一结束即调用 —— 机甲滑回原位，不等伤害数字。
+     * 无需位移（节点缺失、敌我同一节点）时返回 `null`，调用方直接推进即可。
+     *
+     * ⚠ 只是**表现层**位移；伤害结算完全走服务端权威值，与位置无关。
+     */
+    private moveInForMeleeSkill(
+        attackerShow: RobotShow | null,
+        targetShow: RobotShow | null,
+        skillName: string = '',
+    ): { restore: (cb: () => void) => void } | null {
+        const aNode = attackerShow?.node;
+        const tNode = targetShow?.node;
+        if (!aNode || !tNode || aNode === tNode) return null;
+
+        // 归位点优先用缓存的「战斗站位」（不受上一次击退残留影响），没有才用当前位置
+        const cachedHome = attackerShow === this.playerRobotShow ? this.battlePlayerPos : this.battleEnemyPos;
+        const home = cachedHome ? cachedHome.clone() : aNode.position.clone();
+        const targetStart = tNode.position.clone();
+        const attackerOnLeft = aNode.worldPosition.x < tNode.worldPosition.x;
+        const gap = BattleScene.MELEE_CONTACT_GAP;
+        const contactPos = new Vec3(
+            attackerOnLeft ? targetStart.x - gap : targetStart.x + gap,
+            home.y, home.z,
+        );
+        // 清掉可能残留的位移 tween，避免叠加造成错位
+        try {
+            Tween.stopAllByTarget(aNode);
+        } catch (e) { /* 忽略 */ }
+        aNode.setPosition(contactPos);
+        Logger.warn(
+            `[近身技] 位移「${skillName || '技能'}」：x ${home.x.toFixed(0)} → ${contactPos.x.toFixed(0)}` +
+            `（目标 x=${targetStart.x.toFixed(0)}，${attackerOnLeft ? '左→右' : '右→左'}）`
+        );
+
+        return {
+            restore: (cb: () => void) => {
+                // 幂等：tween 回调与兜底调度都可能触发，只推进一次
+                let fired = false;
+                const once = () => {
+                    if (fired) return;
+                    fired = true;
+                    cb();
+                };
+                if (!aNode.isValid) {
+                    once();
+                    return;
+                }
+                try {
+                    Tween.stopAllByTarget(aNode);
+                    tween(aNode)
+                        .to(BattleScene.MELEE_RETURN_TIME, { position: home })
+                        .call(once)
+                        .start();
+                    // 兜底：tween 回调丢失（节点失效 / 战斗收尾）时也要归位并推进，避免死锁
+                    this.scheduleOnce(once, BattleScene.MELEE_RETURN_TIME + 0.3);
+                } catch (err) {
+                    Logger.warn('[BattleScene] 近身技归位失败:', err);
+                    if (aNode.isValid) aNode.setPosition(home);
+                    once();
+                }
+            },
+        };
+    }
+
+    /** 新一场战斗开始前：恢复击破动画后的透明度，并清理上一场残留的 tween（不动本场已排程的 scheduleOnce） */
     private prepareRobotShowsForNewBattle(): void {
-        this.unscheduleAllCallbacks();
         if (this.playerRobotShow?.node) Tween.stopAllByTarget(this.playerRobotShow.node);
         if (this.enemyRobotShow?.node) Tween.stopAllByTarget(this.enemyRobotShow.node);
         this.resetRobotShowOpacity(this.playerRobotShow);
@@ -2124,8 +3604,19 @@ export class BattleScene extends Component {
         if (this.battleSelectPanel) {
             this.battleSelectPanel.active = false;
         }
+        this.closeSkillSelectPanel();
         if (this.playerRobotShow) this.playerRobotShow.setBattleBarsVisible(false);
         if (this.enemyRobotShow) this.enemyRobotShow.setBattleBarsVisible(false);
+
+        // 战斗结束后：玩家机甲若在本场被打倒（血量归零），保底恢复 1 滴血
+        // （与服务端收尾回写口径一致）—— 回到大地图/属性面板应是「存活但残血」，
+        // 而不是永久 0 血（0 血会被当死尸，无法出战）。必须在发送 battle_result
+        // 与刷新属性面板之前执行，保证各处显示同源。
+        if (this.playerUnit && Number(this.playerUnit.hp) <= 0) {
+            this.playerUnit.hp = 1;
+            this.syncUnitHpToRawData(this.playerUnit);
+            this.log('机甲被击倒，战斗结束保底恢复 1 点血量');
+        }
 
         const result = {
             type: winner === 'player' ? 'win' : 'lose',
@@ -2146,7 +3637,7 @@ export class BattleScene extends Component {
                 true,
             );
         } catch (e) {
-            console.warn('[BattleScene] 发送 battle_result 失败:', e);
+            Logger.warn('[BattleScene] 发送 battle_result 失败:', e);
         }
 
         // 战斗结束后：清除本场机甲详情缓存，保证回到机甲属性时重新拉取并显示实打实的血量/经验
@@ -2163,7 +3654,7 @@ export class BattleScene extends Component {
                 this.ws.send(req as any, true, true);
             }
         } catch (e) {
-            console.warn('[BattleScene] 战斗结束刷新缓存/拉取失败:', e);
+            Logger.warn('[BattleScene] 战斗结束刷新缓存/拉取失败:', e);
         }
 
         this.log(`战斗结束：${result.type === 'win' ? '玩家胜利' : '玩家失败'}（原因：${reason === 'ko' ? '击倒' : '逃跑'}）`);
@@ -2215,7 +3706,7 @@ export class BattleScene extends Component {
     }
 
     private log(msg: string) {
-        console.log('[BattleScene]', msg);
+        Logger.debug('[BattleScene]', msg);
         if (!this.logLabel) return;
         const old = this.logLabel.string || '';
         this.logLabel.string = old ? `${old}\n${msg}` : msg;
@@ -2451,7 +3942,7 @@ export class BattleScene extends Component {
         // 分割型（基础值/当前值）
         const nodeKeys = [
             'Melee', 'Armor', 'Accuracy', 'Corrosion', 'Initiative',
-            'Block', 'ParticleShield', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'
+            'Block', 'AttackCount', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'
         ];
         for (const key of nodeKeys) {
             const parent = this.findChildByName(root, key);
@@ -2559,10 +4050,13 @@ export class BattleScene extends Component {
             if (!group || !group.left) continue;
             const baseValue = data[key] ?? 0;
             const currentKey = 'Current' + key;
-            if (Object.prototype.hasOwnProperty.call(data, currentKey)) {
+            const hasCurrent = Object.prototype.hasOwnProperty.call(data, currentKey);
+            // 有 Current 且节点含 RightLabel/SlashSprite → 显示 base/current 分割；
+            // 否则只显示 base（节点缺 right/slash 时也不能整块跳过）
+            if (hasCurrent && group.right && group.slash) {
                 group.left.string = String(baseValue);
-                if (group.right) group.right.string = String(data[currentKey] ?? 0);
-                if (group.slash) group.slash.active = true;
+                group.right.string = String(data[currentKey] ?? 0);
+                group.slash.active = true;
             } else {
                 group.left.string = String(baseValue);
                 if (group.right) group.right.string = '';
@@ -2606,6 +4100,20 @@ export class BattleScene extends Component {
             (unit.rawData as any).CurrentHP = unit.hp;
             if ((unit.rawData as any).data && typeof (unit.rawData as any).data === 'object') {
                 (unit.rawData as any).data.CurrentHP = unit.hp;
+            }
+        } catch {}
+    }
+
+    /**
+     * 把单位 MP 回写进 rawData（与 `syncUnitHpToRawData` 同构）。
+     * 技能会扣蓝、吸血/回蓝会涨蓝，UI 读的是 rawData.CurrentMP，必须同步。
+     */
+    private syncUnitMpToRawData(unit: BattleUnit): void {
+        if (!unit || !unit.rawData) return;
+        try {
+            (unit.rawData as any).CurrentMP = unit.mp;
+            if ((unit.rawData as any).data && typeof (unit.rawData as any).data === 'object') {
+                (unit.rawData as any).data.CurrentMP = unit.mp;
             }
         } catch {}
     }

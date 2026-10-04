@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>save block e2e</title>
+<style>body{background:#111;color:#ccc;font:13px/1.6 Consolas,"Microsoft YaHei",monospace;margin:0}#log{padding:14px 18px;white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="log">running…</div>
+<iframe id="fr" src="/" style="width:1600px;height:900px;border:1px solid #333;margin:12px"></iframe>
+<script>
+/* 全链路真存盘：制作进行素材/地图素材 → 整块贴 → 一变四 → 写盘 */
+const L = [];
+function p(s) { L.push(s); document.getElementById('log').textContent = L.join('\n'); }
+
+setTimeout(run, 5000);
+
+async function run() {
+  try {
+    const W = document.getElementById('fr').contentWindow;
+    const T = W.TS, S = T.S;
+    const D = W.document;
+
+    const roots = await (await fetch('/api/roots')).json();
+    await T.openSheetByPath(roots.mapSrc + '\\map1_7x6.png', 'map1_7x6.png');
+    T.setMode('block'); T.setBlkFlip('order');
+    p('图集: ' + S.sheet.name + '  ' + S.sheet.cols + 'x' + S.sheet.rows + ' = ' + (S.sheet.cols * S.sheet.rows) + ' 格');
+
+    // ---- 1. 语义标注：整块地面，再点几格特殊语义 ----
+    const n = S.sheet.cols * S.sheet.rows;
+    S.sel.clear(); for (let i = 0; i < n; i++) S.sel.add(i);
+    T.applyTag('ground');
+    const mark = (idx, tag) => { S.sel.clear(); S.sel.add(idx); T.applyTag(tag); };
+    mark(5, 'wall');        // 墙面 → 不可通行
+    mark(8, 'plant_np');    // 不可通行物体
+    mark(20, 'over');       // 树冠 → ★上层
+    mark(33, 'road');
+    mark(41, 'plant_p');
+    const tags = {};
+    Object.values(S.tagOf).forEach(t => tags[t] = (tags[t] || 0) + 1);
+    p('语义标注: ' + JSON.stringify(tags));
+
+    // ---- 2. 整块贴 + 一变四 ----
+    S.curSlot = 'B';
+    T.SLOTS.forEach(s => S.out[s.id].fill(null));
+    S.sel.clear(); for (let i = 0; i < n; i++) S.sel.add(i);
+    const b = T.selBlock();
+    p('块: ' + b.w + 'x' + b.h + ' = ' + b.count + ' 格, 空洞 ' + b.holes);
+    T.doVariants('all');
+    p('B 槽已生成: ' + S.out.B.filter(Boolean).length + ' / 256 格');
+
+    // ---- 3. 写盘 ----
+    D.querySelector('#prefixInput').value = 'MAPSRC_FLIP';
+    const dir = S.toolOut || S.outDir;   // 落工具 out/，交给 _verify_out*.py 复算
+    p('导出目录: ' + dir);
+    const paths = [];
+    for (const s of T.SLOTS) {
+      const r = await T.savePng(s.id, dir, true);
+      if (r) paths.push(r);
+    }
+    p('PNG 已保存: ' + paths.length + ' 张');
+    paths.forEach(x => p('   ' + x));
+    await T.saveJson(dir);
+    await T.saveFlags(dir);
+
+    // ---- 4. 自检 ----
+    const f = T.computeFlags();
+    let nImp = 0, nUp = 0;
+    for (const v of f) { if (v & 0x000F) nImp++; if (v & 0x0010) nUp++; }
+    p('flags: 不可通行 ' + nImp + ' 格, ★上层 ' + nUp + ' 格');
+    const man = T.buildManifest();
+    p('manifest: B 槽 ' + man.slots.B.used + ' 格, 首格 = ' + man.slots.B.cells[0].srcSheet + ' #' + man.slots.B.cells[0].srcIndex);
+
+    p('\nDONE OK');
+    document.title = 'SAVE BLOCK E2E DONE';
+  } catch (e) {
+    p('!! 出错: ' + e.message + '\n' + e.stack);
+    document.title = 'SAVE BLOCK E2E FAIL';
+  }
+}
+</script>
+</body>
+</html>

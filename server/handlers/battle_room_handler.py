@@ -11,10 +11,13 @@
 from __future__ import annotations
 
 import time
+import os
+import random
 from typing import Any, Dict, List, Optional
 from bson import ObjectId
 
 from . import utils
+from services import skill_service as skills_svc
 from services.battle_room_service import battle_room_service
 from services.world_presence_service import world_presence_service
 
@@ -25,6 +28,76 @@ def _refresh_remaining_command_seconds(state: Dict[str, Any]) -> None:
     if deadline is not None and isinstance(deadline, (int, float)):
         now_ms = int(time.time() * 1000)
         state["remaining_command_seconds"] = max(0.0, (deadline - now_ms) / 1000.0)
+
+
+# 战斗结束后机甲的最低保留血量：判定为零血（在战斗中被打倒）时给 1 滴血，
+# 保证回到大地图后机甲是「存活但残血」，而不是永久 0 血（0 血会被当死尸，无法出战/复活）。
+BATTLE_SURVIVE_HP = 1
+
+
+def _survive_hp_after_battle(hp: Any) -> int:
+    """战斗收尾时把战斗内血量夹到合法区间：>0 原样，<=0（倒下）保底 1 滴血。
+
+    ⚠ 绝不用 `or` 之类写法：CurrentHP=0 是「倒下」，不是「字段缺失」。
+    """
+    try:
+        value = int(hp)
+    except (TypeError, ValueError):
+        value = 0
+    return value if value > 0 else BATTLE_SURVIVE_HP
+
+
+async def _push_pvp_round_update(room: Dict[str, Any], settled_round: int) -> None:
+    """
+    PVP 回合结算后的主动推送：向房间内两个真人玩家各推一份「视角已交换」的 state。
+
+    为什么必须推送：PVP 是纯 request/response，挂机方从不发请求 → 永远拿不到新 state
+    → 看不到对方攻击自己的动画、血条/状态不更新。此推送补齐该缺口。
+
+    消息类型 `pvp_round_update`：客户端 WebSocketManager 会把带 type 的消息 emit 出去，
+    BattleScene 监听该事件后按同一套播放逻辑演绎整回合。
+    """
+    if not room or room.get("mode") != "pvp":
+        return
+    try:
+        import logging as _logging
+        _log = _logging.getLogger("game_server")
+        delivered_total = 0
+        for internal_side in ("player", "enemy"):
+            target_uid = room.get(f"{internal_side}_user_id")
+            target_cid = str(room.get(f"{internal_side}_character_id") or "")
+            if not target_uid or not target_cid:
+                _log.warning(f"[pvp_round_update] 跳过 side={internal_side}（缺 uid/cid）")
+                continue
+            view = battle_room_service.build_pvp_room_view_for_character(room, target_cid)
+            cleaned = _clean_objectid_for_json(view)
+            _refresh_remaining_command_seconds(cleaned)
+            payload = {
+                "room_id": cleaned.get("room_id"),
+                "settled_round": settled_round,
+                "state": cleaned,
+            }
+            n = await utils.push_to_user(target_uid, "pvp_round_update", payload)
+            delivered_total += n
+            _log.info(
+                f"[pvp_round_update] side={internal_side} uid={target_uid} cid={target_cid} "
+                f"round={settled_round} 投递连接数={n}"
+            )
+        if delivered_total == 0:
+            _log.warning(
+                f"[pvp_round_update] round={settled_round} 未投递到任何连接"
+                f"（user_clients 中无对应在线连接）"
+            )
+    except Exception as e:
+        import traceback
+        import logging as _logging
+        _logging.getLogger("game_server").error(
+            f"[pvp_round_update] 推送失败: {e}\n{traceback.format_exc()}"
+        )
+
+
+# 注册 PVP 回合结算通知回调（服务层只负责结算，推送能力在 handler 层）
+battle_room_service.set_pvp_round_notifier(_push_pvp_round_update)
 
 
 def _clean_objectid_for_json(obj: Any) -> Any:
@@ -55,7 +128,7 @@ async def _load_player_pet_snapshot(user: Any, character_id: Any) -> Optional[Di
         return None
 
     # 1) 查 players 集合中的 battle_team
-    player_doc = utils.safe_mongo_operation(
+    player_doc = await utils.async_mongo_operation_read(
         lambda: utils.players_col.find_one({"user_id": user["_id"], "character_id": cid})
     )
     pet_id: Optional[str] = None
@@ -69,13 +142,13 @@ async def _load_player_pet_snapshot(user: Any, character_id: Any) -> Optional[Di
 
         try:
             obj_id = ObjectId(pet_id)
-            pet = utils.safe_mongo_operation(
+            pet = await utils.async_mongo_operation_read(
                 lambda: utils.robotpet_col.find_one({"_id": obj_id, **query})
             )
         except Exception:
             pet = None
     else:
-        pet = utils.safe_mongo_operation(
+        pet = await utils.async_mongo_operation_read(
             lambda: utils.robotpet_col.find_one(
                 query,
                 sort=[("slot_index", 1)],
@@ -84,7 +157,7 @@ async def _load_player_pet_snapshot(user: Any, character_id: Any) -> Optional[Di
 
     if not pet:
         # battle_team 首 ID 无效或查询失败：按 slot_index 回退第一只
-        pet = utils.safe_mongo_operation(
+        pet = await utils.async_mongo_operation_read(
             lambda: utils.robotpet_col.find_one(
                 query,
                 sort=[("slot_index", 1)],
@@ -110,7 +183,17 @@ def _build_attrs_from_pet(pet: Dict[str, Any]) -> Dict[str, Any]:
     level = int(doc.get("Level", doc.get("level", 1)) or 1)
 
     max_hp = int(doc.get("MaxHP", doc.get("HP", 100)) or 100)
-    hp = int(doc.get("CurrentHP", doc.get("current_hp", max_hp)) or max_hp)
+    # ⚠ 不能用 `or max_hp`：CurrentHP=0（空血）会被误判成"字段缺失"→ 回填满血，
+    #   等于把倒下的机甲静默复活，破坏「死亡空血优先于恢复」。
+    hp_raw = doc.get("CurrentHP", doc.get("current_hp"))
+    hp = int(hp_raw) if hp_raw is not None and str(hp_raw).strip() != "" else max_hp
+    hp = max(0, min(hp, max_hp))
+
+    # 能量：同理，CurrentMP=0（空蓝）必须保留 0，不能被回填成满蓝
+    max_mp = int(doc.get("MaxMP", doc.get("MP", 0)) or 0)
+    mp_raw = doc.get("CurrentMP", doc.get("current_mp"))
+    mp = int(mp_raw) if mp_raw is not None and str(mp_raw).strip() != "" else max_mp
+    mp = max(0, min(mp, max_mp))
 
     melee = int(doc.get("CurrentMelee", doc.get("Melee", 0)) or 0)
     shoot = int(doc.get("CurrentShooting", doc.get("Shooting", 0)) or 0)
@@ -122,6 +205,8 @@ def _build_attrs_from_pet(pet: Dict[str, Any]) -> Dict[str, Any]:
     doc["Level"] = level
     doc["MaxHP"] = max_hp
     doc["CurrentHP"] = hp
+    doc["MaxMP"] = max_mp
+    doc["CurrentMP"] = mp
 
     doc["Melee"] = doc.get("Melee", melee)
     doc["Shooting"] = doc.get("Shooting", shoot)
@@ -133,10 +218,45 @@ def _build_attrs_from_pet(pet: Dict[str, Any]) -> Dict[str, Any]:
     doc["CurrentArmor"] = armor
     doc["CurrentInitiative"] = initiative
 
+    # 攻击次数：确保 CurrentAttackCount 一定存在（PVP/PVE 客户端按它拆段展示）。
+    #   优先用已有的 CurrentAttackCount（= 基础 AttackCount + 装备加成，服务端已算好）；
+    #   缺失时回退到基础 AttackCount；再缺失回退 1。
+    try:
+        base_ac = int(doc.get("AttackCount", 1) or 1)
+    except Exception:
+        base_ac = 1
+    try:
+        cur_ac = doc.get("CurrentAttackCount")
+        cur_ac = int(cur_ac) if cur_ac is not None else base_ac
+    except Exception:
+        cur_ac = base_ac
+    doc["AttackCount"] = max(1, base_ac)
+    doc["CurrentAttackCount"] = max(1, cur_ac)
+
     # 统一 pet_id 字段，方便前端复用
     doc["pet_id"] = str(doc.get("pet_id") or doc.get("_id") or "")
 
     return doc
+
+
+def _build_snapshot_from_monster(doc: Dict[str, Any], base_level: int) -> Dict[str, Any]:
+    """
+    把 MonsterBase 文档直接转成战斗敌人快照。
+    MonsterBase 已与 RobotBase 同构（RobotID/RobotName/AniID + Xxx/CurrentXxx 成对字段），
+    数值来自解包表（已是最终值），无需 level/装备重算，仅归一化并打 source="monster" 标记。
+    """
+    snap: Dict[str, Any] = dict(doc or {})
+    extra = doc.get("MonsterExtra") or {}
+
+    # 与 robot 路径保持字段一致
+    snap["RobotName"] = doc.get("RobotName") or extra.get("MonsterName") or "野怪"
+    snap["Level"] = int(doc.get("Level", base_level) or base_level)
+    snap["source"] = "monster"
+    snap["pet_id"] = "monster_%d" % int(extra.get("MonsterID", 0) or 0)
+    # 立绘：AniID 由前端动态加载对应动画（RobotShow 已支持）
+    snap["AniID"] = doc.get("AniID", "")
+
+    return _build_attrs_from_pet(snap)
 
 
 async def _generate_enemy_snapshot(user: Any, player_pet_id: Optional[str]) -> Dict[str, Any]:
@@ -157,7 +277,7 @@ async def _generate_enemy_snapshot(user: Any, player_pet_id: Optional[str]) -> D
     if player_pet_id:
         try:
             pet_object_id = ObjectId(player_pet_id)
-            player_pet = utils.safe_mongo_operation(
+            player_pet = await utils.async_mongo_operation_read(
                 lambda: utils.robotpet_col.find_one(
                     {"_id": pet_object_id, "user_id": user["_id"]}
                 )
@@ -167,8 +287,27 @@ async def _generate_enemy_snapshot(user: Any, player_pet_id: Optional[str]) -> D
         except Exception:
             pass
 
+    # 0) 按 ENEMY_POOL 配置，可能从 MonsterBase 抽取野怪敌人（与 robot 区分：source="monster"）
+    enemy_pool = os.environ.get("ENEMY_POOL", "monster").lower()
+    use_monster = False
+    if enemy_pool == "monster":
+        use_monster = True
+    elif enemy_pool == "mixed":
+        use_monster = random.random() < 0.5
+
+    if use_monster and utils.monsterbase_col is not None:
+        try:
+            m_sample = await utils.async_mongo_operation_read(
+                lambda: list(utils.monsterbase_col.aggregate([{"$sample": {"size": 1}}]))
+            )
+        except Exception:
+            m_sample = None
+        if m_sample:
+            return _build_snapshot_from_monster(m_sample[0], base_level)
+        # 无可用怪物时回退到 robot 池
+
     # 1) 随机抽一个 RobotBase
-    sample = utils.safe_mongo_operation(
+    sample = await utils.async_mongo_operation_read(
         lambda: list(utils.robotbase_col.aggregate([{"$sample": {"size": 1}}]))
     )
     if not sample:
@@ -486,7 +625,13 @@ async def handle_battle_room_create(websocket, data: Dict[str, Any], current_cha
 
 
 async def handle_battle_room_action(websocket, data: Dict[str, Any], current_character_id: Any):
-    """玩家在房间内提交指令（ATTACK/DEFEND/ESCAPE），服务器结算一整个回合。"""
+    """玩家在房间内提交指令（ATTACK/DEFEND/ESCAPE/SKILL），服务器结算一整个回合。
+
+    技能指令写法（任选其一）：
+      {"action_type": "SKILL", "skill_key": "roubo"}
+      {"action_type": "SKILL", "skill": "肉搏攻击"}
+      {"skill_key": "roubo"}
+    """
     token = data.get("token")
     user_id = data.get("user_id")
     user = utils.get_user_by_id_or_token(user_id=user_id, token=token)
@@ -502,23 +647,37 @@ async def handle_battle_room_action(websocket, data: Dict[str, Any], current_cha
 
     cid = data.get("character_id") or current_character_id
     room_id = data.get("room_id")
-    action_type = str(data.get("action_type") or "").upper()
+
+    action_spec = skills_svc.normalize_action({
+        "type": data.get("action_type") or data.get("type") or data.get("action"),
+        "skill_key": (data.get("skill_key") or data.get("skillKey")
+                      or data.get("skill") or data.get("skill_id")),
+    })
+    if not action_spec or action_spec.get("type") not in ("ATTACK", "DEFEND", "ESCAPE", "SKILL"):
+        await utils.send_error_response(
+            websocket,
+            "battle_room_action",
+            "无效的 action_type",
+            code=400,
+            request_data=data,
+        )
+        return
+
+    if action_spec["type"] == "SKILL" and not action_spec.get("skill_key"):
+        await utils.send_error_response(
+            websocket,
+            "battle_room_action",
+            "技能不存在或无法识别",
+            code=400,
+            request_data=data,
+        )
+        return
 
     if not room_id:
         await utils.send_error_response(
             websocket,
             "battle_room_action",
             "缺少 room_id",
-            code=400,
-            request_data=data,
-        )
-        return
-
-    if action_type not in ("ATTACK", "DEFEND", "ESCAPE"):
-        await utils.send_error_response(
-            websocket,
-            "battle_room_action",
-            "无效的 action_type",
             code=400,
             request_data=data,
         )
@@ -562,9 +721,9 @@ async def handle_battle_room_action(websocket, data: Dict[str, Any], current_cha
 
     # PVE：submit_player_action；PVP：等待双方都提交动作后结算
     if room.get("mode") == "pvp":
-        new_state = await battle_room_service.submit_pvp_action(room_id, str(cid), action_type) or room
+        new_state = await battle_room_service.submit_pvp_action(room_id, str(cid), action_spec) or room
     else:
-        new_state = battle_room_service.submit_player_action(room_id, action_type) or room
+        new_state = battle_room_service.submit_player_action(room_id, action_spec) or room
 
     # 战斗结束后将玩家机甲 CurrentHP 回写数据库，保证“实打实”血量持久化（robotpet 表里 user_id 是 ObjectId）
     if new_state.get("status") == "finished":
@@ -597,14 +756,15 @@ async def handle_battle_room_action(websocket, data: Dict[str, Any], current_cha
                 if pet_id and target_cid and target_uid:
                     try:
                         pid = ObjectId(pet_id) if isinstance(pet_id, str) else pet_id
-                        hp = max(0, int(actor.get("hp", 0)))
-                        res = utils.safe_mongo_operation(
+                        hp = _survive_hp_after_battle(actor.get("hp", 0))
+                        res = await utils.async_mongo_operation(
                             lambda: utils.robotpet_col.update_one(
                                 {"_id": pid, "character_id": target_cid, "user_id": target_uid},
                                 {"$set": {"CurrentHP": hp}},
                             )
                         )
                         if res and res.modified_count:
+                            utils.invalidate_robot_pets_cache(target_uid, target_cid)
                             print(
                                 f"[battle_room_action][pvp] 已回写 {internal_side} 机甲 CurrentHP={hp} (pet_id={pet_id})"
                             )
@@ -624,15 +784,16 @@ async def handle_battle_room_action(websocket, data: Dict[str, Any], current_cha
                 if pet_id and cid:
                     try:
                         pid = ObjectId(pet_id) if isinstance(pet_id, str) else pet_id
-                        hp = max(0, int(player.get("hp", 0)))
+                        hp = _survive_hp_after_battle(player.get("hp", 0))
                         # 使用当前请求的 user["_id"]（ObjectId），与 robotpet 表一致
-                        res = utils.safe_mongo_operation(
+                        res = await utils.async_mongo_operation(
                             lambda: utils.robotpet_col.update_one(
                                 {"_id": pid, "character_id": cid, "user_id": user["_id"]},
                                 {"$set": {"CurrentHP": hp}},
                             )
                         )
                         if res and res.modified_count:
+                            utils.invalidate_robot_pets_cache(user["_id"], cid)
                             print(f"[battle_room_action] 已回写玩家机甲 CurrentHP={hp} (pet_id={pet_id})")
                     except Exception as e:
                         import traceback

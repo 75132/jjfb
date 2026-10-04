@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>图块工坊 · Tileset Studio</title>
+<link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">图块工坊<span>·</span><small>Tileset Studio</small></div>
+  <div class="sep" style="width:1px;height:22px;background:var(--line2)"></div>
+  <span class="hint">素材目录</span>
+  <select id="sheetSelect" style="min-width:230px" title="选择图集"><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\CSDT.png">CSDT.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_A1.png">Dungeon_A1.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_A111.png">Dungeon_A111.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_A2.png">Dungeon_A2.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_A4.png">Dungeon_A4.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_A5.png">Dungeon_A5.png   (384×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_B.png">Dungeon_B.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Dungeon_C.png">Dungeon_C.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Inside_A1.png">Inside_A1.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Inside_A2.png">Inside_A2.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Inside_A4.png">Inside_A4.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Inside_A5.png">Inside_A5.png   (384×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Inside_B.png">Inside_B.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Inside_C.png">Inside_C.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\ITEM01.png">ITEM01.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\ITEM02.png">ITEM02.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP1.png">MAP1.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP10.png">MAP10.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP11.png">MAP11.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP12.png">MAP12.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP15.png">MAP15.png   (384×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP2.png">MAP2.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP3.png">MAP3.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP4.png">MAP4.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP5.png">MAP5.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP6.png">MAP6.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP7.png">MAP7.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP8.png">MAP8.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\MAP9.png">MAP9.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_A1.png">Outside_A1.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_A2.png">Outside_A2.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_A3.png">Outside_A3.png   (768×384)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_A4.png">Outside_A4.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_A5.png">Outside_A5.png   (384×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_B.png">Outside_B.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\Outside_C.png">Outside_C.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Inside_A4.png">SF_Inside_A4.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Inside_B.png">SF_Inside_B.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Inside_C.png">SF_Inside_C.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Outside_A3.png">SF_Outside_A3.png   (768×384)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Outside_A4.png">SF_Outside_A4.png   (768×720)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Outside_A5.png">SF_Outside_A5.png   (384×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Outside_B.png">SF_Outside_B.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\SF_Outside_C.png">SF_Outside_C.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\World_A1.png">World_A1.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\World_A2.png">World_A2.png   (768×576)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\World_B.png">World_B.png   (768×768)</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets\World_C.png">World_C.png   (768×768)</option></select>
+  <button id="btnReload" class="sm">重新加载</button>
+  <button id="btnBrowse" class="sm">打开目录…</button>
+  <div class="spacer"></div>
+  <span class="hint" id="rootHint">D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets</span>
+</header>
+
+<main>
+  <!-- ==================== 左：素材区 ==================== -->
+  <section class="col left">
+    <div class="pane-head">
+      <b>① 原始素材</b>
+      <span class="meta" id="srcMeta">CSDT.png  768×720  →  16 × 15 = 240 格</span>
+      <div class="spacer"></div>
+      <span class="hint">缩放</span>
+      <button class="sm" data-zoom="-1">−</button>
+      <span class="meta" id="zoomLabel">2×</span>
+      <button class="sm" data-zoom="1">＋</button>
+      <button class="sm" id="btnSelAll">全选</button>
+      <button class="sm" id="btnSelNone">清空</button>
+      <button class="sm" id="btnSelInv">反选</button>
+    </div>
+    <div class="canvas-wrap" id="srcWrap">
+      <canvas id="srcCanvas" width="1536" height="1440" style="width: 1536px; height: 1440px;"></canvas>
+      <div class="empty" id="srcEmpty" style="display: none;">
+        <div style="font-size:30px">▦</div>
+        <div>选择右上角的图集，或拖一张 PNG 进来</div>
+      </div>
+    </div>
+    <div class="pane-head" style="border-top:1px solid var(--line);border-bottom:none;height:34px">
+      <span class="meta" id="selInfo">未选中任何图块</span>
+      <div class="spacer"></div>
+      <span class="meta">点击选择 · 拖动框选 · Shift 加选</span>
+    </div>
+  </section>
+
+  <!-- ==================== 中：工具 ==================== -->
+  <section class="col mid">
+
+    <div class="sec">
+      <h4>② 指定语义</h4>
+      <div id="tagList"><div class="tagbtn" data-tag="ground" title="标记选中图块为「地面」（自动分配 → B 槽）"><span class="dot" style="background:#4f7f5b"></span>地面<span class="kbd">1</span></div><div class="tagbtn" data-tag="wall" title="标记选中图块为「墙面」（自动分配 → C 槽）"><span class="dot" style="background:#8e4b48"></span>墙面 <span class="hint">✕通行</span><span class="kbd">2</span></div><div class="tagbtn" data-tag="road" title="标记选中图块为「路面」（自动分配 → D 槽）"><span class="dot" style="background:#9c8a4c"></span>路面<span class="kbd">3</span></div><div class="tagbtn" data-tag="plant_p" title="标记选中图块为「可通行植物」（自动分配 → E 槽）"><span class="dot" style="background:#4a9a6a"></span>可通行植物<span class="kbd">4</span></div><div class="tagbtn" data-tag="plant_np" title="标记选中图块为「不可通行物体」（自动分配 → E 槽）"><span class="dot" style="background:#8a5aaa"></span>不可通行物体 <span class="hint">✕通行</span><span class="kbd">5</span></div><div class="tagbtn" data-tag="over" title="标记选中图块为「树冠(★上层)」（自动分配 → E 槽）"><span class="dot" style="background:#2f7a52"></span>树冠(★上层) <span class="hint">★</span><span class="kbd">6</span></div><div class="tagbtn" data-tag="none" title="标记选中图块为「未标 / 空」"><span class="dot" style="background:#3f434b"></span>未标 / 空<span class="kbd"></span></div></div>
+      <div class="hint" style="margin-top:6px" id="tagHint">按数字键 1–6 快速标注</div>
+    </div>
+
+    <div class="sec">
+      <h4>③ 变换</h4>
+      <div class="grid2" id="tfList"><button title="快捷键 0（数字0）">原图</button><button title="快捷键 H">水平镜像</button><button title="快捷键 V">垂直翻转</button><button title="快捷键 B">180°</button></div>
+      <div style="margin-top:8px">
+        <div class="hint" style="margin-bottom:5px">选中图块预览</div>
+        <div class="variants" id="variantPreview"><canvas class="vcell on" width="48" height="48" title="原图"></canvas><canvas class="vcell" width="48" height="48" title="水平镜像"></canvas><canvas class="vcell" width="48" height="48" title="垂直翻转"></canvas><canvas class="vcell" width="48" height="48" title="180°"></canvas></div>
+        <div class="variants" id="variantLabels" style="margin-top:2px"><div class="vlabel" style="width: 46px;">原</div><div class="vlabel" style="width: 46px;">H</div><div class="vlabel" style="width: 46px;">V</div><div class="vlabel" style="width: 46px;">B</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>④ 送到输出区</h4>
+      <div class="row">
+        <span class="hint">放置变换</span>
+        <select id="placeTf" style="flex:1">
+          <option value="none">原图</option>
+          <option value="h">水平镜像</option>
+          <option value="v">垂直翻转</option>
+          <option value="hv">180° (镜像+翻转)</option>
+        </select>
+      </div>
+      <div class="row">
+        <button class="primary" id="btnPlace" style="flex:1">→ 放到当前槽</button>
+      </div>
+      <div class="row">
+        <button class="ok" id="btnVariantsAll" style="flex:1" title="把选中的每个图块，依次生成 原图/镜像/翻转/180° 四个变体，自动填入空位">⚡ 一键生成全部变体</button>
+      </div>
+      <div class="row">
+        <button id="btnVariantsH" style="flex:1" title="只生成 原图 + 水平镜像">只做水平（原+镜像）</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>⑤ 当前槽操作</h4>
+      <div class="row">
+        <button class="sm" id="btnOutH">镜像(H)</button>
+        <button class="sm" id="btnOutV">翻转(V)</button>
+        <button class="sm" id="btnOutHV">180°(B)</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnOutDup" title="把选中的输出格复制到后面的空位">复制一份</button>
+        <button class="sm danger" id="btnOutDel">删除选中</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnOutCompact">整理空位（左对齐）</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnAssign" title="按语义把图块自动分配进 B/C/D/E">按语义自动分配槽位</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>⑥ 图块清单</h4>
+      <div class="hint" id="statsBox">素材已标注：<b>0</b> 格<br>输出总计：<b>0</b> 格</div>
+    </div>
+
+  </section>
+
+  <!-- ==================== 右：输出区 ==================== -->
+  <section class="col right">
+    <div class="pane-head">
+      <b>⑦ 新图集（输出）</b>
+      <span class="meta" id="outMeta">0 / 256 格</span>
+      <div class="spacer"></div>
+      <button class="sm" id="btnOutClear">清空本槽</button>
+    </div>
+
+    <div class="pane-head" style="height:44px">
+      <div class="slots" id="slotTabs"><div class="slot-tab">A5<span class="cnt">0/128</span></div><div class="slot-tab on">B<span class="cnt">0/256</span></div><div class="slot-tab">C<span class="cnt">0/256</span></div><div class="slot-tab">D<span class="cnt">0/256</span></div><div class="slot-tab">E<span class="cnt">0/256</span></div></div>
+      <div class="spacer"></div>
+      <span class="meta" id="slotMeta">256 格 · 768×768</span>
+    </div>
+
+    <div class="canvas-wrap" id="outWrap">
+      <canvas id="outCanvas" width="1536" height="1536" style="width: 1536px; height: 1536px;"></canvas>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <button class="primary" id="btnSavePng">💾 保存本槽 PNG</button>
+  <button class="primary" id="btnSaveAll">💾 保存全部槽 PNG</button>
+  <div class="sep"></div>
+  <button class="ok" id="btnSaveJson">📄 导出清单 JSON</button>
+  <button class="ok" id="btnSaveFlags">🚧 导出通行表 flags</button>
+  <div class="sep"></div>
+  <button id="btnSaveToProject" class="danger" title="写进 RPG 工程的 img/tilesets/ 目录">⚠ 写进工程 img/tilesets/</button>
+  <div class="spacer"></div>
+  <span class="hint">前缀</span><input type="text" id="prefixInput" size="8" title="导出文件名前缀" style="width: 78px;"><span class="meta" id="outDirHint" style="color:var(--dim)">导出目录 D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out</span>
+  <button class="sm" id="btnReveal">打开导出目录</button>
+</footer>
+
+<div id="status" class="">已加载 CSDT.png（240 格）</div>
+
+<!-- 目录浏览弹层 -->
+<div class="mask" id="mask">
+  <div class="dlg">
+    <h3>选择素材目录</h3>
+    <div class="body">
+      <div class="crumb" id="dlgPath">—</div>
+      <div class="dirlist" id="dlgList" style="margin-top:8px"></div>
+    </div>
+    <div class="foot">
+      <button class="sm" id="dlgUp">↑ 上一级</button>
+      <button class="primary sm" id="dlgUse">用这个目录</button>
+      <div class="spacer"></div>
+      <button class="sm" id="dlgClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="/web/app.js"></script>
+
+
+</body></html>

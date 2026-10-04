@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, director, WebSocketManager, GameConfig, _dec, _class, _crd, ccclass, property, CharacterSelectControl;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, director, WebSocketManager, GameConfig, Logger, _dec, _class, _crd, ccclass, property, CharacterSelectControl;
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
@@ -9,6 +9,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
   function _reportPossibleCrUseOfGameConfig(extras) {
     _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -25,6 +29,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
       GameConfig = _unresolved_3.GameConfig;
+    }, function (_unresolved_4) {
+      Logger = _unresolved_4.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -70,7 +76,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
         update(deltaTime) {
           if (this.wsManager && !this.wsManager.isConnected()) {
-            console.warn('WebSocket已断开，返回登录场景');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('WebSocket已断开，返回登录场景');
             director.loadScene((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).SCENE_NAMES.LOGIN);

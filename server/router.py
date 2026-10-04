@@ -18,6 +18,7 @@ from handlers import minigame2_handler
 from handlers import story_handler
 from handlers import mail_handler
 from handlers import equipment_advanced_handler
+from handlers import skill_handler
 
 
 class RouteHandler:
@@ -367,6 +368,20 @@ ROUTES: Dict[str, RouteHandler] = {
         require_auth=True,
         returns_user_ids=False,
         description='升级所有机器人'
+    ),
+
+    # ========== 技能系统 ==========
+    'skill_list': RouteHandler(
+        skill_handler.handle_skill_list,
+        require_auth=True,
+        returns_user_ids=False,
+        description='列出机甲可主动施放的技能'
+    ),
+    'skill_level_up': RouteHandler(
+        skill_handler.handle_skill_level_up,
+        require_auth=True,
+        returns_user_ids=False,
+        description='手动升级技能（消耗技能书）'
     ),
     
     # ========== 背包相关 ==========

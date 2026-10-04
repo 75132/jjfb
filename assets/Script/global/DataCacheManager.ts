@@ -1,4 +1,5 @@
 import { _decorator } from 'cc';
+import { Logger } from './Logger';
 
 const { ccclass } = _decorator;
 
@@ -50,7 +51,7 @@ export class DataCacheManager {
             data,
             timestamp: Date.now()
         };
-        console.log(`💾 [DataCacheManager] 已缓存背包数据 (character_id: ${characterId})`);
+        Logger.debug(`💾 [DataCacheManager] 已缓存背包数据 (character_id: ${characterId})`);
     }
 
     /**
@@ -76,7 +77,7 @@ export class DataCacheManager {
     public clearBagCache(characterId?: string): void {
         if (!characterId || !this.bagCache || this.bagCache.characterId === characterId) {
             this.bagCache = null;
-            console.log(`🗑️ [DataCacheManager] 已清除背包数据缓存`);
+            Logger.debug(`🗑️ [DataCacheManager] 已清除背包数据缓存`);
         }
     }
 
@@ -89,7 +90,7 @@ export class DataCacheManager {
             data,
             timestamp: Date.now()
         };
-        console.log(`💾 [DataCacheManager] 已缓存机甲列表数据 (character_id: ${characterId})`);
+        Logger.debug(`💾 [DataCacheManager] 已缓存机甲列表数据 (character_id: ${characterId})`);
     }
 
     /**
@@ -115,7 +116,7 @@ export class DataCacheManager {
     public clearRobotPetsCache(characterId?: string): void {
         if (!characterId || !this.robotPetsCache || this.robotPetsCache.characterId === characterId) {
             this.robotPetsCache = null;
-            console.log(`🗑️ [DataCacheManager] 已清除机甲列表数据缓存`);
+            Logger.debug(`🗑️ [DataCacheManager] 已清除机甲列表数据缓存`);
         }
     }
 
@@ -127,7 +128,7 @@ export class DataCacheManager {
             data,
             timestamp: Date.now()
         });
-        console.log(`💾 [DataCacheManager] 已缓存机甲详情数据 (pet_id: ${petId})`);
+        Logger.debug(`💾 [DataCacheManager] 已缓存机甲详情数据 (pet_id: ${petId})`);
     }
 
     /**
@@ -154,10 +155,10 @@ export class DataCacheManager {
     public clearRobotPetInfoCache(petId?: string): void {
         if (petId) {
             this.robotPetInfoCache.delete(petId);
-            console.log(`🗑️ [DataCacheManager] 已清除机甲详情数据缓存 (pet_id: ${petId})`);
+            Logger.debug(`🗑️ [DataCacheManager] 已清除机甲详情数据缓存 (pet_id: ${petId})`);
         } else {
             this.robotPetInfoCache.clear();
-            console.log(`🗑️ [DataCacheManager] 已清除所有机甲详情数据缓存`);
+            Logger.debug(`🗑️ [DataCacheManager] 已清除所有机甲详情数据缓存`);
         }
     }
 
@@ -168,7 +169,7 @@ export class DataCacheManager {
         this.bagCache = null;
         this.robotPetsCache = null;
         this.robotPetInfoCache.clear();
-        console.log(`🗑️ [DataCacheManager] 已清除所有缓存`);
+        Logger.debug(`🗑️ [DataCacheManager] 已清除所有缓存`);
     }
 
     /**
@@ -179,6 +180,6 @@ export class DataCacheManager {
         this.clearRobotPetsCache(characterId);
         // 机甲详情缓存无法按characterId清除，因为key是petId
         // 可以选择清除所有，或者在需要时按需清除
-        console.log(`🗑️ [DataCacheManager] 已清除角色缓存 (character_id: ${characterId})`);
+        Logger.debug(`🗑️ [DataCacheManager] 已清除角色缓存 (character_id: ${characterId})`);
     }
 }

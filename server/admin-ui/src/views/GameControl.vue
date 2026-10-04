@@ -41,7 +41,7 @@ const selectedPet = computed(() => robotPets.value.find((p) => p.pet_id === sele
 const ATTR_OPTIONS = [
   'HP', 'MaxHP', 'MP', 'MaxMP', 'Melee', 'Shooting', 'Armor', 'Evasion',
   'Accuracy', 'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-  'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+  'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
 ]
 
 const unsubs: Array<() => void> = []

@@ -7,6 +7,7 @@ import datetime
 import random
 import time
 import json
+from collections import OrderedDict
 from pymongo.errors import AutoReconnect, ConnectionFailure, ServerSelectionTimeoutError, NetworkTimeout
 
 # 这些变量将在ws_server.py中初始化
@@ -14,6 +15,8 @@ _throttle_timers = {}
 THROTTLE_CONFIG = {
     'get_robot_pets': 0.5,  # 0.5秒内只能请求一次
     'upgrade_robot': 0.3,    # 0.3秒内只能请求一次
+    'skill_level_up': 0.3,   # 技能升级（写等级 + 扣技能书）
+    'skill_list': 0.2,
     'get_character_info': 0.2,  # 200ms
     'get_player': 0.1,  # 100ms
     'bag_get': 0.1,  # 100ms
@@ -45,6 +48,7 @@ players_col = None
 characters_col = None
 messages_col = None
 robotbase_col = None
+monsterbase_col = None
 robotpet_col = None
 inventory_col = None
 user_clients = None
@@ -53,15 +57,17 @@ user_cache = None
 ENCRYPTION_KEY = None
 query_cache = None
 QUERY_CACHE_TTL = 30
+QUERY_CACHE_MAX = 2000
+_query_lru = OrderedDict()
 LEVEL_TOTAL_EXP = None
 MAX_LEVEL = 60
 
 def init_utils(users, account_limits, players, characters, messages, 
-               robotbase, robotpet, inventory, clients,
+               robotbase, monsterbase, robotpet, inventory, clients,
                stats, cache, encryption_key, qcache=None, level_exp=None):
     """初始化工具函数使用的数据库连接"""
     global users_col, account_limits_col, players_col, characters_col, messages_col
-    global robotbase_col, robotpet_col, inventory_col
+    global robotbase_col, monsterbase_col, robotpet_col, inventory_col
     global user_clients, performance_stats, user_cache, ENCRYPTION_KEY
     global query_cache, LEVEL_TOTAL_EXP
     
@@ -71,6 +77,7 @@ def init_utils(users, account_limits, players, characters, messages,
     characters_col = characters
     messages_col = messages
     robotbase_col = robotbase
+    monsterbase_col = monsterbase
     robotpet_col = robotpet
     inventory_col = inventory
     user_clients = clients
@@ -79,6 +86,7 @@ def init_utils(users, account_limits, players, characters, messages,
     ENCRYPTION_KEY = encryption_key
     query_cache = qcache if qcache is not None else {}
     LEVEL_TOTAL_EXP = level_exp
+    _query_lru.clear()
 
 def mongo_op_once(operation):
     """单次执行 Mongo 操作，不重试（供线程池 + async 层退避使用）。"""
@@ -171,43 +179,57 @@ async def async_mongo_operation_read(operation, max_retries=3, timeout=12.0):
     raise TimeoutError(f'MongoDB 只读操作超时（{timeout}秒）')
 
 
-# 异步版本的MongoDB操作（使用线程池执行，避免阻塞事件循环）
+# 异步版本的MongoDB操作（线程池只跑单次 operation，退避在 async 层）
 async def async_mongo_operation(operation, max_retries=5, timeout=10.0):
     """
-    MMO级优化：异步MongoDB操作，在线程池中执行，避免阻塞事件循环
-    参考 PomeloServer：使用线程池处理阻塞操作
-    修复：增加重试次数和超时时间，提高稳定性
-    
-    Args:
-        operation: MongoDB操作函数（同步函数）
-        max_retries: 最大重试次数（默认5次）
-        timeout: 超时时间（秒，默认10秒，考虑重试延迟）
-    
-    Returns:
-        操作结果
+    写路径：线程池内只做单次 operation()，连接类错误在 async 层短退避重试。
+    避免 safe_mongo_operation 的 time.sleep 占满 db_executor。
+    重试次数仍为 max_retries；退避为 0.05/0.1/0.2/0.25 秒，失败由客户端重试。
     """
     import asyncio
+    import socket
+    import time as time_module
     from ws_server import db_executor
-    
+
     if db_executor is None:
-        # 如果没有线程池，直接执行（降级方案）
-        return safe_mongo_operation(operation, max_retries)
-    
-    # 在线程池中执行操作
+        return safe_mongo_operation(operation, max_retries=min(max_retries, 2))
+
     loop = asyncio.get_event_loop()
-    try:
-        result = await asyncio.wait_for(
-            loop.run_in_executor(db_executor, safe_mongo_operation, operation, max_retries),
-            timeout=timeout
-        )
-        return result
-    except asyncio.TimeoutError:
-        print(f'❌ [MongoDB] 操作超时（{timeout}秒）')
-        raise TimeoutError(f'MongoDB操作超时（{timeout}秒）')
-    except Exception as e:
-        # 记录其他错误
-        print(f'❌ [MongoDB] 异步操作失败: {type(e).__name__}: {e}')
-        raise
+    deadline = time_module.monotonic() + timeout
+    last_err = None
+    retryable = (
+        asyncio.TimeoutError,
+        AutoReconnect,
+        ConnectionFailure,
+        ServerSelectionTimeoutError,
+        NetworkTimeout,
+        ConnectionResetError,
+        socket.error,
+        OSError,
+    )
+
+    for attempt in range(max_retries):
+        remaining = deadline - time_module.monotonic()
+        if remaining <= 0:
+            break
+        try:
+            return await asyncio.wait_for(
+                loop.run_in_executor(db_executor, mongo_op_once, operation),
+                timeout=max(remaining, 0.02),
+            )
+        except retryable as e:
+            last_err = e
+            if attempt < max_retries - 1:
+                await asyncio.sleep(min(0.05 * (2 ** attempt), 0.25))
+            continue
+        except Exception as e:
+            print(f'❌ [MongoDB] 异步操作失败: {type(e).__name__}: {e}')
+            raise
+
+    print(f'❌ [MongoDB] 写操作失败，已重试 {max_retries} 次: {type(last_err).__name__ if last_err else "timeout"}')
+    if last_err:
+        raise last_err
+    raise TimeoutError(f'MongoDB 写操作超时（{timeout}秒）')
 
 # 简单的加密函数（实际应用中应使用更安全的加密方式）
 def encrypt(data):
@@ -662,6 +684,43 @@ def unregister_client(ws):
     except Exception:
         pass
 
+
+async def push_to_user(user_id, route: str, data: dict = None, message: str = None) -> int:
+    """
+    向指定 user_id 的所有在线连接主动推送一条带 type 的消息（服务端发起，非请求响应）。
+
+    客户端 WebSocketManager.handleMessage 会把任何带 type 的消息 emit 出去，
+    因此这里直接把 type 设为 route 本身（不加 _response 后缀），客户端按 route 监听即可。
+
+    Returns: 成功投递的连接数。
+    """
+    if user_clients is None:
+        return 0
+    payload = {
+        'type': route,
+        'success': True,
+        'code': 200,
+        'timestamp': time.time(),
+        'version': MESSAGE_PROTOCOL_VERSION,
+    }
+    if data:
+        payload['data'] = data
+    if message:
+        payload['message'] = message
+    text = json.dumps(payload, default=str)
+    delivered = 0
+    ws_set = user_clients.get(str(user_id))
+    if not ws_set:
+        return 0
+    for ws in list(ws_set):
+        try:
+            await ws.send(text)
+            delivered += 1
+        except Exception:
+            # 单个连接发送失败不影响其它连接
+            pass
+    return delivered
+
 def compute_robot_count(user_id, character_id):
     """计算指定用户在指定角色下的机甲数量"""
     try:
@@ -796,14 +855,59 @@ def calculate_level_from_exp(total_exp):
     
     return min(new_level, MAX_LEVEL)
 
+def _query_bucket(cache_key) -> str:
+    """失效前缀对应的桶。robot_pets 按角色分桶，其余按键名前缀。"""
+    key = str(cache_key)
+    if key.startswith('robot_pets:'):
+        parts = key.split(':')
+        if len(parts) >= 3:
+            return f'robot_pets:{parts[1]}:{parts[2]}:'
+        return 'robot_pets:'
+    for name in ('friend_list_', 'friend_requests_', 'robot_counts_'):
+        if key.startswith(name):
+            return name
+    return ''
+
+
+def _pop_query_key(cache_key) -> bool:
+    bucket = _query_lru.pop(cache_key, None)
+    if bucket is None or query_cache is None:
+        return False
+    entries = query_cache.get(bucket)
+    if isinstance(entries, dict):
+        entries.pop(cache_key, None)
+        if not entries:
+            query_cache.pop(bucket, None)
+    return True
+
+
+def purge_expired_query_cache(now=None) -> int:
+    """删掉已超过 QUERY_CACHE_TTL 的项。返回删除条数。"""
+    if query_cache is None:
+        return 0
+    current = time.time() if now is None else now
+    removed = 0
+    for cache_key in list(_query_lru.keys()):
+        bucket = _query_lru.get(cache_key)
+        entry = (query_cache.get(bucket) or {}).get(cache_key) if bucket is not None else None
+        if not entry or current - entry.get('timestamp', 0) >= QUERY_CACHE_TTL:
+            _pop_query_key(cache_key)
+            removed += 1
+    return removed
+
+
 def get_cached_query(cache_key):
     """获取缓存的查询结果"""
     if query_cache is None or performance_stats is None:
         return None
-    cache_entry = query_cache.get(cache_key)
+    bucket = _query_lru.get(cache_key)
+    cache_entry = (query_cache.get(bucket) or {}).get(cache_key) if bucket is not None else None
     if cache_entry and time.time() - cache_entry['timestamp'] < QUERY_CACHE_TTL:
+        _query_lru.move_to_end(cache_key)
         performance_stats['cache_hits'] += 1
         return cache_entry['data']
+    if cache_entry:
+        _pop_query_key(cache_key)
     performance_stats['cache_misses'] += 1
     return None
 
@@ -811,16 +915,58 @@ def set_cached_query(cache_key, result):
     """设置查询结果缓存"""
     if query_cache is None:
         return
-    query_cache[cache_key] = {
+    if cache_key not in _query_lru and len(_query_lru) >= QUERY_CACHE_MAX:
+        purge_expired_query_cache()
+    while cache_key not in _query_lru and len(_query_lru) >= QUERY_CACHE_MAX:
+        _pop_query_key(next(iter(_query_lru)))
+    bucket = _query_bucket(cache_key)
+    old_bucket = _query_lru.get(cache_key)
+    if old_bucket is not None and old_bucket != bucket:
+        _pop_query_key(cache_key)
+    entries = query_cache.setdefault(bucket, {})
+    entries[cache_key] = {
         'data': result,
         'timestamp': time.time()
     }
+    _query_lru[cache_key] = bucket
+    _query_lru.move_to_end(cache_key)
 
 def invalidate_cached_query(cache_key):
     """使查询结果缓存失效（用于数据更新时）"""
     if query_cache is None:
         return
-    query_cache.pop(cache_key, None)
+    _pop_query_key(cache_key)
+
+def invalidate_cached_query_prefix(prefix: str) -> None:
+    """按前缀失效查询缓存（如 robot_pets:{uid}:{cid}:）。只扫命中的桶。"""
+    if query_cache is None or not prefix:
+        return
+    prefix = str(prefix)
+    drop_buckets = [b for b in list(query_cache.keys()) if b and str(b).startswith(prefix)]
+    for bucket in drop_buckets:
+        entries = query_cache.get(bucket) or {}
+        for cache_key in list(entries.keys()):
+            _pop_query_key(cache_key)
+    for bucket in list(query_cache.keys()):
+        if bucket in drop_buckets:
+            continue
+        if bucket and not prefix.startswith(bucket):
+            continue
+        entries = query_cache.get(bucket) or {}
+        for cache_key in [k for k in entries.keys() if str(k).startswith(prefix)]:
+            _pop_query_key(cache_key)
+
+
+def invalidate_robot_pets_cache(user_id, character_id=None) -> None:
+    """机甲列表短缓存失效。character_id 为空则清该用户全部分页。"""
+    if user_id is None:
+        invalidate_cached_query_prefix('robot_pets:')
+        return
+    uid = str(user_id)
+    if character_id:
+        invalidate_cached_query_prefix(f'robot_pets:{uid}:{character_id}:')
+    else:
+        invalidate_cached_query_prefix(f'robot_pets:{uid}:')
 
 def throttle_check(websocket_id, action):
     """节流检查（网游级优化：防止频繁请求）"""

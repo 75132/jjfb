@@ -11,6 +11,8 @@ import { GameConfig } from '../global/GameConfig';
 import { DataCacheManager } from '../global/DataCacheManager';
 import { emitBattleTeamUpdated, emitRobotDataUpdated } from '../global/RobotGameEvents';
 import { TipWindows } from '../global/TipWindows';
+import { Logger } from '../global/Logger';
+import { IntroWorldviewController } from '../Intro/IntroWorldviewController';
 
 const { ccclass } = _decorator;
 
@@ -28,7 +30,7 @@ export const STARTER_MECH_OPTIONS: StarterMechOption[] = [
 ];
 
 /**
- * 进游戏未选初始机甲时强制弹出 SelectWindow；领取后 15 级并自动出战。
+ * 进游戏确认未选初始机甲后强制弹出 SelectWindow；领取后 15 级并自动出战。
  */
 @ccclass('StarterMechPicker')
 export class StarterMechPicker extends Component {
@@ -104,26 +106,36 @@ export class StarterMechPicker extends Component {
         }
     };
 
-    /** 进 Game 场景后调用：服务端未记录初始机甲选择则立即强制弹窗 */
+    /** 进 Game 场景后调用：仅在服务端确认未选初始机甲后强制弹窗 */
     public checkAndPrompt(): void {
         if (this._resolved || this._submitting) return;
+        // 开屏世界观播放期间不弹初始机甲
+        if (IntroWorldviewController.isBlocking()) return;
 
         const ws = this._ws ?? WebSocketManager.getInstance();
         const characterId = ws?.getCharacterId?.();
         if (!characterId) {
+            this.hidePicker();
             this.scheduleRetry(120);
             return;
         }
 
         const cache = DataCacheManager.getInstance().getRobotPetsCache(characterId);
-        if (cache?.starter_mech_chosen === true) {
+        const cacheRobotCount = Number(
+            cache?.robotcount ?? cache?.pets?.length ?? 0,
+        );
+        if (cache?.starter_mech_chosen === true || cacheRobotCount > 0) {
             this._resolved = true;
             this.hidePicker();
             return;
         }
 
-        // 未确认前先弹出，避免等网络请求才出现
-        this.showPicker();
+        // 缓存明确未选且无机甲 → 直接弹；否则等服务端确认，避免老号/断网误弹
+        if (cache?.starter_mech_chosen === false) {
+            this.showPicker();
+        } else {
+            this.hidePicker();
+        }
 
         if (!ws?.isConnected?.()) {
             this.scheduleRetry(150);
@@ -160,12 +172,24 @@ export class StarterMechPicker extends Component {
             (resp: any) => {
                 this._checking = false;
                 if (!resp?.success) {
+                    // 请求失败时不弹窗，避免老号因网络抖动误显
+                    this.hidePicker();
                     this.scheduleRetry(400);
                     return;
                 }
 
                 const starterChosen = resp.starter_mech_chosen ?? resp.data?.starter_mech_chosen;
-                if (starterChosen === true) {
+                const robotCount = Number(
+                    resp.robotcount ?? resp.data?.robotcount ?? resp.pets?.length ?? 0,
+                );
+                // 与服务端 resolve_starter_mech_chosen 对齐：已有机甲视为已选
+                const resolvedChosen = starterChosen === true || robotCount > 0;
+                DataCacheManager.getInstance().setRobotPetsCache(characterId, {
+                    ...(resp.data ?? resp),
+                    starter_mech_chosen: resolvedChosen,
+                });
+
+                if (resolvedChosen) {
                     this._resolved = true;
                     this.hidePicker();
                     return;
@@ -185,7 +209,7 @@ export class StarterMechPicker extends Component {
         const canvas = scene?.getChildByName('Canvas');
         const win = canvas?.getChildByName('SelectWindow') ?? scene?.getChildByName('SelectWindow');
         if (!win) {
-            console.warn('[StarterMechPicker] 场景中未找到 SelectWindow 节点');
+            Logger.warn('[StarterMechPicker] 场景中未找到 SelectWindow 节点');
             return;
         }
 
@@ -300,7 +324,7 @@ export class StarterMechPicker extends Component {
                 this._submitting = false;
                 if (!resp?.success) {
                     const msg = resp?.message || '领取初始机甲失败';
-                    console.warn('[StarterMechPicker] 领取失败:', msg);
+                    Logger.warn('[StarterMechPicker] 领取失败:', msg);
                     this.showPicker();
                     tip?.showAlert(msg, undefined, { autoCloseMs: 0 });
                     return;
@@ -324,7 +348,7 @@ export class StarterMechPicker extends Component {
                 });
                 emitRobotDataUpdated({ character_id: characterId, petId: data.pet_id });
                 emitBattleTeamUpdated({ character_id: characterId });
-                console.log(`✅ [StarterMechPicker] 已领取 ${opt.name} Lv${data.level ?? 15}`);
+                Logger.debug(`✅ [StarterMechPicker] 已领取 ${opt.name} Lv${data.level ?? 15}`);
                 this._resolved = true;
                 this.clearRetryTimer();
                 tip?.close();

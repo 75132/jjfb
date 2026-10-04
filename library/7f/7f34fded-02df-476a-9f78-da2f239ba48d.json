@@ -34,10 +34,9 @@
       "counterattack": 67,
       "block": 37,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1402,
@@ -68,10 +67,9 @@
       "counterattack": 90,
       "block": 50,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1403,
@@ -102,10 +100,9 @@
       "counterattack": 112,
       "block": 62,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1404,
@@ -136,10 +133,9 @@
       "counterattack": 135,
       "block": 75,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1405,
@@ -170,10 +166,9 @@
       "counterattack": 157,
       "block": 87,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1406,
@@ -204,10 +199,9 @@
       "counterattack": 180,
       "block": 100,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1407,
@@ -238,10 +232,9 @@
       "counterattack": 222,
       "block": 123,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1408,
@@ -272,10 +265,9 @@
       "counterattack": 67,
       "block": 37,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1409,
@@ -306,10 +298,9 @@
       "counterattack": 137,
       "block": 247,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     },
     {
       "id": 1410,
@@ -340,10 +331,9 @@
       "counterattack": 137,
       "block": 247,
       "armorPenetration": 0,
-      "particleShield": 0,
       "energyRecovery": 0,
       "lifeRecovery": 0,
-      "attackTimes": 0
+      "attackCount": 0
     }
   ]
 }

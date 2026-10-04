@@ -1,10 +1,16 @@
-System.register(["cc"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
   "use strict";
 
-  var _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, resources, SpriteFrame, JsonAsset, _dec, _class, _class2, _crd, ccclass, ResourceManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, resources, SpriteFrame, JsonAsset, Logger, _dec, _class, _class2, _crd, ccclass, ResourceManager;
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
 
   return {
-    setters: [function (_cc) {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
       _cclegacy = _cc.cclegacy;
       __checkObsolete__ = _cc.__checkObsolete__;
       __checkObsoleteInNamespace__ = _cc.__checkObsoleteInNamespace__;
@@ -12,6 +18,8 @@ System.register(["cc"], function (_export, _context) {
       resources = _cc.resources;
       SpriteFrame = _cc.SpriteFrame;
       JsonAsset = _cc.JsonAsset;
+    }, function (_unresolved_2) {
+      Logger = _unresolved_2.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -83,11 +91,36 @@ System.register(["cc"], function (_export, _context) {
           this.CONCURRENT_LOAD_COUNT = 2;
           // 陆续加载配置：每个资源加载完成后的延迟时间（毫秒），给主线程喘息时间
           this.LOAD_DELAY_MS = 50;
+
+          /** 预加载错峰 setTimeout；新开一轮会作废上一轮未触发的句柄 */
+          this.assetPreloadSession = 0;
+          this.dirPreloadSession = 0;
+          this.assetPreloadTimers = [];
+          this.dirPreloadTimers = [];
         }
 
+        clearTimerList(timers) {
+          for (const h of timers) {
+            clearTimeout(h);
+          }
+
+          timers.length = 0;
+        }
+
+        schedulePreloadStep(timers, session, getSession, delayMs, fn) {
+          const handle = setTimeout(() => {
+            const i = timers.indexOf(handle);
+            if (i >= 0) timers.splice(i, 1);
+            if (session !== getSession()) return;
+            fn();
+          }, delayMs);
+          timers.push(handle);
+        }
         /**
          * 获取单例实例
          */
+
+
         static getInstance() {
           if (!ResourceManager.instance) {
             ResourceManager.instance = new ResourceManager();
@@ -111,7 +144,9 @@ System.register(["cc"], function (_export, _context) {
             const asset = cached.asset; // 检查是否过期
 
             if (Date.now() - cached.timestamp < this.CACHE_TTL) {
-              console.log(`✅ [ResourceManager] 使用缓存资源: ${path}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 使用缓存资源: ${path}`);
               callback(null, asset);
               return;
             } else {
@@ -131,27 +166,35 @@ System.register(["cc"], function (_export, _context) {
           } // 开始加载
 
 
-          console.log(`📦 [ResourceManager] 开始加载资源: ${path}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`📦 [ResourceManager] 开始加载资源: ${path}`);
           const loadPromise = new Promise((resolve, reject) => {
             resources.load(path, type, (err, asset) => {
               this.loadingPromises.delete(path);
 
               if (err) {
-                console.error(`❌ [ResourceManager] 加载资源失败: ${path}`, err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`❌ [ResourceManager] 加载资源失败: ${path}`, err);
                 reject(err);
                 return;
               }
 
               if (!asset) {
                 const error = new Error(`资源加载返回为空: ${path}`);
-                console.error(`❌ [ResourceManager]`, error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`❌ [ResourceManager]`, error);
                 reject(error);
                 return;
               } // 存入缓存
 
 
               this.setCache(path, asset);
-              console.log(`✅ [ResourceManager] 资源加载完成: ${path}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 资源加载完成: ${path}`);
               resolve(asset);
             });
           });
@@ -178,7 +221,9 @@ System.register(["cc"], function (_export, _context) {
             const assets = cached.asset; // 检查是否过期
 
             if (Date.now() - cached.timestamp < this.CACHE_TTL) {
-              console.log(`✅ [ResourceManager] 使用缓存资源目录: ${path} (${assets.length}个)`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 使用缓存资源目录: ${path} (${assets.length}个)`);
               callback(null, assets);
               return;
             } else {
@@ -198,19 +243,25 @@ System.register(["cc"], function (_export, _context) {
           } // 开始加载
 
 
-          console.log(`📦 [ResourceManager] 开始加载资源目录: ${path}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`📦 [ResourceManager] 开始加载资源目录: ${path}`);
           const loadPromise = new Promise((resolve, reject) => {
             resources.loadDir(path, type, (err, assets) => {
               this.loadingPromises.delete(path);
 
               if (err) {
-                console.error(`❌ [ResourceManager] 加载资源目录失败: ${path}`, err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`❌ [ResourceManager] 加载资源目录失败: ${path}`, err);
                 reject(err);
                 return;
               }
 
               if (!assets || assets.length === 0) {
-                console.warn(`⚠️ [ResourceManager] 资源目录为空: ${path}`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn(`⚠️ [ResourceManager] 资源目录为空: ${path}`);
                 callback(null, []);
                 resolve([]);
                 return;
@@ -218,7 +269,9 @@ System.register(["cc"], function (_export, _context) {
 
 
               this.setCache(path, assets);
-              console.log(`✅ [ResourceManager] 资源目录加载完成: ${path} (${assets.length}个)`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 资源目录加载完成: ${path} (${assets.length}个)`);
               resolve(assets);
             });
           });
@@ -243,14 +296,18 @@ System.register(["cc"], function (_export, _context) {
           const cachedVersion = cached == null ? void 0 : cached.version; // 如果版本号相同且缓存未过期，直接使用缓存
 
           if (cached && cachedVersion === version && Date.now() - cached.timestamp < this.CACHE_TTL) {
-            console.log(`✅ [ResourceManager] 使用缓存资源（版本匹配）: ${path} (v${version})`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`✅ [ResourceManager] 使用缓存资源（版本匹配）: ${path} (v${version})`);
             callback(null, cached.asset);
             return;
           } // 版本不同或缓存过期，重新加载
 
 
           if (cachedVersion !== version) {
-            console.log(`🔄 [ResourceManager] 资源版本更新: ${path} (v${cachedVersion} -> v${version})`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🔄 [ResourceManager] 资源版本更新: ${path} (v${cachedVersion} -> v${version})`);
           } // 更新版本信息
 
 
@@ -310,7 +367,11 @@ System.register(["cc"], function (_export, _context) {
 
           let loadingCount = 0; // 正在加载的数量
 
-          console.log(`📦 [ResourceManager] 开始陆续预加载 ${total} 个资源（已缓存 ${cachedCount} 个，需加载 ${needLoadList.length} 个）`); // 如果所有资源都已缓存，直接完成
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`📦 [ResourceManager] 开始陆续预加载 ${total} 个资源（已缓存 ${cachedCount} 个，需加载 ${needLoadList.length} 个）`);
+          this.clearTimerList(this.assetPreloadTimers);
+          const session = ++this.assetPreloadSession; // 如果所有资源都已缓存，直接完成
 
           if (needLoadList.length === 0) {
             if (onProgress) onProgress(100);
@@ -320,12 +381,15 @@ System.register(["cc"], function (_export, _context) {
 
 
           const onLoadComplete = (err, asset, path) => {
+            if (session !== this.assetPreloadSession) return;
             loadingCount--;
             loadedCount++;
 
             if (err || !asset) {
               failCount++;
-              console.warn(`⚠️ [ResourceManager] 预加载失败: ${path}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ [ResourceManager] 预加载失败: ${path}`);
             } else {
               successCount++;
             }
@@ -334,15 +398,16 @@ System.register(["cc"], function (_export, _context) {
             if (onProgress) onProgress(progress); // 如果全部加载完成
 
             if (loadedCount >= total) {
-              console.log(`✅ [ResourceManager] 预加载完成: 成功 ${successCount}/${total}, 失败 ${failCount}/${total}`);
+              this.clearTimerList(this.assetPreloadTimers);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 预加载完成: 成功 ${successCount}/${total}, 失败 ${failCount}/${total}`);
               if (onComplete) onComplete(successCount, failCount);
               return;
             } // 延迟后加载下一个资源（给主线程喘息时间）
 
 
-            setTimeout(() => {
-              loadNextAsset();
-            }, delayMs);
+            this.schedulePreloadStep(this.assetPreloadTimers, session, () => this.assetPreloadSession, delayMs, () => loadNextAsset());
           }; // 加载下一个资源
 
 
@@ -407,7 +472,11 @@ System.register(["cc"], function (_export, _context) {
 
           let loadingCount = 0; // 正在加载的数量
 
-          console.log(`📦 [ResourceManager] 开始陆续预加载 ${total} 个资源目录（已缓存 ${cachedCount} 个，需加载 ${needLoadList.length} 个）`); // 如果所有目录都已缓存，直接完成
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`📦 [ResourceManager] 开始陆续预加载 ${total} 个资源目录（已缓存 ${cachedCount} 个，需加载 ${needLoadList.length} 个）`);
+          this.clearTimerList(this.dirPreloadTimers);
+          const session = ++this.dirPreloadSession; // 如果所有目录都已缓存，直接完成
 
           if (needLoadList.length === 0) {
             if (onProgress) onProgress(100);
@@ -417,12 +486,15 @@ System.register(["cc"], function (_export, _context) {
 
 
           const onLoadComplete = (err, assets, path) => {
+            if (session !== this.dirPreloadSession) return;
             loadingCount--;
             loadedCount++;
 
             if (err || !assets) {
               failCount++;
-              console.warn(`⚠️ [ResourceManager] 预加载目录失败: ${path}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ [ResourceManager] 预加载目录失败: ${path}`);
             } else {
               successCount++;
             }
@@ -431,15 +503,16 @@ System.register(["cc"], function (_export, _context) {
             if (onProgress) onProgress(progress); // 如果全部加载完成
 
             if (loadedCount >= total) {
-              console.log(`✅ [ResourceManager] 预加载目录完成: 成功 ${successCount}/${total}, 失败 ${failCount}/${total}`);
+              this.clearTimerList(this.dirPreloadTimers);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 预加载目录完成: 成功 ${successCount}/${total}, 失败 ${failCount}/${total}`);
               if (onComplete) onComplete(successCount, failCount);
               return;
             } // 延迟后加载下一个目录（给主线程喘息时间）
 
 
-            setTimeout(() => {
-              loadNextDir();
-            }, delayMs);
+            this.schedulePreloadStep(this.dirPreloadTimers, session, () => this.dirPreloadSession, delayMs, () => loadNextDir());
           }; // 加载下一个目录
 
 
@@ -527,11 +600,15 @@ System.register(["cc"], function (_export, _context) {
           if (path) {
             this.resourceCache.delete(path);
             this.resourceVersions.delete(path);
-            console.log(`🗑️ [ResourceManager] 已清除缓存: ${path}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [ResourceManager] 已清除缓存: ${path}`);
           } else {
             this.resourceCache.clear();
             this.resourceVersions.clear();
-            console.log(`🗑️ [ResourceManager] 已清除所有缓存`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [ResourceManager] 已清除所有缓存`);
           }
         }
         /**
@@ -551,7 +628,9 @@ System.register(["cc"], function (_export, _context) {
               }
             });
             this.resourceCache.delete(path);
-            console.log(`🗑️ [ResourceManager] 已释放资源: ${path}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [ResourceManager] 已释放资源: ${path}`);
           }
         }
         /**
@@ -592,7 +671,9 @@ System.register(["cc"], function (_export, _context) {
           });
 
           if (cleanedCount > 0) {
-            console.log(`🧹 [ResourceManager] 已清理 ${cleanedCount} 个过期缓存`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🧹 [ResourceManager] 已清理 ${cleanedCount} 个过期缓存`);
           }
         }
         /**
@@ -612,7 +693,9 @@ System.register(["cc"], function (_export, _context) {
             this.resourceCache.delete(path);
             this.resourceVersions.delete(path);
           });
-          console.log(`🧹 [ResourceManager] 已清理 ${toRemove.length} 个旧缓存（LRU策略）`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🧹 [ResourceManager] 已清理 ${toRemove.length} 个旧缓存（LRU策略）`);
         }
         /**
          * 设置缓存
@@ -646,7 +729,9 @@ System.register(["cc"], function (_export, _context) {
 
 
         preloadGameCoreResources(onProgress, onComplete) {
-          console.log('📦 [ResourceManager] 开始预加载游戏核心资源...'); // 定义需要预加载的核心资源
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📦 [ResourceManager] 开始预加载游戏核心资源...'); // 定义需要预加载的核心资源
 
           const coreJsonAssets = [{
             path: 'json/equip_position',
@@ -704,7 +789,9 @@ System.register(["cc"], function (_export, _context) {
             }
 
             if (completedCount >= totalCount && onComplete) {
-              console.log(`✅ [ResourceManager] 游戏核心资源预加载完成: 成功 ${successCount}/${totalCount}, 失败 ${failCount}/${totalCount}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [ResourceManager] 游戏核心资源预加载完成: 成功 ${successCount}/${totalCount}, 失败 ${failCount}/${totalCount}`);
               onComplete(successCount, failCount);
             }
           }; // 先预加载 JSON 配表（较小，优先加载）
@@ -732,7 +819,9 @@ System.register(["cc"], function (_export, _context) {
               if (onComplete) {
                 const totalProgress = 100;
                 if (onProgress) onProgress(totalProgress);
-                console.log(`✅ [ResourceManager] 游戏核心资源预加载完成: 成功 ${successCount}/${totalCount}, 失败 ${failCount}/${totalCount}`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug(`✅ [ResourceManager] 游戏核心资源预加载完成: 成功 ${successCount}/${totalCount}, 失败 ${failCount}/${totalCount}`);
                 onComplete(successCount, failCount);
               }
             }, 1, // 图集较大，每次只加载1个

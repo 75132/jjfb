@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>图块工坊 · Tileset Studio</title>
+<link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">图块工坊<span>·</span><small>Tileset Studio</small></div>
+  <div class="sep" style="width:1px;height:22px;background:var(--line2)"></div>
+  <span class="hint">素材目录</span>
+  <select id="rootSelect" style="min-width:200px" title="切换素材根目录"><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材" title="D:\机甲风暴开发素材合集\制作进行素材\地图素材">制作进行素材 / 地图素材</option><option value="D:\机甲风暴开发素材合集\制作进行素材" title="D:\机甲风暴开发素材合集\制作进行素材">制作进行素材</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets" title="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets">工程图块集 img/tilesets</option><option value="D:\机甲风暴开发素材合集\机甲风暴2" title="D:\机甲风暴开发素材合集\机甲风暴2">RPG 单机工程</option><option value="D:\机甲风暴开发素材合集" title="D:\机甲风暴开发素材合集">机甲风暴素材总目录</option><option value="D:\jjfbol-cocos\jjfbol-cocos\jjfb" title="D:\jjfbol-cocos\jjfbol-cocos\jjfb">Cocos 工程</option><option value="D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio" title="D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio">工坊目录</option><option value="C:\Users\Administrator\Desktop\图块工坊导出" title="C:\Users\Administrator\Desktop\图块工坊导出">★ 导出目录（桌面）</option><option value="D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out" title="D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out">工具 out 目录</option><option value="D:\_mv_tabtest" title="D:\_mv_tabtest">D:\_mv_tabtest</option><option value="D:\_mv_capacity_test" title="D:\_mv_capacity_test">D:\_mv_capacity_test</option><option value="C:\Users\Administrator\Desktop" title="C:\Users\Administrator\Desktop">桌面</option><option value="C:\Users\Administrator\Downloads" title="C:\Users\Administrator\Downloads">下载</option></select>
+  <span class="hint">图集</span>
+  <select id="sheetSelect" style="min-width:230px" title="选择图集"><optgroup label="地图（≥2×2 格）（19）"><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map1_7x6.png">map1_7x6.png   (336×288 → 7×6 = 42 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map2_7x6.png">map2_7x6.png   (336×288 → 7×6 = 42 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map3_7x6.png">map3_7x6.png   (336×288 → 7×6 = 42 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map4_8x7.png">map4_8x7.png   (384×336 → 8×7 = 56 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map5_7x6.png">map5_7x6.png   (336×288 → 7×6 = 42 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map6_7x6.png">map6_7x6.png   (336×288 → 7×6 = 42 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map7_5x6.png">map7_5x6.png   (240×288 → 5×6 = 30 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map9_7x8.png">map9_7x8.png   (336×384 → 7×8 = 56 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map10_7x6.png">map10_7x6.png   (336×288 → 7×6 = 42 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map11_6x10.png">map11_6x10.png   (288×480 → 6×10 = 60 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map12_6x10.png">map12_6x10.png   (288×480 → 6×10 = 60 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map13_5x6.png">map13_5x6.png   (240×288 → 5×6 = 30 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map14_3x5.png">map14_3x5.png   (144×240 → 3×5 = 15 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map15_3x5.png">map15_3x5.png   (144×240 → 3×5 = 15 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map16_3x5.png">map16_3x5.png   (144×240 → 3×5 = 15 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map17_4x6.png">map17_4x6.png   (192×288 → 4×6 = 24 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map18_3x3.png">map18_3x3.png   (144×144 → 3×3 = 9 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map19_6x2.png">map19_6x2.png   (288×96 → 6×2 = 12 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\map20_3x5.png">map20_3x5.png   (144×240 → 3×5 = 15 格)</option></optgroup><optgroup label="零散素材（1×N / N×1 条状）（3）"><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\bz.png">bz.png   (240×48 → 5×1 = 5 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\cs.png">cs.png   (48×48 → 1×1 = 1 格)</option><option value="D:\机甲风暴开发素材合集\制作进行素材\地图素材\yl.png">yl.png   (48×48 → 1×1 = 1 格)</option></optgroup></select>
+  <button id="btnReload" class="sm">重新加载</button>
+  <button id="btnBrowse" class="sm">打开目录…</button>
+  <button id="btnToggleMid" class="sm">收起工具栏</button>
+  <div class="spacer"></div>
+  <span class="meta" id="projName" title="当前工程包（.tsproj，源图 + 布局 + 语义 + 通行表 全部打包，可导入还原）" style="color:var(--dim)">未保存工程</span>
+  <button id="btnProjSave" class="sm" title="把「源图 + 当前所有槽的布局 + 语义标注 + 通行表」打包成一个 .tsproj 文件，之后可以导入还原（Ctrl+Shift+S）">💾 存工程</button>
+  <button id="btnProjOpen" class="sm" title="导入 .tsproj 工程包，还原源图和全部布局（Ctrl+O）">📂 开工程</button>
+  <div class="hist">
+    <button id="btnUndo" class="sm" title="没有可撤回的操作" disabled="">↶ 撤回</button>
+    <button id="btnRedo" class="sm" title="没有可重做的操作" disabled="">↷ 重做</button>
+    <span class="meta" id="histInfo">0 步</span>
+  </div>
+  <span class="hint" id="rootHint">D:\机甲风暴开发素材合集\制作进行素材\地图素材　·　地图 19 张 + 零散 3 张</span>
+</header>
+
+<main>
+  <!-- ==================== 左：素材区 ==================== -->
+  <section class="col left">
+    <div class="pane-head">
+      <b>① 原始素材</b>
+      <span class="meta" id="srcMeta">map1_7x6.png  336×288  →  7 × 6 = 42 格</span>
+      <div class="spacer"></div>
+      <span class="hint">缩放</span>
+      <button class="sm" data-zoom="-1">−</button>
+      <span class="meta" id="zoomLabel">2×</span>
+      <button class="sm" data-zoom="1">＋</button>
+      <button class="sm" id="btnFit">适应</button>
+      <button class="sm" id="btnSelAll">全选</button>
+      <button class="sm" id="btnSelNone">清空</button>
+      <button class="sm" id="btnSelInv">反选</button>
+    </div>
+    <div class="canvas-wrap" id="srcWrap">
+      <canvas id="srcCanvas" width="672" height="576" style="width: 672px; height: 576px;"></canvas>
+      <div class="empty" id="srcEmpty" style="display: none;">
+        <div style="font-size:30px">▦</div>
+        <div>选择右上角的图集，或拖一张 PNG 进来</div>
+      </div>
+    </div>
+    <div class="pane-head" style="border-top:1px solid var(--line);border-bottom:none;height:34px">
+      <span class="meta" id="selInfo">未选中任何图块</span>
+      <div class="spacer"></div>
+      <span class="meta">点击选择 · 拖动框选 · Shift 加选</span>
+    </div>
+  </section>
+
+  <!-- ==================== 中：工具 ==================== -->
+  <section class="col mid">
+
+    <div class="sec">
+      <h4>② 指定语义</h4>
+      <div id="tagList"><div class="tagbtn" data-tag="ground" title="标记选中图块为「地面」（自动分配 → B 槽）"><span class="dot" style="background:#4f7f5b"></span>地面<span class="kbd">1</span></div><div class="tagbtn" data-tag="wall" title="标记选中图块为「墙面」（自动分配 → C 槽）"><span class="dot" style="background:#8e4b48"></span>墙面 <span class="hint">✕通行</span><span class="kbd">2</span></div><div class="tagbtn" data-tag="road" title="标记选中图块为「路面」（自动分配 → D 槽）"><span class="dot" style="background:#9c8a4c"></span>路面<span class="kbd">3</span></div><div class="tagbtn" data-tag="plant_p" title="标记选中图块为「可通行植物」（自动分配 → E 槽）"><span class="dot" style="background:#4a9a6a"></span>可通行植物<span class="kbd">4</span></div><div class="tagbtn" data-tag="plant_np" title="标记选中图块为「不可通行物体」（自动分配 → E 槽）"><span class="dot" style="background:#8a5aaa"></span>不可通行物体 <span class="hint">✕通行</span><span class="kbd">5</span></div><div class="tagbtn" data-tag="over" title="标记选中图块为「树冠(★上层)」（自动分配 → E 槽）"><span class="dot" style="background:#2f7a52"></span>树冠(★上层) <span class="hint">★</span><span class="kbd">6</span></div><div class="tagbtn" data-tag="none" title="标记选中图块为「未标 / 空」"><span class="dot" style="background:#3f434b"></span>未标 / 空<span class="kbd"></span></div></div>
+      <div class="hint" style="margin-top:6px" id="tagHint">按数字键 1–6 快速标注</div>
+    </div>
+
+    <div class="sec">
+      <h4>③ 变换</h4>
+      <div class="grid2" id="tfList"><button title="快捷键 0（数字0）">原图</button><button title="快捷键 H">水平镜像</button><button title="快捷键 V">垂直翻转</button><button title="快捷键 B">180°</button></div>
+      <div class="row" style="margin-top:7px">
+        <span class="hint">块翻转</span>
+        <div class="seg" id="segBlkFlip" style="flex:1">
+          <button data-bflip="order" class="on" title="连格子的排布一起翻：选 2×2 镜像后，左列↔右列会换位。出来的是「整块地图的镜像」，拼对称地形用这个。默认口径。「只翻每格」= 每格自己翻、位置不动（做图块集用）">整块镜像</button>
+          <button data-bflip="tile" title="只翻每一格本身，格子待在原位置不动（做独立图块集用）">只翻每格</button>
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <div class="hint" style="margin-bottom:5px">选中图块预览</div>
+        <div class="variants" id="variantPreview"><canvas class="vcell on" width="46" height="46" title="原图"></canvas><canvas class="vcell" width="46" height="46" title="水平镜像"></canvas><canvas class="vcell" width="46" height="46" title="垂直翻转"></canvas><canvas class="vcell" width="46" height="46" title="180°"></canvas></div>
+        <div class="variants" id="variantLabels" style="margin-top:2px"><div class="vlabel" style="width: 64px;">原</div><div class="vlabel" style="width: 64px;">H</div><div class="vlabel" style="width: 64px;">V</div><div class="vlabel" style="width: 64px;">B</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>④ 送到输出区</h4>
+      <div class="row">
+        <span class="hint">放置方式</span>
+        <div class="seg" id="segMode" style="flex:1">
+          <button data-mode="block" class="on" title="像 RPG Maker 一样：整块原样贴过去，保持相对位置，不拆散">▦ 整块贴</button>
+          <button data-mode="flat" title="把选中的每个格子依次填进空位（做零散图块用）">▤ 逐个铺</button>
+        </div>
+      </div>
+      <div class="hint" id="blockInfo" style="margin:4px 0 6px">— 先在左边框选一块（或点「整张图当一块」）</div>
+      <div class="row">
+        <span class="hint">放置变换</span>
+        <select id="placeTf" style="flex:1">
+          <option value="none">原图</option>
+          <option value="h">水平镜像</option>
+          <option value="v">垂直翻转</option>
+          <option value="hv">180° (镜像+翻转)</option>
+        </select>
+      </div>
+      <div class="row">
+        <button class="primary" id="btnPlace" style="flex:1">→ 整块贴入当前槽</button>
+      </div>
+      <div class="row">
+        <button class="ok" id="btnVariantsAll" style="flex:1" title="原图/镜像/翻转/180° 四个变体，每个都保持整块形状，块与块对齐排布">⚡ 一变四（保持块形）</button>
+      </div>
+      <div class="row">
+        <button id="btnVariantsH" style="flex:1" title="只生成 原图 + 水平镜像（各一整块）">只做水平（原+镜像）</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnWholeSheet" style="flex:1" title="把整张源图当成一块（全选）">□ 整张图当一块</button>
+        <button class="sm" id="btnSelRect" style="flex:1" title="把当前选区收缩成外接矩形（补齐空洞）">▭ 补齐为矩形</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>⑤ 当前槽操作</h4>
+      <div class="hint" id="outSelInfo" style="margin-bottom: 6px; color: var(--dim);">未选中输出格 — 单击选 1 格 · 拖动框选一块 · 双击选整块</div>
+      <div class="row">
+        <button class="sm" id="btnOutH" title="选 1 格 = 只翻这格；选多格 = 整块镜像（格子会左右换位 + 每格翻转）。想要「每格自己翻、位置不动」先把上面的「块翻转」切到「只翻每格」">镜像(H)</button>
+        <button class="sm" id="btnOutV" title="选 1 格 = 只翻这格；选多格 = 整块镜像（格子会上下换位 + 每格翻转）">翻转(V)</button>
+        <button class="sm" id="btnOutHV" title="选 1 格 = 只翻这格；选多格 = 整块镜像（左右+上下都换位 + 每格翻转 = 180°）">180°(B)</button>
+        <button class="sm" id="btnOutReset" title="把选中格恢复成原图（不做镜像）">原图</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnOutBlock" title="把选中格所在的整块选中（等价于双击）">▣ 选中整块</button>
+        <button class="sm" id="btnErase" title="橡皮擦：在输出区左键拖动即可擦除（E）">🧽 橡皮(E)</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnOutDup" title="把选中的输出格复制到后面的空位">复制一份</button>
+        <button class="sm danger" id="btnOutDel">删除选中</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnOutCompact">整理空位（左对齐）</button>
+      </div>
+      <div class="row">
+        <button class="sm" id="btnAssign" title="按语义把图块自动分配进 B/C/D/E">按语义自动分配槽位</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h4>⑥ 图块清单</h4>
+      <div class="hint" id="statsBox">素材已标注：<b>0</b> 格<br>输出总计：<b>0</b> 格</div>
+    </div>
+
+  </section>
+
+  <!-- ==================== 右：输出区 ==================== -->
+  <section class="col right">
+    <div class="pane-head">
+      <b>⑦ 新图集（输出）</b>
+      <span class="meta" id="outMeta">0 / 256 格</span>
+      <div class="spacer"></div>
+      <button class="sm" id="btnOutClear">清空本槽</button>
+    </div>
+
+    <div class="pane-head" style="height:44px">
+      <div class="slots" id="slotTabs"><div class="slot-tab">A5<span class="cnt">0/128</span></div><div class="slot-tab on">B<span class="cnt">0/256</span></div><div class="slot-tab">C<span class="cnt">0/256</span></div><div class="slot-tab">D<span class="cnt">0/256</span></div><div class="slot-tab">E<span class="cnt">0/256</span></div></div>
+      <div class="spacer"></div>
+      <button class="sm" id="btnFitOut">适应</button>
+      <span class="meta" id="slotMeta">256 格 · 768×768</span>
+    </div>
+
+    <div class="pane-head" style="height:38px;border-bottom:1px solid var(--line)">
+      <span class="hint">鼠标</span>
+      <div class="seg" id="segOutMode">
+        <button data-omode="brush" class="on" title="按住左键在输出区拖一个矩形，源选区块就整块平铺进去（RPG Maker 手感）">🖌 刷块</button>
+        <button data-omode="select" title="按住左键拖出矩形框选输出格（跟 RPG Maker 一样）">▭ 框选</button>
+        <button data-omode="erase" title="橡皮擦：按住左键拖过即擦除；单击一个整块会擦掉整块（Alt 只擦单格）">🧽 橡皮</button>
+      </div>
+      <div class="spacer"></div>
+      <span class="meta" id="outHint">左键拖 = 整块平铺 · 单击选 1 格 · 双击选整块 · Alt 切框选</span>
+    </div>
+
+    <div class="canvas-wrap" id="outWrap">
+      <canvas id="outCanvas" width="768" height="768" style="width: 768px; height: 768px;"></canvas>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <button class="primary" id="btnSavePng">💾 保存本槽 PNG</button>
+  <button class="primary" id="btnSaveAll">💾 保存全部槽 PNG</button>
+  <div class="sep"></div>
+  <button class="ok" id="btnSaveJson">📄 导出清单 JSON</button>
+  <button class="ok" id="btnSaveFlags">🚧 导出通行表 flags</button>
+  <div class="sep"></div>
+  <button id="btnSaveToProject" class="danger" title="写进 RPG 工程的 img/tilesets/ 目录">⚠ 写进工程 img/tilesets/</button>
+  <div class="spacer"></div>
+  <span class="hint">导出到</span>
+  <select id="dirSelect" style="min-width:170px" title="导出目录（默认：桌面\图块工坊导出）"><option value="C:\Users\Administrator\Desktop\图块工坊导出" title="C:\Users\Administrator\Desktop\图块工坊导出">★ 桌面 · 图块工坊导出</option><option value="C:\Users\Administrator\Desktop" title="C:\Users\Administrator\Desktop">桌面（直接放桌面）</option><option value="D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out" title="D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out">工具 out 目录</option><option value="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets" title="D:\机甲风暴开发素材合集\机甲风暴2\img\tilesets">工程 img/tilesets</option><option value="__pick__">选择其他目录…</option></select>
+  <span class="hint">前缀</span><input type="text" id="prefixInput" size="8" title="导出文件名前缀" style="width: 78px;"><span class="meta" id="outDirHint" style="color:var(--dim)">C:\Users\Administrator\Desktop\图块工坊导出</span>
+  <button class="sm" id="btnReveal">📂 打开导出目录</button>
+</footer>
+
+<div id="status" class="">已加载 map1_7x6.png（42 格）</div>
+
+<!-- 目录浏览弹层 -->
+<div class="mask" id="mask">
+  <div class="dlg">
+    <h3>选择素材目录</h3>
+    <div class="body">
+      <div class="crumb" id="dlgPath">—</div>
+      <div class="dirlist" id="dlgList" style="margin-top:8px"></div>
+    </div>
+    <div class="foot">
+      <button class="sm" id="dlgUp">↑ 上一级</button>
+      <button class="primary sm" id="dlgUse">用这个目录</button>
+      <div class="spacer"></div>
+      <button class="sm" id="dlgClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 工程包（.tsproj）导入弹层 -->
+<div class="mask" id="projMask">
+  <div class="dlg" style="width:min(860px,94vw)">
+    <h3>导入工程包（.tsproj）</h3>
+    <div class="body">
+      <div class="crumb" id="projDir">—</div>
+      <div class="hint" style="margin:6px 0">每个包里含：源图 + 五个槽的布局 + 语义标注 + 通行表，导入即完全还原。</div>
+      <div class="projlist" id="projList"></div>
+    </div>
+    <div class="foot">
+      <button class="sm" id="projRefresh">刷新列表</button>
+      <button class="sm" id="projReveal">📂 打开目录</button>
+      <div class="spacer"></div>
+      <span class="meta" id="projHint"></span>
+      <button class="sm" id="projClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="/web/app.js"></script>
+
+
+</body></html>

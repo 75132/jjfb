@@ -1,13 +1,17 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, TiledLayer, PlayerAnimBank, PlayerAnimRuntime, PlayerGridMove, _dec, _dec2, _dec3, _class, _class2, _descriptor, _crd, ccclass, property, executionOrder, PlayerSceneRefs;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, TiledLayer, MapManager, PlayerAnimBank, PlayerAnimRuntime, PlayerGridMove, SpriteLayerMap, _dec, _dec2, _dec3, _class, _class2, _descriptor, _crd, ccclass, property, executionOrder, PlayerSceneRefs;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
   function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
 
   function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'transform-class-properties is enabled and runs after the decorators transform.'); }
+
+  function _reportPossibleCrUseOfMapManager(extras) {
+    _reporterNs.report("MapManager", "./MapManager", _context.meta, extras);
+  }
 
   function _reportPossibleCrUseOfPlayerAnimBank(extras) {
     _reporterNs.report("PlayerAnimBank", "./PlayerAnimBank", _context.meta, extras);
@@ -21,6 +25,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("PlayerGridMove", "./PlayerGridMove", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfSpriteLayerMap(extras) {
+    _reporterNs.report("SpriteLayerMap", "./SpriteLayerMap", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -32,11 +40,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       Component = _cc.Component;
       TiledLayer = _cc.TiledLayer;
     }, function (_unresolved_2) {
-      PlayerAnimBank = _unresolved_2.PlayerAnimBank;
+      MapManager = _unresolved_2.MapManager;
     }, function (_unresolved_3) {
-      PlayerAnimRuntime = _unresolved_3.PlayerAnimRuntime;
+      PlayerAnimBank = _unresolved_3.PlayerAnimBank;
     }, function (_unresolved_4) {
-      PlayerGridMove = _unresolved_4.PlayerGridMove;
+      PlayerAnimRuntime = _unresolved_4.PlayerAnimRuntime;
+    }, function (_unresolved_5) {
+      PlayerGridMove = _unresolved_5.PlayerGridMove;
+    }, function (_unresolved_6) {
+      SpriteLayerMap = _unresolved_6.SpriteLayerMap;
     }],
     execute: function () {
       _crd = true;
@@ -52,7 +64,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       } = _decorator);
       /**
        * 挂在 Player 预制体上：进入场景后若 Map Root / Anim Bank 未拖引用，则按常见层级自动补齐。
-       * 层级约定：Canvas/.../GameArea/WorldRoot/Player（与 WorldRoot 平级的地图节点含 TiledLayer）。
+       * 层级约定：Canvas/.../GameArea/WorldRoot/Player；地图根为 TiledMap（可含 TMX 拼块或 M1 等 Sprite 分层图）。
        */
 
       _export("PlayerSceneRefs", PlayerSceneRefs = (_dec = ccclass('PlayerSceneRefs'), _dec2 = executionOrder(-50), _dec3 = property({
@@ -65,6 +77,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onLoad() {
+          var _pgm$mapRoot;
+
           if (!this.autoResolve) {
             return;
           }
@@ -82,6 +96,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (root) {
               pgm.mapRoot = root;
             }
+          }
+
+          var mapRoot = (_pgm$mapRoot = pgm == null ? void 0 : pgm.mapRoot) != null ? _pgm$mapRoot : this._resolveMapRoot();
+
+          if (mapRoot) {
+            (_crd && MapManager === void 0 ? (_reportPossibleCrUseOfMapManager({
+              error: Error()
+            }), MapManager) : MapManager).ensureOnMapRoot(mapRoot);
+
+            this._ensureSpriteLayerMaps(mapRoot);
           }
 
           if (animRt && !animRt.bank) {
@@ -105,7 +129,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           for (var i = 0; i < tryNames.length; i++) {
             var n = worldRoot.getChildByName(tryNames[i]);
 
-            if (n && this._hasTiledLayerInSubtree(n)) {
+            if (n && this._isMapContainer(n)) {
               return n;
             }
           }
@@ -117,12 +141,41 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               continue;
             }
 
-            if (this._hasTiledLayerInSubtree(ch)) {
+            if (this._isMapContainer(ch)) {
               return ch;
             }
           }
 
           return null;
+        }
+        /** TMX 拼块 或 M{n} Sprite 分层图均视为地图容器 */
+
+
+        _isMapContainer(root) {
+          if (this._hasTiledLayerInSubtree(root)) return true;
+          if (root.getComponentInChildren(_crd && SpriteLayerMap === void 0 ? (_reportPossibleCrUseOfSpriteLayerMap({
+            error: Error()
+          }), SpriteLayerMap) : SpriteLayerMap)) return true;
+
+          for (var i = 0; i < root.children.length; i++) {
+            var name = root.children[i].name || '';
+            if (/^M\d+$/i.test(name) || /^\d+-\d+$/.test(name)) return true;
+          }
+
+          return false;
+        }
+
+        _ensureSpriteLayerMaps(mapRoot) {
+          for (var i = 0; i < mapRoot.children.length; i++) {
+            var ch = mapRoot.children[i];
+            var m = /^M(\d+)$/i.exec(ch.name || '');
+            if (!m) continue;
+            var mapId = Number(m[1]);
+            var path = mapId === 1 ? 'Map/M1_walk_flags' : "Map/M" + mapId + "_walk_flags";
+            (_crd && SpriteLayerMap === void 0 ? (_reportPossibleCrUseOfSpriteLayerMap({
+              error: Error()
+            }), SpriteLayerMap) : SpriteLayerMap).ensureOnNode(ch, mapId, path);
+          }
         }
 
         _hasTiledLayerInSubtree(root) {

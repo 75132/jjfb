@@ -48,10 +48,10 @@ async def handle_add_item(websocket, data, current_character_id):
         return
     
     # 验证角色是否存在
-    player = utils.players_col.find_one({
+    player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
         'user_id': user['_id'],
         'character_id': target_character_id
-    })
+    }))
     if not player:
         await websocket.send(json.dumps({
             'type': 'add_response',
@@ -63,10 +63,10 @@ async def handle_add_item(websocket, data, current_character_id):
     try:
         # 从inventory_col获取现有物品列表
         from .bag_handler import merge_inventory_items, split_inventory_items
-        doc = utils.inventory_col.find_one({
+        doc = await utils.async_mongo_operation_read(lambda: utils.inventory_col.find_one({
             'user_id': user['_id'],
             'character_id': target_character_id
-        })
+        }))
         items = merge_inventory_items(doc) if doc else []
         
         # 加载物品配置（用于堆叠规则）
@@ -140,11 +140,11 @@ async def handle_add_item(websocket, data, current_character_id):
         inventory_data['character_id'] = target_character_id
         
         # 更新inventory_col
-        utils.inventory_col.replace_one(
+        await utils.async_mongo_operation(lambda: utils.inventory_col.replace_one(
             {'user_id': user['_id'], 'character_id': target_character_id},
             inventory_data,
             upsert=True
-        )
+        ))
         
         # 发送成功响应
         await websocket.send(json.dumps({
@@ -220,10 +220,10 @@ async def handle_add_exp(websocket, data, current_character_id, add_exp_to_playe
         return
     
     # 5. 验证角色是否属于该用户（关键安全验证）
-    player = utils.players_col.find_one({
+    player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
         'user_id': user['_id'],
         'character_id': target_character_id
-    })
+    }))
     if not player:
         await websocket.send(json.dumps({
             'type': 'add_exp_response',
@@ -237,13 +237,13 @@ async def handle_add_exp(websocket, data, current_character_id, add_exp_to_playe
         new_level, new_exp, level_up_count = add_exp_to_player_func(player, exp_amount)
         
         # 7. 更新数据库（使用双重验证条件，确保安全）
-        update_result = utils.players_col.update_one(
+        update_result = await utils.async_mongo_operation(lambda: utils.players_col.update_one(
             {'user_id': user['_id'], 'character_id': target_character_id},  # 双重条件确保安全
             {'$set': {
                 'level': new_level,
                 'exp': new_exp
             }}
-        )
+        ))
         
         # 8. 验证更新是否成功
         if update_result.matched_count == 0:

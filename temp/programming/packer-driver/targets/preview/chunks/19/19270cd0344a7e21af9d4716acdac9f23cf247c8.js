@@ -1,10 +1,16 @@
-System.register(["cc"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
   "use strict";
 
-  var _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, resources, SpriteFrame, JsonAsset, _dec, _class, _class2, _crd, ccclass, ResourceManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, resources, SpriteFrame, JsonAsset, Logger, _dec, _class, _class2, _crd, ccclass, ResourceManager;
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
 
   return {
-    setters: [function (_cc) {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
       _cclegacy = _cc.cclegacy;
       __checkObsolete__ = _cc.__checkObsolete__;
       __checkObsoleteInNamespace__ = _cc.__checkObsoleteInNamespace__;
@@ -12,6 +18,8 @@ System.register(["cc"], function (_export, _context) {
       resources = _cc.resources;
       SpriteFrame = _cc.SpriteFrame;
       JsonAsset = _cc.JsonAsset;
+    }, function (_unresolved_2) {
+      Logger = _unresolved_2.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -83,11 +91,36 @@ System.register(["cc"], function (_export, _context) {
           this.CONCURRENT_LOAD_COUNT = 2;
           // 陆续加载配置：每个资源加载完成后的延迟时间（毫秒），给主线程喘息时间
           this.LOAD_DELAY_MS = 50;
+
+          /** 预加载错峰 setTimeout；新开一轮会作废上一轮未触发的句柄 */
+          this.assetPreloadSession = 0;
+          this.dirPreloadSession = 0;
+          this.assetPreloadTimers = [];
+          this.dirPreloadTimers = [];
         }
 
+        clearTimerList(timers) {
+          for (var h of timers) {
+            clearTimeout(h);
+          }
+
+          timers.length = 0;
+        }
+
+        schedulePreloadStep(timers, session, getSession, delayMs, fn) {
+          var handle = setTimeout(() => {
+            var i = timers.indexOf(handle);
+            if (i >= 0) timers.splice(i, 1);
+            if (session !== getSession()) return;
+            fn();
+          }, delayMs);
+          timers.push(handle);
+        }
         /**
          * 获取单例实例
          */
+
+
         static getInstance() {
           if (!ResourceManager.instance) {
             ResourceManager.instance = new ResourceManager();
@@ -115,7 +148,9 @@ System.register(["cc"], function (_export, _context) {
             var _asset = cached.asset; // 检查是否过期
 
             if (Date.now() - cached.timestamp < this.CACHE_TTL) {
-              console.log("\u2705 [ResourceManager] \u4F7F\u7528\u7F13\u5B58\u8D44\u6E90: " + path);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u4F7F\u7528\u7F13\u5B58\u8D44\u6E90: " + path);
               callback(null, _asset);
               return;
             } else {
@@ -135,27 +170,35 @@ System.register(["cc"], function (_export, _context) {
           } // 开始加载
 
 
-          console.log("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u52A0\u8F7D\u8D44\u6E90: " + path);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u52A0\u8F7D\u8D44\u6E90: " + path);
           var loadPromise = new Promise((resolve, reject) => {
             resources.load(path, type, (err, asset) => {
               this.loadingPromises.delete(path);
 
               if (err) {
-                console.error("\u274C [ResourceManager] \u52A0\u8F7D\u8D44\u6E90\u5931\u8D25: " + path, err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C [ResourceManager] \u52A0\u8F7D\u8D44\u6E90\u5931\u8D25: " + path, err);
                 reject(err);
                 return;
               }
 
               if (!asset) {
                 var error = new Error("\u8D44\u6E90\u52A0\u8F7D\u8FD4\u56DE\u4E3A\u7A7A: " + path);
-                console.error("\u274C [ResourceManager]", error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C [ResourceManager]", error);
                 reject(error);
                 return;
               } // 存入缓存
 
 
               this.setCache(path, asset);
-              console.log("\u2705 [ResourceManager] \u8D44\u6E90\u52A0\u8F7D\u5B8C\u6210: " + path);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u8D44\u6E90\u52A0\u8F7D\u5B8C\u6210: " + path);
               resolve(asset);
             });
           });
@@ -186,7 +229,9 @@ System.register(["cc"], function (_export, _context) {
             var _assets = cached.asset; // 检查是否过期
 
             if (Date.now() - cached.timestamp < this.CACHE_TTL) {
-              console.log("\u2705 [ResourceManager] \u4F7F\u7528\u7F13\u5B58\u8D44\u6E90\u76EE\u5F55: " + path + " (" + _assets.length + "\u4E2A)");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u4F7F\u7528\u7F13\u5B58\u8D44\u6E90\u76EE\u5F55: " + path + " (" + _assets.length + "\u4E2A)");
               callback(null, _assets);
               return;
             } else {
@@ -206,19 +251,25 @@ System.register(["cc"], function (_export, _context) {
           } // 开始加载
 
 
-          console.log("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u52A0\u8F7D\u8D44\u6E90\u76EE\u5F55: " + path);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u52A0\u8F7D\u8D44\u6E90\u76EE\u5F55: " + path);
           var loadPromise = new Promise((resolve, reject) => {
             resources.loadDir(path, type, (err, assets) => {
               this.loadingPromises.delete(path);
 
               if (err) {
-                console.error("\u274C [ResourceManager] \u52A0\u8F7D\u8D44\u6E90\u76EE\u5F55\u5931\u8D25: " + path, err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C [ResourceManager] \u52A0\u8F7D\u8D44\u6E90\u76EE\u5F55\u5931\u8D25: " + path, err);
                 reject(err);
                 return;
               }
 
               if (!assets || assets.length === 0) {
-                console.warn("\u26A0\uFE0F [ResourceManager] \u8D44\u6E90\u76EE\u5F55\u4E3A\u7A7A: " + path);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("\u26A0\uFE0F [ResourceManager] \u8D44\u6E90\u76EE\u5F55\u4E3A\u7A7A: " + path);
                 callback(null, []);
                 resolve([]);
                 return;
@@ -226,7 +277,9 @@ System.register(["cc"], function (_export, _context) {
 
 
               this.setCache(path, assets);
-              console.log("\u2705 [ResourceManager] \u8D44\u6E90\u76EE\u5F55\u52A0\u8F7D\u5B8C\u6210: " + path + " (" + assets.length + "\u4E2A)");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u8D44\u6E90\u76EE\u5F55\u52A0\u8F7D\u5B8C\u6210: " + path + " (" + assets.length + "\u4E2A)");
               resolve(assets);
             });
           });
@@ -251,14 +304,18 @@ System.register(["cc"], function (_export, _context) {
           var cachedVersion = cached == null ? void 0 : cached.version; // 如果版本号相同且缓存未过期，直接使用缓存
 
           if (cached && cachedVersion === version && Date.now() - cached.timestamp < this.CACHE_TTL) {
-            console.log("\u2705 [ResourceManager] \u4F7F\u7528\u7F13\u5B58\u8D44\u6E90\uFF08\u7248\u672C\u5339\u914D\uFF09: " + path + " (v" + version + ")");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u2705 [ResourceManager] \u4F7F\u7528\u7F13\u5B58\u8D44\u6E90\uFF08\u7248\u672C\u5339\u914D\uFF09: " + path + " (v" + version + ")");
             callback(null, cached.asset);
             return;
           } // 版本不同或缓存过期，重新加载
 
 
           if (cachedVersion !== version) {
-            console.log("\uD83D\uDD04 [ResourceManager] \u8D44\u6E90\u7248\u672C\u66F4\u65B0: " + path + " (v" + cachedVersion + " -> v" + version + ")");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDD04 [ResourceManager] \u8D44\u6E90\u7248\u672C\u66F4\u65B0: " + path + " (v" + cachedVersion + " -> v" + version + ")");
           } // 更新版本信息
 
 
@@ -330,7 +387,11 @@ System.register(["cc"], function (_export, _context) {
 
           var loadingCount = 0; // 正在加载的数量
 
-          console.log("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u9646\u7EED\u9884\u52A0\u8F7D " + total + " \u4E2A\u8D44\u6E90\uFF08\u5DF2\u7F13\u5B58 " + cachedCount + " \u4E2A\uFF0C\u9700\u52A0\u8F7D " + needLoadList.length + " \u4E2A\uFF09"); // 如果所有资源都已缓存，直接完成
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u9646\u7EED\u9884\u52A0\u8F7D " + total + " \u4E2A\u8D44\u6E90\uFF08\u5DF2\u7F13\u5B58 " + cachedCount + " \u4E2A\uFF0C\u9700\u52A0\u8F7D " + needLoadList.length + " \u4E2A\uFF09");
+          this.clearTimerList(this.assetPreloadTimers);
+          var session = ++this.assetPreloadSession; // 如果所有资源都已缓存，直接完成
 
           if (needLoadList.length === 0) {
             if (onProgress) onProgress(100);
@@ -340,12 +401,15 @@ System.register(["cc"], function (_export, _context) {
 
 
           var onLoadComplete = (err, asset, path) => {
+            if (session !== this.assetPreloadSession) return;
             loadingCount--;
             loadedCount++;
 
             if (err || !asset) {
               failCount++;
-              console.warn("\u26A0\uFE0F [ResourceManager] \u9884\u52A0\u8F7D\u5931\u8D25: " + path);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F [ResourceManager] \u9884\u52A0\u8F7D\u5931\u8D25: " + path);
             } else {
               successCount++;
             }
@@ -354,15 +418,16 @@ System.register(["cc"], function (_export, _context) {
             if (onProgress) onProgress(progress); // 如果全部加载完成
 
             if (loadedCount >= total) {
-              console.log("\u2705 [ResourceManager] \u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + "/" + total + ", \u5931\u8D25 " + failCount + "/" + total);
+              this.clearTimerList(this.assetPreloadTimers);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + "/" + total + ", \u5931\u8D25 " + failCount + "/" + total);
               if (onComplete) onComplete(successCount, failCount);
               return;
             } // 延迟后加载下一个资源（给主线程喘息时间）
 
 
-            setTimeout(() => {
-              loadNextAsset();
-            }, delayMs);
+            this.schedulePreloadStep(this.assetPreloadTimers, session, () => this.assetPreloadSession, delayMs, () => loadNextAsset());
           }; // 加载下一个资源
 
 
@@ -444,7 +509,11 @@ System.register(["cc"], function (_export, _context) {
 
           var loadingCount = 0; // 正在加载的数量
 
-          console.log("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u9646\u7EED\u9884\u52A0\u8F7D " + total + " \u4E2A\u8D44\u6E90\u76EE\u5F55\uFF08\u5DF2\u7F13\u5B58 " + cachedCount + " \u4E2A\uFF0C\u9700\u52A0\u8F7D " + needLoadList.length + " \u4E2A\uFF09"); // 如果所有目录都已缓存，直接完成
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDCE6 [ResourceManager] \u5F00\u59CB\u9646\u7EED\u9884\u52A0\u8F7D " + total + " \u4E2A\u8D44\u6E90\u76EE\u5F55\uFF08\u5DF2\u7F13\u5B58 " + cachedCount + " \u4E2A\uFF0C\u9700\u52A0\u8F7D " + needLoadList.length + " \u4E2A\uFF09");
+          this.clearTimerList(this.dirPreloadTimers);
+          var session = ++this.dirPreloadSession; // 如果所有目录都已缓存，直接完成
 
           if (needLoadList.length === 0) {
             if (onProgress) onProgress(100);
@@ -454,12 +523,15 @@ System.register(["cc"], function (_export, _context) {
 
 
           var onLoadComplete = (err, assets, path) => {
+            if (session !== this.dirPreloadSession) return;
             loadingCount--;
             loadedCount++;
 
             if (err || !assets) {
               failCount++;
-              console.warn("\u26A0\uFE0F [ResourceManager] \u9884\u52A0\u8F7D\u76EE\u5F55\u5931\u8D25: " + path);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F [ResourceManager] \u9884\u52A0\u8F7D\u76EE\u5F55\u5931\u8D25: " + path);
             } else {
               successCount++;
             }
@@ -468,15 +540,16 @@ System.register(["cc"], function (_export, _context) {
             if (onProgress) onProgress(progress); // 如果全部加载完成
 
             if (loadedCount >= total) {
-              console.log("\u2705 [ResourceManager] \u9884\u52A0\u8F7D\u76EE\u5F55\u5B8C\u6210: \u6210\u529F " + successCount + "/" + total + ", \u5931\u8D25 " + failCount + "/" + total);
+              this.clearTimerList(this.dirPreloadTimers);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u9884\u52A0\u8F7D\u76EE\u5F55\u5B8C\u6210: \u6210\u529F " + successCount + "/" + total + ", \u5931\u8D25 " + failCount + "/" + total);
               if (onComplete) onComplete(successCount, failCount);
               return;
             } // 延迟后加载下一个目录（给主线程喘息时间）
 
 
-            setTimeout(() => {
-              loadNextDir();
-            }, delayMs);
+            this.schedulePreloadStep(this.dirPreloadTimers, session, () => this.dirPreloadSession, delayMs, () => loadNextDir());
           }; // 加载下一个目录
 
 
@@ -569,11 +642,15 @@ System.register(["cc"], function (_export, _context) {
           if (path) {
             this.resourceCache.delete(path);
             this.resourceVersions.delete(path);
-            console.log("\uD83D\uDDD1\uFE0F [ResourceManager] \u5DF2\u6E05\u9664\u7F13\u5B58: " + path);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDDD1\uFE0F [ResourceManager] \u5DF2\u6E05\u9664\u7F13\u5B58: " + path);
           } else {
             this.resourceCache.clear();
             this.resourceVersions.clear();
-            console.log("\uD83D\uDDD1\uFE0F [ResourceManager] \u5DF2\u6E05\u9664\u6240\u6709\u7F13\u5B58");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDDD1\uFE0F [ResourceManager] \u5DF2\u6E05\u9664\u6240\u6709\u7F13\u5B58");
           }
         }
         /**
@@ -595,7 +672,9 @@ System.register(["cc"], function (_export, _context) {
             });
 
             this.resourceCache.delete(path);
-            console.log("\uD83D\uDDD1\uFE0F [ResourceManager] \u5DF2\u91CA\u653E\u8D44\u6E90: " + path);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDDD1\uFE0F [ResourceManager] \u5DF2\u91CA\u653E\u8D44\u6E90: " + path);
           }
         }
         /**
@@ -636,7 +715,9 @@ System.register(["cc"], function (_export, _context) {
           });
 
           if (cleanedCount > 0) {
-            console.log("\uD83E\uDDF9 [ResourceManager] \u5DF2\u6E05\u7406 " + cleanedCount + " \u4E2A\u8FC7\u671F\u7F13\u5B58");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83E\uDDF9 [ResourceManager] \u5DF2\u6E05\u7406 " + cleanedCount + " \u4E2A\u8FC7\u671F\u7F13\u5B58");
           }
         }
         /**
@@ -657,7 +738,9 @@ System.register(["cc"], function (_export, _context) {
             this.resourceCache.delete(path);
             this.resourceVersions.delete(path);
           });
-          console.log("\uD83E\uDDF9 [ResourceManager] \u5DF2\u6E05\u7406 " + toRemove.length + " \u4E2A\u65E7\u7F13\u5B58\uFF08LRU\u7B56\u7565\uFF09");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83E\uDDF9 [ResourceManager] \u5DF2\u6E05\u7406 " + toRemove.length + " \u4E2A\u65E7\u7F13\u5B58\uFF08LRU\u7B56\u7565\uFF09");
         }
         /**
          * 设置缓存
@@ -691,7 +774,9 @@ System.register(["cc"], function (_export, _context) {
 
 
         preloadGameCoreResources(onProgress, onComplete) {
-          console.log('📦 [ResourceManager] 开始预加载游戏核心资源...'); // 定义需要预加载的核心资源
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📦 [ResourceManager] 开始预加载游戏核心资源...'); // 定义需要预加载的核心资源
 
           var coreJsonAssets = [{
             path: 'json/equip_position',
@@ -749,7 +834,9 @@ System.register(["cc"], function (_export, _context) {
             }
 
             if (completedCount >= totalCount && onComplete) {
-              console.log("\u2705 [ResourceManager] \u6E38\u620F\u6838\u5FC3\u8D44\u6E90\u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + "/" + totalCount + ", \u5931\u8D25 " + failCount + "/" + totalCount);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [ResourceManager] \u6E38\u620F\u6838\u5FC3\u8D44\u6E90\u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + "/" + totalCount + ", \u5931\u8D25 " + failCount + "/" + totalCount);
               onComplete(successCount, failCount);
             }
           }; // 先预加载 JSON 配表（较小，优先加载）
@@ -777,7 +864,9 @@ System.register(["cc"], function (_export, _context) {
               if (onComplete) {
                 var totalProgress = 100;
                 if (onProgress) onProgress(totalProgress);
-                console.log("\u2705 [ResourceManager] \u6E38\u620F\u6838\u5FC3\u8D44\u6E90\u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + "/" + totalCount + ", \u5931\u8D25 " + failCount + "/" + totalCount);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 [ResourceManager] \u6E38\u620F\u6838\u5FC3\u8D44\u6E90\u9884\u52A0\u8F7D\u5B8C\u6210: \u6210\u529F " + successCount + "/" + totalCount + ", \u5931\u8D25 " + failCount + "/" + totalCount);
                 onComplete(successCount, failCount);
               }
             }, 1, // 图集较大，每次只加载1个

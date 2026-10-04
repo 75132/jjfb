@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, Label, instantiate, Color, Sprite, SpriteFrame } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -341,11 +342,11 @@ export class LoadingPanel extends Component {
         try {
             ws.abortConnectAttempts();
         } catch (e) {
-            console.warn('[LoadingPanel] 取消连接失败', e);
+            Logger.warn('[LoadingPanel] 取消连接失败', e);
         }
         this._setTip(TIP_CONNECT_FAILED, true);
         this._startShowRotate();
-        console.warn('[LoadingPanel] 30s 未连上，已停止本地自动连接');
+        Logger.warn('[LoadingPanel] 30s 未连上，已停止本地自动连接');
     }
 
     private _setTip(text: string, asError: boolean): void {
@@ -360,7 +361,7 @@ export class LoadingPanel extends Component {
 
             if (!ws || !ws.isConnected()) {
                 if (this.allowLocalFallback) {
-                    console.log(`[LoadingPanel] 本地阶段 ${stage}（未连接服务器）`);
+                    Logger.debug(`[LoadingPanel] 本地阶段 ${stage}（未连接服务器）`);
                 }
                 done();
                 return;
@@ -379,11 +380,11 @@ export class LoadingPanel extends Component {
                     { stage },
                     (response: any) => {
                         if (response && response.success === false && response.code === 408) {
-                            console.warn(`[LoadingPanel] 阶段 ${stage} 超时，继续本地流程`);
+                            Logger.warn(`[LoadingPanel] 阶段 ${stage} 超时，继续本地流程`);
                         } else if (response && response.success === false) {
-                            console.warn(`[LoadingPanel] 阶段 ${stage} 失败:`, response.message || response);
+                            Logger.warn(`[LoadingPanel] 阶段 ${stage} 失败:`, response.message || response);
                         } else {
-                            console.log(`[LoadingPanel] 阶段 ${stage} 完成`, response?.data || response);
+                            Logger.debug(`[LoadingPanel] 阶段 ${stage} 完成`, response?.data || response);
                         }
                         finish();
                     },
@@ -391,7 +392,7 @@ export class LoadingPanel extends Component {
                     this.stageRequestTimeoutMs
                 );
             } catch (e) {
-                console.warn(`[LoadingPanel] 阶段 ${stage} 请求异常，本地继续`, e);
+                Logger.warn(`[LoadingPanel] 阶段 ${stage} 请求异常，本地继续`, e);
                 finish();
             }
         });

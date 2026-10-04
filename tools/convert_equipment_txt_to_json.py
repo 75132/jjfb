@@ -34,10 +34,9 @@ ATTRIBUTE_NAMES = {
     'Counterattack': '反击',
     'Block': '格挡',
     'Armor Penetration': '穿透',
-    'Particle Shield': '粒子护盾',
+    'Attack Times': '攻击次数',
     'Energy Recovery': '能量恢复',
-    'Life Recovery': '生命恢复',
-    'Attack Times': '攻击次数'
+    'Life Recovery': '生命恢复'
 }
 
 
@@ -74,7 +73,7 @@ def parse_txt_file(file_path: str) -> List[Dict[str, Any]]:
                     if col_name in ['Equipment ID', 'Type', 'Img', 'Required Level', 'Price',
                                    'HP', 'MP', 'Melee', 'Shoot', 'Armor', 'Evasion', 'Accuracy',
                                    'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-                                   'Counterattack', 'Block', 'Armor Penetration', 'Particle Shield',
+                                   'Counterattack', 'Block', 'Armor Penetration',
                                    'Energy Recovery', 'Life Recovery', 'Attack Times']:
                         try:
                             row_data[col_name] = int(value) if value else 0
@@ -124,14 +123,12 @@ def generate_effect_text(row_data: Dict[str, Any]) -> str:
         effects.append(f"格挡+{row_data['Block']}")
     if row_data.get('Armor Penetration', 0) > 0:
         effects.append(f"穿透+{row_data['Armor Penetration']}")
-    if row_data.get('Particle Shield', 0) > 0:
-        effects.append(f"粒子护盾+{row_data['Particle Shield']}")
+    if row_data.get('Attack Times', 0) > 0:
+        effects.append(f"攻击次数+{row_data['Attack Times']}")
     if row_data.get('Energy Recovery', 0) > 0:
         effects.append(f"能量恢复+{row_data['Energy Recovery']}")
     if row_data.get('Life Recovery', 0) > 0:
         effects.append(f"生命恢复+{row_data['Life Recovery']}")
-    if row_data.get('Attack Times', 0) > 0:
-        effects.append(f"攻击次数+{row_data['Attack Times']}")
     
     # 等级要求
     required_level = row_data.get('Required Level', 0)
@@ -178,10 +175,9 @@ def convert_to_json_item(row_data: Dict[str, Any], itype_id: int) -> Dict[str, A
         "counterattack": row_data.get('Counterattack', 0),
         "block": row_data.get('Block', 0),
         "armorPenetration": row_data.get('Armor Penetration', 0),
-        "particleShield": row_data.get('Particle Shield', 0),
+        "attackCount": int(row_data.get('Attack Times', 0) or 0),
         "energyRecovery": row_data.get('Energy Recovery', 0),
-        "lifeRecovery": row_data.get('Life Recovery', 0),
-        "attackTimes": row_data.get('Attack Times', 0)
+        "lifeRecovery": row_data.get('Life Recovery', 0)
     }
     
     return item

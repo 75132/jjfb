@@ -10,9 +10,9 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import math
 import time
+from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional, Tuple
 
 _MAX_STEP_PX = 66.0
@@ -20,37 +20,61 @@ _MAX_STEP_PX = 66.0
 
 class WorldPresenceService:
     def __init__(self) -> None:
-        self._lock: Optional[asyncio.Lock] = None
+        self._meta: Optional[asyncio.Lock] = None
+        self._map_locks: Dict[int, asyncio.Lock] = {}
         self._rooms: Dict[int, Dict[str, dict]] = {}
         self._ws_index: Dict[int, Tuple[int, str]] = {}
         self._last_db_save: Dict[str, float] = {}
         # 角色重新进图后，要求“至少发生一次有效移动”才允许再次触发战斗（避免重连即原地再触发）
         self._need_fresh_collision: set[str] = set()
 
-    def _ensure_lock(self) -> asyncio.Lock:
-        if self._lock is None:
-            self._lock = asyncio.Lock()
-        return self._lock
+    def _meta_lock(self) -> asyncio.Lock:
+        if self._meta is None:
+            self._meta = asyncio.Lock()
+        return self._meta
+
+    async def _lock_for(self, map_id: int) -> asyncio.Lock:
+        async with self._meta_lock():
+            lock = self._map_locks.get(map_id)
+            if lock is None:
+                lock = asyncio.Lock()
+                self._map_locks[map_id] = lock
+            return lock
+
+    @asynccontextmanager
+    async def _hold_maps(self, *map_ids: int):
+        """按 map_id 升序加锁，避免跨图死锁。不与 _meta 嵌套持有。"""
+        ids = sorted({int(m) for m in map_ids})
+        locks = [await self._lock_for(mid) for mid in ids]
+        for lk in locks:
+            await lk.acquire()
+        try:
+            yield
+        finally:
+            for lk in reversed(locks):
+                lk.release()
 
     async def leave_websocket(self, websocket) -> None:
         if websocket is None:
             return
         wid = id(websocket)
-        map_id: Optional[int] = None
-        cid: Optional[str] = None
-        snap: Optional[Tuple[int, float, float]] = None
-        async with self._ensure_lock():
+        async with self._meta_lock():
             pair = self._ws_index.pop(wid, None)
-            if not pair:
-                return
-            map_id, cid = pair
+        if not pair:
+            return
+        map_id, cid = pair
+        snap: Optional[Tuple[int, float, float]] = None
+        async with self._hold_maps(map_id):
             room = self._rooms.get(map_id)
             st = room.get(cid) if room else None
             if st:
                 snap = (int(st.get('map_id', map_id)), float(st['x']), float(st['y']))
             self._remove_character_from_map_locked(map_id, cid)
-        if map_id is not None and cid:
-            await self._broadcast_to_map(map_id, websocket, {'type': 'world_player_leave', 'character_id': cid, 'reason': 'offline'})
+        await self._broadcast_to_map(
+            map_id, websocket,
+            {'type': 'world_player_leave', 'character_id': cid, 'reason': 'offline'},
+            immediate=True,
+        )
         if snap and cid:
             mid, sx, sy = snap
             self._save_position_immediate(cid, mid, sx, sy)
@@ -63,22 +87,27 @@ class WorldPresenceService:
             del self._rooms[map_id]
 
     async def _purge_character_globally_locked(self, cid: str, except_ws=None) -> None:
-        for mid in list(self._rooms.keys()):
-            room = self._rooms.get(mid)
-            if not room or cid not in room:
-                continue
-            st = room.pop(cid)
-            ws_old = st.get('websocket')
-            if ws_old is not None and (except_ws is None or id(ws_old) != id(except_ws)):
-                self._ws_index.pop(id(ws_old), None)
-            if len(room) == 0:
-                del self._rooms[mid]
+        for mid in sorted(list(self._rooms.keys())):
+            async with self._hold_maps(mid):
+                room = self._rooms.get(mid)
+                if not room or cid not in room:
+                    continue
+                st = room.pop(cid)
+                ws_old = st.get('websocket')
+                if len(room) == 0:
+                    del self._rooms[mid]
+                wid = id(ws_old) if ws_old is not None else None
+                drop_ws = ws_old is not None and (except_ws is None or id(ws_old) != id(except_ws))
+            if drop_ws and wid is not None:
+                async with self._meta_lock():
+                    cur = self._ws_index.get(wid)
+                    if cur and cur[1] == cid:
+                        self._ws_index.pop(wid, None)
 
-    async def _broadcast_to_map(self, map_id: int, exclude_ws, payload: dict) -> None:
-        raw = json.dumps(payload, default=str)
-        async with self._ensure_lock():
+    async def _broadcast_to_map(self, map_id: int, exclude_ws, payload: dict, immediate: bool = False) -> None:
+        targets: List[Tuple[str, Any]] = []
+        async with self._hold_maps(map_id):
             room = self._rooms.get(map_id, {})
-            targets: List[Any] = []
             seen = set()
             for st in room.values():
                 ws = st.get('websocket')
@@ -88,16 +117,19 @@ class WorldPresenceService:
                 if i in seen:
                     continue
                 seen.add(i)
-                targets.append(ws)
+                sid = str(st.get('user_id') or i)
+                targets.append((sid, ws))
 
-        async def _send_one(ws):
-            try:
-                await ws.send(raw)
-            except Exception:
-                pass
-
-        if targets:
-            await asyncio.gather(*(_send_one(ws) for ws in targets), return_exceptions=True)
+        if not targets:
+            return
+        from services.push_scheduler import push_scheduler
+        for sid, ws in targets:
+            await push_scheduler.schedule(
+                session_id=sid,
+                message=payload,
+                websocket=ws,
+                immediate=immediate,
+            )
 
     async def enter(
         self,
@@ -111,13 +143,15 @@ class WorldPresenceService:
         role_name: str,
         sprite: int,
     ) -> List[dict]:
-        async with self._ensure_lock():
-            await self._purge_character_globally_locked(character_id, except_ws=websocket)
+        await self._purge_character_globally_locked(character_id, except_ws=websocket)
+        async with self._meta_lock():
             old = self._ws_index.pop(id(websocket), None)
-            if old:
-                omid, ocid = old
+        if old:
+            omid, ocid = old
+            async with self._hold_maps(omid):
                 self._remove_character_from_map_locked(omid, ocid)
 
+        async with self._hold_maps(map_id):
             state = {
                 'user_id': user_id,
                 'character_id': character_id,
@@ -132,16 +166,15 @@ class WorldPresenceService:
                 'updated_at': time.time(),
             }
             self._rooms.setdefault(map_id, {})[character_id] = state
-            self._ws_index[id(websocket)] = (map_id, character_id)
-            # 进入地图后，先标记为“需要下一次碰撞”，直到发生一次有效 world_step 才解除
             self._need_fresh_collision.add(character_id)
-
             others: List[dict] = []
             room = self._rooms.get(map_id, {})
             for oc_id, st in room.items():
                 if oc_id == character_id:
                     continue
                 others.append(self._public_view(st))
+        async with self._meta_lock():
+            self._ws_index[id(websocket)] = (map_id, character_id)
 
         join_msg = {
             'type': 'world_player_join',
@@ -155,7 +188,7 @@ class WorldPresenceService:
                 'moving': False,
             },
         }
-        await self._broadcast_to_map(map_id, websocket, join_msg)
+        await self._broadcast_to_map(map_id, websocket, join_msg, immediate=True)
         # 进图即落库（站着不动也应有最新坐标；与 move 共用节流避免狂写）
         self._maybe_schedule_db_save(character_id, map_id, float(x), float(y))
         return others
@@ -170,13 +203,14 @@ class WorldPresenceService:
         facing: str,
         moving: bool,
     ) -> Tuple[bool, str]:
-        async with self._ensure_lock():
+        async with self._meta_lock():
             pair = self._ws_index.get(id(websocket))
-            if not pair or pair[1] != character_id:
-                return False, 'not_in_world'
-            mid, cid = pair
-            if mid != map_id:
-                return False, 'map_mismatch'
+        if not pair or pair[1] != character_id:
+            return False, 'not_in_world'
+        mid, cid = pair
+        if mid != map_id:
+            return False, 'map_mismatch'
+        async with self._hold_maps(mid):
             room = self._rooms.get(mid)
             if not room or cid not in room:
                 return False, 'not_in_room'
@@ -204,7 +238,7 @@ class WorldPresenceService:
             'Sprite': sp_out,
             'role_name': rn_out,
         }
-        await self._broadcast_to_map(map_id, websocket, msg)
+        await self._broadcast_to_map(map_id, websocket, msg, immediate=False)
         self._maybe_schedule_db_save(character_id, map_id, float(x), float(y))
         return True, 'ok'
 
@@ -231,21 +265,26 @@ class WorldPresenceService:
     async def leave_map(self, websocket, character_id: str, map_id: int) -> None:
         snap: Optional[Tuple[int, float, float]] = None
         cid_out: Optional[str] = None
-        async with self._ensure_lock():
+        async with self._meta_lock():
             pair = self._ws_index.get(id(websocket))
             if not pair:
                 return
             mid, cid = pair
             if cid != character_id or mid != map_id:
                 return
-            room = self._rooms.get(mid)
-            st = room.get(cid) if room else None
-            if st:
-                snap = (int(st.get('map_id', mid)), float(st['x']), float(st['y']))
-            cid_out = cid
             self._ws_index.pop(id(websocket), None)
-            self._remove_character_from_map_locked(mid, cid)
-        await self._broadcast_to_map(map_id, websocket, {'type': 'world_player_leave', 'character_id': character_id, 'reason': 'leave'})
+        async with self._hold_maps(map_id):
+            room = self._rooms.get(map_id)
+            st = room.get(character_id) if room else None
+            if st:
+                snap = (int(st.get('map_id', map_id)), float(st['x']), float(st['y']))
+            cid_out = character_id
+            self._remove_character_from_map_locked(map_id, character_id)
+        await self._broadcast_to_map(
+            map_id, websocket,
+            {'type': 'world_player_leave', 'character_id': character_id, 'reason': 'leave'},
+            immediate=True,
+        )
         if snap and cid_out:
             smid, sx, sy = snap
             self._save_position_immediate(cid_out, smid, sx, sy)

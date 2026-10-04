@@ -1,0 +1,131 @@
+{
+  "map": "Map025",
+  "rpg_map_id": 25,
+  "tileset": 18,
+  "tileset_name": "测试",
+  "grid": {
+    "w": 40,
+    "h": 30,
+    "tile": 48
+  },
+  "px": {
+    "w": 1920,
+    "h": 1440
+  },
+  "anchor": "RPG左上角为原点；Cocos逻辑坐标 x=rpgX*48+24, y=24-rpgY*48",
+  "layers": [
+    {
+      "file": "Map025_L1_ground.png",
+      "name": "地面(草地)",
+      "band": "B",
+      "z_order": 1,
+      "cells": 1189,
+      "md5": "2bcfb5ed6534d3b1d2198d623ad7b6ae",
+      "size": "1920x1440",
+      "bytes": 55273
+    },
+    {
+      "file": "Map025_L2_wall.png",
+      "name": "墙壁(石墙/栅栏/外框)",
+      "band": "C",
+      "z_order": 2,
+      "cells": 238,
+      "md5": "44d89950c50d6ee2c1aba55b08a0edde",
+      "size": "1920x1440",
+      "bytes": 77554
+    },
+    {
+      "file": "Map025_L3_road.png",
+      "name": "路面(黄色土路)",
+      "band": "D",
+      "z_order": 3,
+      "cells": 166,
+      "md5": "49f71e93f36c879b45b30e4b567b395c",
+      "size": "1920x1440",
+      "bytes": 30477
+    },
+    {
+      "file": "Map025_L4_plant.png",
+      "name": "植物等不可通行",
+      "band": "E",
+      "z_order": 4,
+      "cells": 807,
+      "md5": "ecea8b3dc1ead41efd23d1a9e54c253b",
+      "size": "1920x1440",
+      "bytes": 36306
+    },
+    {
+      "file": "Map025_L1_ground_filled.png",
+      "name": "地面(草地) · 补洞版",
+      "band": "B",
+      "z_order": 1,
+      "cells": 1200,
+      "md5": "352e713c6ffb05991a25be928edb33d3",
+      "size": "1920x1440",
+      "bytes": 53746,
+      "note": "把 11 个洞(两层都是石墙的格)补上 id238 草地；与 MV 合成逐像素比对 0 差异，视觉完全一致。推荐 Cocos 用这一张做地面底图。"
+    }
+  ],
+  "verified": "四层叠加 md5 == MV原生渲染 md5",
+  "holes": {
+    "count": 11,
+    "cells": [
+      [
+        4,
+        4
+      ],
+      [
+        30,
+        4
+      ],
+      [
+        30,
+        5
+      ],
+      [
+        17,
+        6
+      ],
+      [
+        30,
+        6
+      ],
+      [
+        17,
+        7
+      ],
+      [
+        18,
+        7
+      ],
+      [
+        17,
+        8
+      ],
+      [
+        18,
+        8
+      ],
+      [
+        18,
+        9
+      ],
+      [
+        32,
+        15
+      ]
+    ],
+    "cause": "这 11 格在 z2 与 z3 里画的都是石墙(C段)，两层都没画地面",
+    "fill_fixed": "Map025_L1_ground_filled.png"
+  },
+  "z2_blank_tile": {
+    "id": 779,
+    "count": 728,
+    "sheet": "MAP15",
+    "at": [
+      144,
+      48
+    ],
+    "note": "源像素不透明 0/2304 = 空图块，等于没填充；z3 在同格有 B238 草地覆盖，成品看不出"
+  }
+}

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Collider2D, BoxCollider2D, Contact2DType, director, input, Input, KeyCode, PlayerGridMove, BattleScene, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _crd, ccclass, property, BattleTriggerOnContact;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Collider2D, BoxCollider2D, Contact2DType, director, input, Input, KeyCode, PlayerGridMove, BattleScene, Logger, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _crd, ccclass, property, BattleTriggerOnContact;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -15,6 +15,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
   function _reportPossibleCrUseOfBattleScene(extras) {
     _reporterNs.report("BattleScene", "../BattleScene", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -38,6 +42,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       PlayerGridMove = _unresolved_2.PlayerGridMove;
     }, function (_unresolved_3) {
       BattleScene = _unresolved_3.BattleScene;
+    }, function (_unresolved_4) {
+      Logger = _unresolved_4.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -90,6 +96,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this._playerMove = null;
           this._playerBox = null;
           this._lastPlayerResolveAt = 0;
+          this._lastPollAt = 0;
+          this._lastPollX = Number.NaN;
+          this._lastPollY = Number.NaN;
           this._touchBeganThisFrame = false;
 
           this._onKeyDown = e => {
@@ -117,7 +126,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             if (this.debugLog) {
               var _this$battleRoot;
 
-              console.log(`[BattleTriggerOnContact] BEGIN (player=${playerMove.node.name}, trigger=${this.node.name}, pendingEnter=${this._pendingEnter}, battleActive=${Boolean((_this$battleRoot = this.battleRoot) == null ? void 0 : _this$battleRoot.active)})`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[BattleTriggerOnContact] BEGIN (player=${playerMove.node.name}, trigger=${this.node.name}, pendingEnter=${this._pendingEnter}, battleActive=${Boolean((_this$battleRoot = this.battleRoot) == null ? void 0 : _this$battleRoot.active)})`);
             } // 战斗进行中：不允许重复触发
 
 
@@ -142,7 +153,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             this._wasTouchingWhenBattleStarted = false;
 
             if (this.debugLog) {
-              console.log(`[BattleTriggerOnContact] END (player=${playerMove.node.name}, trigger=${this.node.name})`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[BattleTriggerOnContact] END (player=${playerMove.node.name}, trigger=${this.node.name})`);
             }
           };
         }
@@ -164,7 +177,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (this.debugLog) {
             var _this$node, _this$_collider, _this$battleRoot3;
 
-            console.log(`[BattleTriggerOnContact] onLoad trigger=${(_this$node = this.node) == null ? void 0 : _this$node.name} collider=${((_this$_collider = this._collider) == null || (_this$_collider = _this$_collider.constructor) == null ? void 0 : _this$_collider.name) || 'null'} battleRootActive=${Boolean((_this$battleRoot3 = this.battleRoot) == null ? void 0 : _this$battleRoot3.active)}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`[BattleTriggerOnContact] onLoad trigger=${(_this$node = this.node) == null ? void 0 : _this$node.name} collider=${((_this$_collider = this._collider) == null || (_this$_collider = _this$_collider.constructor) == null ? void 0 : _this$_collider.name) || 'null'} battleRootActive=${Boolean((_this$battleRoot3 = this.battleRoot) == null ? void 0 : _this$battleRoot3.active)}`);
           }
 
           if (this._collider) {
@@ -174,7 +189,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           } else if (this.debugLog) {
             var _this$node2;
 
-            console.warn(`[BattleTriggerOnContact] collider not found on node=${(_this$node2 = this.node) == null ? void 0 : _this$node2.name}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`[BattleTriggerOnContact] collider not found on node=${(_this$node2 = this.node) == null ? void 0 : _this$node2.name}`);
           }
 
           input.on(Input.EventType.KEY_DOWN, this._onKeyDown, this); // 初始化战斗边沿状态
@@ -217,7 +234,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           if (this.pollingEnabled && this._touchBeganThisFrame && !battleActive && !this._pendingEnter) {
             if (this.debugLog) {
-              console.log(`[BattleTriggerOnContact] >>> POLL START BATTLE (trigger=${this.node.name})`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[BattleTriggerOnContact] >>> POLL START BATTLE (trigger=${this.node.name})`);
             }
 
             this._tryStartBattle();
@@ -264,7 +283,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         }
 
         _pollTouchOverlap() {
+          var _this$battleRoot6, _this$_playerMove2;
+
+          if ((_this$battleRoot6 = this.battleRoot) != null && _this$battleRoot6.active) return;
+
           this._resolveLocalPlayerOnce();
+
+          const pos = (_this$_playerMove2 = this._playerMove) == null || (_this$_playerMove2 = _this$_playerMove2.node) == null ? void 0 : _this$_playerMove2.position;
+          const now = Date.now();
+
+          if (pos && pos.x === this._lastPollX && pos.y === this._lastPollY && now - this._lastPollAt < 100) {
+            return;
+          }
+
+          this._lastPollAt = now;
+
+          if (pos) {
+            this._lastPollX = pos.x;
+            this._lastPollY = pos.y;
+          }
 
           if (!this._triggerBox || !this._playerBox) return;
           const a = this._triggerBox.worldAABB;
@@ -292,7 +329,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (this.battleRoot.active) return;
 
           if (this.debugLog) {
-            console.log(`[BattleTriggerOnContact] >>> START BATTLE (trigger=${this.node.name})`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`[BattleTriggerOnContact] >>> START BATTLE (trigger=${this.node.name})`);
           } // 关键：记录战斗开始时玩家是否仍在碰撞框内
 
 

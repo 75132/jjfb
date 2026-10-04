@@ -1,13 +1,21 @@
-System.register(["cc"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
   "use strict";
 
-  var _cclegacy, RouteDictionary, _crd;
+  var _reporterNs, _cclegacy, Logger, RouteDictionary, _crd;
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "./Logger", _context.meta, extras);
+  }
 
   _export("RouteDictionary", void 0);
 
   return {
-    setters: [function (_cc) {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
       _cclegacy = _cc.cclegacy;
+    }, function (_unresolved_2) {
+      Logger = _unresolved_2.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -58,7 +66,9 @@ System.register(["cc"], function (_export, _context) {
           }
 
           this.enabled = true;
-          console.log(`✅ [RouteDictionary] 字典加载成功，版本: ${this.version}，路由数: ${this.routeToId.size}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ [RouteDictionary] 字典加载成功，版本: ${this.version}，路由数: ${this.routeToId.size}`);
         }
         /**
          * 编码路由（字符串 -> 数字）

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Sprite, SpriteFrame, Label, Button, director, WebSocketManager, GameConfig, DataCacheManager, RobotShow, getEnergyBlocksFromPayload, CharacterCreatePanel, normalizeBagItemsResponse, ServerSelectPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _crd, ccclass, property, CharacterSelect;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Sprite, SpriteFrame, Label, Button, director, WebSocketManager, GameConfig, DataCacheManager, RobotShow, getEnergyBlocksFromPayload, CharacterCreatePanel, normalizeBagItemsResponse, ServerSelectPanel, Logger, markNewCharacterNeedsIntro, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _crd, ccclass, property, CharacterSelect;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -41,6 +41,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("ServerSelectPanel", "./ServerSelectPanel", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfmarkNewCharacterNeedsIntro(extras) {
+    _reporterNs.report("markNewCharacterNeedsIntro", "../Intro/IntroFlags", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -72,6 +80,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       normalizeBagItemsResponse = _unresolved_8.normalizeBagItemsResponse;
     }, function (_unresolved_9) {
       ServerSelectPanel = _unresolved_9.ServerSelectPanel;
+    }, function (_unresolved_10) {
+      Logger = _unresolved_10.Logger;
+    }, function (_unresolved_11) {
+      markNewCharacterNeedsIntro = _unresolved_11.markNewCharacterNeedsIntro;
     }],
     execute: function () {
       _crd = true;
@@ -168,6 +180,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           /** 初始化阶段 one-shot 定时器，场景销毁时一并清理，避免残留回调 */
           this.initOneShotTimers = [];
+          this._slotsDirty = false;
+
+          /** 交互期一次性定时器。只在 onDestroy 清理，避免认证成功时把进游戏/槽位重试一起取消。 */
+          this.authPollTimer = null;
+          this.looseTimers = [];
           // 预加载状态标记
           this.gameScenePreloaded = false;
           // 是否因点击进入游戏而触发的预加载
@@ -175,18 +192,30 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // 是否在等待预加载完成后立即跳转
           this.waitJumpAfterPreload = false;
 
+          this.flushRefreshAllSlots = () => {
+            var _this$node;
+
+            this._slotsDirty = false;
+            if (!((_this$node = this.node) != null && _this$node.isValid)) return;
+            this.refreshAllSlots();
+          };
+
           /**
            * 处理批量角色信息响应（优化：一次性接收所有槽位数据）
            * 修复：确保 this 绑定正确，避免 "is not a function" 错误
            * 注意：这是事件监听器，会被 WebSocketManager 调用
            */
           this.onAllCharactersResponse = data => {
-            console.log('📥 收到批量角色信息响应:', data); // 兼容标准格式（data字段）和直接格式
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📥 收到批量角色信息响应:', data); // 兼容标准格式（data字段）和直接格式
 
             const resp = data.data || data;
 
             if (!resp) {
-              console.error('❌ 批量角色信息响应为空');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 批量角色信息响应为空');
               return;
             }
 
@@ -196,18 +225,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               }), WebSocketManager) : WebSocketManager).fingerprintAllCharactersPayload(resp.characters);
 
               if (this.hasLoadedCharacters && fp && fp === this.lastAppliedAllCharsFp) {
-                console.log('ℹ️ [CharacterSelect] 角色列表与当前界面一致，跳过重复刷新');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('ℹ️ [CharacterSelect] 角色列表与当前界面一致，跳过重复刷新');
                 return;
               }
 
               const characterCount = Object.keys(resp.characters).length;
-              console.log(`✅ 批量接收 ${characterCount} 个槽位的角色数据`); // 处理每个槽位的数据
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ 批量接收 ${characterCount} 个槽位的角色数据`); // 处理每个槽位的数据
 
               for (const slotIndexStr in resp.characters) {
                 const slotIndex = parseInt(slotIndexStr);
 
                 if (isNaN(slotIndex) || slotIndex < 0 || slotIndex >= this.roleSlots.length) {
-                  console.warn(`⚠️ 无效的槽位索引: ${slotIndexStr}`);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn(`⚠️ 无效的槽位索引: ${slotIndexStr}`);
                   continue;
                 }
 
@@ -220,7 +255,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   this.onCharacterInfo(charData);
                 } else {
                   // 空槽位，清空数据但保留槽位结构
-                  console.log(`ℹ️ 槽位 ${slotIndex} 为空`);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug(`ℹ️ 槽位 ${slotIndex} 为空`);
                   this.slotRoleData[slotIndex] = {
                     slot_index: slotIndex,
                     role_name: '',
@@ -244,7 +281,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 }
               }
 
-              console.log('✅ 批量角色数据加载完成'); // 批量加载成功：后续不要再抢发单槽位 get_character_info
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ 批量角色数据加载完成'); // 批量加载成功：后续不要再抢发单槽位 get_character_info
 
               this.hasLoadedCharacters = true;
               this.lastAppliedAllCharsFp = fp;
@@ -261,7 +300,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               }, 0);
             } else {
               const errorMsg = resp.message || resp.error || '未知错误';
-              console.error('❌ 批量获取角色信息失败:', errorMsg);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 批量获取角色信息失败:', errorMsg);
             }
           };
 
@@ -272,10 +313,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            * 认证成功后加载角色数据
            */
           this.onAuthResponse = data => {
-            console.log('📥 收到认证响应:', data);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📥 收到认证响应:', data);
 
             if (data.success) {
-              console.log('✅ 认证成功，立即加载角色数据（会话态已在 WebSocketManager 中更新）');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ 认证成功，立即加载角色数据（会话态已在 WebSocketManager 中更新）');
 
               if (this.staleSessionFallbackTimer) {
                 clearTimeout(this.staleSessionFallbackTimer);
@@ -286,11 +331,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.clearInitOneShotTimers(); // 重要：hasLoadedCharacters 只在批量响应成功后置 true；此处禁止假置 true，
               // 否则从游戏返回时若误标已加载，会跳过 refresh，界面一直空白。
 
-              console.log('🔄 认证成功后刷新所有槽位');
-              this.refreshAllSlots();
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('🔄 认证成功后刷新所有槽位');
+              this.requestRefreshAllSlots();
             } else {
-              console.error('❌ 认证失败:', data == null ? void 0 : data.message, 'code:', data == null ? void 0 : data.code);
-              console.warn('⚠️ 认证失败，无法加载角色数据'); // 安全阀闭环：如果服务端判定离线/未鉴权过久，需要重登
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 认证失败:', data == null ? void 0 : data.message, 'code:', data == null ? void 0 : data.code);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ 认证失败，无法加载角色数据'); // 安全阀闭环：如果服务端判定离线/未鉴权过久，需要重登
 
               if ((data == null ? void 0 : data.code) === 401) {
                 try {
@@ -310,7 +361,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            * 处理选择角色响应
            */
           this.onSelectCharacterResponse = data => {
-            console.log('📥 收到选择角色响应:', data); // 兼容多种响应格式：标准格式 { success: true, data: { character_id: ... } } 或直接格式 { success: true, character_id: ... }
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📥 收到选择角色响应:', data); // 兼容多种响应格式：标准格式 { success: true, data: { character_id: ... } } 或直接格式 { success: true, character_id: ... }
 
             const success = data.success === true || data.success === 'true';
             const characterId = data.character_id || data.data && data.data.character_id;
@@ -337,9 +390,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.preloadGameData(characterId); // 跳转到Game场景
 
               if (this.gameScenePreloaded) {
-                setTimeout(() => {
+                this.trackLooseTimer(setTimeout(() => {
+                  var _this$node2;
+
+                  if (!((_this$node2 = this.node) != null && _this$node2.isValid)) return;
                   this.jumpToGameScene();
-                }, 50);
+                }, 50));
               } else {
                 this.waitJumpAfterPreload = true;
 
@@ -358,7 +414,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                         this.jumpToGameScene();
                       }
                     } else {
-                      console.error('❌ Game场景预加载失败:', error);
+                      (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                        error: Error()
+                      }), Logger) : Logger).error('❌ Game场景预加载失败:', error);
                       this.hideLoading();
                     }
                   });
@@ -366,7 +424,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               }
             } else {
               // 选择失败，隐藏Loading并提示
-              console.error('❌ 选择角色失败:', data.message || '未知错误');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 选择角色失败:', data.message || '未知错误');
               this.hideLoading();
 
               if (this.pendingStartGameSlot >= 0 && this.startgameButtons[this.pendingStartGameSlot]) {
@@ -398,6 +458,27 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           this.initOneShotTimers.length = 0;
+        }
+
+        trackLooseTimer(handle) {
+          if (handle !== undefined && handle !== null) {
+            this.looseTimers.push(handle);
+          }
+        }
+
+        clearLooseTimers() {
+          if (this.authPollTimer) {
+            clearTimeout(this.authPollTimer);
+            this.authPollTimer = null;
+          }
+
+          for (const h of this.looseTimers) {
+            try {
+              clearTimeout(h);
+            } catch (_) {}
+          }
+
+          this.looseTimers.length = 0;
         }
         /** 坐标分量显示为整数（四舍五入），避免浮点误差拉出长小数 */
 
@@ -461,7 +542,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         start() {
-          console.log('🎮 CharacterSelect组件启动'); // 预加载Game场景，提高跳转速度
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🎮 CharacterSelect组件启动'); // 预加载Game场景，提高跳转速度
 
           this.preloadGameScene(); // 重置状态（鉴权态由 WebSocketManager.sessionAuthenticated 统一管理）
 
@@ -471,7 +554,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const startDelay = setTimeout(() => {
             // 修复点：组件销毁后不再初始化，避免访问已销毁节点/事件
             if (!this.isValid) return;
-            console.log('🔧 开始初始化组件');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('🔧 开始初始化组件');
             this.initializeComponents();
           }, 200);
           this.trackInitTimer(startDelay);
@@ -534,16 +619,22 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               const token = this.wsManager.getToken();
               const userId = this.wsManager.getUserId();
-              console.log('🔍 检查登录状态 - token:', token ? '存在' : '不存在', ', userId:', userId ? '存在' : '不存在');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('🔍 检查登录状态 - token:', token ? '存在' : '不存在', ', userId:', userId ? '存在' : '不存在');
 
               if (token && userId) {
-                console.log('✅ 检测到已登录，准备加载角色数据'); // 重置状态标记（每次进入场景都重新加载列表；会话是否已鉴权请看 WebSocketManager）
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('✅ 检测到已登录，准备加载角色数据'); // 重置状态标记（每次进入场景都重新加载列表；会话是否已鉴权请看 WebSocketManager）
 
                 this.hasLoadedCharacters = false;
                 this.lastAppliedAllCharsFp = ''; // 确保 WebSocket 已建立（切换角色回选角后可能刚重连）
 
                 if (!this.wsManager.isConnected()) {
-                  console.log('🔄 WebSocket未连接，正在重新连接...');
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug('🔄 WebSocket未连接，正在重新连接...');
                   this.wsManager.connect(); // 等待认证完成后再加载（通过onAuthResponse回调）
                   // 设置超时，如果2秒后还没认证成功，假定会话有效并尝试拉列表（避免卡死）
 
@@ -551,7 +642,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                     if (!this.isValid) return;
 
                     if (!this.hasLoadedCharacters && !this.wsManager.isSessionAuthenticated()) {
-                      console.warn('⚠️ 认证响应超时（2秒），假定会话仍有效并尝试加载角色');
+                      (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                        error: Error()
+                      }), Logger) : Logger).warn('⚠️ 认证响应超时（2秒），假定会话仍有效并尝试加载角色');
                       this.tryAssumeSessionAndRefresh('reconnect_2s');
                     }
                   }, 2000);
@@ -559,12 +652,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 } else {
                   // 如果已经连接，检查是否需要重新认证
                   // WebSocketManager在连接时会自动发送auth_request，但如果是已存在的连接，可能需要手动触发
-                  console.log('✅ WebSocket已连接，检查认证状态'); // 如果连接已建立但还没认证，主动发送认证请求
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug('✅ WebSocket已连接，检查认证状态'); // 如果连接已建立但还没认证，主动发送认证请求
 
                   const currentToken = this.wsManager.getToken();
 
                   if (currentToken && !this.wsManager.isSessionAuthenticated()) {
-                    console.log('🔄 主动发送认证请求'); // 使用GameConfig中的消息类型
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug('🔄 主动发送认证请求'); // 使用GameConfig中的消息类型
 
                     this.wsManager.send({
                       type: 'auth_request',
@@ -579,25 +676,31 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                     if (!this.isValid) return;
 
                     if (!this.hasLoadedCharacters && !this.wsManager.isSessionAuthenticated()) {
-                      console.warn('⚠️ 认证响应超时（1.5秒），假定会话仍有效并尝试加载角色');
+                      (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                        error: Error()
+                      }), Logger) : Logger).warn('⚠️ 认证响应超时（1.5秒），假定会话仍有效并尝试加载角色');
                       this.tryAssumeSessionAndRefresh('connected_1_5s');
                     }
                   }, 1500);
                   this.trackInitTimer(t15);
                 }
               } else {
-                console.warn('⚠️ 未检测到登录信息，无法加载角色数据');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('⚠️ 未检测到登录信息，无法加载角色数据');
               }
             }
           } catch (error) {
-            console.error('❌ 初始化组件失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 初始化组件失败:', error);
           } // 绑定创建面板事件
 
 
           if (this.createPanel) {
             try {
               this.createPanel.on('refresh_slots_and_hide_buttons', () => {
-                this.refreshAllSlots();
+                this.requestRefreshAllSlots();
                 this.hideAllSlotButtons();
               }, this);
             } catch (error) {}
@@ -743,7 +846,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             const token = this.wsManager.getToken();
             const userId = this.wsManager.getUserId();
             if (!token || !userId) return;
-            console.log('ℹ️ [CharacterSelect] 已连接但未收到 auth_response，假定会话有效并拉取角色列表');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('ℹ️ [CharacterSelect] 已连接但未收到 auth_response，假定会话有效并拉取角色列表');
             this.tryAssumeSessionAndRefresh('stale_session_800ms');
           }, 800);
         }
@@ -761,35 +866,54 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (!this.wsManager.isSessionAuthenticated()) {
             if (!this.wsManager.tryMarkSessionAuthenticatedIfConnected()) return;
-            console.log(`🔄 [CharacterSelect] 假定会话仍有效 (${reason})，请求角色列表`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🔄 [CharacterSelect] 假定会话仍有效 (${reason})，请求角色列表`);
           } else {
-            console.log(`🔄 [CharacterSelect] 会话已由 WebSocketManager 标记有效，补拉角色列表 (${reason})`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🔄 [CharacterSelect] 会话已由 WebSocketManager 标记有效，补拉角色列表 (${reason})`);
           }
 
-          this.refreshAllSlots();
+          this.requestRefreshAllSlots();
+        }
+
+        /** 同一帧内多次刷新合并成下一帧一次。首次进场景的那次仍直接调用 refreshAllSlots。 */
+        requestRefreshAllSlots() {
+          if (this._slotsDirty) return;
+          this._slotsDirty = true;
+          this.scheduleOnce(this.flushRefreshAllSlots, 0);
         }
 
         refreshAllSlots() {
           if (!this.wsManager) {
-            console.warn('⚠️ refreshAllSlots: wsManager不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ refreshAllSlots: wsManager不存在');
             return;
           }
 
           const token = this.wsManager.getToken();
 
           if (!token) {
-            console.warn('⚠️ refreshAllSlots: token不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ refreshAllSlots: token不存在');
             return;
           }
 
           if (!this.wsManager.isConnected()) {
-            console.warn('⚠️ refreshAllSlots: WebSocket未连接');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ refreshAllSlots: WebSocket未连接');
             return;
           } // 鉴权态由 WebSocketManager 统一管理（含不断线返回选角）
 
 
           if (!this.wsManager.isSessionAuthenticated()) {
-            console.warn('⚠️ refreshAllSlots: 尚未标记会话已鉴权，等待 auth_response 或短重试');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ refreshAllSlots: 尚未标记会话已鉴权，等待 auth_response 或短重试');
             let retryCount = 0;
             const maxRetries = 5;
 
@@ -801,21 +925,27 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               retryCount++;
 
               if (this.wsManager.isSessionAuthenticated()) {
-                console.log('✅ 会话已鉴权，重新尝试加载角色数据');
-                this.refreshAllSlots();
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('✅ 会话已鉴权，重新尝试加载角色数据');
+                this.requestRefreshAllSlots();
               } else if (retryCount < maxRetries) {
-                setTimeout(checkAuth, 100);
+                this.authPollTimer = setTimeout(checkAuth, 100);
               } else {
-                console.warn('⚠️ 短重试内仍未鉴权，假定会话仍有效并尝试拉取角色列表');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('⚠️ 短重试内仍未鉴权，假定会话仍有效并尝试拉取角色列表');
                 this.tryAssumeSessionAndRefresh('auth_retry_exhausted');
               }
             };
 
-            setTimeout(checkAuth, 100);
+            this.authPollTimer = setTimeout(checkAuth, 100);
             return;
           }
 
-          console.log('🔄 批量获取所有角色信息（立即请求）');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 批量获取所有角色信息（立即请求）');
           this.wsManager.requestGetAllCharactersNow(true);
         }
 
@@ -859,7 +989,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               }
 
               this.slotDataFallbackTimer = setTimeout(() => {
-                this.slotDataFallbackTimer = null; // 仍未批量加载完成时才兜底，并且只在用户仍停留该槽位时请求
+                var _this$node3;
+
+                this.slotDataFallbackTimer = null;
+                if (!((_this$node3 = this.node) != null && _this$node3.isValid)) return; // 仍未批量加载完成时才兜底，并且只在用户仍停留该槽位时请求
 
                 if (!this.hasLoadedCharacters && this.selectedIndex === idx) {
                   this.requestSlotData(idx);
@@ -894,14 +1027,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         requestSlotData(idx) {
           if (!this.wsManager) {
-            console.warn('⚠️ requestSlotData: wsManager不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ requestSlotData: wsManager不存在');
             return;
           }
 
           const token = this.wsManager.getToken();
 
           if (!token) {
-            console.warn('⚠️ requestSlotData: token不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ requestSlotData: token不存在');
             return;
           } // 确保 requestIdToSlotIndex 已初始化
 
@@ -928,21 +1065,29 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (!data) {
             // 如果数据不存在，先请求数据，然后显示创建按钮（因为可能是空槽位）
-            console.log(`⚠️ 槽位 ${idx} 数据不存在，先请求数据`); // 批量加载还没完成时（网页端更容易慢），避免抢发单槽位请求导致超时/重试拖慢进入
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`⚠️ 槽位 ${idx} 数据不存在，先请求数据`); // 批量加载还没完成时（网页端更容易慢），避免抢发单槽位请求导致超时/重试拖慢进入
 
             if (!this.hasLoadedCharacters) {
-              setTimeout(() => {
-                // 只在用户仍停留在该槽位时重试
+              this.trackLooseTimer(setTimeout(() => {
+                var _this$node4;
+
+                if (!((_this$node4 = this.node) != null && _this$node4.isValid)) return; // 只在用户仍停留在该槽位时重试
+
                 if (!this.hasLoadedCharacters && this.selectedIndex === idx) {
                   this.showSlotButtons(idx);
                 }
-              }, 300);
+              }, 300));
               return;
             }
 
             this.requestSlotData(idx); // 延迟显示按钮，等待数据加载
 
-            setTimeout(() => {
+            this.trackLooseTimer(setTimeout(() => {
+              var _this$node5;
+
+              if (!((_this$node5 = this.node) != null && _this$node5.isValid)) return;
               const updatedData = this.slotRoleData[idx];
 
               if (updatedData) {
@@ -953,7 +1098,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   this.createButtons[idx].node.active = true;
                 }
               }
-            }, 300);
+            }, 300));
             return;
           } // 检查是否有角色（使用更严格的判断）
 
@@ -999,7 +1144,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onCharacterInfo(data) {
           var _data, _data2, _data$Sprite, _data$role_name;
 
-          console.log('📥 收到角色信息响应:', data); // 对于失败响应（如 408/503），只做最小处理：不参与 request_id 严格匹配与 UI 覆盖
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 收到角色信息响应:', data); // 对于失败响应（如 408/503），只做最小处理：不参与 request_id 严格匹配与 UI 覆盖
           // 避免出现 “request_id 在映射中不存在” 的噪音，以及错误数据把界面抹掉
 
           if (data && data.success === false) {
@@ -1037,28 +1184,40 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (mappedSlot !== undefined) {
               slotIndex = mappedSlot;
               delete this.requestIdToSlotIndex[requestId];
-              console.log(`✅ 通过request_id匹配到槽位: ${slotIndex}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ 通过request_id匹配到槽位: ${slotIndex}`);
             } else {
               // 映射缺失通常是超时重试/重复响应导致；此时改用服务端 slot_index，避免 UI 被错槽位覆盖
-              console.warn(`⚠️ request_id ${requestId} 在映射中不存在，使用返回的 slot_index: ${slotIndex}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`⚠️ request_id ${requestId} 在映射中不存在，使用返回的 slot_index: ${slotIndex}`);
             }
           } else if (((_data2 = data) == null ? void 0 : _data2.slot_index) === undefined) {
-            console.warn('⚠️ 无法确定槽位索引，使用当前选中槽位:', slotIndex);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ 无法确定槽位索引，使用当前选中槽位:', slotIndex);
           } // 防御：roleSlots 可能在绑定丢失时为 null，避免读取 length 抛异常
 
 
           if (!this.roleSlots || this.roleSlots.length === 0) {
             // 这里更多是初始化时序问题或临时未绑定状态，将错误降级为警告，避免在控制台刷红
-            console.warn('⚠️ onCharacterInfo: roleSlots 为空或未绑定（多半是初始化时机问题），请仅在确实未绑定时关注此日志');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ onCharacterInfo: roleSlots 为空或未绑定（多半是初始化时机问题），请仅在确实未绑定时关注此日志');
             return;
           }
 
           if (slotIndex < 0 || slotIndex >= this.roleSlots.length) {
-            console.error(`❌ 槽位索引超出范围: ${slotIndex}, 总槽位数: ${this.roleSlots.length}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error(`❌ 槽位索引超出范围: ${slotIndex}, 总槽位数: ${this.roleSlots.length}`);
             return;
           }
 
-          console.log(`✅ 处理槽位 ${slotIndex} 的角色信息`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ 处理槽位 ${slotIndex} 的角色信息`);
           const slotNode = this.roleSlots[slotIndex];
           if (!slotNode) return; // 修复：保留原有数据中的 user_id / character_id / 形象字段，避免服务器推送部分字段时把已有形象“抹掉”
 
@@ -1097,12 +1256,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 if (!isNaN(spriteValue) && spriteValue > 0 && this.characterSprites && this.characterSprites[spriteValue - 1]) {
                   characterSprite.spriteFrame = this.characterSprites[spriteValue - 1];
                   characterSpriteNode.active = true;
-                  console.log(`✅ 槽位 ${slotIndex} 设置精灵: Sprite=${spriteValue}`);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug(`✅ 槽位 ${slotIndex} 设置精灵: Sprite=${spriteValue}`);
                 } else {
-                  console.warn(`⚠️ 槽位 ${slotIndex} 精灵索引无效: Sprite=${mergedData.Sprite}, spriteValue=${spriteValue}`); // 如果精灵索引无效，但角色名存在，保留精灵显示（可能是数据不完整）
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn(`⚠️ 槽位 ${slotIndex} 精灵索引无效: Sprite=${mergedData.Sprite}, spriteValue=${spriteValue}`); // 如果精灵索引无效，但角色名存在，保留精灵显示（可能是数据不完整）
 
                   if (mergedData.role_name && mergedData.role_name !== '0' && mergedData.role_name !== 0) {
-                    console.log(`ℹ️ 保留槽位 ${slotIndex} 的精灵显示（角色名存在但精灵索引无效）`);
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug(`ℹ️ 保留槽位 ${slotIndex} 的精灵显示（角色名存在但精灵索引无效）`);
                   } else {
                     characterSprite.spriteFrame = null;
                     characterSpriteNode.active = false;
@@ -1174,10 +1339,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (data.success) {
             if (this.deleteonfirm) this.deleteonfirm.active = false;
-            this.refreshAllSlots();
+            this.requestRefreshAllSlots();
             this.hideAllSlotButtons(); // 删除后立即隐藏按钮
           } else {
-            console.error('删除角色失败:', data.message);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('删除角色失败:', data.message);
           }
         }
 
@@ -1197,29 +1364,48 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onCreateCharacterSuccess(data) {
-          console.log('📥 收到创建角色响应:', data); // 兼容标准格式和直接格式
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📥 收到创建角色响应:', data); // 兼容标准格式和直接格式
 
           const resp = data.data || data;
 
           if (resp && resp.success) {
+            var _resp$data;
+
             if (this.createPanel) this.createPanel.active = false;
             this.hideAllSlotButtons(); // 创建后立即隐藏按钮
             // 获取创建成功的槽位索引
 
             const slotIndex = resp.slot_index !== undefined ? resp.slot_index : this.selectedIndex;
-            console.log(`✅ 创建角色成功，槽位: ${slotIndex}`); // 立即刷新所有槽位（批量获取最新数据）
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`✅ 创建角色成功，槽位: ${slotIndex}`); // 新角色首次进 Game 播放开屏世界观
+
+            const createdId = resp.character_id || ((_resp$data = resp.data) == null ? void 0 : _resp$data.character_id);
+
+            if (createdId) {
+              (_crd && markNewCharacterNeedsIntro === void 0 ? (_reportPossibleCrUseOfmarkNewCharacterNeedsIntro({
+                error: Error()
+              }), markNewCharacterNeedsIntro) : markNewCharacterNeedsIntro)(String(createdId));
+            } // 立即刷新所有槽位（批量获取最新数据）
             // 不延迟，确保界面及时更新
 
-            this.refreshAllSlots();
+
+            this.requestRefreshAllSlots();
           } else {
             const errorMsg = (resp == null ? void 0 : resp.message) || (resp == null ? void 0 : resp.error) || (data == null ? void 0 : data.message) || '未知错误';
-            console.error('❌ 创建角色失败:', errorMsg); // 如果是因为槽位占用失败，刷新该槽位数据
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 创建角色失败:', errorMsg); // 如果是因为槽位占用失败，刷新该槽位数据
 
             if (errorMsg.includes('槽位')) {
               const slotIndex = (resp == null ? void 0 : resp.slot_index) !== undefined ? resp.slot_index : this.selectedIndex;
 
               if (slotIndex >= 0 && slotIndex < this.roleSlots.length) {
-                console.log(`🔄 槽位占用，刷新槽位 ${slotIndex} 的数据`); // 清空该槽位数据
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug(`🔄 槽位占用，刷新槽位 ${slotIndex} 的数据`); // 清空该槽位数据
 
                 this.slotRoleData[slotIndex] = {
                   slot_index: slotIndex,
@@ -1227,9 +1413,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   Sprite: 0
                 }; // 刷新所有槽位
 
-                setTimeout(() => {
-                  this.refreshAllSlots();
-                }, 200);
+                this.trackLooseTimer(setTimeout(() => {
+                  var _this$node6;
+
+                  if (!((_this$node6 = this.node) != null && _this$node6.isValid)) return;
+                  this.requestRefreshAllSlots();
+                }, 200));
               }
             }
           }
@@ -1272,57 +1461,77 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onStartGameClick(idx) {
           // 修复点：进入游戏过程防抖，避免高频点击触发多次选择角色请求
           if (this.isStartingGame) {
-            console.warn('⚠️ 正在进入游戏中，忽略重复点击');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ 正在进入游戏中，忽略重复点击');
             return;
           }
 
           const slotData = this.slotRoleData[idx];
 
           if (!this.wsManager) {
-            console.error('❌ WebSocketManager不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ WebSocketManager不存在');
             return;
           }
 
           if (!slotData) {
-            console.warn(`⚠️ 槽位 ${idx} 数据不存在，先请求数据`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`⚠️ 槽位 ${idx} 数据不存在，先请求数据`);
             this.requestSlotData(idx); // 延迟后重试（等待数据加载）
 
-            setTimeout(() => {
+            this.trackLooseTimer(setTimeout(() => {
+              var _this$node7;
+
+              if (!((_this$node7 = this.node) != null && _this$node7.isValid)) return;
               const retryData = this.slotRoleData[idx];
 
               if (retryData && retryData.user_id && retryData.character_id) {
                 this.onStartGameClick(idx);
               } else {
-                console.error(`❌ 槽位 ${idx} 数据加载失败，无法进入游戏`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`❌ 槽位 ${idx} 数据加载失败，无法进入游戏`);
               }
-            }, 500);
+            }, 500));
             return;
           }
 
           const token = this.wsManager.getToken();
 
           if (!token) {
-            console.error('❌ Token不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ Token不存在');
             return;
           } // 检查关键数据
 
 
           if (!slotData.user_id || !slotData.character_id) {
-            console.warn(`⚠️ 槽位 ${idx} 缺少关键数据，重新请求:`, {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`⚠️ 槽位 ${idx} 缺少关键数据，重新请求:`, {
               user_id: slotData.user_id,
               character_id: slotData.character_id
             });
             this.requestSlotData(idx); // 延迟后重试
 
-            setTimeout(() => {
+            this.trackLooseTimer(setTimeout(() => {
+              var _this$node8;
+
+              if (!((_this$node8 = this.node) != null && _this$node8.isValid)) return;
               const retryData = this.slotRoleData[idx];
 
               if (retryData && retryData.user_id && retryData.character_id) {
                 this.onStartGameClick(idx);
               } else {
-                console.error(`❌ 槽位 ${idx} 数据加载失败，无法进入游戏`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error(`❌ 槽位 ${idx} 数据加载失败，无法进入游戏`);
               }
-            }, 500);
+            }, 500));
             return;
           } // 修复点：标记开始进入游戏过程，并禁用当前槽位的开始按钮
 
@@ -1338,7 +1547,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.pendingStartGameSlot = idx; // 通知服务器选择当前角色
 
-          console.log(`🔄 发送选择角色请求: character_id=${slotData.character_id}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🔄 发送选择角色请求: character_id=${slotData.character_id}`);
           const requestId = `select_char_${Date.now()}_${idx}`;
           this.wsManager.request('select_character', {
             character_id: slotData.character_id,
@@ -1349,10 +1560,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }, true, 10000); // 与上方 request(..., 10000) 对齐：客户端略长 2s，避免网络抖动误杀
 
           this.selectCharacterTimeout = setTimeout(() => {
-            console.error('❌ 选择角色超时（12秒）');
+            var _this$node9;
+
+            this.selectCharacterTimeout = null;
+            if (!((_this$node9 = this.node) != null && _this$node9.isValid)) return;
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 选择角色超时（12秒）');
             this.hideLoading();
-            this.pendingStartGameSlot = -1;
-            this.selectCharacterTimeout = null; // 修复点：超时后恢复开始游戏状态，允许玩家重新尝试
+            this.pendingStartGameSlot = -1; // 修复点：超时后恢复开始游戏状态，允许玩家重新尝试
 
             this.isStartingGame = false;
 
@@ -1379,7 +1595,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const cacheManager = (_crd && DataCacheManager === void 0 ? (_reportPossibleCrUseOfDataCacheManager({
             error: Error()
           }), DataCacheManager) : DataCacheManager).getInstance();
-          console.log(`🔄 [CharacterSelect] 开始预加载游戏数据 (character_id: ${characterId})`); // 预加载背包数据
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🔄 [CharacterSelect] 开始预加载游戏数据 (character_id: ${characterId})`); // 预加载背包数据
 
           this.wsManager.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
@@ -1398,7 +1616,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (snapshot.success) {
               cacheManager.setBagCache(characterId, snapshot);
-              console.log(`✅ [CharacterSelect] 背包数据预加载完成`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [CharacterSelect] 背包数据预加载完成`);
             }
           }, true, 20000); // 预加载机甲列表数据（第一页）
 
@@ -1411,7 +1631,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }, response => {
             if (response && response.success) {
               cacheManager.setRobotPetsCache(characterId, response);
-              console.log(`✅ [CharacterSelect] 机甲列表数据预加载完成`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`✅ [CharacterSelect] 机甲列表数据预加载完成`);
             }
           }, true, 20000);
         }
@@ -1421,7 +1643,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         jumpToGameScene() {
-          console.log('🔄 开始跳转到Game场景...');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 开始跳转到Game场景...');
           director.loadScene((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
           }), GameConfig) : GameConfig).SCENE_NAMES.GAME, error => {
@@ -1431,9 +1655,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             if (error) {
-              console.error('❌ 跳转到Game场景失败:', error);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 跳转到Game场景失败:', error);
             } else {
-              console.log('✅ 跳转到Game场景成功');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ 跳转到Game场景成功');
             }
           });
         }
@@ -1443,23 +1671,34 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleSceneJumpError() {
-          console.log('🔄 尝试跳转回角色选择场景'); // 减少延迟时间
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 尝试跳转回角色选择场景'); // 减少延迟时间
 
-          setTimeout(() => {
+          this.trackLooseTimer(setTimeout(() => {
+            var _this$node10;
+
+            if (!((_this$node10 = this.node) != null && _this$node10.isValid)) return;
             director.loadScene((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).SCENE_NAMES.CHARACTER_SELECT, error => {
               if (error) {
-                console.error('❌ 跳转回角色选择场景失败:', error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('❌ 跳转回角色选择场景失败:', error);
               } else {
-                console.log('✅ 跳转回角色选择场景成功');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('✅ 跳转回角色选择场景成功');
               }
             });
-          }, 1000); // 从2000ms减少到1000ms
+          }, 1000)); // 从2000ms减少到1000ms
         }
 
         onDestroy() {
-          // 清理事件监听
+          this.unschedule(this.flushRefreshAllSlots);
+          this._slotsDirty = false; // 清理事件监听
+
           if (this.wsManager) {
             try {
               this.wsManager.off('character_info_response', this.onCharacterInfo, this);
@@ -1472,7 +1711,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               this.wsManager.off('auth_response', this.onAuthResponse, this);
             } catch (error) {
-              console.warn('⚠️ 清理事件监听时出错:', error);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ 清理事件监听时出错:', error);
             }
           } // 清除超时定时器
 
@@ -1492,7 +1733,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.staleSessionFallbackTimer = null;
           }
 
-          this.clearInitOneShotTimers(); // 清理数据
+          this.clearInitOneShotTimers();
+          this.clearLooseTimers(); // 清理数据
 
           this.requestIdToSlotIndex = {};
           this.slotRoleData = [];

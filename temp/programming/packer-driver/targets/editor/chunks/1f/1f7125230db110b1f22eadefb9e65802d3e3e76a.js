@@ -1,14 +1,22 @@
-System.register(["cc"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
   "use strict";
 
-  var _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, _dec, _class, _class2, _crd, ccclass, DataCacheManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Logger, _dec, _class, _class2, _crd, ccclass, DataCacheManager;
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "./Logger", _context.meta, extras);
+  }
 
   return {
-    setters: [function (_cc) {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
       _cclegacy = _cc.cclegacy;
       __checkObsolete__ = _cc.__checkObsolete__;
       __checkObsoleteInNamespace__ = _cc.__checkObsoleteInNamespace__;
       _decorator = _cc._decorator;
+    }, function (_unresolved_2) {
+      Logger = _unresolved_2.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -56,7 +64,9 @@ System.register(["cc"], function (_export, _context) {
             data,
             timestamp: Date.now()
           };
-          console.log(`💾 [DataCacheManager] 已缓存背包数据 (character_id: ${characterId})`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`💾 [DataCacheManager] 已缓存背包数据 (character_id: ${characterId})`);
         }
         /**
          * 获取背包数据缓存
@@ -84,7 +94,9 @@ System.register(["cc"], function (_export, _context) {
         clearBagCache(characterId) {
           if (!characterId || !this.bagCache || this.bagCache.characterId === characterId) {
             this.bagCache = null;
-            console.log(`🗑️ [DataCacheManager] 已清除背包数据缓存`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [DataCacheManager] 已清除背包数据缓存`);
           }
         }
         /**
@@ -98,7 +110,9 @@ System.register(["cc"], function (_export, _context) {
             data,
             timestamp: Date.now()
           };
-          console.log(`💾 [DataCacheManager] 已缓存机甲列表数据 (character_id: ${characterId})`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`💾 [DataCacheManager] 已缓存机甲列表数据 (character_id: ${characterId})`);
         }
         /**
          * 获取机甲列表数据缓存
@@ -126,7 +140,9 @@ System.register(["cc"], function (_export, _context) {
         clearRobotPetsCache(characterId) {
           if (!characterId || !this.robotPetsCache || this.robotPetsCache.characterId === characterId) {
             this.robotPetsCache = null;
-            console.log(`🗑️ [DataCacheManager] 已清除机甲列表数据缓存`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [DataCacheManager] 已清除机甲列表数据缓存`);
           }
         }
         /**
@@ -139,7 +155,9 @@ System.register(["cc"], function (_export, _context) {
             data,
             timestamp: Date.now()
           });
-          console.log(`💾 [DataCacheManager] 已缓存机甲详情数据 (pet_id: ${petId})`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`💾 [DataCacheManager] 已缓存机甲详情数据 (pet_id: ${petId})`);
         }
         /**
          * 获取机甲详情数据缓存
@@ -169,10 +187,14 @@ System.register(["cc"], function (_export, _context) {
         clearRobotPetInfoCache(petId) {
           if (petId) {
             this.robotPetInfoCache.delete(petId);
-            console.log(`🗑️ [DataCacheManager] 已清除机甲详情数据缓存 (pet_id: ${petId})`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [DataCacheManager] 已清除机甲详情数据缓存 (pet_id: ${petId})`);
           } else {
             this.robotPetInfoCache.clear();
-            console.log(`🗑️ [DataCacheManager] 已清除所有机甲详情数据缓存`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug(`🗑️ [DataCacheManager] 已清除所有机甲详情数据缓存`);
           }
         }
         /**
@@ -184,7 +206,9 @@ System.register(["cc"], function (_export, _context) {
           this.bagCache = null;
           this.robotPetsCache = null;
           this.robotPetInfoCache.clear();
-          console.log(`🗑️ [DataCacheManager] 已清除所有缓存`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🗑️ [DataCacheManager] 已清除所有缓存`);
         }
         /**
          * 清除指定角色的所有缓存
@@ -196,7 +220,9 @@ System.register(["cc"], function (_export, _context) {
           this.clearRobotPetsCache(characterId); // 机甲详情缓存无法按characterId清除，因为key是petId
           // 可以选择清除所有，或者在需要时按需清除
 
-          console.log(`🗑️ [DataCacheManager] 已清除角色缓存 (character_id: ${characterId})`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🗑️ [DataCacheManager] 已清除角色缓存 (character_id: ${characterId})`);
         }
 
       }, _class2.instance = null, _class2)) || _class));

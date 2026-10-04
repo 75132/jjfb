@@ -6,6 +6,27 @@ import datetime
 from . import utils
 import math
 
+# get_player 读路径：不含 friends/battle_team 等本接口未返回字段；好友判断另查
+_PLAYER_INFO_PROJECTION = {
+    '_id': 1,
+    'user_id': 1,
+    'character_id': 1,
+    'friend_id': 1,
+    'role_name': 1,
+    'level': 1,
+    'exp': 1,
+    'Sprite': 1,
+    'class': 1,
+    'gold': 1,
+    'energy_blocks': 1,
+    'points': 1,
+    'alliance': 1,
+    'record': 1,
+    'rank': 1,
+    'position': 1,
+    'items': 1,
+}
+
 def get_total_exp_for_level(level):
     """获取指定等级的累计总经验（level 从 1 开始）"""
     if utils.LEVEL_TOTAL_EXP is None:
@@ -32,8 +53,7 @@ def calculate_level_from_exp(total_exp):
 
 _MAP_DEFAULT_SPAWNS = {
     1: (120.0, -24.0),  # 地图1出生点（需求指定）
-    # 预留：后续地图可继续在此扩展
-    # 2: (x, y),
+    2: (72.0, -360.0),  # 地图2：第8行第2格（玩家像素）
 }
 
 
@@ -146,7 +166,7 @@ async def handle_get_player(websocket, data, current_character_id):
         print(f'[player_handler] 使用 friend_id 直接查询: {friend_id}')
         # MMO级优化：异步数据库查询，避免阻塞事件循环
         player = await utils.async_mongo_operation(
-            lambda: utils.players_col.find_one({'friend_id': friend_id}),
+            lambda: utils.players_col.find_one({'friend_id': friend_id}, _PLAYER_INFO_PROJECTION),
             timeout=2.0
         )
         query_source = 'friend_id_direct'
@@ -161,7 +181,7 @@ async def handle_get_player(websocket, data, current_character_id):
         print(f'[player_handler] 使用 character_id 查询: {cid}')
         # MMO级优化：异步数据库查询，避免阻塞事件循环
         player = await utils.async_mongo_operation(
-            lambda: utils.players_col.find_one({'character_id': cid}),
+            lambda: utils.players_col.find_one({'character_id': cid}, _PLAYER_INFO_PROJECTION),
             timeout=2.0
         )
         query_source = 'character_id_standard'
@@ -172,7 +192,7 @@ async def handle_get_player(websocket, data, current_character_id):
         cid = current_character_id
         # MMO级优化：异步数据库查询，避免阻塞事件循环
         player = await utils.async_mongo_operation(
-            lambda: utils.players_col.find_one({'character_id': cid}),
+            lambda: utils.players_col.find_one({'character_id': cid}, _PLAYER_INFO_PROJECTION),
             timeout=2.0
         )
         query_source = 'self_fallback'
@@ -191,7 +211,10 @@ async def handle_get_player(websocket, data, current_character_id):
     is_friend = False
     if not is_self and current_character_id:
         # 获取当前玩家的好友列表
-        current_player_doc = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': current_character_id}))
+        current_player_doc = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+            {'character_id': current_character_id},
+            {'friends': 1},
+        ))
         if current_player_doc:
             friends = current_player_doc.get('friends', [])
             target_friend_id = player.get('friend_id')

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, find, Sprite, SpriteAtlas, SpriteFrame, tween, Vec3, ResourceManager, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _class3, _crd, ccclass, property, RobotEvolutionEffect;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, find, Sprite, SpriteAtlas, SpriteFrame, tween, Vec3, ResourceManager, Logger, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _class3, _crd, ccclass, property, RobotEvolutionEffect;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -11,6 +11,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
   function _reportPossibleCrUseOfResourceManager(extras) {
     _reporterNs.report("ResourceManager", "./ResourceManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -31,6 +35,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       Vec3 = _cc.Vec3;
     }, function (_unresolved_2) {
       ResourceManager = _unresolved_2.ResourceManager;
+    }, function (_unresolved_3) {
+      Logger = _unresolved_3.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -101,7 +107,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           var panel = find('Canvas/RobotJinHua');
 
           if (!panel) {
-            console.warn('[RobotEvolutionEffect] 未找到 RobotJinHua 节点');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[RobotEvolutionEffect] 未找到 RobotJinHua 节点');
             return null;
           }
 
@@ -150,13 +158,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           var root = this.rootNode || this.node;
 
           if (!this.primarySprite) {
-            console.warn('[RobotEvolutionEffect] 缺少 Sprite 组件');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[RobotEvolutionEffect] 缺少 Sprite 组件');
             return;
           }
 
           this.currentOldFrameName = oldAniId + "-0";
           this.currentNewFrameName = newAniId + "-0";
-          console.log('[RobotEvolutionEffect] 请求进化动画', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[RobotEvolutionEffect] 请求进化动画', {
             oldAniId,
             newAniId,
             oldFrameName: this.currentOldFrameName,
@@ -187,7 +199,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           this.isPlaying = true; // 如果两个帧都已经加载完成，立即开始动画
 
           if (oldFrame && newFrame) {
-            console.log('[RobotEvolutionEffect] 帧已缓存，立即开始切换动画');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[RobotEvolutionEffect] 帧已缓存，立即开始切换动画');
             this.startSwitchAnimation();
           } else {
             // 异步加载帧（如果还没有）
@@ -266,7 +280,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               this.useNewFrame = !this.useNewFrame;
               var targetFrame = this.useNewFrame ? newF : oldF;
               this.primarySprite.spriteFrame = targetFrame;
-              console.log('[RobotEvolutionEffect] ✅ 切换帧', {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[RobotEvolutionEffect] ✅ 切换帧', {
                 elapsed: elapsed.toFixed(2),
                 useNew: this.useNewFrame,
                 frameName: targetFrame.name
@@ -282,7 +298,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
                   this.switchCallback = null;
                 }
 
-                console.log('[RobotEvolutionEffect] 切换完成，定格新形态', {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[RobotEvolutionEffect] 切换完成，定格新形态', {
                   frameName: newF.name
                 });
                 this.showTipAndClose();
@@ -388,7 +406,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           // resources.load 的路径不包含 "resources" 前缀，这里直接加载 SpriteFrame 子资源
 
           var path = "Robot/" + frameName + "/spriteFrame";
-          console.log('[RobotEvolutionEffect] 开始加载帧', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[RobotEvolutionEffect] 开始加载帧', {
             frameName,
             path
           }); // 使用 ResourceManager 统一管理资源缓存
@@ -400,7 +420,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
             this.loadingFrames.delete(frameName);
 
             if (err || !sf) {
-              console.warn('[RobotEvolutionEffect] 加载帧失败', {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[RobotEvolutionEffect] 加载帧失败', {
                 frameName,
                 path,
                 err
@@ -410,14 +432,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
 
             if (!this.isPlaying) {
-              console.log('[RobotEvolutionEffect] 帧加载完成但动画已停止', {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[RobotEvolutionEffect] 帧加载完成但动画已停止', {
                 frameName
               });
               return;
             }
 
             this.frameCache.set(frameName, sf);
-            console.log('[RobotEvolutionEffect] 加载帧成功', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[RobotEvolutionEffect] 加载帧成功', {
               frameName,
               path
             }); // 图片加载完成后，如果正在播放动画，立即应用
@@ -426,7 +452,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               // 如果是旧形态帧且当前没有显示任何帧，立即显示
               if (frameName === this.currentOldFrameName && !this.primarySprite.spriteFrame) {
                 this.primarySprite.spriteFrame = sf;
-                console.log('[RobotEvolutionEffect] 应用旧形态帧', {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('[RobotEvolutionEffect] 应用旧形态帧', {
                   frameName
                 });
               } // 如果两个帧都加载完成，确保动画已经开始切换
@@ -439,7 +467,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               if (_oldF && _newF) {
                 if (!this.switchCallback) {
                   // 如果调度器意外停止，重新启动
-                  console.log('[RobotEvolutionEffect] 帧加载完成，重新启动切换动画');
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug('[RobotEvolutionEffect] 帧加载完成，重新启动切换动画');
                   this.startSwitchAnimation();
                 }
               }

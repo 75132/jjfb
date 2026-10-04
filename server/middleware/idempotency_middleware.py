@@ -28,6 +28,7 @@ IDEMPOTENT_ROUTES = {
 NON_IDEMPOTENT_ROUTES = {
     'upgrade_robot',        # 修改操作通常不是幂等的
     'upgrade_all_robots',
+    'skill_level_up',       # 技能升级会扣技能书
     'bag_use_item',
     'bag_discard_item',
     'bag_move_item',

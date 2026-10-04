@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, director, RobotList, WebSocketManager, GameConfig, RobotShow, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _crd, ccclass, property, GameMenu;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, director, RobotList, WebSocketManager, GameConfig, RobotShow, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _crd, ccclass, property, GameMenu;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -25,6 +25,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("RobotShow", "./RobotShow", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -45,6 +49,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       GameConfig = _unresolved_4.GameConfig;
     }, function (_unresolved_5) {
       RobotShow = _unresolved_5.RobotShow;
+    }, function (_unresolved_6) {
+      Logger = _unresolved_6.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -101,10 +107,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.panelAnimations = {};
           this.lastOpenTs = 0;
           this.lastOpenName = '';
+          this.pendingTimers = [];
         }
 
         start() {
-          console.log('🎮 GameMenu 开始初始化...'); // 资源预热：在主界面就提前把 RobotShow 的资源加载好，战斗/机甲界面打开更快
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🎮 GameMenu 开始初始化...'); // 资源预热：在主界面就提前把 RobotShow 的资源加载好，战斗/机甲界面打开更快
           // 幂等调用，不会重复加载
 
           try {
@@ -114,11 +123,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           } catch (_unused) {} // 延迟初始化，避免阻塞场景加载
 
 
-          setTimeout(() => {
+          this.pendingTimers.push(setTimeout(() => {
+            var _this$node;
+
+            if (!((_this$node = this.node) != null && _this$node.isValid)) return;
             this.initializePanels();
             this.bindButtonEvents();
-            console.log('✅ GameMenu 初始化完成');
-          }, 20); // 延迟20ms初始化
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ GameMenu 初始化完成');
+          }, 20)); // 延迟20ms初始化
         }
         /**
          * 初始化面板状态
@@ -141,9 +155,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.confirmDialog.active = false;
           }
 
-          console.log('🎮 GameMenu初始化完成，按钮数量:', this.buttons.length);
-          console.log('📱 所有面板已设置为默认隐藏状态');
-          console.log('🎯 返回按钮绑定弹窗:', ((_this$confirmDialog = this.confirmDialog) == null ? void 0 : _this$confirmDialog.name) || '未设置');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🎮 GameMenu初始化完成，按钮数量:', this.buttons.length);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📱 所有面板已设置为默认隐藏状态');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🎯 返回按钮绑定弹窗:', ((_this$confirmDialog = this.confirmDialog) == null ? void 0 : _this$confirmDialog.name) || '未设置');
         }
         /**
          * 绑定按钮事件
@@ -158,7 +178,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               button.node.on(Button.EventType.CLICK, () => {
                 this.openPanel(panelName);
               }, this);
-              console.log("\uD83D\uDD17 \u6309\u94AE " + button.node.name + " \u7ED1\u5B9A\u5230\u9762\u677F " + panelName);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\uD83D\uDD17 \u6309\u94AE " + button.node.name + " \u7ED1\u5B9A\u5230\u9762\u677F " + panelName);
             }
           }); // 绑定返回按钮
 
@@ -166,7 +188,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.returnButton.node.on(Button.EventType.CLICK, () => {
               this.showConfirmDialog();
             }, this);
-            console.log("\uD83C\uDFAF \u8FD4\u56DE\u6309\u94AE " + this.returnButton.node.name + " \u5DF2\u7ED1\u5B9A");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83C\uDFAF \u8FD4\u56DE\u6309\u94AE " + this.returnButton.node.name + " \u5DF2\u7ED1\u5B9A");
           } // 绑定确认弹窗按钮
 
 
@@ -199,13 +223,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var panel = this.panels.find(p => p.name === panelName);
 
           if (!panel) {
-            console.warn("\u26A0\uFE0F \u672A\u627E\u5230\u9762\u677F: " + panelName);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F \u672A\u627E\u5230\u9762\u677F: " + panelName);
             return;
           } // 检查实际节点状态，如果已经显示就直接返回
 
 
           if (panel.active) {
-            console.log("\uD83D\uDD04 \u9762\u677F " + panelName + " \u8282\u70B9\u5DF2\u7ECF\u662F\u663E\u793A\u72B6\u6001\uFF0C\u65E0\u9700\u64CD\u4F5C");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDD04 \u9762\u677F " + panelName + " \u8282\u70B9\u5DF2\u7ECF\u662F\u663E\u793A\u72B6\u6001\uFF0C\u65E0\u9700\u64CD\u4F5C");
             return;
           } // 关闭其他面板
 
@@ -223,7 +251,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             robotList.show(false); // 明确 fromBag=false，保证 Set/设置出战 面板显示
           }
 
-          console.log("\uD83D\uDEAA \u6253\u5F00\u9762\u677F: " + panelName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDEAA \u6253\u5F00\u9762\u677F: " + panelName);
         }
         /**
          * 关闭面板
@@ -237,7 +267,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           panel.active = false;
           this.panelStates[panelName] = false;
           this.activePanel = null;
-          console.log("\uD83D\uDEAA \u9690\u85CF\u9762\u677F: " + panelName);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDEAA \u9690\u85CF\u9762\u677F: " + panelName);
         }
         /**
          * 关闭所有面板
@@ -284,11 +316,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               }
             }
           });
-          console.log('🔄 面板状态已同步');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 面板状态已同步');
         }
 
         onDestroy() {
-          // 清理资源
+          for (var h of this.pendingTimers) {
+            clearTimeout(h);
+          }
+
+          this.pendingTimers.length = 0; // 清理资源
+
           this.panelAnimations = {};
 
           try {
@@ -320,7 +359,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         showConfirmDialog() {
           if (this.confirmDialog) {
             this.confirmDialog.active = true;
-            console.log('❓ 显示返回确认弹窗');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('❓ 显示返回确认弹窗');
           }
         }
         /**
@@ -331,7 +372,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         hideConfirmDialog() {
           if (this.confirmDialog) {
             this.confirmDialog.active = false;
-            console.log('❌ 隐藏返回确认弹窗');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('❌ 隐藏返回确认弹窗');
           }
         }
         /**
@@ -340,7 +383,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         confirmReturnToCharacterSelect() {
-          console.log('✅ 用户确认切换角色（返回选角，非账号登出）');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('✅ 用户确认切换角色（返回选角，非账号登出）');
 
           try {
             var wsManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
@@ -355,20 +400,29 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             wsManager.switchCharacterAndReturnToSelect(); // 延迟一小段时间确保数据清除完成，然后切换场景
 
-            setTimeout(() => {
-              // 返回角色选择场景（不是登录场景）
+            this.pendingTimers.push(setTimeout(() => {
+              var _this$node2;
+
+              if (!((_this$node2 = this.node) != null && _this$node2.isValid)) return; // 返回角色选择场景（不是登录场景）
+
               director.loadScene((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
                 error: Error()
               }), GameConfig) : GameConfig).SCENE_NAMES.CHARACTER_SELECT, error => {
                 if (error) {
-                  console.error('❌ 跳转角色选择场景失败:', error);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).error('❌ 跳转角色选择场景失败:', error);
                 } else {
-                  console.log('✅ 已返回角色选择场景');
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug('✅ 已返回角色选择场景');
                 }
               });
-            }, 100); // 延迟100ms确保数据清除和事件处理完成
+            }, 100)); // 延迟100ms确保数据清除和事件处理完成
           } catch (error) {
-            console.error('❌ 返回选角流程异常:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 返回选角流程异常:', error);
             this.hideConfirmDialog();
           }
         }

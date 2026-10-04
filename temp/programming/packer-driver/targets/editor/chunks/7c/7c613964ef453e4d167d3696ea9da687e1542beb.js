@@ -103,10 +103,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           const t = this._target;
           let dx = t.x - cur.x;
           let dy = t.y - cur.y;
-          const dist = Math.hypot(dx, dy); // 已到格点：立刻 idle，避免「停住后动画还播一会」
+          const dist = Math.hypot(dx, dy);
 
-          if (dist < 0.05) {
-            this.node.setPosition(Math.round(t.x), Math.round(t.y), cur.z);
+          if (dist < 0.5) {
+            if (this._playingWalk || dist >= 0.05) {
+              this.node.setPosition(Math.round(t.x), Math.round(t.y), cur.z);
+            }
 
             if (this._playingWalk) {
               var _this$_anim2;

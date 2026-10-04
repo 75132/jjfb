@@ -62,9 +62,10 @@ export class RemoteAvatarController extends Component {
         let dy = t.y - cur.y;
         const dist = Math.hypot(dx, dy);
 
-        // 已到格点：立刻 idle，避免「停住后动画还播一会」
-        if (dist < 0.05) {
-            this.node.setPosition(Math.round(t.x), Math.round(t.y), cur.z);
+        if (dist < 0.5) {
+            if (this._playingWalk || dist >= 0.05) {
+                this.node.setPosition(Math.round(t.x), Math.round(t.y), cur.z);
+            }
             if (this._playingWalk) {
                 this._playingWalk = false;
                 this._anim?.playIdle(this._lastFacing, true);

@@ -9,6 +9,27 @@ import random
 import asyncio
 from . import utils
 
+# 选角槽位 / 角色卡读路径：不含 items 等大字段
+_CHARACTER_SLOT_PROJECTION = {
+    '_id': 1,
+    'slot_index': 1,
+    'character_id': 1,
+    'role_name': 1,
+    'Sprite': 1,
+    'class': 1,
+    'gold': 1,
+    'level': 1,
+    'exp': 1,
+    'energy_blocks': 1,
+    'points': 1,
+    'alliance': 1,
+    'record': 1,
+    'robotcount': 1,
+    'position': 1,
+    'rank': 1,
+    'friend_id': 1,
+}
+
 # 需要从ws_server导入的函数（通过参数传递）
 _create_robot_pet = None
 _broadcast_to_user_async = None
@@ -80,7 +101,7 @@ def create_robot_pet(user_id, character_id, base_robot):
     current_field_mappings = {
         'CurrentMelee': 'Melee', 'CurrentArmor': 'Armor', 'CurrentAccuracy': 'Accuracy',
         'CurrentCorrosion': 'Corrosion', 'CurrentInitiative': 'Initiative', 'CurrentBlock': 'Block',
-        'CurrentParticleShield': 'ParticleShield', 'CurrentArmorPenetration': 'ArmorPenetration',
+        'CurrentAttackCount': 'AttackCount', 'CurrentArmorPenetration': 'ArmorPenetration',
         'CurrentShooting': 'Shooting', 'CurrentEvasion': 'Evasion', 'CurrentLethality': 'Lethality',
         'CurrentResistance': 'Resistance', 'CurrentCounterattack': 'Counterattack'
     }
@@ -97,11 +118,11 @@ def create_robot_pet(user_id, character_id, base_robot):
         'HP', 'MaxHP', 'MP', 'MaxMP',
         'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
         'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-        'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+        'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
         'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
         'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
         'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-        'CurrentArmorPenetration', 'CurrentParticleShield'
+        'CurrentArmorPenetration', 'CurrentAttackCount'
     ]
     
     # 应用随机化
@@ -124,11 +145,11 @@ def create_robot_pet(user_id, character_id, base_robot):
         'HP', 'MaxHP', 'CurrentHP', 'MP', 'MaxMP', 'CurrentMP',
         'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
         'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-        'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+        'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
         'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
         'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
         'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-        'CurrentArmorPenetration', 'CurrentParticleShield',
+        'CurrentArmorPenetration', 'CurrentAttackCount',
         'Growth', 'Comprehension', 'StarLevel', 'Level', 'EXP',
         'RobotID', 'RobotName', 'Class', 'Form', 'AniID'
     ]
@@ -223,7 +244,10 @@ async def handle_get_all_characters(websocket, data, current_user_id, current_ch
                         timeout=2.0
                     )
                     doc = await utils.async_mongo_operation(
-                        lambda: utils.players_col.find_one({'user_id': user['_id'], 'slot_index': slot_index}),
+                        lambda: utils.players_col.find_one(
+                            {'user_id': user['_id'], 'slot_index': slot_index},
+                            _CHARACTER_SLOT_PROJECTION,
+                        ),
                         timeout=2.0
                     )
                 except Exception as e:
@@ -245,7 +269,7 @@ async def handle_get_all_characters(websocket, data, current_user_id, current_ch
                 ch = chars[slot_index] if 0 <= slot_index < len(chars) else None
                 if ch:
                     try:
-                        utils.players_col.update_one(
+                        await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                             {'user_id': user['_id'], 'slot_index': slot_index},
                             {'$set': {
                                 'character_id': ch.get('character_id'),
@@ -263,8 +287,11 @@ async def handle_get_all_characters(websocket, data, current_user_id, current_ch
                                 'rank': ch.get('rank', ''),
                                 'friend_id': doc.get('friend_id') or utils.generate_friend_id()
                             }}
-                        )
-                        doc = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'user_id': user['_id'], 'slot_index': slot_index}))
+                        ))
+                        doc = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+                            {'user_id': user['_id'], 'slot_index': slot_index},
+                            _CHARACTER_SLOT_PROJECTION,
+                        ))
                     except Exception as e:
                         print(f'补齐玩家角色数据失败 (slot {slot_index}):', e)
             
@@ -377,7 +404,10 @@ async def handle_get_character_info(websocket, data, current_user_id, current_ch
         )
         return current_user_id, current_character_id
     
-    doc = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'user_id': user['_id'], 'slot_index': slot_index}))
+    doc = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+        {'user_id': user['_id'], 'slot_index': slot_index},
+        _CHARACTER_SLOT_PROJECTION,
+    ))
     if not doc:
         # 兼容旧数据：从users.characters迁移一份到players
         chars = user.get('characters', [None, None, None])
@@ -386,7 +416,7 @@ async def handle_get_character_info(websocket, data, current_user_id, current_ch
         ch = chars[slot_index] if 0 <= slot_index < len(chars) else None
         if ch:
             try:
-                utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+                await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                     {'user_id': user['_id'], 'slot_index': slot_index},
                     {'$setOnInsert': {
                         'user_id': user['_id'],
@@ -410,7 +440,10 @@ async def handle_get_character_info(websocket, data, current_user_id, current_ch
                 ))
             except Exception as e:
                 print('迁移旧角色数据失败:', e)
-            doc = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'user_id': user['_id'], 'slot_index': slot_index}))
+            doc = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+                {'user_id': user['_id'], 'slot_index': slot_index},
+                _CHARACTER_SLOT_PROJECTION,
+            ))
     else:
         # 若players文档存在但字段不完整，则尝试从users.characters补齐
         incomplete = (not doc.get('character_id')) or (not doc.get('role_name')) or (doc.get('Sprite', 0) in [0, '0'])
@@ -421,7 +454,7 @@ async def handle_get_character_info(websocket, data, current_user_id, current_ch
             ch = chars[slot_index] if 0 <= slot_index < len(chars) else None
             if ch:
                 try:
-                    utils.players_col.update_one(
+                    await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                         {'user_id': user['_id'], 'slot_index': slot_index},
                         {'$set': {
                             'character_id': ch.get('character_id'),
@@ -439,8 +472,11 @@ async def handle_get_character_info(websocket, data, current_user_id, current_ch
                             'rank': ch.get('rank', ''),
                             'friend_id': doc.get('friend_id') or utils.generate_friend_id()
                         }}
-                    )
-                    doc = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'user_id': user['_id'], 'slot_index': slot_index}))
+                    ))
+                    doc = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+                        {'user_id': user['_id'], 'slot_index': slot_index},
+                        _CHARACTER_SLOT_PROJECTION,
+                    ))
                 except Exception as e:
                     print('补齐玩家角色数据失败:', e)
     
@@ -454,7 +490,7 @@ async def handle_get_character_info(websocket, data, current_user_id, current_ch
         current_character_id = doc.get('character_id')
         dynamic_robot_count = utils.compute_robot_count(user['_id'], current_character_id)
         try:
-            utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.players_col.update_one(
                 {'_id': doc['_id']},
                 {'$set': {'robotcount': dynamic_robot_count}}
             ))
@@ -510,11 +546,17 @@ async def handle_select_character(websocket, data, current_user_id, current_char
         except Exception:
             slot_index = None
         if slot_index is not None:
-            doc = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'user_id': user['_id'], 'slot_index': slot_index}))
+            doc = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+                {'user_id': user['_id'], 'slot_index': slot_index},
+                {'character_id': 1},
+            ))
             if doc:
                 character_id = doc.get('character_id')
     
-    ch = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'character_id': character_id, 'user_id': user['_id']}))
+    ch = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one(
+        {'character_id': character_id, 'user_id': user['_id']},
+        {'_id': 1, 'character_id': 1},
+    ))
     if not ch:
         await utils.send_direct_response(websocket, {'type': 'select_character_response', 'success': False, 'message': '角色不存在'}, request_data=data)
     else:
@@ -582,7 +624,7 @@ async def handle_create_character(websocket, data, current_user_id, current_char
         return current_user_id, current_character_id
     
     # 检查players_col中是否已有该槽位的角色
-    existing_player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({
+    existing_player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
         'user_id': user['_id'],
         'slot_index': slot_index
     }))
@@ -618,10 +660,10 @@ async def handle_create_character(websocket, data, current_user_id, current_char
         'friend_id': friend_id
     }
     chars[slot_index] = ch
-    utils.users_col.update_one({'_id': user['_id']}, {'$set': {'characters': chars}})
+    await utils.async_mongo_operation(lambda: utils.users_col.update_one({'_id': user['_id']}, {'$set': {'characters': chars}}))
     try:
         # 修复：使用$set而不是$setOnInsert，确保即使文档已存在也能更新
-        utils.safe_mongo_operation(lambda: utils.players_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.players_col.update_one(
             {'user_id': user['_id'], 'slot_index': slot_index},
             {'$set': {
                 'user_id': user['_id'],
@@ -660,11 +702,11 @@ async def handle_create_character(websocket, data, current_user_id, current_char
     # 更新该角色的机甲数量并通知客户端
     try:
         rc = utils.compute_robot_count(user['_id'], character_id)
-        utils.players_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.players_col.update_one(
             {'user_id': user['_id'], 'slot_index': slot_index},
             {'$set': {'robotcount': rc}}
-        )
-        pets = list(utils.robotpet_col.find({'user_id': user['_id'], 'character_id': character_id}))
+        ))
+        pets = await utils.async_mongo_operation_read(lambda: list(utils.robotpet_col.find({'user_id': user['_id'], 'character_id': character_id})))
         pets_list = []
         for pet in pets:
             ani_id = pet.get('AniID', '') or ''
@@ -736,7 +778,7 @@ async def handle_delete_character(websocket, data, current_user_id, current_char
     
     # 清空users集合中的character槽位
     chars[slot_index] = None
-    utils.safe_mongo_operation(lambda: utils.users_col.update_one({'_id': user['_id']}, {'$set': {'characters': chars}}))
+    await utils.async_mongo_operation(lambda: utils.users_col.update_one({'_id': user['_id']}, {'$set': {'characters': chars}}))
     
     # 删除所有关联数据（保留聊天记录）
     deleted_count = {
@@ -748,7 +790,7 @@ async def handle_delete_character(websocket, data, current_user_id, current_char
     
     try:
         # 1. 删除players集合中的角色数据
-        result = utils.players_col.delete_one({'user_id': user['_id'], 'slot_index': slot_index})
+        result = await utils.async_mongo_operation(lambda: utils.players_col.delete_one({'user_id': user['_id'], 'slot_index': slot_index}))
         deleted_count['players'] = result.deleted_count
         print(f'✅ 删除players数据: {result.deleted_count} 条')
     except Exception as e:
@@ -757,7 +799,7 @@ async def handle_delete_character(websocket, data, current_user_id, current_char
     # 2. 删除RobotPet（机甲宠物）- 通过character_id和user_id删除
     if character_id:
         try:
-            result = utils.safe_mongo_operation(lambda: utils.robotpet_col.delete_many({
+            result = await utils.async_mongo_operation(lambda: utils.robotpet_col.delete_many({
                 'user_id': user['_id'],
                 'character_id': character_id
             }))
@@ -768,10 +810,10 @@ async def handle_delete_character(websocket, data, current_user_id, current_char
         
         # 3. 删除inventory（背包物品）
         try:
-            result = utils.inventory_col.delete_many({
+            result = await utils.async_mongo_operation(lambda: utils.inventory_col.delete_many({
                 'user_id': user['_id'],
                 'character_id': character_id
-            })
+            }))
             deleted_count['inventory'] = result.deleted_count
             print(f'✅ 删除inventory数据: {result.deleted_count} 条 (character_id: {character_id})')
         except Exception as e:

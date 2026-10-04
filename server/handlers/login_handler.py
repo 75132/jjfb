@@ -39,7 +39,7 @@ async def handle_login(websocket, data, current_user_id):
     # 如果提供了 refresh_token，尝试刷新 Token
     if refresh_token:
         # 查找拥有该 refresh_token 的用户
-        user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({
+        user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({
             'refresh_token': refresh_token
         }))
         
@@ -54,7 +54,7 @@ async def handle_login(websocket, data, current_user_id):
                         token_service.generate_token_pair(str(user['_id']), account)
                     
                     # 更新用户 Token
-                    utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+                    await utils.async_mongo_operation(lambda: utils.users_col.update_one(
                         {'_id': user['_id']},
                         {'$set': {
                             'token': access_token,
@@ -114,10 +114,10 @@ async def handle_login(websocket, data, current_user_id):
         await utils.send_error_response(websocket, 'login', _lock_msg(lock_until), code=429, request_data=data)
         return current_user_id
 
-    user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'account': account}))
+    user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'account': account}))
     if user and verify_password(password, user.get('password', '')):
         if needs_rehash(user.get('password', '')):
-            utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.users_col.update_one(
                 {'_id': user['_id']}, {'$set': {'password': hash_password(password)}}
             ))
         # 登录成功，清空该账号+IP的登录失败计数
@@ -136,7 +136,7 @@ async def handle_login(websocket, data, current_user_id):
             token_service.revoke_token(old_refresh_token, user.get('refresh_token_expires_at'))
         
         # 更新用户 Token 和最后登录时间
-        utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.users_col.update_one(
             {'_id': user['_id']},
             {'$set': {
                 'token': access_token,
@@ -254,10 +254,10 @@ async def handle_auth_request(websocket, data, current_user_id, current_characte
                 )
         if character_id:
             # 验证角色是否属于该用户
-            player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({
+            player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({
                 'character_id': character_id,
                 'user_id': current_user_id
-            }))
+            }, {'_id': 1}))
             if player:
                 # 角色验证成功，自动设置 current_character_id
                 current_character_id = character_id
@@ -277,7 +277,7 @@ async def handle_auth_request(websocket, data, current_user_id, current_characte
         session.update_active()
 
         # auth_request 成功后刷新 last_auth_verified_at，让下一次重连窗口继续生效
-        utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.users_col.update_one(
             {'_id': current_user_id},
             {'$set': {'last_auth_verified_at': datetime.datetime.utcnow()}}
         ))
@@ -314,7 +314,7 @@ async def handle_register(websocket, data, current_user_id):
     try:
         # 尝试创建新用户，如果账号已存在则会失败
         initial_token = utils.generate_unique_token(account, password)
-        result = utils.safe_mongo_operation(lambda: utils.users_col.find_one_and_update(
+        result = await utils.async_mongo_operation(lambda: utils.users_col.find_one_and_update(
             {'account': account},  # 查询条件
             {'$setOnInsert': {
                 'account': account,
@@ -396,7 +396,7 @@ async def handle_full_logout(websocket, data, current_user_id):
     
     if current_user_id:
         # 获取用户信息
-        user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'_id': current_user_id}))
+        user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'_id': current_user_id}))
         if user:
             # 撤销所有 Token
             tokens_to_revoke = {}
@@ -409,7 +409,7 @@ async def handle_full_logout(websocket, data, current_user_id):
                 token_service.revoke_user_tokens(str(current_user_id), tokens_to_revoke)
             
             # 清除数据库中的 Token
-            utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.users_col.update_one(
                 {'_id': current_user_id},
                 {'$unset': {
                     'token': '',
@@ -467,9 +467,9 @@ async def handle_change_password(websocket, data, current_user_id):
         return current_user_id
 
     # 未登录场景：按账号查；已登录场景：优先用 current_user_id 兜底
-    user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'account': account}))
+    user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'account': account}))
     if (not user) and current_user_id:
-        user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'_id': current_user_id}))
+        user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'_id': current_user_id}))
 
     if not user or not verify_password(old_password, user.get('password', '')):
         _, lock_until = utils.record_account_action_failure(account, client_ip, 'pwd', max_fail=5, lock_minutes=5)
@@ -497,7 +497,7 @@ async def handle_change_password(websocket, data, current_user_id):
             token_service.generate_token_pair(str(user_id), user['account'])
         
         # 更新密码和Token
-        utils.safe_mongo_operation(lambda: utils.users_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.users_col.update_one(
             {'_id': user_id},
             {'$set': {
                 'password': hash_password(new_password),
@@ -558,7 +558,7 @@ async def handle_delete_account(websocket, data, current_user_id):
     
     # 1. 删除所有players记录
     try:
-        result = utils.safe_mongo_operation(lambda: utils.players_col.delete_many({'user_id': user_id}))
+        result = await utils.async_mongo_operation(lambda: utils.players_col.delete_many({'user_id': user_id}))
         deleted_count['players'] = result.deleted_count
         print(f'✅ 删除players数据: {result.deleted_count} 条')
     except Exception as e:
@@ -566,7 +566,7 @@ async def handle_delete_account(websocket, data, current_user_id):
     
     # 2. 删除所有RobotPet
     try:
-        result = utils.safe_mongo_operation(lambda: utils.robotpet_col.delete_many({'user_id': user_id}))
+        result = await utils.async_mongo_operation(lambda: utils.robotpet_col.delete_many({'user_id': user_id}))
         deleted_count['robotpet'] = result.deleted_count
         print(f'✅ 删除RobotPet数据: {result.deleted_count} 条')
     except Exception as e:
@@ -574,7 +574,7 @@ async def handle_delete_account(websocket, data, current_user_id):
     
     # 3. 删除所有inventory
     try:
-        result = utils.safe_mongo_operation(lambda: utils.inventory_col.delete_many({'user_id': user_id}))
+        result = await utils.async_mongo_operation(lambda: utils.inventory_col.delete_many({'user_id': user_id}))
         deleted_count['inventory'] = result.deleted_count
         print(f'✅ 删除inventory数据: {result.deleted_count} 条')
     except Exception as e:
@@ -583,7 +583,7 @@ async def handle_delete_account(websocket, data, current_user_id):
     # 4. 删除所有相关的messages（通过character_id）
     if character_ids:
         try:
-            result = utils.safe_mongo_operation(lambda: utils.messages_col.delete_many({'character_id': {'$in': character_ids}}))
+            result = await utils.async_mongo_operation(lambda: utils.messages_col.delete_many({'character_id': {'$in': character_ids}}))
             deleted_count['messages'] = result.deleted_count
             print(f'✅ 删除messages数据: {result.deleted_count} 条')
         except Exception as e:
@@ -591,7 +591,7 @@ async def handle_delete_account(websocket, data, current_user_id):
     
     # 5. 最后删除users账号
     try:
-        result = utils.safe_mongo_operation(lambda: utils.users_col.delete_one({'_id': user_id}))
+        result = await utils.async_mongo_operation(lambda: utils.users_col.delete_one({'_id': user_id}))
         deleted_count['users'] = result.deleted_count
         print(f'✅ 删除users账号: {result.deleted_count} 条 (账号: {account})')
     except Exception as e:

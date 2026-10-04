@@ -1,0 +1,93 @@
+[
+  {
+    "id": "zuojia4",
+    "name": "座驾-宙斯",
+    "frameCount": 14,
+    "frameSize": [
+      78,
+      77
+    ],
+    "picPath": "Image/ZuoJia/pic/zuojia4-{i}.png",
+    "resourcesPath": "ZuoJia/zuojia4-{i}",
+    "gif": "Image/ZuoJia/gif/zuojia4.gif",
+    "sheet": "Image/ZuoJia/sheet/zuojia4.png"
+  },
+  {
+    "id": "zuojia5",
+    "name": "座驾-阿瑞斯",
+    "frameCount": 14,
+    "frameSize": [
+      92,
+      74
+    ],
+    "picPath": "Image/ZuoJia/pic/zuojia5-{i}.png",
+    "resourcesPath": "ZuoJia/zuojia5-{i}",
+    "gif": "Image/ZuoJia/gif/zuojia5.gif",
+    "sheet": "Image/ZuoJia/sheet/zuojia5.png"
+  },
+  {
+    "id": "zuojia6",
+    "name": "座驾-波塞冬",
+    "frameCount": 14,
+    "frameSize": [
+      70,
+      78
+    ],
+    "picPath": "Image/ZuoJia/pic/zuojia6-{i}.png",
+    "resourcesPath": "ZuoJia/zuojia6-{i}",
+    "gif": "Image/ZuoJia/gif/zuojia6.gif",
+    "sheet": "Image/ZuoJia/sheet/zuojia6.png"
+  },
+  {
+    "id": "zuojia7",
+    "name": "座驾-哈迪斯",
+    "frameCount": 14,
+    "frameSize": [
+      86,
+      73
+    ],
+    "picPath": "Image/ZuoJia/pic/zuojia7-{i}.png",
+    "resourcesPath": "ZuoJia/zuojia7-{i}",
+    "gif": "Image/ZuoJia/gif/zuojia7.gif",
+    "sheet": "Image/ZuoJia/sheet/zuojia7.png"
+  },
+  {
+    "id": "zuojia8",
+    "name": "新座驾5",
+    "frameCount": 14,
+    "frameSize": [
+      88,
+      78
+    ],
+    "picPath": "Image/ZuoJia/pic/zuojia8-{i}.png",
+    "resourcesPath": "ZuoJia/zuojia8-{i}",
+    "gif": "Image/ZuoJia/gif/zuojia8.gif",
+    "sheet": "Image/ZuoJia/sheet/zuojia8.png"
+  },
+  {
+    "id": "zuojia9",
+    "name": "新座驾6",
+    "frameCount": 16,
+    "frameSize": [
+      96,
+      66
+    ],
+    "picPath": "Image/ZuoJia/pic/zuojia9-{i}.png",
+    "resourcesPath": "ZuoJia/zuojia9-{i}",
+    "gif": "Image/ZuoJia/gif/zuojia9.gif",
+    "sheet": "Image/ZuoJia/sheet/zuojia9.png"
+  },
+  {
+    "id": "car4",
+    "name": "神行座驾",
+    "frameCount": 10,
+    "frameSize": [
+      46,
+      30
+    ],
+    "picPath": "Image/ZuoJia/pic/car4-{i}.png",
+    "resourcesPath": "ZuoJia/car4-{i}",
+    "gif": "Image/ZuoJia/gif/car4.gif",
+    "sheet": "Image/ZuoJia/sheet/car4.png"
+  }
+]

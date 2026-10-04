@@ -69,6 +69,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           _initializerDefineProperty(this, "autoResolvePlayer", _descriptor5, this);
 
           this._tmp = v3();
+          this.gaUt = null;
+          this.pUt = null;
         }
 
         onLoad() {
@@ -95,7 +97,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
           this.player = n;
         }
 
+        start() {
+          this.refreshFollowTransforms();
+        }
+
+        refreshFollowTransforms() {
+          var _this$gameArea, _this$player;
+
+          this.gaUt = (_this$gameArea = this.gameArea) != null && _this$gameArea.isValid ? this.gameArea.getComponent(UITransform) : null;
+          this.pUt = (_this$player = this.player) != null && _this$player.isValid ? this.player.getComponent(UITransform) : null;
+        }
+
         lateUpdate() {
+          var _this$gaUt, _this$pUt;
+
           const player = this.player;
           const gameArea = this.gameArea;
           const mapRoot = this.mapRoot;
@@ -104,8 +119,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
             return;
           }
 
-          const gaUt = gameArea.getComponent(UITransform);
-          const pUt = player.getComponent(UITransform);
+          if (!((_this$gaUt = this.gaUt) != null && _this$gaUt.isValid) || this.gaUt.node !== gameArea || !((_this$pUt = this.pUt) != null && _this$pUt.isValid) || this.pUt.node !== player) {
+            this.refreshFollowTransforms();
+          }
+
+          const gaUt = this.gaUt;
+          const pUt = this.pUt;
 
           if (!gaUt || !pUt) {
             return;
@@ -213,6 +232,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
           while (stack.length > 0) {
             const n = stack.pop();
+            if (n !== mapRoot && !n.activeInHierarchy) continue;
             const ut = n.getComponent(UITransform);
 
             if (ut) {

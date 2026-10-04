@@ -1,0 +1,91 @@
+{
+  "name": "zuojia6",
+  "cn": "座驾-波塞冬",
+  "mode": "piece_compose",
+  "rect_count": 5,
+  "piece_frames": 14,
+  "out_frames": 14,
+  "frame_sizes": [
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ],
+    [
+      70,
+      78
+    ]
+  ],
+  "compose": {
+    "mode": "piece_records",
+    "frame_count": 14,
+    "draw_order": "record_order",
+    "anchor_mode": "top_left",
+    "seam_fix": true,
+    "apply_flag_transform": true,
+    "canvas_box": [
+      -35,
+      -60,
+      35,
+      18
+    ],
+    "canvas_size": [
+      70,
+      78
+    ]
+  },
+  "parse": {
+    "frame_count": 14,
+    "tail_start": 79,
+    "tail_end": 533,
+    "remaining_bytes": 93
+  },
+  "chroma_changed": 1206
+}

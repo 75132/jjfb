@@ -1,5 +1,7 @@
 import { _decorator, Component, Node, EditBox, Button, Sprite, SpriteFrame, ToggleContainer, Color, Label } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
+import { Logger } from '../global/Logger';
+import { markNewCharacterNeedsIntro } from '../Intro/IntroFlags';
 const { ccclass, property } = _decorator;
 
 @ccclass('CharacterCreatePanel')
@@ -36,11 +38,13 @@ export class CharacterCreatePanel extends Component {
     private wsManager: WebSocketManager = null!;
     // 修复点：创建角色过程状态标记，防止高频点击导致多次创建请求
     private isCreating: boolean = false;
+    private initTimer: ReturnType<typeof setTimeout> | null = null;
 
     start() {
         // 延迟初始化，避免引擎内部错误；组件销毁后不再执行
-        setTimeout(() => {
-            if (!this.isValid) return;
+        this.initTimer = setTimeout(() => {
+            this.initTimer = null;
+            if (!this.node?.isValid) return;
             this.initializeComponents();
         }, 200);
     }
@@ -60,7 +64,7 @@ export class CharacterCreatePanel extends Component {
                     try {
                         node.on(Node.EventType.TOUCH_END, () => this.onSelectCharacter(idx), this);
                     } catch (error) {
-                        console.error(`绑定角色格子${idx}点击事件时出错:`, error);
+                        Logger.error(`绑定角色格子${idx}点击事件时出错:`, error);
                     }
                 }
             });
@@ -70,7 +74,7 @@ export class CharacterCreatePanel extends Component {
                 try {
                     this.backButton.node.on(Button.EventType.CLICK, this.onBackClick, this);
                 } catch (error) {
-                    console.error('绑定返回按钮事件时出错:', error);
+                    Logger.error('绑定返回按钮事件时出错:', error);
                 }
             }
 
@@ -79,7 +83,7 @@ export class CharacterCreatePanel extends Component {
                 try {
                     this.createButton.node.on(Button.EventType.CLICK, this.onCreateClick, this);
                 } catch (error) {
-                    console.error('绑定创建按钮事件时出错:', error);
+                    Logger.error('绑定创建按钮事件时出错:', error);
                 }
             }
 
@@ -88,18 +92,22 @@ export class CharacterCreatePanel extends Component {
                 try {
                     this.randomNameBtn.node.on(Button.EventType.CLICK, this.randomName, this);
                 } catch (error) {
-                    console.error('绑定随机名字按钮事件时出错:', error);
+                    Logger.error('绑定随机名字按钮事件时出错:', error);
                 }
             }
 
             // 默认选中第一个角色
             this.onSelectCharacter(0);
         } catch (error) {
-            console.error('CharacterCreatePanel初始化时出错:', error);
+            Logger.error('CharacterCreatePanel初始化时出错:', error);
         }
     }
 
     onDestroy() {
+        if (this.initTimer !== null) {
+            clearTimeout(this.initTimer);
+            this.initTimer = null;
+        }
         // 移除监听
         if (this.wsManager) {
             this.wsManager.off('create_character_response', this.onCreateCharacterResponse, this);
@@ -115,6 +123,10 @@ export class CharacterCreatePanel extends Component {
         // 兼容标准格式（data字段）和直接格式
         const resp = data.data || data;
         if (resp.success) {
+            const createdId = resp.character_id || (data && data.character_id);
+            if (createdId) {
+                markNewCharacterNeedsIntro(String(createdId));
+            }
             (this as any).node.active = false;
             (this as any).node.emit('refresh_slots_and_hide_buttons');
             if (this.tipLabel) this.tipLabel.string = '';

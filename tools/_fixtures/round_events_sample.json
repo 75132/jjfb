@@ -1,0 +1,629 @@
+{
+  "generated_by": "tools/_gen_round_events_fixture.py",
+  "skills_version": 6,
+  "normal_attack_enabled": true,
+  "formula_scale": {
+    "name": "A",
+    "atk_divisor": 3,
+    "drop_tail_constants": true,
+    "desc": "a.atk ÷ 3，且删除公式末尾的纯数字加项（b.def 不缩放）",
+    "effect": "普攻 (a.atk/3)*3 - b.def ≡ 攻击 - 装甲，与现网公式一致（满配 17272 对齐设计基准）"
+  },
+  "scenarios": [
+    {
+      "name": "attack",
+      "action": "ATTACK",
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 400,
+          "targets": [
+            {
+              "side": "enemy",
+              "kind": "hp_damage",
+              "damage": 1147,
+              "crit": false,
+              "hp_after": 7853,
+              "mp_after": 200
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 520,
+              "crit": false,
+              "hp_after": 7480,
+              "mp_after": 400
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7480,
+        "mp": 400
+      },
+      "enemy": {
+        "hp": 7853,
+        "mp": 200
+      }
+    },
+    {
+      "name": "skill_damage",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "roubo"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "roubo",
+          "skill_name": "肉搏攻击",
+          "anim": "quan01",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 100,
+          "mp_after": 300,
+          "targets": [
+            {
+              "side": "enemy",
+              "kind": "hp_damage",
+              "damage": 1875,
+              "crit": false,
+              "hp_after": 7125,
+              "mp_after": 200
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 545,
+              "crit": false,
+              "hp_after": 7455,
+              "mp_after": 300
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7455,
+        "mp": 300
+      },
+      "enemy": {
+        "hp": 7125,
+        "mp": 200
+      }
+    },
+    {
+      "name": "skill_drain_hp",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "shengmingshequ"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "shengmingshequ",
+          "skill_name": "生命摄取",
+          "anim": "shengmingshequ",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 56,
+          "mp_after": 344,
+          "targets": [
+            {
+              "side": "enemy",
+              "kind": "hp_drain",
+              "damage": 653,
+              "crit": false,
+              "hp_after": 8347,
+              "mp_after": 200,
+              "drained": 326
+            }
+          ],
+          "heals": [
+            {
+              "side": "player",
+              "attr": "hp",
+              "value": 326,
+              "cur": 2326,
+              "max": 8000,
+              "from": "drain"
+            }
+          ],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 520,
+              "crit": false,
+              "hp_after": 1806,
+              "mp_after": 344
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 1806,
+        "mp": 344
+      },
+      "enemy": {
+        "hp": 8347,
+        "mp": 200
+      }
+    },
+    {
+      "name": "skill_drain_mp",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "zhaqu"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "zhaqu",
+          "skill_name": "能量榨取",
+          "anim": "zhaqu",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 56,
+          "mp_after": 44,
+          "targets": [
+            {
+              "side": "enemy",
+              "kind": "mp_drain",
+              "damage": 653,
+              "crit": false,
+              "hp_after": 9000,
+              "mp_after": 0,
+              "drained": 326
+            }
+          ],
+          "heals": [
+            {
+              "side": "player",
+              "attr": "mp",
+              "value": 326,
+              "cur": 370,
+              "max": 400,
+              "from": "drain"
+            }
+          ],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 0,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 520,
+              "crit": false,
+              "hp_after": 7480,
+              "mp_after": 370
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7480,
+        "mp": 370
+      },
+      "enemy": {
+        "hp": 9000,
+        "mp": 0
+      }
+    },
+    {
+      "name": "skill_heal",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "xiuli"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "xiuli",
+          "skill_name": "紧急修理",
+          "anim": "xiuli",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 56,
+          "mp_after": 344,
+          "targets": [],
+          "heals": [
+            {
+              "side": "player",
+              "attr": "hp",
+              "value": 2400,
+              "cur": 4400,
+              "max": 8000,
+              "from": "hp_recover_ratio"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "hp_recover_ratio",
+              "applied": true,
+              "target": "player",
+              "value": 2400
+            }
+          ],
+          "pending_effects": [],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 573,
+              "crit": false,
+              "hp_after": 3827,
+              "mp_after": 344
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 3827,
+        "mp": 344
+      },
+      "enemy": {
+        "hp": 9000,
+        "mp": 200
+      }
+    },
+    {
+      "name": "skill_shield",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "nenglianghudun"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "nenglianghudun",
+          "skill_name": "能量护盾",
+          "anim": "xinniandun",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 64,
+          "mp_after": 336,
+          "targets": [],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [
+            {
+              "kind": "add_buff",
+              "param": "def",
+              "value1": 2,
+              "value2": 0,
+              "applied": false,
+              "reason": "额外效果（buff / 状态）待口径，暂不改属性"
+            }
+          ],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 573,
+              "crit": false,
+              "hp_after": 7427,
+              "mp_after": 336
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7427,
+        "mp": 336
+      },
+      "enemy": {
+        "hp": 9000,
+        "mp": 200
+      }
+    },
+    {
+      "name": "defend",
+      "action": "DEFEND",
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "DEFEND",
+          "skill_key": null,
+          "skill_name": null,
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 400,
+          "targets": [],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 286,
+              "crit": false,
+              "hp_after": 7714,
+              "mp_after": 400
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7714,
+        "mp": 400
+      },
+      "enemy": {
+        "hp": 9000,
+        "mp": 200
+      }
+    },
+    {
+      "name": "failed_mp",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "roubo"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "roubo",
+          "skill_name": "肉搏攻击",
+          "anim": "quan01",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 0,
+          "targets": [],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": "能量不足"
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 573,
+              "crit": false,
+              "hp_after": 7427,
+              "mp_after": 0
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7427,
+        "mp": 0
+      },
+      "enemy": {
+        "hp": 9000,
+        "mp": 200
+      }
+    },
+    {
+      "name": "failed_unknown",
+      "action": {
+        "type": "SKILL",
+        "skill_key": "leiting"
+      },
+      "events": [
+        {
+          "round": 1,
+          "side": "player",
+          "action": "SKILL",
+          "skill_key": "leiting",
+          "skill_name": "纳米攻击",
+          "anim": "leiting",
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 400,
+          "targets": [],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": "尚未学会该技能"
+        },
+        {
+          "round": 1,
+          "side": "enemy",
+          "action": "ATTACK",
+          "skill_key": null,
+          "skill_name": "格斗·普通攻击",
+          "anim": null,
+          "level": 1,
+          "repeats": 1,
+          "mp_cost": 0,
+          "mp_after": 200,
+          "targets": [
+            {
+              "side": "player",
+              "kind": "hp_damage",
+              "damage": 573,
+              "crit": false,
+              "hp_after": 7427,
+              "mp_after": 400
+            }
+          ],
+          "heals": [],
+          "effects": [],
+          "pending_effects": [],
+          "failed": null
+        }
+      ],
+      "player": {
+        "hp": 7427,
+        "mp": 400
+      },
+      "enemy": {
+        "hp": 9000,
+        "mp": 200
+      }
+    }
+  ]
+}

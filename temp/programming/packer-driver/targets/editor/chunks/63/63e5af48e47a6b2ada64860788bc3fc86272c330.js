@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Button, Sprite, instantiate, Prefab, EditBox, assetManager, UITransform, v2, WebSocketManager, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _crd, ccclass, property, SYNC_INTERVAL_SEC, MAX_BET_AMOUNT, MIN_BET_AMOUNT, CATEGORIES, MiniGame2;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Button, Sprite, instantiate, Prefab, EditBox, assetManager, UITransform, v2, WebSocketManager, Logger, _dec, _dec2, _dec3, _dec4, _class, _class2, _descriptor, _descriptor2, _descriptor3, _crd, ccclass, property, SYNC_INTERVAL_SEC, MAX_BET_AMOUNT, MIN_BET_AMOUNT, CATEGORIES, MiniGame2;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -11,6 +11,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -34,6 +38,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       v2 = _cc.v2;
     }, function (_unresolved_2) {
       WebSocketManager = _unresolved_2.WebSocketManager;
+    }, function (_unresolved_3) {
+      Logger = _unresolved_3.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -683,7 +689,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
             this._optionCategorySig = this.categoryStructureSig(rows);
           } catch (e) {
-            console.warn('[MiniGame2] rebuildOptionItems', e);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[MiniGame2] rebuildOptionItems', e);
           }
 
           if (token !== this._rebuildToken) return;
@@ -704,7 +712,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
               type: Prefab
             }, (err, asset) => {
               if (err) {
-                console.warn('[MiniGame2] load MiniGame2ListPrefab failed:', err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('[MiniGame2] load MiniGame2ListPrefab failed:', err);
                 resolve(null);
                 return;
               }
@@ -941,7 +951,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
         }
 
         showError(text) {
-          console.warn('[MiniGame2]', text);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn('[MiniGame2]', text);
           if (!this.errorPanel) return; // 若之前没找到 Label，这里再兜底找一次，优先直系子节点名为 "Label" 的主文案
 
           if (!this.errorLabel) {

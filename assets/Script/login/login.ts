@@ -3,6 +3,7 @@ import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
 import { ChangePasswordPanel } from './ChangePasswordPanel';
 import { LoadingPanel } from './LoadingPanel';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
 
 @ccclass('Login')
@@ -65,7 +66,7 @@ export class Login extends Component {
     start() {
         // 修复点：未绑定 loginPanelNode 时提前 return，避免后续访问空指针
         if (!this.loginPanelNode) {
-            console.error('loginPanelNode 未绑定，请在编辑器属性面板拖拽绑定登录面板节点！');
+            Logger.error('loginPanelNode 未绑定，请在编辑器属性面板拖拽绑定登录面板节点！');
             return;
         }
         this.webSocketManager = WebSocketManager.getInstance();
@@ -105,12 +106,12 @@ export class Login extends Component {
                 if (!this.isValid) return;
                 this.continueAfterBoot();
             });
-            console.log('登录组件初始化完成（等待 Loading 启动检测）');
+            Logger.debug('登录组件初始化完成（等待 Loading 启动检测）');
             return;
         }
 
         this.continueAfterBoot();
-        console.log('登录组件初始化完成');
+        Logger.debug('登录组件初始化完成');
     }
 
     /** Loading 流程结束后：按 token 显示登录面板或自动鉴权 */
@@ -123,7 +124,7 @@ export class Login extends Component {
         const hasGameIds = this.webSocketManager.hasGameIds();
 
         if (token) {
-            console.log('检测到内存中的Token，准备自动登录');
+            Logger.debug('检测到内存中的Token，准备自动登录');
             if (this.tipLabel) this.tipLabel.string = '自动登录中...';
             this.loginPanelNode.active = false;
 
@@ -148,7 +149,7 @@ export class Login extends Component {
 
             // 不在这里提前自动跳转，改为等待 auth_response 成功后再决定跳转，避免脏本地ID导致误跳。
         } else {
-            console.log('内存中无Token，显示登录面板');
+            Logger.debug('内存中无Token，显示登录面板');
             this.loginPanelNode.active = true;
         }
     }
@@ -229,7 +230,7 @@ export class Login extends Component {
             false, // 登录时不需要token认证
             10000 // 10秒超时
         );
-        console.log('发送登录请求:', { account, type: GameConfig.MESSAGE_TYPES.LOGIN });
+        Logger.debug('发送登录请求:', { account, type: GameConfig.MESSAGE_TYPES.LOGIN });
         if (this.tipLabel) this.tipLabel.string = '登录中...';
     }
 
@@ -270,7 +271,7 @@ export class Login extends Component {
             false, // 注册时不需要token认证
             10000 // 10秒超时
         );
-        console.log('发送注册请求:', { account, type: GameConfig.MESSAGE_TYPES.REGISTER });
+        Logger.debug('发送注册请求:', { account, type: GameConfig.MESSAGE_TYPES.REGISTER });
         if (this.tipLabel) this.tipLabel.string = ''; // 清空提示
     }
 
@@ -309,7 +310,7 @@ export class Login extends Component {
                 // 注意：这里只保存userId，不保存characterId（因为还没有选择角色）
                 this.webSocketManager.saveGameIds(userId, ''); // characterId设为空字符串
             }
-            console.log('登录成功，user_id:', userId);
+            Logger.debug('登录成功，user_id:', userId);
             this.loginPanelNode.active = false; // 隐藏登录面板
             if (this.startButton) {
                 this.startButton.node.active = true;
@@ -322,7 +323,7 @@ export class Login extends Component {
         } else {
             const errorMessage = data.message || '登录失败';
             this.tipLabel.string = data.code === 429 ? errorMessage : `登录失败: ${errorMessage}`;
-            console.error('登录失败:', { code: data.code, message: errorMessage });
+            Logger.error('登录失败:', { code: data.code, message: errorMessage });
         }
     }
 
@@ -355,12 +356,12 @@ export class Login extends Component {
                 this.webSocketManager.saveGameIds(userId, ''); // characterId设为空字符串
             }
             this.tipLabel.string = '注册成功，请登录';
-            console.log('注册成功，user_id:', userId);
+            Logger.debug('注册成功，user_id:', userId);
         } else {
             // 处理错误响应
             const errorMessage = data.message || '注册失败';
             this.tipLabel.string = `注册失败: ${errorMessage}`;
-            console.error('注册失败:', { code: data.code, message: errorMessage });
+            Logger.error('注册失败:', { code: data.code, message: errorMessage });
         }
     }
 
@@ -376,7 +377,7 @@ export class Login extends Component {
      * 处理认证成功
      */
     private handleAuthSuccess(data: any) {
-        console.log('自动认证成功，用户ID:', data?.user_id);
+        Logger.debug('自动认证成功，用户ID:', data?.user_id);
         if (data?.user_id) {
             const serverCharacterId = data?.character_id || '';
             this.webSocketManager.saveGameIds(data.user_id, serverCharacterId);
@@ -404,7 +405,7 @@ export class Login extends Component {
      * 处理认证失败
      */
     private handleAuthFailure(data: any) {
-        console.log('自动认证失败:', data?.message);
+        Logger.debug('自动认证失败:', data?.message);
         try { this.webSocketManager.clearAll(); } catch {}
         if (this.tipLabel) this.tipLabel.string = '自动登录失败，请重新登录';
         if (this.loginPanelNode) this.loginPanelNode.active = true;
@@ -421,7 +422,7 @@ export class Login extends Component {
             (this.loadingPanel.isRunning() || this.loadingPanel.isConnectFailed())) {
             return;
         }
-        console.log('网络断开，显示登录面板');
+        Logger.debug('网络断开，显示登录面板');
         if (this.tipLabel) this.tipLabel.string = '网络连接已断开，请重新登录';
         if (this.loginPanelNode) this.loginPanelNode.active = true;
         if (this.startButton && this.startButton.node) this.startButton.node.active = false;
@@ -435,7 +436,7 @@ export class Login extends Component {
         if (this.isLogoutRequesting) return;
         this.isLogoutRequesting = true;
         if (this.logoutButton) this.logoutButton.interactable = false;
-        console.log('执行登出操作');
+        Logger.debug('执行登出操作');
         if (!this.webSocketManager) {
             this.webSocketManager = WebSocketManager.getInstance();
         }
@@ -482,7 +483,7 @@ export class Login extends Component {
      */
     private handleLogoutFailure(data: any) {
         this.clearLogoutState();
-        console.error('登出失败:', data?.message);
+        Logger.error('登出失败:', data?.message);
         if (this.tipLabel) this.tipLabel.string = '登出失败: ' + (data?.message || '');
         if (this.loginPanelNode) this.loginPanelNode.active = true;
         if (this.startButton && this.startButton.node) this.startButton.node.active = false;
@@ -589,22 +590,22 @@ export class Login extends Component {
         this.startButton.interactable = false;
         if (this.tipLabel) this.tipLabel.string = '正在进入选角…';
         if (this.startJumpMaskNode) this.startJumpMaskNode.active = true;
-        console.log('🔄 准备跳转到角色选择场景');
+        Logger.debug('🔄 准备跳转到角色选择场景');
         this.prefetchCharactersIfReady();
         try {
             director.loadScene(GameConfig.SCENE_NAMES.CHARACTER_SELECT, (error) => {
                 if (error) {
-                    console.error('❌ 跳转到角色选择场景失败:', error);
-                    console.log('💡 请检查场景名称和构建设置');
+                    Logger.error('❌ 跳转到角色选择场景失败:', error);
+                    Logger.debug('💡 请检查场景名称和构建设置');
                     if (this.isValid && this.startButton) this.startButton.interactable = true;
                     if (this.isValid && this.tipLabel) this.tipLabel.string = '';
                     if (this.isValid && this.startJumpMaskNode) this.startJumpMaskNode.active = false;
                 } else {
-                    console.log('✅ 跳转到角色选择场景成功');
+                    Logger.debug('✅ 跳转到角色选择场景成功');
                 }
             });
         } catch (error) {
-            console.error('❌ 场景跳转异常:', error);
+            Logger.error('❌ 场景跳转异常:', error);
             if (this.startButton) this.startButton.interactable = true;
             if (this.tipLabel) this.tipLabel.string = '';
             if (this.startJumpMaskNode) this.startJumpMaskNode.active = false;

@@ -1,7 +1,12 @@
 import { _decorator, Component, Node, Button, Widget, Sprite } from 'cc';
 import { MechAttributeTEST } from './MechAttributeTEST';
+import { MechSkillPanel } from './MechSkillPanel';
 import { robotGameEvents, RobotGameEvent } from '../global/RobotGameEvents';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
+
+/** 「技能」功能面板的节点名（functionPanels 里按名字找） */
+const SKILL_PANEL_NAME = 'MechSkill';
 
 @ccclass('RobotAttributePanel')
 export class RobotAttributePanel extends Component {
@@ -29,6 +34,9 @@ export class RobotAttributePanel extends Component {
     private panelStates: { [key: string]: boolean } = {};
     private currentOpenPanel: Node | null = null;
     private _lastShownPetId: string | null = null;
+    private initTimer: ReturnType<typeof setTimeout> | null = null;
+    /** 「技能面板未显式挂载」的提示只打一次，避免刷屏 */
+    private static _warnedSkillPanelUnmounted = false;
 
     onLoad() {
         robotGameEvents.on(RobotGameEvent.RobotDataUpdated, this.onGlobalRobotRefresh, this);
@@ -39,7 +47,9 @@ export class RobotAttributePanel extends Component {
         // 隐藏初始化日志
 
         // 延迟初始化，避免阻塞场景加载
-        setTimeout(() => {
+        this.initTimer = setTimeout(() => {
+            this.initTimer = null;
+            if (!this.node?.isValid) return;
             this.initializePanels();
             this.bindButtonEvents();
             this.bindDestroyButton();
@@ -50,7 +60,7 @@ export class RobotAttributePanel extends Component {
                 this.mechAttributeComponent = this.node.getComponentInChildren(MechAttributeTEST);
                 if (!this.mechAttributeComponent) {
                     // 只在找不到时记录警告
-                    console.warn('⚠️ [RobotAttributePanel] 未找到 MechAttributeTEST 组件');
+                    Logger.warn('⚠️ [RobotAttributePanel] 未找到 MechAttributeTEST 组件');
                 }
             }
 
@@ -67,7 +77,7 @@ export class RobotAttributePanel extends Component {
      */
     private initializePanels(): void {
         // 简化日志输出，减少初始化时间
-        console.log(`🔧 初始化面板状态 - 按钮:${this.functionButtons.length}, 面板:${this.functionPanels.length}`);
+        Logger.debug(`🔧 初始化面板状态 - 按钮:${this.functionButtons.length}, 面板:${this.functionPanels.length}`);
 
         // 初始化所有面板状态
         this.functionPanels.forEach((panel, index) => {
@@ -97,7 +107,7 @@ export class RobotAttributePanel extends Component {
             }
         });
 
-        console.log(`✅ RobotAttributePanel初始化完成 - 当前面板: ${this.currentOpenPanel?.name || '无'}`);
+        Logger.debug(`✅ RobotAttributePanel初始化完成 - 当前面板: ${this.currentOpenPanel?.name || '无'}`);
     }
     
     /**
@@ -147,14 +157,81 @@ export class RobotAttributePanel extends Component {
             // 隐藏日志
         }
     }
-    
+
+    // ========== 技能面板（MechSkill） ==========
+
+    /**
+     * 找到「技能」面板节点（优先 functionPanels 里名叫 MechSkill 的，其次子树兜底查找）。
+     */
+    public getSkillPanelNode(): Node | null {
+        const byList = this.functionPanels.find((p) => p && p.name === SKILL_PANEL_NAME);
+        if (byList) return byList;
+        return this.findNodeByName(this.node, SKILL_PANEL_NAME);
+    }
+
+    private findNodeByName(parent: Node | null, name: string): Node | null {
+        if (!parent) return null;
+        for (const c of parent.children) {
+            if (c.name === name) return c;
+        }
+        for (const c of parent.children) {
+            const deep = this.findNodeByName(c, name);
+            if (deep) return deep;
+        }
+        return null;
+    }
+
+    /**
+     * 拿（必要时**运行时兜底挂载**）技能面板组件。
+     *
+     * ⚠ 本组件刻意不新增 `@property` 引用 —— 场景里只要按约定搭好节点
+     *   （MechSkill/BG/Skill1/{Icon,SkillName,SkillLevel}），挂在 MechSkill 上的
+     *   `MechSkillPanel` **不需要拖任何属性**就能跑。
+     *
+     * 优先 `getComponent`（美术在编辑器里**显式挂载**的那个），取不到才 `addComponent` 兜底；
+     * 兜底时会提示一次，方便以后定位（避免"组件到底挂没挂"找不到）。
+     */
+    public ensureSkillPanel(): MechSkillPanel | null {
+        const panelNode = this.getSkillPanelNode();
+        if (!panelNode || !panelNode.isValid) {
+            Logger.warn('[RobotAttributePanel] 未找到技能面板节点 MechSkill');
+            return null;
+        }
+        let comp = panelNode.getComponent(MechSkillPanel);
+        if (!comp) {
+            comp = panelNode.addComponent(MechSkillPanel);
+            if (!RobotAttributePanel._warnedSkillPanelUnmounted) {
+                RobotAttributePanel._warnedSkillPanelUnmounted = true;
+                Logger.info(
+                    '[RobotAttributePanel] MechSkill 未显式挂载 MechSkillPanel，已运行时自动补上；' +
+                    '建议在编辑器把这个组件挂到 MechSkill 上，方便以后定位'
+                );
+            }
+        }
+        return comp;
+    }
+
+    /**
+     * 把当前选中的机甲同步给技能面板（切面板 / 换机甲 / 技能升级后都该调）。
+     * @param petId 不传则沿用上次选中的机甲
+     */
+    public syncSkillPanel(petId?: string | null): void {
+        const comp = this.ensureSkillPanel();
+        if (!comp) return;
+        const id = petId !== undefined && petId !== null && String(petId).trim() !== ''
+            ? String(petId).trim()
+            : this._lastShownPetId;
+        if (!id) return;
+        comp.setPetId(id);
+    }
+
     /**
      * 切换到指定面板
      */
     public switchToPanel(panelName: string): void {
         const targetPanel = this.functionPanels.find(p => p.name === panelName);
         if (!targetPanel) {
-            console.warn(`⚠️ 未找到面板: ${panelName}`);
+            Logger.warn(`⚠️ 未找到面板: ${panelName}`);
             return;
         }
         
@@ -191,6 +268,11 @@ export class RobotAttributePanel extends Component {
         panel.active = true;
         this.panelStates[panelName] = true;
         this.currentOpenPanel = panel;
+
+        // 技能面板：切进来时同步当前机甲的技能列表（数据可能在别处变过）
+        if (panelName === SKILL_PANEL_NAME) {
+            this.syncSkillPanel();
+        }
         
         // 控制按钮的Sprite组件显示/隐藏
         this.functionButtons.forEach((button, buttonIndex) => {
@@ -277,7 +359,7 @@ export class RobotAttributePanel extends Component {
         if (this.functionPanels.length > 0) {
             this.showPanel(this.functionPanels[0].name);
         } else {
-            console.warn('⚠️ [RobotAttributePanel] 没有功能面板可用');
+            Logger.warn('⚠️ [RobotAttributePanel] 没有功能面板可用');
         }
         
         // 性能优化：立即调用，不延迟
@@ -298,12 +380,23 @@ export class RobotAttributePanel extends Component {
             if (this.mechAttributeComponent && this.mechAttributeComponent.node && this.mechAttributeComponent.node.isValid) {
                 this.mechAttributeComponent.showSelectedRobot(petId);
             } else {
-                console.error('❌ [RobotAttributePanel] 找不到 MechAttributeTEST 组件');
+                Logger.error('❌ [RobotAttributePanel] 找不到 MechAttributeTEST 组件');
             }
+        }
+
+        // 技能面板同样跟着当前机甲走（失败不影响属性面板）
+        try {
+            this.syncSkillPanel(petId);
+        } catch (err) {
+            Logger.warn('[RobotAttributePanel] 同步技能面板失败:', err);
         }
     }
     
     onDestroy() {
+        if (this.initTimer !== null) {
+            clearTimeout(this.initTimer);
+            this.initTimer = null;
+        }
         robotGameEvents.off(RobotGameEvent.RobotDataUpdated, this.onGlobalRobotRefresh, this);
         robotGameEvents.off(RobotGameEvent.BattleTeamUpdated, this.onGlobalRobotRefresh, this);
         // 清理事件监听

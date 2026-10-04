@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, director, GameConfig, WebSocketManager, MiniGame1, _dec, _dec2, _dec3, _dec4, _dec5, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _class3, _crd, ccclass, property, LEVEL_TOTAL_EXP, GameCommonData;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, director, GameConfig, WebSocketManager, MiniGame1, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _class3, _crd, ccclass, property, LEVEL_TOTAL_EXP, GameCommonData;
 
   function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -23,6 +23,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("MiniGame1", "./MiniGame1", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -39,6 +43,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       WebSocketManager = _unresolved_3.WebSocketManager;
     }, function (_unresolved_4) {
       MiniGame1 = _unresolved_4.MiniGame1;
+    }, function (_unresolved_5) {
+      Logger = _unresolved_5.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -172,6 +178,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           /** 角色当前等级（1~60） */
           _initializerDefineProperty(this, "_level", _descriptor, this);
 
+          this.refreshPlayerInfoTimer = null;
+          this.refreshPlayerInfoReject = null;
+
           /** 角色当前累计总经验（不做负数校验，调用时注意） */
           _initializerDefineProperty(this, "_totalExp", _descriptor2, this);
 
@@ -183,20 +192,30 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.wsManager = null;
 
+          /** 是否已成功发起过玩家信息请求（幂等保护，避免事件+轮询重复请求） */
+          this._playerInfoRequested = false;
+
+          /** 等待认证就绪的兜底轮询定时器 */
+          this._readyPollTimer = null;
+
           /**
            * 认证响应回调（关键修复：认证成功后再请求数据）
            */
           this.onAuthResponse = data => {
             if (data && data.success) {
-              console.log('✅ [GameCommonData] 认证成功，准备请求玩家信息'); // 认证成功后，延迟一小段时间确保服务器端current_user_id已设置
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [GameCommonData] 认证成功，准备请求玩家信息'); // 认证成功后，延迟一小段时间确保服务器端current_user_id已设置
 
               this.scheduleOnce(() => {
-                if (this.validateDataIntegrity()) {
-                  this.requestPlayerInfo();
-                }
+                // 修复：改为走统一的就绪检查（含 isSessionAuthenticated 判据），
+                // 未就绪时登记等待而非直接失败弹 Loading。
+                this._tryRequestPlayerInfoWhenReady();
               }, 0.1);
             } else {
-              console.warn('⚠️ [GameCommonData] 认证失败，无法请求玩家信息');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [GameCommonData] 认证失败，无法请求玩家信息');
             }
           };
 
@@ -204,9 +223,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            * 网络连接成功回调（如果已经认证，立即请求；否则等待认证）
            */
           this.onNetworkConnect = () => {
-            console.log('📡 [GameCommonData] 网络连接成功'); // 如果已经连接且有完整凭证，检查是否已认证
-            // 注意：auth_request是自动发送的，我们等待auth_response后再请求数据
-            // 这里只做备用检查
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📡 [GameCommonData] 网络连接成功'); // 修复：连接成功也触发一次就绪检查；若此时已鉴权（如不断线返回）则立即请求，
+            // 否则登记等待 auth_response。避免只依赖单一事件导致漏触发。
+
+            this._tryRequestPlayerInfoWhenReady();
           };
 
           /**
@@ -214,24 +236,32 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            * 关键修复：只处理 is_self=true 的响应，避免被好友信息污染
            */
           this.onPlayerInfo = data => {
-            console.log('📥 [GameCommonData] 收到player_info响应（原始数据）:', data); // ✅ 关键修复：支持标准响应格式（数据在 data.data 中）
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📥 [GameCommonData] 收到player_info响应（原始数据）:', data); // ✅ 关键修复：支持标准响应格式（数据在 data.data 中）
 
             var responseData = data;
 
             if (data && data.success && data.data && typeof data.data === 'object') {
               // 标准格式：合并根级别字段和 data 字段
               responseData = _extends({}, data, data.data);
-              console.log('📥 [GameCommonData] 检测到标准响应格式，合并数据字段');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('📥 [GameCommonData] 检测到标准响应格式，合并数据字段');
             }
 
             if (!responseData || !responseData.success) {
               var _responseData;
 
-              console.warn('⚠️ [GameCommonData] 收到无效的玩家信息响应:', responseData);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [GameCommonData] 收到无效的玩家信息响应:', responseData);
               var code = Number(((_responseData = responseData) == null ? void 0 : _responseData.code) || 0); // 角色被删/会话失效时，直接强制退出到登录，避免停留在空壳 Game 场景。
 
               if (code === 401 || code === 404) {
-                console.error("\uD83D\uDEA8 [GameCommonData] get_player \u5931\u8D25(code=" + code + ")\uFF0C\u5F3A\u5236\u56DE\u767B\u5F55");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\uD83D\uDEA8 [GameCommonData] get_player \u5931\u8D25(code=" + code + ")\uFF0C\u5F3A\u5236\u56DE\u767B\u5F55");
 
                 try {
                   this.wsManager.clearAll();
@@ -254,7 +284,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (responseData.is_self !== true) {
-              console.log('📥 [GameCommonData] 忽略非自己的 player_info 响应（is_self=false），避免数据污染:', {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('📥 [GameCommonData] 忽略非自己的 player_info 响应（is_self=false），避免数据污染:', {
                 is_self: responseData.is_self,
                 role_name: responseData.role_name,
                 request_id: responseData.request_id
@@ -265,7 +297,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (responseData.request_id !== undefined) {
-              console.log('📥 [GameCommonData] 收到带 request_id 的响应:', responseData.request_id);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('📥 [GameCommonData] 收到带 request_id 的响应:', responseData.request_id);
             }
 
             var level = Number(responseData.level || 1);
@@ -276,7 +310,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this._level = this.clampLevel(level);
             this._totalExp = Math.max(0, totalExp);
             this._roleName = roleName;
-            console.log("\u2705 [GameCommonData] \u73A9\u5BB6\u4FE1\u606F\u5DF2\u66F4\u65B0\uFF08\u786E\u8BA4\u662F\u81EA\u5DF1\u7684\u6570\u636E\uFF09 - \u7B49\u7EA7: " + this._level + ", \u7ECF\u9A8C: " + this._totalExp + ", \u540D\u79F0: " + this._roleName); // 触发数据更新事件，通知其他组件（如 TopRole）
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u2705 [GameCommonData] \u73A9\u5BB6\u4FE1\u606F\u5DF2\u66F4\u65B0\uFF08\u786E\u8BA4\u662F\u81EA\u5DF1\u7684\u6570\u636E\uFF09 - \u7B49\u7EA7: " + this._level + ", \u7ECF\u9A8C: " + this._totalExp + ", \u540D\u79F0: " + this._roleName); // 触发数据更新事件，通知其他组件（如 TopRole）
 
             var updateData = {
               level: this._level,
@@ -292,7 +328,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            */
           this.onAddExpResponse = data => {
             if (!data || !data.success) {
-              console.warn('⚠️ [GameCommonData] 收到无效的增加经验响应');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [GameCommonData] 收到无效的增加经验响应');
               return;
             }
 
@@ -303,7 +341,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             this._level = this.clampLevel(level);
             this._totalExp = Math.max(0, totalExp);
-            console.log("\u2705 [GameCommonData] \u7ECF\u9A8C\u5DF2\u66F4\u65B0 - \u7B49\u7EA7: " + this._level + " (" + (levelUpCount > 0 ? "\u5347\u7EA7\u4E86 " + levelUpCount + " \u7EA7" : '未升级') + "), \u7ECF\u9A8C: " + this._totalExp); // 触发数据更新事件
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u2705 [GameCommonData] \u7ECF\u9A8C\u5DF2\u66F4\u65B0 - \u7B49\u7EA7: " + this._level + " (" + (levelUpCount > 0 ? "\u5347\u7EA7\u4E86 " + levelUpCount + " \u7EA7" : '未升级') + "), \u7ECF\u9A8C: " + this._totalExp); // 触发数据更新事件
 
             this.node.emit('data_updated', {
               level: this._level,
@@ -329,7 +369,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            */
           this.onCharacterChanged = data => {
             if (data && data.reason === 'character_id_cleared') {
-              console.log('🗑️ [GameCommonData] 检测到角色切换，清除内部状态'); // 清除所有内部状态
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('🗑️ [GameCommonData] 检测到角色切换，清除内部状态'); // 清除所有内部状态
 
               this._level = 1;
               this._totalExp = 0;
@@ -347,7 +389,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onLoad() {
           // 简单单例：同场景只保留一个
           if (GameCommonData.instance && GameCommonData.instance !== this) {
-            console.warn('[GameCommonData] 场景内已存在实例，自动销毁多余的一个。');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[GameCommonData] 场景内已存在实例，自动销毁多余的一个。');
             this.destroy();
             return;
           }
@@ -379,22 +423,100 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         start() {
           (_crd && MiniGame1 === void 0 ? (_reportPossibleCrUseOfMiniGame({
             error: Error()
-          }), MiniGame1) : MiniGame1).mountFromSceneRoot(this.node); // 延迟请求玩家信息，避免阻塞场景加载
-          // 如果WebSocket已连接，立即尝试请求；否则等待network_connect事件
+          }), MiniGame1) : MiniGame1).mountFromSceneRoot(this.node); // 修复（时序竞态）：不再用 300ms 硬延迟赌凭证就绪。
+          // 改为「已就绪立即请求；未就绪则等认证事件」——避免预热期 Token 尚未落盘时
+          // 误判为「Token不存在」而弹出全屏 Loading 遮挡剧情交互。
 
-          this.scheduleOnce(() => {
-            // 如果已经连接且有完整凭证，立即请求
-            if (this.wsManager.isConnected() && this.validateDataIntegrity()) {
-              console.log('✅ [GameCommonData] WebSocket已连接且数据完整，立即请求玩家信息');
-              this.requestPlayerInfo();
-            } else {
-              console.log('⏳ [GameCommonData] 等待WebSocket连接和凭证准备完成...'); // 如果还没准备好，等待network_connect事件触发请求（已在onNetworkConnect中处理）
+          this._tryRequestPlayerInfoWhenReady();
+        }
+        /** 就绪判据：连接已建立 + 会话已鉴权 + 三证齐全 */
+
+
+        _isReadyForPlayerInfo() {
+          if (!this.wsManager.isConnected()) return false; // 权威判据：auth_response(success) 后为真；断线/清凭证即失效
+
+          if (!this.wsManager.isSessionAuthenticated()) return false;
+          return this.validateDataIntegrity();
+        }
+        /**
+         * 尝试请求玩家信息；未就绪则登记等待，由 onAuthResponse / onNetworkConnect / 兜底轮询唤醒。
+         */
+
+
+        _tryRequestPlayerInfoWhenReady() {
+          if (this._playerInfoRequested) return;
+
+          if (this._isReadyForPlayerInfo()) {
+            this._playerInfoRequested = true;
+
+            this._stopReadyPoll();
+
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ [GameCommonData] 已就绪，立即请求玩家信息');
+            this.requestPlayerInfo();
+            return;
+          }
+
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('⏳ [GameCommonData] 尚未就绪，等待认证完成...');
+
+          this._startReadyPoll();
+        }
+        /** 兜底轮询：应对「事件早于本组件注册」或极端慢的握手，避免永久挂起 */
+
+
+        _startReadyPoll() {
+          if (this._readyPollTimer !== null) return;
+          var elapsed = 0;
+          var STEP = 200;
+          var TIMEOUT = 8000;
+          this._readyPollTimer = setInterval(() => {
+            elapsed += STEP;
+
+            if (this._playerInfoRequested) {
+              this._stopReadyPoll();
+
+              return;
             }
-          }, 0.3); // 延迟300ms，确保AutoLoginUser已经应用凭证
+
+            if (this._isReadyForPlayerInfo()) {
+              this._tryRequestPlayerInfoWhenReady();
+
+              return;
+            }
+
+            if (elapsed >= TIMEOUT) {
+              this._stopReadyPoll();
+
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [GameCommonData] 等待认证就绪超时，交由 GameControl 状态监控处理');
+            }
+          }, STEP);
+        }
+
+        _stopReadyPoll() {
+          if (this._readyPollTimer !== null) {
+            clearInterval(this._readyPollTimer);
+            this._readyPollTimer = null;
+          }
         }
 
         onDestroy() {
-          // 取消 WebSocket 监听
+          if (this.refreshPlayerInfoTimer !== null) {
+            clearTimeout(this.refreshPlayerInfoTimer);
+            this.refreshPlayerInfoTimer = null;
+          } // 清理就绪轮询（修复：避免组件销毁后定时器继续运行）
+
+
+          this._stopReadyPoll();
+
+          var rejectRefresh = this.refreshPlayerInfoReject;
+          this.refreshPlayerInfoReject = null;
+          if (rejectRefresh) rejectRefresh(new Error('刷新玩家信息超时')); // 取消 WebSocket 监听
+
           if (this.wsManager) {
             this.wsManager.off('player_info', this.onPlayerInfo, this);
             this.wsManager.off('player_info_response', this.onPlayerInfo, this); // 新格式
@@ -429,7 +551,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), WebSocketManager) : WebSocketManager).getInstance(); // 检查WebSocket连接
 
           if (!wsManager.isConnected()) {
-            console.error('❌ [GameCommonData] WebSocket未连接');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [GameCommonData] WebSocket未连接');
             this.triggerLoadingOnDataMissing('WebSocket未连接');
             return false;
           } // 检查Token
@@ -438,7 +562,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var token = wsManager.getToken();
 
           if (!token || token.length === 0) {
-            console.error('❌ [GameCommonData] Token不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [GameCommonData] Token不存在');
             this.triggerLoadingOnDataMissing('Token不存在');
             return false;
           } // 检查用户ID
@@ -447,7 +573,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var userId = wsManager.getUserId();
 
           if (!userId || userId.length === 0) {
-            console.error('❌ [GameCommonData] 用户ID不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [GameCommonData] 用户ID不存在');
             this.triggerLoadingOnDataMissing('用户ID不存在');
             return false;
           } // 检查角色ID
@@ -456,7 +584,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var characterId = wsManager.getCharacterId();
 
           if (!characterId || characterId.length === 0) {
-            console.error('❌ [GameCommonData] 角色ID不存在');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [GameCommonData] 角色ID不存在');
             this.triggerLoadingOnDataMissing('角色ID不存在');
             return false;
           }
@@ -471,7 +601,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         triggerLoadingOnDataMissing(reason) {
           var _this$node$scene;
 
-          console.error("\uD83D\uDEA8 [GameCommonData] \u6570\u636E\u7F3A\u5931\uFF1A" + reason + "\uFF0C\u89E6\u53D1Loading\u9762\u677F"); // 通过事件通知GameControl显示Loading
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).error("\uD83D\uDEA8 [GameCommonData] \u6570\u636E\u7F3A\u5931\uFF1A" + reason + "\uFF0C\u89E6\u53D1Loading\u9762\u677F"); // 通过事件通知GameControl显示Loading
 
           this.node.emit('data_integrity_failed', {
             reason
@@ -529,8 +661,34 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         refreshPlayerInfo(callback) {
           return new Promise((resolve, reject) => {
-            // 设置一次性监听器
+            var settled = false;
+
+            var settleReject = err => {
+              if (settled) return;
+              settled = true;
+
+              if (this.refreshPlayerInfoReject === settleReject) {
+                this.refreshPlayerInfoReject = null;
+              }
+
+              reject(err);
+            };
+
+            this.refreshPlayerInfoReject = settleReject; // 设置一次性监听器
+
             var onDataUpdated = data => {
+              if (settled) return;
+              settled = true;
+
+              if (this.refreshPlayerInfoTimer !== null) {
+                clearTimeout(this.refreshPlayerInfoTimer);
+                this.refreshPlayerInfoTimer = null;
+              }
+
+              if (this.refreshPlayerInfoReject === settleReject) {
+                this.refreshPlayerInfoReject = null;
+              }
+
               if (this.node && this.node.isValid) {
                 this.node.off('data_updated', onDataUpdated);
               }
@@ -543,12 +701,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             this.requestPlayerInfo(); // 设置超时（5秒）
 
-            setTimeout(() => {
-              if (this.node && this.node.isValid) {
+            if (this.refreshPlayerInfoTimer !== null) {
+              clearTimeout(this.refreshPlayerInfoTimer);
+            }
+
+            this.refreshPlayerInfoTimer = setTimeout(() => {
+              var _this$node;
+
+              this.refreshPlayerInfoTimer = null;
+
+              if ((_this$node = this.node) != null && _this$node.isValid) {
                 this.node.off('data_updated', onDataUpdated);
               }
 
-              reject(new Error('刷新玩家信息超时'));
+              settleReject(new Error('刷新玩家信息超时'));
             }, 5000);
           });
         }
@@ -568,19 +734,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             case 'player':
             case 'all':
               this.refreshPlayerInfo(callback).catch(err => {
-                console.error('❌ 刷新玩家信息失败:', err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('❌ 刷新玩家信息失败:', err);
               });
               break;
 
             case 'exp':
               // 如果只需要经验，也刷新完整玩家信息（因为服务器返回的是完整数据）
               this.refreshPlayerInfo(callback).catch(err => {
-                console.error('❌ 刷新经验信息失败:', err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('❌ 刷新经验信息失败:', err);
               });
               break;
 
             default:
-              console.warn("\u26A0\uFE0F \u672A\u77E5\u7684\u6570\u636E\u7C7B\u578B: " + dataType);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F \u672A\u77E5\u7684\u6570\u636E\u7C7B\u578B: " + dataType);
           }
         }
         /**
@@ -589,7 +761,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         forceRefresh() {
-          console.log('🔄 [GameCommonData] 强制刷新所有数据');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 [GameCommonData] 强制刷新所有数据');
           this.refreshData('all');
         } // —— 网络消息处理（数据中心核心逻辑）—— //
 
@@ -604,14 +778,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           // 验证数据完整性
           if (!this.validateDataIntegrity()) {
-            console.error('❌ [GameCommonData] 数据不完整，无法请求玩家信息');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [GameCommonData] 数据不完整，无法请求玩家信息');
             return;
           }
 
           var cid = ((_this$wsManager$getCh = (_this$wsManager = this.wsManager).getCharacterId) == null ? void 0 : _this$wsManager$getCh.call(_this$wsManager)) || undefined;
 
           if (!cid) {
-            console.warn('⚠️ [GameCommonData] 未选择角色，无法请求玩家信息');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [GameCommonData] 未选择角色，无法请求玩家信息');
             this.triggerLoadingOnDataMissing('角色ID不存在');
             return;
           } // 构建请求数据
@@ -627,7 +805,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             requestData.user_id = userId; // 测试模式：提供user_id作为备用验证
           }
 
-          console.log('📤 [GameCommonData] 发送请求玩家信息:', requestData); // 使用request方法，自动生成request_id并匹配响应
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📤 [GameCommonData] 发送请求玩家信息:', requestData); // 使用request方法，自动生成request_id并匹配响应
 
           this.wsManager.request('get_player', requestData, response => {
             // 通过request_id匹配的响应回调（组件销毁后直接忽略，避免跨场景回调噪音）
@@ -638,12 +818,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (typeof this.onPlayerInfo === 'function') {
               this.onPlayerInfo(response);
             } else {
-              console.error('❌ [GameCommonData] onPlayerInfo 回调不存在，忽略本次响应');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ [GameCommonData] onPlayerInfo 回调不存在，忽略本次响应');
             }
           }, true, // 需要认证
           10000 // 10秒超时
           );
-          console.log('📤 [GameCommonData] 请求已发送（使用request方法）');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📤 [GameCommonData] 请求已发送（使用request方法）');
         }
 
         // —— 同步接口（仅供内部使用，外部组件应通过事件监听）—— //

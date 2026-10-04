@@ -1,6 +1,7 @@
 import { _decorator, Component, Node } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -19,10 +20,10 @@ export class AutoLoginUser extends Component {
     private isAuthenticated: boolean = false;
 
     onLoad() {
-        console.log('👤 AutoLoginUser: Auto-login script loaded.');
+        Logger.debug('👤 AutoLoginUser: Auto-login script loaded.');
         this.wsManager = WebSocketManager.getInstance();
         if (!this.wsManager) {
-            console.error('❌ AutoLoginUser: WebSocketManager instance not found.');
+            Logger.error('❌ AutoLoginUser: WebSocketManager instance not found.');
             return;
         }
 
@@ -67,7 +68,7 @@ export class AutoLoginUser extends Component {
      * 网络连接成功回调
      */
     private onNetworkConnect = () => {
-        console.log('👤 AutoLoginUser: 网络连接成功，凭证已自动应用到WebSocketManager');
+        Logger.debug('👤 AutoLoginUser: 网络连接成功，凭证已自动应用到WebSocketManager');
         // 凭证已经在autoLogin中应用，WebSocketManager连接成功后会自动发送auth_request验证token
         // 但为了确保user_id和character_id也被发送（测试模式），我们也手动发送一次
         this.scheduleOnce(() => {
@@ -80,7 +81,7 @@ export class AutoLoginUser extends Component {
      */
     private onAuthResponse = (data: any) => {
         if (data.success) {
-            console.log('✅ [AutoLoginUser] Token验证成功，自动登录成功');
+            Logger.debug('✅ [AutoLoginUser] Token验证成功，自动登录成功');
 
             // 断线重连容错：服务端可能返回 character_id=null，
             // 此时优先使用 WebSocketManager 当前内存里的 character_id，避免把角色覆盖成 ''。
@@ -91,19 +92,19 @@ export class AutoLoginUser extends Component {
             
             // 关键修复：更新 user_id（服务器端返回的 user_id 是权威的）
             if (data.user_id) {
-                console.log(`✅ [AutoLoginUser] 更新 user_id: ${data.user_id}`);
+                Logger.debug(`✅ [AutoLoginUser] 更新 user_id: ${data.user_id}`);
                 this.currentUserId = data.user_id;
             }
             
             // 如果服务器端返回了 character_id（说明自动选择角色成功），使用服务器返回的
             if (data.character_id) {
-                console.log(`✅ [AutoLoginUser] 服务器端已自动选择角色: ${data.character_id}`);
+                Logger.debug(`✅ [AutoLoginUser] 服务器端已自动选择角色: ${data.character_id}`);
                 this.currentCharacterId = data.character_id;
                 // 重新应用凭证（包含更新后的 user_id 和 character_id）
                 this.applyCredentials();
                 // 标记为已认证
                 this.isAuthenticated = true;
-                console.log('✅ [AutoLoginUser] 认证完成，可以正常使用游戏功能');
+                Logger.debug('✅ [AutoLoginUser] 认证完成，可以正常使用游戏功能');
             } else {
                 // 服务器未返回角色ID时，主动清空本地角色，避免脏ID导致状态错乱/误跳转。
                 this.currentCharacterId = '';
@@ -112,7 +113,7 @@ export class AutoLoginUser extends Component {
                 this.isAuthenticated = true;
             }
         } else {
-            console.error('❌ [AutoLoginUser] Token验证失败:', data.message);
+            Logger.error('❌ [AutoLoginUser] Token验证失败:', data.message);
             this.isAuthenticated = false;
             // Token验证失败，但这里不做自动登录，因为可能需要用户输入账号密码
             // 如果需要自动登录，可以在这里调用登录接口（如果有账号密码的话）
@@ -135,9 +136,9 @@ export class AutoLoginUser extends Component {
         this.currentCharacterId = existingCharacterId || '';
         
         if (this.currentToken) {
-            console.log('👤 AutoLoginUser: 检测到本地 token，准备自动认证');
+            Logger.debug('👤 AutoLoginUser: 检测到本地 token，准备自动认证');
         } else {
-            console.log('👤 AutoLoginUser: 本地 token 不存在，自动登录跳过');
+            Logger.debug('👤 AutoLoginUser: 本地 token 不存在，自动登录跳过');
         }
     }
 
@@ -146,7 +147,7 @@ export class AutoLoginUser extends Component {
      */
     private onLoginResponse = (data: any) => {
         if (data.success && data.token && data.user_id) {
-            console.log('👤 AutoLoginUser: 检测到登录成功，更新凭证');
+            Logger.debug('👤 AutoLoginUser: 检测到登录成功，更新凭证');
             this.currentToken = data.token;
             this.currentUserId = data.user_id;
             // 注意：登录时还没有 character_id，所以不更新它
@@ -159,7 +160,7 @@ export class AutoLoginUser extends Component {
      */
     private onSelectCharacterResponse = (data: any) => {
         if (data.success && data.character_id) {
-            console.log('✅ [AutoLoginUser] 检测到选择角色成功，更新凭证');
+            Logger.debug('✅ [AutoLoginUser] 检测到选择角色成功，更新凭证');
             const userId = this.wsManager.getUserId();
             if (userId) {
                 this.currentUserId = userId;
@@ -169,7 +170,7 @@ export class AutoLoginUser extends Component {
             this.applyCredentials();
             // 标记为已认证
             this.isAuthenticated = true;
-            console.log('✅ [AutoLoginUser] 选择角色完成，认证状态已更新');
+            Logger.debug('✅ [AutoLoginUser] 选择角色完成，认证状态已更新');
         }
     };
 
@@ -178,7 +179,7 @@ export class AutoLoginUser extends Component {
      */
     private onCreateCharacterResponse = (data: any) => {
         if (data.success && data.character_id) {
-            console.log('👤 AutoLoginUser: 检测到创建角色成功，更新凭证');
+            Logger.debug('👤 AutoLoginUser: 检测到创建角色成功，更新凭证');
             const userId = this.wsManager.getUserId();
             const token = this.wsManager.getToken();
             if (userId) {
@@ -214,30 +215,30 @@ export class AutoLoginUser extends Component {
      * 执行自动登录
      */
     private autoLogin() {
-        console.log('👤 AutoLoginUser: Setting credentials...');
+        Logger.debug('👤 AutoLoginUser: Setting credentials...');
         
         // 应用凭证
         this.applyCredentials();
 
         // 没有 token 就不做自动登录
         if (!this.currentToken) {
-            console.log('👤 AutoLoginUser: token 不存在，自动登录跳过');
+            Logger.debug('👤 AutoLoginUser: token 不存在，自动登录跳过');
             return;
         }
         
         // Ensure connection
         if (!this.wsManager.isConnected()) {
-            console.log('👤 AutoLoginUser: WebSocket not connected. Initiating connection...');
+            Logger.debug('👤 AutoLoginUser: WebSocket not connected. Initiating connection...');
             this.wsManager.connect();
         } else {
-            console.log('👤 AutoLoginUser: WebSocket already connected.');
+            Logger.debug('👤 AutoLoginUser: WebSocket already connected.');
             // 认证请求由 WebSocketManager 在握手/重连阶段自动触发
         }
 
-        console.log('✅ AutoLoginUser: Credentials set successfully.');
-        console.log(`   Token: ${this.currentToken.substring(0, 10)}...`);
-        console.log(`   UserID: ${this.currentUserId}`);
-        console.log(`   CharID: ${this.currentCharacterId}`);
+        Logger.debug('✅ AutoLoginUser: Credentials set successfully.');
+        Logger.debug(`   Token: ${this.currentToken.substring(0, 10)}...`);
+        Logger.debug(`   UserID: ${this.currentUserId}`);
+        Logger.debug(`   CharID: ${this.currentCharacterId}`);
     }
     
     /**
@@ -252,7 +253,7 @@ export class AutoLoginUser extends Component {
                 token: token,
                 character_id: this.currentCharacterId
             };
-            console.log('🔄 [AutoLoginUser] 发送认证请求');
+            Logger.debug('🔄 [AutoLoginUser] 发送认证请求');
             this.wsManager.send(authMsg, false, true);
         }
     }

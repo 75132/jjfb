@@ -229,33 +229,15 @@ def load_valid_item_ids():
             }
         print(f'✅ [BagHandler] 已加载 {len(_valid_item_ids)} 个有效物品ID（包含装备），{len(_item_config)} 条堆叠配置')
     else:
-        # 如果找不到文件，使用默认范围（1-75）
-        _valid_item_ids = list(range(1, 76))
+        # 如果找不到文件，使用默认范围（1-89；89 = 最后一行技能书）
+        _valid_item_ids = list(range(1, 90))
         _item_config = {}
-        print(f'⚠️ [BagHandler] 未找到Items.json，使用默认物品ID范围 1-75')
+        print(f'⚠️ [BagHandler] 未找到Items.json，使用默认物品ID范围 1-89')
 
 def load_valid_item_ids_data():
     """加载 Items.json 数据（返回完整数据，不修改全局变量）"""
-    try:
-        # 优先从 server/data/Items.json 加载（新位置）
-        base_dir = os.path.dirname(os.path.dirname(__file__))  # server
-        possible_paths = [
-            os.path.join(base_dir, 'data', 'Items.json'),  # server/data/Items.json（新位置，优先）
-            os.path.join(os.path.dirname(__file__), 'json', 'Items.json'),  # server/handlers/json/Items.json（旧位置，兼容）
-            os.path.join(base_dir, 'assets', 'resources', 'json', 'Items.json'),
-            os.path.join(os.path.dirname(__file__), '..', 'assets', 'resources', 'json', 'Items.json'),
-            'assets/resources/json/Items.json',
-            '../assets/resources/json/Items.json',
-        ]
-        
-        for path in possible_paths:
-            if os.path.exists(path):
-                with open(path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-        return []
-    except Exception as e:
-        print(f'❌ [BagHandler] 加载Items.json失败: {e}')
-        return []
+    from config_loader import load_items_json
+    return load_items_json()
 
 # 装备系统相关函数已移动到 equipment_handler.py
 # _equip_item_to_pet 和 _remove_equipment_attributes 已移动到 equipment_handler.py
@@ -1110,10 +1092,88 @@ async def handle_bag_use_item(websocket, data, current_character_id):
                 )
                 return
 
+        # ========== 技能书：单独分支（必须在加载 item_data 之前拦下）==========
+        # 技能书一次「使用」可能消耗 1/2/3 本（升级到 Lv2/3/4），
+        # 与通用的「效果成功 → 扣 1 个」不是同一套数量语义，必须单独处理并 return。
+        # ⚠ 放在 `if item_data:` 之外：item_data 取不到时下面的流程会**静默扣掉 1 个**，
+        #   而技能书只依赖 item_id，不该受「物品配置是否加载成功」影响。
+        # 判定与落库全在 skill_handler.apply_skill_book（与技能面板按钮同口径）。
+        try:
+            from . import skill_handler as _skill_handler
+        except ImportError:
+            _skill_handler = None
+        if _skill_handler is not None and _skill_handler.skill_book_svc.is_skill_book(item_id):
+            if target_norm != "pet" or not pet_id:
+                await utils.send_error_response(
+                    websocket, 'bag_use_item', '技能书只能对机甲使用，请先选择机甲',
+                    code=400, request_data=data, error_code='SKILL_BOOK_NEED_PET')
+                return
+            book_res = await _skill_handler.apply_skill_book(
+                user['_id'], cid, pet_id, item_id)
+            if not book_res.get('ok'):
+                await utils.send_error_response(
+                    websocket, 'bag_use_item',
+                    book_res.get('reason') or '技能书使用失败',
+                    code=400, request_data=data, error_code='SKILL_BOOK_DENIED')
+                return
+            action_cn = '学会' if book_res.get('action') == 'learn' else '升级'
+            book_msg = '%s的技能「%s」%s至 Lv%s' % (
+                book_res.get('pet_name') or '机甲', book_res.get('name') or '',
+                action_cn, book_res.get('to_level'))
+            await utils.send_success_response(
+                websocket, 'bag_use_item',
+                data={
+                    'item_id': item_id,
+                    'used': True,
+                    # 与其它「对机甲使用」的道具保持同一形状：客户端据此清机甲缓存 + 广播刷新
+                    'target_type': 'Pet',
+                    'pet_id': book_res.get('pet_id'),
+                    'target_name': book_res.get('pet_name'),
+                    # 复用客户端既有的 effect_result 提示链
+                    'effect_result': {
+                        'success': True,
+                        'message': book_msg,
+                        'effect_type': 'SKILL_BOOK',
+                        'results': [{
+                            'success': True,
+                            'message': book_msg,
+                            'effect_type': 'SKILL_BOOK',
+                        }],
+                        'data': {
+                            'action': book_res.get('action'),
+                            'skill_key': book_res.get('skill_key'),
+                            'name': book_res.get('name'),
+                            'from_level': book_res.get('from_level'),
+                            'to_level': book_res.get('to_level'),
+                            'books_consumed': book_res.get('books_consumed'),
+                        },
+                    },
+                    # 结构化字段：供技能面板/飘字做精确刷新
+                    'skill_book': {
+                        'action': book_res.get('action'),
+                        'skill_key': book_res.get('skill_key'),
+                        'name': book_res.get('name'),
+                        'from_level': book_res.get('from_level'),
+                        'to_level': book_res.get('to_level'),
+                        'levels': book_res.get('levels'),
+                        'books_consumed': book_res.get('books_consumed'),
+                        'books_left': book_res.get('books_left'),
+                        'pet_id': book_res.get('pet_id'),
+                    },
+                },
+                message=book_msg,
+                request_data=data,
+            )
+            # ⚠ `_audit_bag_write(user_id, character_id, action, **fields)` 的第三个位置参数
+            #   就叫 action，这里**不能**再用 `action=` 传关键字（会 TypeError: multiple values）。
+            _audit_bag_write(user['_id'], cid, 'use_skill_book',
+                             item=item_id, pet=pet_id, skill_action=action_cn)
+            return
+
         # ========== 应用物品效果（在消耗物品之前）==========
         effect_result = None
         item_data = None
-        
+
         # 加载物品配置（网游级优化：使用缓存）
         try:
             item_data = get_equipment_config(item_id)
@@ -1217,6 +1277,7 @@ async def handle_bag_use_item(websocket, data, current_character_id):
                 bag_cache = get_bag_cache()
                 if bag_cache:
                     bag_cache.invalidate(user['_id'], cid)
+                utils.invalidate_robot_pets_cache(user['_id'], cid)
                 
                 # 构建响应数据（标准格式：数据在data字段中）
                 response_data = {
@@ -1308,6 +1369,7 @@ async def handle_bag_use_item(websocket, data, current_character_id):
         bag_cache = get_bag_cache()
         if bag_cache:
             bag_cache.invalidate(user['_id'], cid)
+        utils.invalidate_robot_pets_cache(user['_id'], cid)
         
         # MMO最佳实践：确保数据库写入完成，避免返回旧数据
         # 验证更新是否成功

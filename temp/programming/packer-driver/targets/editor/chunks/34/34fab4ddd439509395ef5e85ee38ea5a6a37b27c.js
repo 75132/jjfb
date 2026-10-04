@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, EditBox, Button, Label, director, WebSocketManager, GameConfig, ChangePasswordPanel, LoadingPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _crd, ccclass, property, Login;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, EditBox, Button, Label, director, WebSocketManager, GameConfig, ChangePasswordPanel, LoadingPanel, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _crd, ccclass, property, Login;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -23,6 +23,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfLoadingPanel(extras) {
     _reporterNs.report("LoadingPanel", "./LoadingPanel", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -47,6 +51,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       ChangePasswordPanel = _unresolved_4.ChangePasswordPanel;
     }, function (_unresolved_5) {
       LoadingPanel = _unresolved_5.LoadingPanel;
+    }, function (_unresolved_6) {
+      Logger = _unresolved_6.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -124,7 +130,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         start() {
           // 修复点：未绑定 loginPanelNode 时提前 return，避免后续访问空指针
           if (!this.loginPanelNode) {
-            console.error('loginPanelNode 未绑定，请在编辑器属性面板拖拽绑定登录面板节点！');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('loginPanelNode 未绑定，请在编辑器属性面板拖拽绑定登录面板节点！');
             return;
           }
 
@@ -173,12 +181,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (!this.isValid) return;
               this.continueAfterBoot();
             });
-            console.log('登录组件初始化完成（等待 Loading 启动检测）');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('登录组件初始化完成（等待 Loading 启动检测）');
             return;
           }
 
           this.continueAfterBoot();
-          console.log('登录组件初始化完成');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('登录组件初始化完成');
         }
         /** Loading 流程结束后：按 token 显示登录面板或自动鉴权 */
 
@@ -196,7 +208,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const hasGameIds = this.webSocketManager.hasGameIds();
 
           if (token) {
-            console.log('检测到内存中的Token，准备自动登录');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('检测到内存中的Token，准备自动登录');
             if (this.tipLabel) this.tipLabel.string = '自动登录中...';
             this.loginPanelNode.active = false; // 断线/返回登录页时：通常此时“没有 characterId”，但 token 仍有效
             // 因此需要显式显示“进入游戏”按钮（否则会因为初始化时强制 active=false 而看不到）
@@ -220,7 +234,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             } catch {} // 不在这里提前自动跳转，改为等待 auth_response 成功后再决定跳转，避免脏本地ID导致误跳。
 
           } else {
-            console.log('内存中无Token，显示登录面板');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('内存中无Token，显示登录面板');
             this.loginPanelNode.active = true;
           }
         }
@@ -312,7 +328,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }, false, // 登录时不需要token认证
           10000 // 10秒超时
           );
-          console.log('发送登录请求:', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('发送登录请求:', {
             account,
             type: (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
@@ -358,7 +376,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }, false, // 注册时不需要token认证
           10000 // 10秒超时
           );
-          console.log('发送注册请求:', {
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('发送注册请求:', {
             account,
             type: (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
@@ -405,7 +425,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.webSocketManager.saveGameIds(userId, ''); // characterId设为空字符串
             }
 
-            console.log('登录成功，user_id:', userId);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('登录成功，user_id:', userId);
             this.loginPanelNode.active = false; // 隐藏登录面板
 
             if (this.startButton) {
@@ -421,7 +443,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           } else {
             const errorMessage = data.message || '登录失败';
             this.tipLabel.string = data.code === 429 ? errorMessage : `登录失败: ${errorMessage}`;
-            console.error('登录失败:', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('登录失败:', {
               code: data.code,
               message: errorMessage
             });
@@ -462,12 +486,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             this.tipLabel.string = '注册成功，请登录';
-            console.log('注册成功，user_id:', userId);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('注册成功，user_id:', userId);
           } else {
             // 处理错误响应
             const errorMessage = data.message || '注册失败';
             this.tipLabel.string = `注册失败: ${errorMessage}`;
-            console.error('注册失败:', {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('注册失败:', {
               code: data.code,
               message: errorMessage
             });
@@ -487,7 +515,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleAuthSuccess(data) {
-          console.log('自动认证成功，用户ID:', data == null ? void 0 : data.user_id);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('自动认证成功，用户ID:', data == null ? void 0 : data.user_id);
 
           if (data != null && data.user_id) {
             const serverCharacterId = (data == null ? void 0 : data.character_id) || '';
@@ -522,7 +552,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleAuthFailure(data) {
-          console.log('自动认证失败:', data == null ? void 0 : data.message);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('自动认证失败:', data == null ? void 0 : data.message);
 
           try {
             this.webSocketManager.clearAll();
@@ -544,7 +576,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          console.log('网络断开，显示登录面板');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('网络断开，显示登录面板');
           if (this.tipLabel) this.tipLabel.string = '网络连接已断开，请重新登录';
           if (this.loginPanelNode) this.loginPanelNode.active = true;
           if (this.startButton && this.startButton.node) this.startButton.node.active = false;
@@ -559,7 +593,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.isLogoutRequesting) return;
           this.isLogoutRequesting = true;
           if (this.logoutButton) this.logoutButton.interactable = false;
-          console.log('执行登出操作');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('执行登出操作');
 
           if (!this.webSocketManager) {
             this.webSocketManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
@@ -614,7 +650,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         handleLogoutFailure(data) {
           this.clearLogoutState();
-          console.error('登出失败:', data == null ? void 0 : data.message);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).error('登出失败:', data == null ? void 0 : data.message);
           if (this.tipLabel) this.tipLabel.string = '登出失败: ' + ((data == null ? void 0 : data.message) || '');
           if (this.loginPanelNode) this.loginPanelNode.active = true;
           if (this.startButton && this.startButton.node) this.startButton.node.active = false;
@@ -746,7 +784,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.startButton.interactable = false;
           if (this.tipLabel) this.tipLabel.string = '正在进入选角…';
           if (this.startJumpMaskNode) this.startJumpMaskNode.active = true;
-          console.log('🔄 准备跳转到角色选择场景');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔄 准备跳转到角色选择场景');
           this.prefetchCharactersIfReady();
 
           try {
@@ -754,17 +794,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               error: Error()
             }), GameConfig) : GameConfig).SCENE_NAMES.CHARACTER_SELECT, error => {
               if (error) {
-                console.error('❌ 跳转到角色选择场景失败:', error);
-                console.log('💡 请检查场景名称和构建设置');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('❌ 跳转到角色选择场景失败:', error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('💡 请检查场景名称和构建设置');
                 if (this.isValid && this.startButton) this.startButton.interactable = true;
                 if (this.isValid && this.tipLabel) this.tipLabel.string = '';
                 if (this.isValid && this.startJumpMaskNode) this.startJumpMaskNode.active = false;
               } else {
-                console.log('✅ 跳转到角色选择场景成功');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('✅ 跳转到角色选择场景成功');
               }
             });
           } catch (error) {
-            console.error('❌ 场景跳转异常:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 场景跳转异常:', error);
             if (this.startButton) this.startButton.interactable = true;
             if (this.tipLabel) this.tipLabel.string = '';
             if (this.startJumpMaskNode) this.startJumpMaskNode.active = false;

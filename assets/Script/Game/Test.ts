@@ -2,6 +2,7 @@ import { _decorator, Component, Node, Button, EventTouch, Vec3, UITransform } fr
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameCommonData } from './GameCommonData';
 import { BattleScene } from './BattleScene';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -52,7 +53,7 @@ export class Test extends Component {
     private panelVisible: boolean = false;
 
     start() {
-        console.log('🧪 测试脚本启动');
+        Logger.debug('🧪 测试脚本启动');
         
         // 初始化面板状态
         if (this.gameTestPanel) {
@@ -162,13 +163,13 @@ export class Test extends Component {
      */
     private togglePanel(): void {
         if (!this.gameTestPanel) {
-            console.warn('⚠️ GameTest面板未绑定');
+            Logger.warn('⚠️ GameTest面板未绑定');
             return;
         }
         
         this.panelVisible = !this.panelVisible;
         this.gameTestPanel.active = this.panelVisible;
-        console.log(`🧪 GameTest面板已${this.panelVisible ? '显示' : '隐藏'}`);
+        Logger.debug(`🧪 GameTest面板已${this.panelVisible ? '显示' : '隐藏'}`);
     }
 
     /**
@@ -202,49 +203,49 @@ export class Test extends Component {
         // 清除Token按钮
         if (this.clearTokenBtn) {
             this.clearTokenBtn.node.on(Button.EventType.CLICK, this.onClearTokenClick, this);
-            console.log('✅ 清除Token按钮事件已绑定');
+            Logger.debug('✅ 清除Token按钮事件已绑定');
         }
 
         // 清除用户ID按钮
         if (this.clearUserIdBtn) {
             this.clearUserIdBtn.node.on(Button.EventType.CLICK, this.onClearUserIdClick, this);
-            console.log('✅ 清除用户ID按钮事件已绑定');
+            Logger.debug('✅ 清除用户ID按钮事件已绑定');
         }
 
         // 清除角色ID按钮
         if (this.clearCharacterIdBtn) {
             this.clearCharacterIdBtn.node.on(Button.EventType.CLICK, this.onClearCharacterIdClick, this);
-            console.log('✅ 清除角色ID按钮事件已绑定');
+            Logger.debug('✅ 清除角色ID按钮事件已绑定');
         }
 
         // 输出信息按钮
         if (this.logInfoBtn) {
             this.logInfoBtn.node.on(Button.EventType.CLICK, this.onLogInfoClick, this);
-            console.log('✅ 输出信息按钮事件已绑定');
+            Logger.debug('✅ 输出信息按钮事件已绑定');
         }
 
         // 加经验按钮
         if (this.addExpBtn) {
             this.addExpBtn.node.on(Button.EventType.CLICK, this.onAddExpClick, this);
-            console.log('✅ 加经验按钮事件已绑定');
+            Logger.debug('✅ 加经验按钮事件已绑定');
         }
 
         // 升级所有机甲按钮
         if (this.upgradeAllRobotsBtn) {
             this.upgradeAllRobotsBtn.node.on(Button.EventType.CLICK, this.onUpgradeAllRobotsClick, this);
-            console.log('✅ 升级所有机甲按钮事件已绑定');
+            Logger.debug('✅ 升级所有机甲按钮事件已绑定');
         }
 
         // 启动战斗按钮
         if (this.startBattleBtn) {
             this.startBattleBtn.node.on(Button.EventType.CLICK, this.onStartBattleClick, this);
-            console.log('✅ 启动战斗按钮事件已绑定');
+            Logger.debug('✅ 启动战斗按钮事件已绑定');
         }
 
         // 平匹配按钮
         if (this.pvpMatchBtn) {
             this.pvpMatchBtn.node.on(Button.EventType.CLICK, this.onPvpMatchClick, this);
-            console.log('✅ 平匹配按钮事件已绑定');
+            Logger.debug('✅ 平匹配按钮事件已绑定');
         }
     }
 
@@ -252,16 +253,16 @@ export class Test extends Component {
      * 平匹配按钮点击事件：进入 BattleScene，并让 BattleScene 自己发起匹配（显示 Loading，5 秒超时退出）
      */
     private onPvpMatchClick(): void {
-        console.log('🆚 测试：进入平匹配（PVP）');
+        Logger.debug('🆚 测试：进入平匹配（PVP）');
 
         if (!this.battleScenePanel) {
-            console.error('❌ BattleScene 面板未绑定');
+            Logger.error('❌ BattleScene 面板未绑定');
             return;
         }
 
         const battleScene = this.battleScenePanel.getComponent(BattleScene);
         if (!battleScene) {
-            console.error('❌ BattleScene 组件未找到');
+            Logger.error('❌ BattleScene 组件未找到');
             return;
         }
 
@@ -274,7 +275,7 @@ export class Test extends Component {
      * 清除Token按钮点击事件
      */
     private onClearTokenClick(): void {
-        console.log('🧪 测试：清除Token');
+        Logger.debug('🧪 测试：清除Token');
         
         try {
             const wsManager = WebSocketManager.getInstance();
@@ -288,14 +289,14 @@ export class Test extends Component {
             // 清除本地Token
             wsManager.clearToken();
             
-            console.log('✅ Token已清除');
-            console.log('📋 当前状态:');
+            Logger.debug('✅ Token已清除');
+            Logger.debug('📋 当前状态:');
             this.logCurrentStatus();
             
             // 注意：不需要手动触发，WebSocketManager.clearToken()会自动触发data_changed事件
             
         } catch (error) {
-            console.error('❌ 清除Token失败:', error);
+            Logger.error('❌ 清除Token失败:', error);
         }
     }
 
@@ -303,7 +304,7 @@ export class Test extends Component {
      * 清除用户ID按钮点击事件
      */
     private onClearUserIdClick(): void {
-        console.log('🧪 测试：清除用户ID');
+        Logger.debug('🧪 测试：清除用户ID');
         
         try {
             const wsManager = WebSocketManager.getInstance();
@@ -311,14 +312,14 @@ export class Test extends Component {
             // 清除用户ID
             wsManager.clearUserId();
             
-            console.log('✅ 用户ID已清除');
-            console.log('📋 当前状态:');
+            Logger.debug('✅ 用户ID已清除');
+            Logger.debug('📋 当前状态:');
             this.logCurrentStatus();
             
             // 注意：不需要手动触发，WebSocketManager.clearUserId()会自动触发data_changed事件
             
         } catch (error) {
-            console.error('❌ 清除用户ID失败:', error);
+            Logger.error('❌ 清除用户ID失败:', error);
         }
     }
 
@@ -326,7 +327,7 @@ export class Test extends Component {
      * 清除角色ID按钮点击事件
      */
     private onClearCharacterIdClick(): void {
-        console.log('🧪 测试：清除角色ID');
+        Logger.debug('🧪 测试：清除角色ID');
         
         try {
             const wsManager = WebSocketManager.getInstance();
@@ -334,14 +335,14 @@ export class Test extends Component {
             // 清除角色ID
             wsManager.clearCharacterId();
             
-            console.log('✅ 角色ID已清除');
-            console.log('📋 当前状态:');
+            Logger.debug('✅ 角色ID已清除');
+            Logger.debug('📋 当前状态:');
             this.logCurrentStatus();
             
             // 注意：不需要手动触发，WebSocketManager.clearCharacterId()会自动触发data_changed事件
             
         } catch (error) {
-            console.error('❌ 清除角色ID失败:', error);
+            Logger.error('❌ 清除角色ID失败:', error);
         }
     }
 
@@ -350,7 +351,7 @@ export class Test extends Component {
      * 输出信息按钮点击事件
      */
     private onLogInfoClick(): void {
-        console.log('🧪 测试：输出Token和ID信息');
+        Logger.debug('🧪 测试：输出Token和ID信息');
         this.logCurrentStatus();
     }
 
@@ -364,36 +365,36 @@ export class Test extends Component {
             const userId = wsManager.getUserId();
             const characterId = wsManager.getCharacterId();
             
-            console.log('📋 当前Token和ID状态:');
-            console.log('  - Token存在:', token !== null);
-            console.log('  - 用户ID存在:', userId !== null);
-            console.log('  - 角色ID存在:', characterId !== null);
-            console.log('  - 游戏ID完整:', wsManager.hasGameIds());
-            console.log('  - WebSocket连接状态:', wsManager.isConnected());
+            Logger.debug('📋 当前Token和ID状态:');
+            Logger.debug('  - Token存在:', token !== null);
+            Logger.debug('  - 用户ID存在:', userId !== null);
+            Logger.debug('  - 角色ID存在:', characterId !== null);
+            Logger.debug('  - 游戏ID完整:', wsManager.hasGameIds());
+            Logger.debug('  - WebSocket连接状态:', wsManager.isConnected());
             
             if (token) {
-                console.log('  - Token:', token);
-                console.log('  - Token长度:', token.length);
-                console.log('  - Token前10位:', token.substring(0, 10));
-                console.log('  - Token后10位:', token.substring(token.length - 10));
+                Logger.debug('  - Token:', token);
+                Logger.debug('  - Token长度:', token.length);
+                Logger.debug('  - Token前10位:', token.substring(0, 10));
+                Logger.debug('  - Token后10位:', token.substring(token.length - 10));
             } else {
-                console.log('  - Token: null');
+                Logger.debug('  - Token: null');
             }
             
             if (userId) {
-                console.log('  - 用户ID:', userId);
+                Logger.debug('  - 用户ID:', userId);
             } else {
-                console.log('  - 用户ID: null');
+                Logger.debug('  - 用户ID: null');
             }
             
             if (characterId) {
-                console.log('  - 角色ID:', characterId);
+                Logger.debug('  - 角色ID:', characterId);
             } else {
-                console.log('  - 角色ID: null');
+                Logger.debug('  - 角色ID: null');
             }
             
         } catch (error) {
-            console.error('❌ 输出状态失败:', error);
+            Logger.error('❌ 输出状态失败:', error);
         }
     }
 
@@ -401,7 +402,7 @@ export class Test extends Component {
      * 手动触发状态检查（调试用）
      */
     public manualStatusCheck(): void {
-        console.log('🔍 手动触发状态检查');
+        Logger.debug('🔍 手动触发状态检查');
         this.logCurrentStatus();
     }
 
@@ -413,7 +414,7 @@ export class Test extends Component {
             const wsManager = WebSocketManager.getInstance();
             return wsManager.getToken();
         } catch (error) {
-            console.error('❌ 获取Token失败:', error);
+            Logger.error('❌ 获取Token失败:', error);
             return null;
         }
     }
@@ -426,7 +427,7 @@ export class Test extends Component {
             const wsManager = WebSocketManager.getInstance();
             return wsManager.getUserId();
         } catch (error) {
-            console.error('❌ 获取用户ID失败:', error);
+            Logger.error('❌ 获取用户ID失败:', error);
             return null;
         }
     }
@@ -439,7 +440,7 @@ export class Test extends Component {
             const wsManager = WebSocketManager.getInstance();
             return wsManager.getCharacterId();
         } catch (error) {
-            console.error('❌ 获取角色ID失败:', error);
+            Logger.error('❌ 获取角色ID失败:', error);
             return null;
         }
     }
@@ -448,17 +449,17 @@ export class Test extends Component {
      * 加经验按钮点击事件
      */
     private onAddExpClick(): void {
-        console.log('🧪 测试：增加经验值 9999');
+        Logger.debug('🧪 测试：增加经验值 9999');
         
         // 严格验证数据完整性（防止未授权操作）
         if (!GameCommonData.instance) {
-            console.error('❌ GameCommonData未初始化，无法增加经验');
+            Logger.error('❌ GameCommonData未初始化，无法增加经验');
             return;
         }
 
         // 验证数据完整性（会触发Loading如果数据缺失）
         if (!GameCommonData.instance.validateDataIntegrity()) {
-            console.error('❌ 数据不完整，无法增加经验');
+            Logger.error('❌ 数据不完整，无法增加经验');
             return;
         }
 
@@ -470,7 +471,7 @@ export class Test extends Component {
             
             // 双重验证（防止绕过）
             if (!token || !userId || !characterId) {
-                console.error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
+                Logger.error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
                 GameCommonData.instance.validateDataIntegrity(); // 触发Loading
                 return;
             }
@@ -485,9 +486,9 @@ export class Test extends Component {
             };
             wsManager.send(msg, true);
             
-            console.log('📤 已发送加经验请求：9999 经验值（已验证数据完整性）');
+            Logger.debug('📤 已发送加经验请求：9999 经验值（已验证数据完整性）');
         } catch (error) {
-            console.error('❌ 增加经验失败:', error);
+            Logger.error('❌ 增加经验失败:', error);
         }
     }
 
@@ -495,17 +496,17 @@ export class Test extends Component {
      * 升级所有机甲按钮点击事件
      */
     private onUpgradeAllRobotsClick(): void {
-        console.log('🧪 测试：给所有机甲增加经验值 9999');
+        Logger.debug('🧪 测试：给所有机甲增加经验值 9999');
         
         // 严格验证数据完整性（防止未授权操作）
         if (!GameCommonData.instance) {
-            console.error('❌ GameCommonData未初始化，无法升级机甲');
+            Logger.error('❌ GameCommonData未初始化，无法升级机甲');
             return;
         }
 
         // 验证数据完整性（会触发Loading如果数据缺失）
         if (!GameCommonData.instance.validateDataIntegrity()) {
-            console.error('❌ 数据不完整，无法升级机甲');
+            Logger.error('❌ 数据不完整，无法升级机甲');
             return;
         }
 
@@ -517,7 +518,7 @@ export class Test extends Component {
             
             // 双重验证（防止绕过）
             if (!token || !userId || !characterId) {
-                console.error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
+                Logger.error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
                 GameCommonData.instance.validateDataIntegrity(); // 触发Loading
                 return;
             }
@@ -531,9 +532,9 @@ export class Test extends Component {
             };
             wsManager.send(msg, true);
             
-            console.log('📤 已发送升级所有机甲请求：每个机甲增加 9999 经验值（已验证数据完整性）');
+            Logger.debug('📤 已发送升级所有机甲请求：每个机甲增加 9999 经验值（已验证数据完整性）');
         } catch (error) {
-            console.error('❌ 升级所有机甲失败:', error);
+            Logger.error('❌ 升级所有机甲失败:', error);
         }
     }
 
@@ -541,16 +542,16 @@ export class Test extends Component {
      * 启动战斗按钮点击事件
      */
     private onStartBattleClick(): void {
-        console.log('⚔️ 测试：启动战斗场景');
+        Logger.debug('⚔️ 测试：启动战斗场景');
         
         if (!this.battleScenePanel) {
-            console.error('❌ BattleScene 面板未绑定');
+            Logger.error('❌ BattleScene 面板未绑定');
             return;
         }
 
         // 激活 BattleScene 面板（onEnable 会自动调用 startNewBattle）
         this.battleScenePanel.active = true;
-        console.log('✅ 战斗场景已启动');
+        Logger.debug('✅ 战斗场景已启动');
     }
 
     /**
@@ -558,7 +559,7 @@ export class Test extends Component {
      */
     private logExpInfo(): void {
         if (!GameCommonData.instance) {
-            console.warn('⚠️ GameCommonData 未初始化');
+            Logger.warn('⚠️ GameCommonData 未初始化');
             return;
         }
 
@@ -567,17 +568,17 @@ export class Test extends Component {
         const needExp = GameCommonData.instance.needExpForNextLevel;
         const isMaxLevel = GameCommonData.instance.isMaxLevel;
 
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log('📊 角色经验信息：');
-        console.log(`  - 当前等级：${level}`);
-        console.log(`  - 当前总经验：${totalExp.toLocaleString()}`);
+        Logger.debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        Logger.debug('📊 角色经验信息：');
+        Logger.debug(`  - 当前等级：${level}`);
+        Logger.debug(`  - 当前总经验：${totalExp.toLocaleString()}`);
         
         if (isMaxLevel) {
-            console.log(`  - 状态：已满级（${level}级封顶）`);
+            Logger.debug(`  - 状态：已满级（${level}级封顶）`);
         } else {
-            console.log(`  - 距离下次升级所需经验：${needExp.toLocaleString()}`);
+            Logger.debug(`  - 距离下次升级所需经验：${needExp.toLocaleString()}`);
         }
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        Logger.debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     }
 
     onDestroy() {
@@ -616,7 +617,7 @@ export class Test extends Component {
             GameCommonData.instance.node.off('data_updated', this.onDataUpdated, this);
         }
 
-        console.log('🧪 测试脚本销毁');
+        Logger.debug('🧪 测试脚本销毁');
     }
 }
 

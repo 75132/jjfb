@@ -1,11 +1,13 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13", "__unresolved_14", "__unresolved_15", "__unresolved_16"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13", "__unresolved_14", "__unresolved_15", "__unresolved_16", "__unresolved_17", "__unresolved_18", "__unresolved_19"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, assetManager, BoxCollider2D, Button, Collider2D, Component, director, input, Input, instantiate, JsonAsset, KeyCode, Label, Node, Color, Sprite, SpriteFrame, UITransform, v3, PlayerGridMove, BattleTriggerOnContact, ResourceManager, StoryUIViewRefs, WebSocketManager, normalizeBagHasItemsResponse, ownedItemIdsFromQuantities, collectRequirementItemIdsFromMap, BattleScene, isBattleInteractAction, isChoiceBlockedMessage, promisifyWsRequest, shouldCompleteChoice, shouldStartBattleFromChoice, evaluateAppearRequirements, evaluateRequirements, buildLocalCompletePayload, clearLocalStoryPersist, loadLocalStoryPersist, localStoryStorageKey, saveLocalStoryPersist, sanitizeBattlePseudoChoicesInRuntime, decideNpcVisibility, isHiddenByMainlineStep, visibilityHiddenUntilReveal, isStaleMainlineGiver, parseEnemyGiverUid, allowsSkipServerStoryApis, DEFAULT_STORY_RUNTIME_MODE, normalizeStoryRuntimeMode, shouldAutoFinalizeSettlement, shouldPlayRewardAnimation, GameConfig, logicalToParentLocal, mapContentBoundsInParentSpace, TILE_CELL, getNpcTaskStatusFrameUuids, npcTaskIndicatorKindToIndex, resolveNpcTaskIndicatorKind, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _class3, _crd, ccclass, property, executionOrder, PREFIX, StoryManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, assetManager, BoxCollider2D, Button, Collider2D, Component, director, input, Input, instantiate, JsonAsset, KeyCode, Label, Node, Color, Sprite, SpriteFrame, UITransform, v3, PlayerGridMove, BattleTriggerOnContact, MapManager, ResourceManager, StoryUIViewRefs, WebSocketManager, normalizeBagHasItemsResponse, ownedItemIdsFromQuantities, collectRequirementItemIdsFromMap, BattleScene, isBattleInteractAction, isChoiceBlockedMessage, promisifyWsRequest, shouldCompleteChoice, shouldStartBattleFromChoice, evaluateAppearRequirements, evaluateRequirements, buildLocalCompletePayload, clearLocalStoryPersist, loadLocalStoryPersist, localStoryStorageKey, saveLocalStoryPersist, sanitizeBattlePseudoChoicesInRuntime, decideNpcVisibility, isHiddenByMainlineStep, visibilityHiddenUntilReveal, isStaleMainlineGiver, parseEnemyGiverUid, allowsSkipServerStoryApis, DEFAULT_STORY_RUNTIME_MODE, normalizeStoryRuntimeMode, shouldAutoFinalizeSettlement, shouldPlayRewardAnimation, GameConfig, PerformanceMonitor, logicalToParentLocal, mapContentBoundsInParentSpace, TILE_CELL, getNpcTaskStatusFrameUuids, npcTaskIndicatorKindToIndex, resolveNpcTaskIndicatorKind, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _class3, _crd, ccclass, property, executionOrder, PREFIX, StoryManager;
 
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
   function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+  function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -16,7 +18,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
   function storyLog(level, message, context) {
     var tail = context && Object.keys(context).length ? " " + JSON.stringify(context) : '';
     var line = PREFIX + " " + message + tail;
-    if (level === 'error') console.error(line);else if (level === 'warn') console.warn(line);else console.log(line);
+    if (level === 'error') (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+      error: Error()
+    }), Logger) : Logger).error(line);else if (level === 'warn') (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+      error: Error()
+    }), Logger) : Logger).warn(line);else (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+      error: Error()
+    }), Logger) : Logger).debug(line);
   }
   /** 与 map JSON 对齐的格子像素（与 PlayerGridMove CELL 一致） */
 
@@ -48,6 +56,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfBattleTriggerOnContact(extras) {
     _reporterNs.report("BattleTriggerOnContact", "./GameArea/BattleTriggerOnContact", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfMapManager(extras) {
+    _reporterNs.report("MapManager", "./GameArea/MapManager", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfResourceManager(extras) {
@@ -198,6 +210,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfPerformanceMonitor(extras) {
+    _reporterNs.report("PerformanceMonitor", "../global/PerformanceMonitor", _context.meta, extras);
+  }
+
   function _reportPossibleCrUseOflogicalToParentLocal(extras) {
     _reporterNs.report("logicalToParentLocal", "./tilemap-coords", _context.meta, extras);
   }
@@ -224,6 +240,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfNpcTaskIndicatorKind(extras) {
     _reporterNs.report("NpcTaskIndicatorKind", "./npc-task-indicator", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   _export("normalizeDialogueScript", normalizeDialogueScript);
@@ -259,56 +279,62 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_3) {
       BattleTriggerOnContact = _unresolved_3.BattleTriggerOnContact;
     }, function (_unresolved_4) {
-      ResourceManager = _unresolved_4.ResourceManager;
+      MapManager = _unresolved_4.MapManager;
     }, function (_unresolved_5) {
-      StoryUIViewRefs = _unresolved_5.StoryUIViewRefs;
+      ResourceManager = _unresolved_5.ResourceManager;
     }, function (_unresolved_6) {
-      WebSocketManager = _unresolved_6.WebSocketManager;
+      StoryUIViewRefs = _unresolved_6.StoryUIViewRefs;
     }, function (_unresolved_7) {
-      normalizeBagHasItemsResponse = _unresolved_7.normalizeBagHasItemsResponse;
-      ownedItemIdsFromQuantities = _unresolved_7.ownedItemIdsFromQuantities;
-      collectRequirementItemIdsFromMap = _unresolved_7.collectRequirementItemIdsFromMap;
+      WebSocketManager = _unresolved_7.WebSocketManager;
     }, function (_unresolved_8) {
-      BattleScene = _unresolved_8.BattleScene;
+      normalizeBagHasItemsResponse = _unresolved_8.normalizeBagHasItemsResponse;
+      ownedItemIdsFromQuantities = _unresolved_8.ownedItemIdsFromQuantities;
+      collectRequirementItemIdsFromMap = _unresolved_8.collectRequirementItemIdsFromMap;
     }, function (_unresolved_9) {
-      isBattleInteractAction = _unresolved_9.isBattleInteractAction;
-      isChoiceBlockedMessage = _unresolved_9.isChoiceBlockedMessage;
-      promisifyWsRequest = _unresolved_9.promisifyWsRequest;
-      shouldCompleteChoice = _unresolved_9.shouldCompleteChoice;
-      shouldStartBattleFromChoice = _unresolved_9.shouldStartBattleFromChoice;
+      BattleScene = _unresolved_9.BattleScene;
     }, function (_unresolved_10) {
-      evaluateAppearRequirements = _unresolved_10.evaluateAppearRequirements;
-      evaluateRequirements = _unresolved_10.evaluateRequirements;
+      isBattleInteractAction = _unresolved_10.isBattleInteractAction;
+      isChoiceBlockedMessage = _unresolved_10.isChoiceBlockedMessage;
+      promisifyWsRequest = _unresolved_10.promisifyWsRequest;
+      shouldCompleteChoice = _unresolved_10.shouldCompleteChoice;
+      shouldStartBattleFromChoice = _unresolved_10.shouldStartBattleFromChoice;
     }, function (_unresolved_11) {
-      buildLocalCompletePayload = _unresolved_11.buildLocalCompletePayload;
-      clearLocalStoryPersist = _unresolved_11.clearLocalStoryPersist;
-      loadLocalStoryPersist = _unresolved_11.loadLocalStoryPersist;
-      localStoryStorageKey = _unresolved_11.localStoryStorageKey;
-      saveLocalStoryPersist = _unresolved_11.saveLocalStoryPersist;
+      evaluateAppearRequirements = _unresolved_11.evaluateAppearRequirements;
+      evaluateRequirements = _unresolved_11.evaluateRequirements;
     }, function (_unresolved_12) {
-      sanitizeBattlePseudoChoicesInRuntime = _unresolved_12.sanitizeBattlePseudoChoicesInRuntime;
+      buildLocalCompletePayload = _unresolved_12.buildLocalCompletePayload;
+      clearLocalStoryPersist = _unresolved_12.clearLocalStoryPersist;
+      loadLocalStoryPersist = _unresolved_12.loadLocalStoryPersist;
+      localStoryStorageKey = _unresolved_12.localStoryStorageKey;
+      saveLocalStoryPersist = _unresolved_12.saveLocalStoryPersist;
     }, function (_unresolved_13) {
-      decideNpcVisibility = _unresolved_13.decideNpcVisibility;
-      isHiddenByMainlineStep = _unresolved_13.isHiddenByMainlineStep;
-      visibilityHiddenUntilReveal = _unresolved_13.isNpcHiddenUntilReveal;
-      isStaleMainlineGiver = _unresolved_13.isStaleMainlineGiver;
-      parseEnemyGiverUid = _unresolved_13.parseEnemyGiverUid;
+      sanitizeBattlePseudoChoicesInRuntime = _unresolved_13.sanitizeBattlePseudoChoicesInRuntime;
     }, function (_unresolved_14) {
-      allowsSkipServerStoryApis = _unresolved_14.allowsSkipServerStoryApis;
-      DEFAULT_STORY_RUNTIME_MODE = _unresolved_14.DEFAULT_STORY_RUNTIME_MODE;
-      normalizeStoryRuntimeMode = _unresolved_14.normalizeStoryRuntimeMode;
-      shouldAutoFinalizeSettlement = _unresolved_14.shouldAutoFinalizeSettlement;
-      shouldPlayRewardAnimation = _unresolved_14.shouldPlayRewardAnimation;
+      decideNpcVisibility = _unresolved_14.decideNpcVisibility;
+      isHiddenByMainlineStep = _unresolved_14.isHiddenByMainlineStep;
+      visibilityHiddenUntilReveal = _unresolved_14.isNpcHiddenUntilReveal;
+      isStaleMainlineGiver = _unresolved_14.isStaleMainlineGiver;
+      parseEnemyGiverUid = _unresolved_14.parseEnemyGiverUid;
     }, function (_unresolved_15) {
-      GameConfig = _unresolved_15.GameConfig;
+      allowsSkipServerStoryApis = _unresolved_15.allowsSkipServerStoryApis;
+      DEFAULT_STORY_RUNTIME_MODE = _unresolved_15.DEFAULT_STORY_RUNTIME_MODE;
+      normalizeStoryRuntimeMode = _unresolved_15.normalizeStoryRuntimeMode;
+      shouldAutoFinalizeSettlement = _unresolved_15.shouldAutoFinalizeSettlement;
+      shouldPlayRewardAnimation = _unresolved_15.shouldPlayRewardAnimation;
     }, function (_unresolved_16) {
-      logicalToParentLocal = _unresolved_16.logicalToParentLocal;
-      mapContentBoundsInParentSpace = _unresolved_16.mapContentBoundsInParentSpace;
-      TILE_CELL = _unresolved_16.TILE_CELL;
+      GameConfig = _unresolved_16.GameConfig;
     }, function (_unresolved_17) {
-      getNpcTaskStatusFrameUuids = _unresolved_17.getNpcTaskStatusFrameUuids;
-      npcTaskIndicatorKindToIndex = _unresolved_17.npcTaskIndicatorKindToIndex;
-      resolveNpcTaskIndicatorKind = _unresolved_17.resolveNpcTaskIndicatorKind;
+      PerformanceMonitor = _unresolved_17.PerformanceMonitor;
+    }, function (_unresolved_18) {
+      logicalToParentLocal = _unresolved_18.logicalToParentLocal;
+      mapContentBoundsInParentSpace = _unresolved_18.mapContentBoundsInParentSpace;
+      TILE_CELL = _unresolved_18.TILE_CELL;
+    }, function (_unresolved_19) {
+      getNpcTaskStatusFrameUuids = _unresolved_19.getNpcTaskStatusFrameUuids;
+      npcTaskIndicatorKindToIndex = _unresolved_19.npcTaskIndicatorKindToIndex;
+      resolveNpcTaskIndicatorKind = _unresolved_19.resolveNpcTaskIndicatorKind;
+    }, function (_unresolved_20) {
+      Logger = _unresolved_20.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -364,8 +390,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       }), _dec18 = property({
         type: Node,
         tooltip: 'BattleScene 根节点（剧情战斗）'
-      }), _dec19 = property({
-        tooltip: '地图 code，与 JSON mapCode 一致'
       }), _dec(_class = _dec2(_class = (_class2 = (_class3 = class StoryManager extends Component {
         constructor() {
           super(...arguments);
@@ -421,8 +445,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           _initializerDefineProperty(this, "battleRoot", _descriptor22, this);
 
-          _initializerDefineProperty(this, "mapCode", _descriptor23, this);
-
+          /**
+           * 地图 code：由 mapConfig(JSON) 的 mapCode 在 _parseMap() 中自动注入，不暴露到属性检查器。
+           * JSON 缺 mapCode 时用此兜底；同时作为本地剧情存档 key（localStoryStorageKey）。
+           * 注意：换 json 只需保证各图 mapCode 唯一，无需手动改这里。
+           */
+          this.mapCode = 'world_1782661910893';
           this._refs = null;
           this._dialogueScripts = {};
           this._choiceScripts = {};
@@ -440,6 +468,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._playerMove = null;
           this._playerCollider = null;
           this._lastPlayerResolveAt = 0;
+          this._pollAccum = 0;
+          this._lastPollPosKey = '';
           this._playerTouchingNpcUid = null;
 
           /** 玩家在 NPC 碰撞箱内时显示 RMV 式交互提示（不再占用 Toast 队列） */
@@ -574,8 +604,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             if (!this._isStoryInteractKey(e.keyCode)) return;
-            if (this._eventFlowRunning) return;
-            if (this._activationNpcUid) return;
+
+            if (this._eventFlowRunning) {
+              // 诊断：上一次事件流未结束就再次按 E（可能是流程卡住或战斗未回）
+              storyLog('warn', 'StoryManager: 交互键被忽略——事件流进行中', {
+                activationNpcUid: this._activationNpcUid
+              });
+              return;
+            }
+
+            if (this._activationNpcUid) {
+              // 诊断：会话未收尾，_activationNpcUid 仍锁着（常见于战斗失败/异常中断未调用 _endActivation）
+              storyLog('warn', 'StoryManager: 交互键被忽略——上一会话未结束', {
+                activationNpcUid: this._activationNpcUid,
+                pausedForBattle: this._activationPausedForBattle
+              });
+              return;
+            }
+
             var npcUid = this._playerTouchingNpcUid;
 
             if (!npcUid) {
@@ -586,10 +632,21 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
                 var seqHint = this._getSequentialBlockHint();
 
+                storyLog('info', 'StoryManager: 交互键按下但不在 NPC 范围内', {
+                  touchingNpcUid: this._playerTouchingNpcUid,
+                  resolvedCount: this._resolved.length,
+                  seqHint: seqHint || null
+                });
                 this.showToast(seqHint || '靠近 NPC 再交谈', 2000);
               }
 
               return;
+            }
+
+            if (this.debugLog) {
+              storyLog('info', 'StoryManager: 交互键触发激活', {
+                npcUid
+              });
             }
 
             this._tryTriggerActivation(npcUid);
@@ -926,11 +983,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             error: Error()
           }), parseEnemyGiverUid) : parseEnemyGiverUid)(npcUid);
         }
-        /** 该 NPC 是否仍有未完成剧情环（含「须先战斗」等暂不可交互的环） */
+        /** 该 NPC 是否仍有未完成剧情环（传送可重复，不计入未完成） */
 
 
         _hasIncompleteStoryEvents(npcUid, events) {
-          return events.some(ev => !this._isQuestStepComplete(npcUid, ev));
+          return events.some(ev => ev.eventType !== 'teleport' && !this._isQuestStepComplete(npcUid, ev));
         }
         /** appear / 交付条件：地图无此 eventId 时，若所属 giver 链已全部完成则视为满足 */
 
@@ -976,6 +1033,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
         /** giver 是否已完成至少一环 task_accept */
 
+        /**
+         * 战斗敌人的「任务官链已启动」判定。
+         *
+         * 标准情形：链内存在 task_accept 且该事件已完成。
+         * 兼容跨 NPC 任务链（接取在别的 NPC 上、战斗官只负责推进/交付）：
+         * 只要链中引用的任务已被玩家接取，或该链已有任一事件完成，同样视为已启动。
+         */
+
 
         _giverChainAccepted(giverUid, giverEvents) {
           for (var ev of giverEvents) {
@@ -989,7 +1054,22 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (hasAccept && this._isQuestStepComplete(giverUid, ev)) return true;
           }
 
-          return false;
+          for (var _ev of giverEvents) {
+            var _ev$server$effects2, _ev$server2;
+
+            var effects = (_ev$server$effects2 = (_ev$server2 = _ev.server) == null ? void 0 : _ev$server2.effects) != null ? _ev$server$effects2 : [];
+
+            for (var raw of effects) {
+              var _raw$action, _raw$taskId;
+
+              var action = String((_raw$action = raw == null ? void 0 : raw.action) != null ? _raw$action : '');
+              if (action !== 'task_accept' && action !== 'task_complete') continue;
+              var tid = Number((_raw$taskId = raw == null ? void 0 : raw.taskId) != null ? _raw$taskId : 0);
+              if (tid > 0 && this._hasTaskBeenAccepted(tid)) return true;
+            }
+          }
+
+          return giverEvents.some(ev => this._isQuestStepComplete(giverUid, ev));
         }
 
         _enemyBattleEventIds(npcUid, events) {
@@ -1009,28 +1089,93 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var giverUid = this._enemyGiverUid(npcUid);
 
-          if (!giverUid) return false;
-          if (currentMainlineUid && giverUid !== currentMainlineUid) return false;
-          if (!currentMainlineUid) return false;
+          if (!giverUid) {
+            this._diagBattleEnemyHidden(npcUid, 'uid 无法解析出任务官');
+
+            return false;
+          }
+
+          if (!currentMainlineUid) {
+            this._diagBattleEnemyHidden(npcUid, '当前无主线 NPC', {
+              giverUid
+            });
+
+            return false;
+          }
+
+          if (giverUid !== currentMainlineUid) {
+            this._diagBattleEnemyHidden(npcUid, '任务官不是当前主线 NPC', {
+              giverUid,
+              currentMainlineUid
+            });
+
+            return false;
+          }
 
           var giverRow = this._npcRows.find(r => r.npcUid === giverUid);
 
           var giverEvents = (_giverRow$events = giverRow == null ? void 0 : giverRow.events) != null ? _giverRow$events : [];
-          if (!this._giverChainAccepted(giverUid, giverEvents)) return false;
-          if (!this._hasIncompleteStoryEvents(giverUid, giverEvents)) return false;
+
+          if (!this._giverChainAccepted(giverUid, giverEvents)) {
+            this._diagBattleEnemyHidden(npcUid, '任务官链未启动（无 task_accept / 任务未接取 / 无已完成事件）', {
+              giverUid,
+              giverEventIds: giverEvents.map(e => this._stableEventId(giverUid, e))
+            });
+
+            return false;
+          }
+
+          if (!this._hasIncompleteStoryEvents(giverUid, giverEvents)) {
+            this._diagBattleEnemyHidden(npcUid, '任务官链已全部完成', {
+              giverUid
+            });
+
+            return false;
+          }
 
           var row = this._npcRows.find(r => r.npcUid === npcUid);
 
           if (row && (_crd && visibilityHiddenUntilReveal === void 0 ? (_reportPossibleCrUseOfvisibilityHiddenUntilReveal({
             error: Error()
           }), visibilityHiddenUntilReveal) : visibilityHiddenUntilReveal)(npcUid, row, this._revealedNpcUids, this._buildRequirementContext())) {
+            var _row$appear$requireme, _row$appear;
+
+            this._diagBattleEnemyHidden(npcUid, 'appear 条件未满足', {
+              requirements: (_row$appear$requireme = (_row$appear = row.appear) == null ? void 0 : _row$appear.requirements) != null ? _row$appear$requireme : []
+            });
+
             return false;
           }
 
           var battleIds = this._enemyBattleEventIds(npcUid, events);
 
-          if (battleIds.size > 0 && [...battleIds].every(id => this._isAppearEventDone(id))) return false;
-          return this._pickInteractEvent(npcUid, events) !== null;
+          if (battleIds.size > 0 && [...battleIds].every(id => this._isAppearEventDone(id))) {
+            this._diagBattleEnemyHidden(npcUid, '战斗环已全部完成', {
+              battleIds: [...battleIds]
+            });
+
+            return false;
+          }
+
+          var pick = this._pickInteractEvent(npcUid, events) !== null;
+
+          if (!pick) {
+            this._diagBattleEnemyHidden(npcUid, '无可用可交互事件', {
+              eventIds: events.map(e => this._stableEventId(npcUid, e))
+            });
+          }
+
+          return pick;
+        }
+        /** 诊断：战斗敌人未显示的拦截面（debugLog 开启时输出） */
+
+
+        _diagBattleEnemyHidden(npcUid, reason, extra) {
+          if (!this.debugLog) return;
+          storyLog('warn', 'StoryManager: 战斗敌人不显示', _extends({
+            npcUid,
+            reason
+          }, extra != null ? extra : {}));
         }
         /** 任务状态图标用：战斗环须胜利才算完成 */
 
@@ -1089,9 +1234,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _eventIsTaskTurnIn(ev) {
-          var _ev$server$effects2, _ev$server2;
+          var _ev$server$effects3, _ev$server3;
 
-          return ev.eventType === 'task' && ((_ev$server$effects2 = (_ev$server2 = ev.server) == null ? void 0 : _ev$server2.effects) != null ? _ev$server$effects2 : []).some(raw => {
+          return ev.eventType === 'task' && ((_ev$server$effects3 = (_ev$server3 = ev.server) == null ? void 0 : _ev$server3.effects) != null ? _ev$server$effects3 : []).some(raw => {
             var _action2;
 
             return String((_action2 = raw.action) != null ? _action2 : '') === 'task_complete';
@@ -1120,14 +1265,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var turnInEv = null;
 
-          for (var _ev of sorted) {
-            var _ev$order2;
+          for (var _ev2 of sorted) {
+            var _ev2$order;
 
-            if (((_ev$order2 = _ev.order) != null ? _ev$order2 : 0) < segmentStartOrder) continue;
-            if (!this._eventIsTaskTurnIn(_ev)) continue;
+            if (((_ev2$order = _ev2.order) != null ? _ev2$order : 0) < segmentStartOrder) continue;
+            if (!this._eventIsTaskTurnIn(_ev2)) continue;
 
-            if (!this._isQuestStepComplete(npcUid, _ev)) {
-              turnInEv = _ev;
+            if (!this._isQuestStepComplete(npcUid, _ev2)) {
+              turnInEv = _ev2;
               break;
             }
           }
@@ -1135,14 +1280,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var battleEventIds = new Set();
           var segmentEndOrder = (_turnInEv$order = (_turnInEv = turnInEv) == null ? void 0 : _turnInEv.order) != null ? _turnInEv$order : Number.MAX_SAFE_INTEGER;
 
-          for (var _ev2 of sorted) {
-            var _ev2$order;
+          for (var _ev3 of sorted) {
+            var _ev3$order;
 
-            var order = (_ev2$order = _ev2.order) != null ? _ev2$order : 0;
+            var order = (_ev3$order = _ev3.order) != null ? _ev3$order : 0;
             if (order < segmentStartOrder || order >= segmentEndOrder) continue;
 
-            if (_ev2.eventType === 'battle') {
-              battleEventIds.add(this._stableEventId(npcUid, _ev2));
+            if (_ev3.eventType === 'battle') {
+              battleEventIds.add(this._stableEventId(npcUid, _ev3));
             }
           }
 
@@ -1168,9 +1313,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             for (var raw of (_row$events4 = row.events) != null ? _row$events4 : []) {
               var _row$events4;
 
-              var _ev3 = raw;
-              if (_ev3.eventType !== 'battle') continue;
-              battleEventIds.add(this._stableEventId(uid, _ev3));
+              var _ev4 = raw;
+              if (_ev4.eventType !== 'battle') continue;
+              battleEventIds.add(this._stableEventId(uid, _ev4));
             }
           }
 
@@ -1185,8 +1330,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _recordTaskEffectsFromEvent(ev, choiceId) {
-          for (var raw of (_ev$server$effects3 = (_ev$server3 = ev.server) == null ? void 0 : _ev$server3.effects) != null ? _ev$server$effects3 : []) {
-            var _ev$server$effects3, _ev$server3, _eff$action, _eff$taskId, _eff$choiceId;
+          for (var raw of (_ev$server$effects4 = (_ev$server4 = ev.server) == null ? void 0 : _ev$server4.effects) != null ? _ev$server$effects4 : []) {
+            var _ev$server$effects4, _ev$server4, _eff$action, _eff$taskId, _eff$choiceId;
 
             var eff = raw;
             var action = String((_eff$action = eff.action) != null ? _eff$action : '');
@@ -1252,10 +1397,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (!_uid2) continue;
 
-            for (var _ev4 of (_row$events6 = _row.events) != null ? _row$events6 : []) {
+            for (var _ev5 of (_row$events6 = _row.events) != null ? _row$events6 : []) {
               var _row$events6;
 
-              var _cast = _ev4;
+              var _cast = _ev5;
               if (_cast.eventType !== 'battle') continue;
 
               var _eid = this._stableEventId(_uid2, _cast);
@@ -1329,10 +1474,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           });
 
           for (var ev of sorted) {
-            var _ev$server4;
+            var _ev$server5;
 
             if (this._isQuestStepComplete(npcUid, ev)) continue;
-            var reqs = (_ev$server4 = ev.server) == null ? void 0 : _ev$server4.requirements;
+            var reqs = (_ev$server5 = ev.server) == null ? void 0 : _ev$server5.requirements;
             if (!this._evaluateRequirements(reqs)) return ev;
             return ev;
           }
@@ -1533,6 +1678,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             error: Error()
           }), WebSocketManager) : WebSocketManager).getInstance();
           if (!((_this$_ws = this._ws) != null && _this$_ws.getCharacterId != null && _this$_ws.getCharacterId())) return;
+          (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+            error: Error()
+          }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('story_get_state');
 
           this._ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
@@ -1541,6 +1689,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }, resp => {
             var _resp$data;
 
+            (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+              error: Error()
+            }), PerformanceMonitor) : PerformanceMonitor).getInstance().endTimer('story_get_state');
             if (!this._alive()) return;
 
             if (!(resp != null && resp.success)) {
@@ -1838,6 +1989,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 choice_id: choiceId
               }, 8000);
               return resp.data || resp;
+            } catch (err) {
+              // 诊断：服务端拒绝交互（未知事件 / 条件不满足 / 地图未同步）会走到这里
+              storyLog('error', 'StoryManager: story_interact 失败', {
+                mapCode: _this5.mapCode,
+                npcUid,
+                eventId: _this5._stableEventId(npcUid, ev),
+                eventType: ev.eventType,
+                choiceId: choiceId != null ? choiceId : null,
+                err: err instanceof Error ? err.message : String(err),
+                hint: '若提示「未知事件/未知地图」，说明 server/data/story_maps 与客户端 JSON 不同步，需重新发布'
+              });
+              throw err;
             } finally {
               _this5._showFlowWaiting(false);
             }
@@ -2060,22 +2223,58 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 return;
               }
 
-              var interactPayload = yield _this8._promiseInteract(npcUid, ev);
+              var interactPayload = yield _this8._promiseInteract(npcUid, ev); // 纯传送：无需选项，完成事件后由 applied_effects 驱动 MapManager
+
+              if (ev.eventType === 'teleport' && !client.choiceScriptId && !interactPayload.choice_script_id) {
+                if (client.dialogueScriptId) {
+                  var scr = _this8._dialogueScripts[client.dialogueScriptId];
+                  if (scr) yield _this8._promiseDialogue(scr);
+                } else {
+                  _this8.showStoryTip('正在传送…', 1200);
+                }
+
+                if (_this8._isLocalPreview()) {
+                  // buildLocalCompletePayload 已在 _promiseComplete 内 apply
+                  yield _this8._promiseComplete(npcUid, ev, {});
+
+                  _this8._endActivation();
+
+                  return;
+                }
+
+                var data = yield _this8._promiseComplete(npcUid, ev, {});
+
+                if (!data || Object.keys(data).length === 0) {
+                  _this8._applyTeleportFromEventConfig(ev);
+
+                  _this8._endActivation();
+
+                  return;
+                }
+
+                _this8._applyEffectsFromResponse(data); // 可重复：不写入本地 completed，也不隐藏 NPC
+
+
+                _this8._endActivation();
+
+                return;
+              }
 
               if (ev.eventType === 'dialog' && client.dialogueScriptId) {
-                var scr = _this8._dialogueScripts[client.dialogueScriptId];
+                var _scr = _this8._dialogueScripts[client.dialogueScriptId];
 
-                if (!scr) {
+                if (!_scr) {
                   _this8.showToast('对白配置缺失', 3000);
 
                   failFlow();
                   return;
                 }
 
-                yield _this8._promiseDialogue(scr);
-                var data = yield _this8._promiseComplete(npcUid, ev, {});
+                yield _this8._promiseDialogue(_scr);
 
-                _this8._applyEffectsFromResponse(data);
+                var _data2 = yield _this8._promiseComplete(npcUid, ev, {});
+
+                _this8._applyEffectsFromResponse(_data2);
 
                 _this8._markEventDone(npcUid, ev, {});
 
@@ -2084,7 +2283,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               var choiceScriptId = client.choiceScriptId || interactPayload.choice_script_id;
 
-              if (choiceScriptId || ev.eventType === 'choice' || ev.eventType === 'teleport') {
+              if (choiceScriptId || ev.eventType === 'choice') {
                 var sid = choiceScriptId || client.choiceScriptId;
 
                 var _ch = sid ? _this8._choiceScripts[sid] : null;
@@ -2116,13 +2315,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   return;
                 }
 
-                var _data2 = yield _this8._promiseComplete(npcUid, ev, {
+                var _data3 = yield _this8._promiseComplete(npcUid, ev, {
                   choiceId: _opt2.id
                 });
 
-                if (!_this8._isLocalPreview() && (!_data2 || Object.keys(_data2).length === 0)) return;
+                if (!_this8._isLocalPreview() && (!_data3 || Object.keys(_data3).length === 0)) return;
 
-                _this8._applyEffectsFromResponse(_data2);
+                _this8._applyEffectsFromResponse(_data3);
 
                 _this8._markEventDone(npcUid, ev, {
                   choiceId: _opt2.id
@@ -2143,9 +2342,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   });
                 }
 
-                var _data3 = yield _this8._promiseComplete(npcUid, ev, {});
+                var _data4 = yield _this8._promiseComplete(npcUid, ev, {});
 
-                _this8._applyEffectsFromResponse(_data3);
+                _this8._applyEffectsFromResponse(_data4);
 
                 _this8._markEventDone(npcUid, ev, {});
 
@@ -2338,7 +2537,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._resolved.push({
             npcUid: uid,
             node,
-            events: (_row$events8 = row.events) != null ? _row$events8 : []
+            events: (_row$events8 = row.events) != null ? _row$events8 : [],
+            box: node.getComponent(BoxCollider2D)
           });
 
           this._bindNpcTouchHandlers();
@@ -2351,25 +2551,145 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _applyTeleport(tp) {
-          var _tp$toMapId, _tp$toX, _tp$toY;
+          var _ref3, _tp$toMapId, _ref4, _tp$toX, _ref5, _tp$toY, _find, _this$_playerMove$map, _this$_playerMove, _this$_playerMove2;
 
-          var mapId = Number((_tp$toMapId = tp.toMapId) != null ? _tp$toMapId : 0);
-          var x = Number((_tp$toX = tp.toX) != null ? _tp$toX : 0);
-          var y = Number((_tp$toY = tp.toY) != null ? _tp$toY : 0);
+          var mapId = Number((_ref3 = (_tp$toMapId = tp.toMapId) != null ? _tp$toMapId : tp.to_map_id) != null ? _ref3 : 0);
+          var x = Number((_ref4 = (_tp$toX = tp.toX) != null ? _tp$toX : tp.to_x) != null ? _ref4 : 0);
+          var y = Number((_ref5 = (_tp$toY = tp.toY) != null ? _tp$toY : tp.to_y) != null ? _ref5 : 0);
+          if (!Number.isFinite(mapId) || mapId <= 0) return;
+          var mm = (_find = (_crd && MapManager === void 0 ? (_reportPossibleCrUseOfMapManager({
+            error: Error()
+          }), MapManager) : MapManager).find()) != null ? _find : (_crd && MapManager === void 0 ? (_reportPossibleCrUseOfMapManager({
+            error: Error()
+          }), MapManager) : MapManager).ensureOnMapRoot((_this$_playerMove$map = (_this$_playerMove = this._playerMove) == null ? void 0 : _this$_playerMove.mapRoot) != null ? _this$_playerMove$map : null);
 
-          if (mapId === 1) {
-            var _this$_playerMove;
+          if (mm) {
+            void mm.switchTo(mapId, x, y).then(() => {
+              if (mm.activeMapId === mapId) {
+                this.showStoryTip('已传送至指定地点', 2800);
+              } else {
+                this.showStoryTip('传送失败：目标地图未就绪', 3200);
+              }
+            });
+            return;
+          } // 无 MapManager 时仅同图落点
 
-            this._resolveLocalPlayerOnce();
 
-            var node = (_this$_playerMove = this._playerMove) == null ? void 0 : _this$_playerMove.node;
+          this._resolveLocalPlayerOnce();
 
-            if (node != null && node.isValid) {
-              node.setPosition(x, y, node.position.z);
-              this.showStoryTip('已传送至指定地点', 2800);
+          var node = (_this$_playerMove2 = this._playerMove) == null ? void 0 : _this$_playerMove2.node;
+
+          if (node != null && node.isValid) {
+            node.setPosition(x, y, node.position.z);
+            this.showStoryTip('已传送至指定地点', 2800);
+          }
+        }
+        /** complete 失败时从事件配置兜底切图 */
+
+
+        _applyTeleportFromEventConfig(ev) {
+          var _ev$server$effects5, _ev$server6, _effects$find;
+
+          var effects = (_ev$server$effects5 = (_ev$server6 = ev.server) == null ? void 0 : _ev$server6.effects) != null ? _ev$server$effects5 : [];
+          var tp = (_effects$find = effects.find(e => {
+            var _e$action;
+
+            return String((_e$action = e.action) != null ? _e$action : '') === 'teleport';
+          })) != null ? _effects$find : ev.eventParam;
+
+          if (tp && (tp.toMapId != null || tp.to_map_id != null)) {
+            var _tp$toMapId2, _tp$toX2, _tp$toY2;
+
+            this._applyTeleport({
+              toMapId: (_tp$toMapId2 = tp.toMapId) != null ? _tp$toMapId2 : tp.to_map_id,
+              toX: (_tp$toX2 = tp.toX) != null ? _tp$toX2 : tp.to_x,
+              toY: (_tp$toY2 = tp.toY) != null ? _tp$toY2 : tp.to_y
+            });
+          }
+        }
+        /**
+         * MapManager 切图时调用：换 mapConfig / 重绑 NPC；无 JSON 时清空并隐藏旧图 NPC。
+         */
+
+
+        bindMap(mapId, mapConfig) {
+          this.closeAll();
+
+          this._endActivation();
+
+          this._unbindNpcTouchHandlers();
+
+          for (var i = 0; i < this._resolved.length; i++) {
+            var _this$_resolved$i;
+
+            var n = (_this$_resolved$i = this._resolved[i]) == null ? void 0 : _this$_resolved$i.node;
+            if (n != null && n.isValid) n.active = false;
+          }
+
+          this._destroySpawnedNpcs();
+
+          this._resolved = [];
+          this._storyNpcOrder = [];
+          this.mapConfig = mapConfig;
+          this._dialogueScripts = {};
+          this._choiceScripts = {};
+          this._npcRows = [];
+          this._taskDefs = [];
+          this._jsonMapContentSize = null;
+
+          if (mapConfig != null && mapConfig.json) {
+            this._parseMap();
+
+            this._resolveNpcs();
+
+            this._resetStoryRuntimeState();
+
+            if (this._isLocalPreview()) {
+              this._loadLocalStoryState();
+            } else {
+              this._fetchStoryStateFromServer();
             }
-          } else {
-            this.showStoryTip("\u6CD5\u897F\u57CE\uFF08\u5730\u56FE " + mapId + "\uFF09\u4F20\u9001\u5DF2\u767B\u8BB0\uFF0C\u8BE5\u5730\u56FE\u573A\u666F\u540E\u7EED\u63A5\u5165", 4500);
+
+            if (this.debugLog) {
+              storyLog('info', 'StoryManager.bindMap', {
+                mapId,
+                mapCode: this.mapCode,
+                npcs: this._resolved.length
+              });
+            }
+
+            return;
+          }
+
+          this._resetStoryRuntimeState();
+
+          this._hideSceneStoryNpcNodes();
+
+          if (this.debugLog) {
+            storyLog('info', 'StoryManager.bindMap: 无剧情 JSON，已隐藏 NPC', {
+              mapId
+            });
+          }
+        }
+        /** 无 mapConfig 时隐藏 WorldRoot 下剧情 NPC，避免旧图事件残留 */
+
+
+        _hideSceneStoryNpcNodes() {
+          var _this$_playerMove$nod, _this$_playerMove3;
+
+          var scene = director.getScene();
+          if (!scene) return;
+
+          var wr = this._findNodeByName(scene, 'WorldRoot');
+
+          if (!wr) return;
+          var pmNode = (_this$_playerMove$nod = (_this$_playerMove3 = this._playerMove) == null ? void 0 : _this$_playerMove3.node) != null ? _this$_playerMove$nod : null;
+
+          var nodes = this._collectColliderNpcNodes(wr, pmNode);
+
+          for (var i = 0; i < nodes.length; i++) {
+            var n = nodes[i];
+            if (n != null && n.isValid) n.active = false;
           }
         }
         /**
@@ -2378,7 +2698,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _startStoryBattle(npcUid, ev, choiceId, alreadyAuthorized, _onFinished) {
-          var _ev$server5;
+          var _ev$server7;
 
           if (alreadyAuthorized === void 0) {
             alreadyAuthorized = false;
@@ -2386,7 +2706,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var eventId = this._stableEventId(npcUid, ev);
 
-          var battleRef = ((_ev$server5 = ev.server) == null ? void 0 : _ev$server5.battleRef) || 'battle_300001';
+          var battleRef = ((_ev$server7 = ev.server) == null ? void 0 : _ev$server7.battleRef) || 'battle_300001';
           var root = this.battleRoot;
           var battle = root == null ? void 0 : root.getComponent(_crd && BattleScene === void 0 ? (_reportPossibleCrUseOfBattleScene({
             error: Error()
@@ -2476,7 +2796,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onDestroy() {
-          var _this$_playerMove2;
+          var _this$_playerMove4;
 
           input.off(Input.EventType.KEY_DOWN, this._onKeyDown, this);
           var ws = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
@@ -2494,15 +2814,37 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._clearChoiceHandlers();
 
           this.unschedule(this._hideToast);
-          (_this$_playerMove2 = this._playerMove) == null || _this$_playerMove2.setInputLocked(false);
+          (_this$_playerMove4 = this._playerMove) == null || _this$_playerMove4.setInputLocked(false);
 
           this._destroySpawnedNpcs();
         }
 
-        update() {
-          this._pollTouchOverlap();
+        update(dt) {
+          var _this$_playerMove5;
 
           this._syncPlayerInputLock();
+
+          if (this.isBlocking) {
+            this._syncInteractRangeHint(null);
+
+            return;
+          }
+
+          this._resolveLocalPlayerOnce();
+
+          var p = (_this$_playerMove5 = this._playerMove) == null || (_this$_playerMove5 = _this$_playerMove5.node) == null ? void 0 : _this$_playerMove5.position;
+          var key = p ? p.x + "|" + p.y : '';
+          var moved = key !== this._lastPollPosKey;
+          this._lastPollPosKey = key;
+
+          if (!moved) {
+            this._pollAccum += dt;
+            if (this._pollAccum < 0.1) return;
+          }
+
+          this._pollAccum = 0;
+
+          this._pollTouchOverlap();
         }
 
         get isBlocking() {
@@ -2521,16 +2863,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _syncPlayerInputLock() {
-          var _this$_playerMove3;
+          var _this$_playerMove6;
 
           this._resolveLocalPlayerOnce();
 
-          (_this$_playerMove3 = this._playerMove) == null || _this$_playerMove3.setInputLocked(this._shouldLockPlayerMovement());
+          (_this$_playerMove6 = this._playerMove) == null || _this$_playerMove6.setInputLocked(this._shouldLockPlayerMovement());
         } // --- map ---
 
 
         _parseMap() {
-          var _this$mapConfig5, _ref3, _raw$mapCode, _raw$client, _client$dialogueScrip, _client$choiceScripts, _raw$npcs, _ref4, _raw$tasks, _raw$mapWidth, _raw$mapHeight, _raw$server, _server$antiCheat;
+          var _this$mapConfig5, _ref6, _raw$mapCode, _raw$client, _client$dialogueScrip, _client$choiceScripts, _raw$npcs, _ref7, _raw$tasks, _raw$mapWidth, _raw$mapHeight, _raw$server, _server$antiCheat;
 
           var raw = (_this$mapConfig5 = this.mapConfig) == null ? void 0 : _this$mapConfig5.json;
 
@@ -2539,11 +2881,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             return;
           }
 
-          var jsonMapCode = String((_ref3 = (_raw$mapCode = raw.mapCode) != null ? _raw$mapCode : raw.map_code) != null ? _ref3 : '').trim();
+          var jsonMapCode = String((_ref6 = (_raw$mapCode = raw.mapCode) != null ? _raw$mapCode : raw.map_code) != null ? _ref6 : '').trim();
 
           if (jsonMapCode && jsonMapCode !== this.mapCode) {
             if (this.debugLog) {
-              storyLog('warn', 'StoryManager: mapCode 与 JsonAsset 不一致，已以 JSON 为准', {
+              storyLog('info', 'StoryManager: mapCode 已按 JsonAsset 更新', {
                 sceneMapCode: this.mapCode,
                 jsonMapCode
               });
@@ -2559,7 +2901,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._dialogueScripts = (_client$dialogueScrip = client.dialogueScripts) != null ? _client$dialogueScrip : {};
           this._choiceScripts = (_client$choiceScripts = client.choiceScripts) != null ? _client$choiceScripts : {};
           this._npcRows = (_raw$npcs = raw.npcs) != null ? _raw$npcs : [];
-          this._taskDefs = (_ref4 = (_raw$tasks = raw.tasks) != null ? _raw$tasks : raw.quests) != null ? _ref4 : [];
+          this._taskDefs = (_ref7 = (_raw$tasks = raw.tasks) != null ? _raw$tasks : raw.quests) != null ? _ref7 : [];
           var mw = Number((_raw$mapWidth = raw.mapWidth) != null ? _raw$mapWidth : raw.map_width);
           var mh = Number((_raw$mapHeight = raw.mapHeight) != null ? _raw$mapHeight : raw.map_height);
 
@@ -2596,14 +2938,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var npcUid = (_row$npcUid6 = row.npcUid) != null ? _row$npcUid6 : '';
 
             for (var ev of (_row$events9 = row.events) != null ? _row$events9 : []) {
-              var _row$events9, _ev$client4, _script$options, _ev$server$allowedCho, _ev$server6;
+              var _row$events9, _ev$client4, _script$options, _ev$server$allowedCho, _ev$server8;
 
               if (ev.eventType !== 'choice' && ev.eventType !== 'teleport') continue;
               var sid = (_ev$client4 = ev.client) == null ? void 0 : _ev$client4.choiceScriptId;
               if (!sid) continue;
               var script = this._choiceScripts[sid];
               if (!(script != null && (_script$options = script.options) != null && _script$options.length)) continue;
-              var allowed = (_ev$server$allowedCho = (_ev$server6 = ev.server) == null ? void 0 : _ev$server6.allowedChoiceIds) != null ? _ev$server$allowedCho : [];
+              var allowed = (_ev$server$allowedCho = (_ev$server8 = ev.server) == null ? void 0 : _ev$server8.allowedChoiceIds) != null ? _ev$server$allowedCho : [];
 
               for (var _opt3 of script.options) {
                 var _opt3$text;
@@ -2764,10 +3106,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _stableEventId(npcUid, ev) {
-          var _ev$order3;
+          var _ev$order2;
 
           if (ev.eventId) return ev.eventId;
-          return npcUid + "#order_" + ((_ev$order3 = ev.order) != null ? _ev$order3 : 0);
+          return npcUid + "#order_" + ((_ev$order2 = ev.order) != null ? _ev$order2 : 0);
         }
 
         _markEventDone(npcUid, ev, opts) {
@@ -2848,6 +3190,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var entry = this._resolved.find(x => x.npcUid === npcUid);
 
           if (!entry) {
+            // 诊断：NPC 未解析到场景节点（配置有该 NPC 但场景树缺失 / 生成失败）
+            storyLog('warn', 'StoryManager: 激活失败，未解析到 NPC 节点', {
+              npcUid,
+              resolvedUids: this._resolved.map(r => r.npcUid)
+            });
+
             this._endActivation();
 
             return;
@@ -2858,9 +3206,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var ev = this._pickInteractEvent(npcUid, entry.events);
 
           if (!ev) {
+            var _entry$events$length, _entry$events;
+
+            // 诊断：具体原因已由 _pickInteractEvent 打出，这里标记本次激活结束
+            storyLog('warn', 'StoryManager: 激活中止（无可用交互事件）', {
+              npcUid,
+              eventCount: (_entry$events$length = (_entry$events = entry.events) == null ? void 0 : _entry$events.length) != null ? _entry$events$length : 0
+            });
+
             this._endActivation();
 
             return;
+          }
+
+          if (this.debugLog) {
+            storyLog('info', 'StoryManager: 激活成功，开始事件流', {
+              npcUid,
+              eventId: this._stableEventId(npcUid, ev),
+              eventType: ev.eventType
+            });
           }
 
           if ((_ev$client6 = ev.client) != null && _ev$client6.requiresApproach && !this._npcApproachOk) {
@@ -2875,11 +3239,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _facePlayerTowardNpc(npcNode) {
-          var _this$_playerMove4;
+          var _this$_playerMove7;
 
           this._resolveLocalPlayerOnce();
 
-          if (!((_this$_playerMove4 = this._playerMove) != null && (_this$_playerMove4 = _this$_playerMove4.node) != null && _this$_playerMove4.isValid) || !(npcNode != null && npcNode.isValid)) return;
+          if (!((_this$_playerMove7 = this._playerMove) != null && (_this$_playerMove7 = _this$_playerMove7.node) != null && _this$_playerMove7.isValid) || !(npcNode != null && npcNode.isValid)) return;
           var p = npcNode.worldPosition;
 
           this._playerMove.faceToward(p.x, p.y);
@@ -3226,15 +3590,33 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           });
 
           for (var ev of sorted) {
-            var _ev$server7;
+            var _ev$server9;
 
-            if (this._isQuestStepComplete(npcUid, ev)) continue;
-            var reqs = (_ev$server7 = ev.server) == null ? void 0 : _ev$server7.requirements; // 首个未完成环未满足条件时不得跳到后面（如 e5 待战斗时禁止连到 e6/e8）
+            // 传送可重复触发
+            if (ev.eventType !== 'teleport' && this._isQuestStepComplete(npcUid, ev)) continue;
+            var reqs = (_ev$server9 = ev.server) == null ? void 0 : _ev$server9.requirements; // 首个未完成环未满足条件时不得跳到后面（如 e5 待战斗时禁止连到 e6/e8）
 
-            if (!this._evaluateRequirements(reqs)) return null;
+            if (!this._evaluateRequirements(reqs)) {
+              // 诊断：条件不满足是「按 E 无反应」最常见的静默原因，必须留痕
+              storyLog('warn', 'StoryManager: 交互事件条件未满足，交互中止', {
+                npcUid,
+                eventId: this._stableEventId(npcUid, ev),
+                eventType: ev.eventType,
+                requirements: reqs != null ? reqs : []
+              });
+              return null;
+            }
+
             return ev;
-          }
+          } // 诊断：说明该 NPC 的所有事件都已完成（或事件列表为空）
 
+
+          storyLog('warn', 'StoryManager: NPC 无可交互事件（全部已完成或列表为空）', {
+            npcUid,
+            eventCount: sorted.length,
+            eventIds: sorted.map(e => this._stableEventId(npcUid, e)),
+            completed: sorted.map(e => this._isQuestStepComplete(npcUid, e))
+          });
           return null;
         } // --- NPC 发现 ---
 
@@ -3249,7 +3631,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _resolveNpcs() {
-          var _ref5, _this$_npcRows$find2;
+          var _ref8, _this$_npcRows$find2;
 
           this._unbindNpcTouchHandlers();
 
@@ -3262,7 +3644,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var canvas = this._findNodeByName(scene, 'Canvas');
 
-          var templateNpc = (_ref5 = canvas && this._getChildByPath(canvas, 'GameArea/WorldRoot/NPC')) != null ? _ref5 : null;
+          var templateNpc = (_ref8 = canvas && this._getChildByPath(canvas, 'GameArea/WorldRoot/NPC')) != null ? _ref8 : null;
           var refRow = (_this$_npcRows$find2 = this._npcRows.find(r => r.npcUid === '0_lead_01')) != null ? _this$_npcRows$find2 : this._npcRows[0];
           var ordered = [...this._npcRows].sort((a, b) => {
             var pa = a.npcUid === '0_lead_01' ? 1 : 0;
@@ -3339,7 +3721,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this._resolved.push({
               npcUid,
               node,
-              events
+              events,
+              box: node.getComponent(BoxCollider2D)
             });
 
             if (this.debugLog) {
@@ -3445,9 +3828,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _computeJsonRowWorldPos(scene, row) {
-          var _this$_playerMove5;
+          var _this$_playerMove8;
 
-          var pm = (_this$_playerMove5 = this._playerMove) != null ? _this$_playerMove5 : scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
+          var pm = (_this$_playerMove8 = this._playerMove) != null ? _this$_playerMove8 : scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
             error: Error()
           }), PlayerGridMove) : PlayerGridMove);
           if (!(pm != null && pm.mapRoot)) return null;
@@ -3568,9 +3951,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _findNodeByJsonCoord(scene, row, used) {
-          var _this$_playerMove6;
+          var _this$_playerMove9;
 
-          var pm = (_this$_playerMove6 = this._playerMove) != null ? _this$_playerMove6 : scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
+          var pm = (_this$_playerMove9 = this._playerMove) != null ? _this$_playerMove9 : scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
             error: Error()
           }), PlayerGridMove) : PlayerGridMove);
           if (!(pm != null && pm.mapRoot)) return null;
@@ -3630,7 +4013,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _findNpcNodeFallback(scene, row, used) {
-          var _ref6, _this$_playerMove$nod, _this$_playerMove7, _scene$getComponentIn, _row$npcUid11;
+          var _ref9, _this$_playerMove$nod2, _this$_playerMove10, _scene$getComponentIn, _row$npcUid11;
 
           var canvas = this._findNodeByName(scene, 'Canvas');
 
@@ -3649,9 +4032,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var wr = this._findNodeByName(scene, 'WorldRoot');
 
           if (!wr) return null;
-          var pmNode = (_ref6 = (_this$_playerMove$nod = (_this$_playerMove7 = this._playerMove) == null ? void 0 : _this$_playerMove7.node) != null ? _this$_playerMove$nod : (_scene$getComponentIn = scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
+          var pmNode = (_ref9 = (_this$_playerMove$nod2 = (_this$_playerMove10 = this._playerMove) == null ? void 0 : _this$_playerMove10.node) != null ? _this$_playerMove$nod2 : (_scene$getComponentIn = scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
             error: Error()
-          }), PlayerGridMove) : PlayerGridMove)) == null ? void 0 : _scene$getComponentIn.node) != null ? _ref6 : null;
+          }), PlayerGridMove) : PlayerGridMove)) == null ? void 0 : _scene$getComponentIn.node) != null ? _ref9 : null;
 
           var colliders = this._collectColliderNpcNodes(wr, pmNode).filter(n => !used.has(n));
 
@@ -3752,13 +4135,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this._lastPlayerResolveAt = now;
 
           try {
-            var _scene$getComponentIn2, _this$_playerMove8;
+            var _scene$getComponentIn2, _this$_playerMove11;
 
             var scene = director.getScene == null ? void 0 : director.getScene();
             this._playerMove = (_scene$getComponentIn2 = scene == null ? void 0 : scene.getComponentInChildren(_crd && PlayerGridMove === void 0 ? (_reportPossibleCrUseOfPlayerGridMove({
               error: Error()
             }), PlayerGridMove) : PlayerGridMove)) != null ? _scene$getComponentIn2 : null;
-            var pNode = (_this$_playerMove8 = this._playerMove) == null ? void 0 : _this$_playerMove8.node;
+            var pNode = (_this$_playerMove11 = this._playerMove) == null ? void 0 : _this$_playerMove11.node;
 
             if (pNode) {
               var box = pNode.getComponentInChildren(BoxCollider2D);
@@ -3781,9 +4164,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _distanceToPlayer(target) {
-          var _this$_playerMove9;
+          var _this$_playerMove12;
 
-          if (!((_this$_playerMove9 = this._playerMove) != null && _this$_playerMove9.node)) return Number.POSITIVE_INFINITY;
+          if (!((_this$_playerMove12 = this._playerMove) != null && _this$_playerMove12.node)) return Number.POSITIVE_INFINITY;
           var a = target.worldPosition;
           var b = this._playerMove.node.worldPosition;
           return Math.hypot(a.x - b.x, a.y - b.y);
@@ -3818,11 +4201,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _pollTouchOverlap() {
-          var _this$_playerMove10;
+          var _this$_playerMove13;
 
           this._resolveLocalPlayerOnce();
 
-          if (!((_this$_playerMove10 = this._playerMove) != null && _this$_playerMove10.node) || this._resolved.length === 0) {
+          if (!((_this$_playerMove13 = this._playerMove) != null && _this$_playerMove13.node) || this._resolved.length === 0) {
             this._playerTouchingNpcUid = null;
 
             this._syncInteractRangeHint(null);
@@ -3836,14 +4219,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var bestUid = null;
           var bestDist = Number.POSITIVE_INFINITY;
 
-          for (var {
-            npcUid,
-            node
-          } of this._resolved) {
+          for (var entry of this._resolved) {
             var _this$_playerCollider;
 
+            var {
+              npcUid,
+              node
+            } = entry;
             if (!node.isValid || !node.active) continue;
-            var trig = node.getComponent(BoxCollider2D);
+
+            if (!entry.box || !entry.box.isValid) {
+              entry.box = node.getComponent(BoxCollider2D);
+            }
+
+            var trig = entry.box;
 
             var dist = this._distanceToPlayer(node);
 
@@ -3925,13 +4314,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         // --- UI（原 StoryDialoguePlayer） ---
         _resolveRefs() {
-          var _ref7, _this$getComponent, _this$node5;
+          var _ref10, _this$getComponent, _this$node5;
 
-          this._refs = (_ref7 = (_this$getComponent = this.getComponent(_crd && StoryUIViewRefs === void 0 ? (_reportPossibleCrUseOfStoryUIViewRefs({
+          this._refs = (_ref10 = (_this$getComponent = this.getComponent(_crd && StoryUIViewRefs === void 0 ? (_reportPossibleCrUseOfStoryUIViewRefs({
             error: Error()
           }), StoryUIViewRefs) : StoryUIViewRefs)) != null ? _this$getComponent : (_this$node5 = this.node) == null ? void 0 : _this$node5.getComponentInChildren(_crd && StoryUIViewRefs === void 0 ? (_reportPossibleCrUseOfStoryUIViewRefs({
             error: Error()
-          }), StoryUIViewRefs) : StoryUIViewRefs)) != null ? _ref7 : null;
+          }), StoryUIViewRefs) : StoryUIViewRefs)) != null ? _ref10 : null;
 
           if (!this._refs) {
             var _this$node6;
@@ -4484,13 +4873,6 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         writable: true,
         initializer: function initializer() {
           return null;
-        }
-      }), _descriptor23 = _applyDecoratedDescriptor(_class2.prototype, "mapCode", [_dec19], {
-        configurable: true,
-        enumerable: true,
-        writable: true,
-        initializer: function initializer() {
-          return 'world_1782661910893';
         }
       })), _class2)) || _class) || _class));
 

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, ScrollView, instantiate, UITransform, Color, Sprite, SpriteFrame, WebSocketManager, GameConfig, DataCacheManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, robotGameEvents, RobotGameEvent, TipWindows, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _class3, _crd, ccclass, property, RobotList;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, ScrollView, instantiate, UITransform, Color, Sprite, SpriteFrame, WebSocketManager, GameConfig, DataCacheManager, UILockManager, emitBattleTeamUpdated, emitRobotDataUpdated, robotGameEvents, RobotGameEvent, TipWindows, PerformanceMonitor, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _class3, _crd, ccclass, property, RobotList;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -45,6 +45,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("TipWindows", "../global/TipWindows", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfPerformanceMonitor(extras) {
+    _reporterNs.report("PerformanceMonitor", "../global/PerformanceMonitor", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -78,6 +86,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       RobotGameEvent = _unresolved_6.RobotGameEvent;
     }, function (_unresolved_7) {
       TipWindows = _unresolved_7.TipWindows;
+    }, function (_unresolved_8) {
+      PerformanceMonitor = _unresolved_8.PerformanceMonitor;
+    }, function (_unresolved_9) {
+      Logger = _unresolved_9.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -98,7 +110,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         type: SpriteFrame
       }), _dec10 = property({
         type: SpriteFrame
-      }), _dec(_class = (_class2 = (_class3 = class RobotList extends Component {
+      }), _dec11 = property({
+        type: SpriteFrame
+      }), _dec12 = property({
+        type: SpriteFrame
+      }), _dec13 = property(Node), _dec(_class = (_class2 = (_class3 = class RobotList extends Component {
         constructor(...args) {
           super(...args);
 
@@ -155,6 +171,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           _initializerDefineProperty(this, "mechaIconQuanneng", _descriptor9, this);
 
+          /** 行常规状态底图（未选中） */
+          _initializerDefineProperty(this, "rowNormalSprite", _descriptor10, this);
+
+          /** 行选中状态底图 */
+          _initializerDefineProperty(this, "rowSelectedSprite", _descriptor11, this);
+
+          /** 包内「共有 X 台机甲可出战」的 Count 节点（Label 显示可出战机甲数） */
+          _initializerDefineProperty(this, "countLabel", _descriptor12, this);
+
           this.itemClickHandlers = new Map();
 
           /** 修复点：确认/出战/放生防抖，避免高频点击重复请求 */
@@ -201,7 +226,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            */
           this.onCharacterChanged = data => {
             if (data && data.reason === 'character_id_cleared') {
-              console.log('🗑️ [RobotList] 检测到角色切换，清除内部状态'); // 清除所有内部状态
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('🗑️ [RobotList] 检测到角色切换，清除内部状态'); // 清除所有内部状态
 
               this.currentPets = [];
               this.battleTeam = [];
@@ -367,10 +394,61 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var _ref, _data$battle_team, _data$data, _this$node3;
 
           if (!(data != null && data.success)) return;
+          const prevTeam = this.battleTeam;
           const raw = (_ref = (_data$battle_team = data.battle_team) != null ? _data$battle_team : (_data$data = data.data) == null ? void 0 : _data$data.battle_team) != null ? _ref : [];
           this.battleTeam = (Array.isArray(raw) ? raw : []).map(x => String(x).trim().toLowerCase()).filter(Boolean);
           this.applyServerTeamVersion(data);
-          if ((_this$node3 = this.node) != null && _this$node3.active && this.currentPets.length > 0) this.refreshListUI();
+          if (!((_this$node3 = this.node) != null && _this$node3.active && this.currentPets.length > 0)) return;
+
+          if (this.battleTeamMembershipChanged(prevTeam, this.battleTeam)) {
+            this.refreshListUI();
+            return;
+          }
+
+          this.patchBattleTeamRowStyles();
+        }
+        /** 只看出战成员集合，忽略顺序。顺序变化不整表重建。 */
+
+
+        battleTeamMembershipChanged(prev, next) {
+          const a = new Set(prev.map(id => this.normPetId(id)).filter(Boolean));
+          const b = new Set(next.map(id => this.normPetId(id)).filter(Boolean));
+          if (a.size !== b.size) return true;
+
+          for (const id of a) {
+            if (!b.has(id)) return true;
+          }
+
+          return false;
+        }
+        /** 成员没变时只改已有行的出战标记和底色，不重排、不重建、不重触发选中。 */
+
+
+        patchBattleTeamRowStyles() {
+          const visit = node => {
+            if (!(node != null && node.isValid) || !node.active) return;
+            const pet = node._pet;
+            if (!pet) return;
+            const tagN = this.findChild(node, 'TeamTag');
+
+            if (tagN) {
+              const tl = tagN.getComponent(Label);
+
+              if (tl) {
+                var _ref2, _ref3, _pet$pet_id;
+
+                const pid = String((_ref2 = (_ref3 = (_pet$pet_id = pet.pet_id) != null ? _pet$pet_id : pet._id) != null ? _ref3 : pet.id) != null ? _ref2 : '');
+                const inTeam = !!pid && this.battleTeam.some(bid => this.normPetId(bid) === this.normPetId(pid));
+                tl.string = inTeam ? '出战' : '';
+              }
+            }
+
+            this.updateRowBattleFilter(node, pet);
+          };
+
+          visit(this.robotListDataTemplate);
+
+          for (const n of this.listItems) visit(n);
         }
         /** 唯一入口：打开并加载（优化：先显示缓存，再后台更新） */
 
@@ -452,9 +530,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const n = this.normPetId(petId);
           if (!n) return false;
           return this.currentPets.some(p => {
-            var _ref2, _ref3, _p$pet_id;
+            var _ref4, _ref5, _p$pet_id;
 
-            return this.normPetId(String((_ref2 = (_ref3 = (_p$pet_id = p.pet_id) != null ? _p$pet_id : p._id) != null ? _ref3 : p.id) != null ? _ref2 : '')) === n;
+            return this.normPetId(String((_ref4 = (_ref5 = (_p$pet_id = p.pet_id) != null ? _p$pet_id : p._id) != null ? _ref5 : p.id) != null ? _ref4 : '')) === n;
           });
         }
         /** 是否只剩最后一台机甲（放生/分解前客户端预检） */
@@ -553,7 +631,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               try {
                 cb(resp);
               } catch (e) {
-                console.error('[RobotList] onPetsResponse fan-out', e);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('[RobotList] onPetsResponse fan-out', e);
               }
             }
           };
@@ -567,20 +647,29 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             RobotList._petsSfCid = cid;
             RobotList._petsSfCallbacks = [resp => this.onPetsResponse(resp)];
+            (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+              error: Error()
+            }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('get_robot_pets');
             this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).MESSAGE_TYPES.GET_ROBOT_PETS, req, resp => deliver(resp), true, timeoutMs);
             return;
           }
 
+          (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+            error: Error()
+          }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('get_robot_pets');
           this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
           }), GameConfig) : GameConfig).MESSAGE_TYPES.GET_ROBOT_PETS, req, resp => this.onPetsResponse(resp), true, timeoutMs);
         }
 
         onPetsResponse(data) {
-          var _data$data2, _data$battle_team2, _data$data3, _data$pagination, _data$data4, _pagination$page, _ref4, _ref5, _ref6, _data$robotcount, _data$data5;
+          var _data$data2, _data$battle_team2, _data$data3, _data$pagination, _data$data4, _pagination$page, _ref6, _ref7, _ref8, _data$robotcount, _data$data5;
 
+          (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+            error: Error()
+          }), PerformanceMonitor) : PerformanceMonitor).getInstance().endTimer('get_robot_pets');
           const isUpdate = (data == null ? void 0 : data.type) === (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
           }), GameConfig) : GameConfig).MESSAGE_TYPES.ROBOT_PETS_UPDATE;
@@ -664,7 +753,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.applyServerTeamVersion(data);
           const pagination = (_data$pagination = data.pagination) != null ? _data$pagination : (_data$data4 = data.data) == null ? void 0 : _data$data4.pagination;
           const page = (_pagination$page = pagination == null ? void 0 : pagination.page) != null ? _pagination$page : 0;
-          this._robotCount = Number((_ref4 = (_ref5 = (_ref6 = (_data$robotcount = data.robotcount) != null ? _data$robotcount : (_data$data5 = data.data) == null ? void 0 : _data$data5.robotcount) != null ? _ref6 : pagination == null ? void 0 : pagination.total) != null ? _ref5 : this.currentPets.length) != null ? _ref4 : 0);
+          this._robotCount = Number((_ref6 = (_ref7 = (_ref8 = (_data$robotcount = data.robotcount) != null ? _data$robotcount : (_data$data5 = data.data) == null ? void 0 : _data$data5.robotcount) != null ? _ref8 : pagination == null ? void 0 : pagination.total) != null ? _ref7 : this.currentPets.length) != null ? _ref6 : 0);
 
           if (page === 0 && !Array.isArray(bt) && this.ws && !this._fallbackBattleTeamRequested) {
             this._fallbackBattleTeamRequested = true;
@@ -737,9 +826,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const rest = []; // 分离出战和非出战机甲（用规范化 id 比较，与 battleTeam 小写存储一致）
 
           for (const p of this.currentPets) {
-            var _ref7, _ref8, _p$pet_id2;
+            var _ref9, _ref10, _p$pet_id2;
 
-            const id = this.normPetId(String((_ref7 = (_ref8 = (_p$pet_id2 = p.pet_id) != null ? _p$pet_id2 : p._id) != null ? _ref8 : p.id) != null ? _ref7 : ''));
+            const id = this.normPetId(String((_ref9 = (_ref10 = (_p$pet_id2 = p.pet_id) != null ? _p$pet_id2 : p._id) != null ? _ref10 : p.id) != null ? _ref9 : ''));
             const battleIndex = this.battleTeam.findIndex(bid => this.normPetId(bid) === id);
 
             if (battleIndex >= 0) {
@@ -758,22 +847,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           inTeam.sort((a, b) => a.order - b.order); // 关键修复：合并列表，出战机甲在前，其他在后
 
           this.currentPets = [...inTeam.map(item => item.pet), ...rest];
-          console.log(`[RobotList] 排序完成: 出战${inTeam.length}个, 其他${rest.length}个, 出战队伍:`, this.battleTeam);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`[RobotList] 排序完成: 出战${inTeam.length}个, 其他${rest.length}个, 出战队伍:`, this.battleTeam);
         }
 
         refreshListUI() {
-          var _ref9, _ref10, _this$selectedPet$pet;
+          var _ref11, _ref12, _this$selectedPet$pet;
 
-          const sid = this.selectedPet ? this.normPetId(String((_ref9 = (_ref10 = (_this$selectedPet$pet = this.selectedPet.pet_id) != null ? _this$selectedPet$pet : this.selectedPet._id) != null ? _ref10 : this.selectedPet.id) != null ? _ref9 : '')) : '';
+          const sid = this.selectedPet ? this.normPetId(String((_ref11 = (_ref12 = (_this$selectedPet$pet = this.selectedPet.pet_id) != null ? _this$selectedPet$pet : this.selectedPet._id) != null ? _ref12 : this.selectedPet.id) != null ? _ref11 : '')) : '';
           this.sortByBattleTeam();
           this.bgColorMap.clear();
           this.renderList(this.currentPets);
 
           if (sid) {
             const idx = this.currentPets.findIndex(p => {
-              var _ref11, _ref12, _p$pet_id3;
+              var _ref13, _ref14, _p$pet_id3;
 
-              return this.normPetId(String((_ref11 = (_ref12 = (_p$pet_id3 = p.pet_id) != null ? _p$pet_id3 : p._id) != null ? _ref12 : p.id) != null ? _ref11 : '')) === sid;
+              return this.normPetId(String((_ref13 = (_ref14 = (_p$pet_id3 = p.pet_id) != null ? _p$pet_id3 : p._id) != null ? _ref14 : p.id) != null ? _ref13 : '')) === sid;
             });
 
             if (idx >= 0) {
@@ -816,12 +907,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.fillRow(node, pet, i);
             this.setRowLayout(node, i, firstY);
             this.bindRowClick(node, i);
-            this.bindSetAndActions(node, pet, i); // 关键修复：先更新滤镜，再设置未选中状态（确保红色滤镜不被覆盖）
+            this.bindSetAndActions(node, pet, i); // 出战标记（AttackState 显隐）→ 再铺常规底图
 
-            this.updateRowBattleFilter(node, pet); // 先应用红色滤镜
-
-            this.setRowSelection(node, false); // 再设置未选中状态（不会覆盖已应用的滤镜）
-
+            this.updateRowBattleFilter(node, pet);
+            this.setRowSelection(node, false);
             this.updateSetVisibility(node);
             if (node.parent !== this.content) this.content.addChild(node);
           }
@@ -840,6 +929,40 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.updateContentHeight(pets.length, firstY);
           this.updateConfirmVisibility();
+          this.updateBattleCount();
+        }
+        /**
+         * 刷新「共有 X 台机甲可出战」的 Count。
+         * 目前口径 = 当前机甲列表总数（后续可改为仅统计满足出战条件的机甲）。
+         */
+
+
+        updateBattleCount() {
+          const n = this.currentPets.length;
+          this.updateBattleCountLabel(n);
+        }
+
+        updateBattleCountLabel(n) {
+          var _this$countLabel;
+
+          const node = (_this$countLabel = this.countLabel) != null ? _this$countLabel : this.findChild(this.node, 'Count');
+          if (!node) return;
+          const label = node.getComponent(Label);
+
+          if (label) {
+            label.string = String(n);
+            return;
+          } // Count 节点无 Label 时，向下找第一个 Label
+
+
+          for (const c of node.children) {
+            const l = c.getComponent(Label);
+
+            if (l) {
+              l.string = String(n);
+              return;
+            }
+          }
         }
         /** P1 性能：首行 template + listItems 复用，避免每次打开都全量 instantiate。 */
 
@@ -863,10 +986,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         fillRow(node, pet, _index) {
-          var _ref13, _ref14, _pet$pet_id, _ref15, _pet$Form, _pet$Level, _pet$Class;
+          var _ref15, _ref16, _pet$pet_id2, _ref17, _pet$Form, _pet$Level, _pet$Class;
 
-          const id = String((_ref13 = (_ref14 = (_pet$pet_id = pet.pet_id) != null ? _pet$pet_id : pet._id) != null ? _ref14 : pet.id) != null ? _ref13 : '');
-          const form = Number((_ref15 = (_pet$Form = pet.Form) != null ? _pet$Form : pet.Fo) != null ? _ref15 : 0);
+          const id = String((_ref15 = (_ref16 = (_pet$pet_id2 = pet.pet_id) != null ? _pet$pet_id2 : pet._id) != null ? _ref16 : pet.id) != null ? _ref15 : '');
+          const form = Number((_ref17 = (_pet$Form = pet.Form) != null ? _pet$Form : pet.Fo) != null ? _ref17 : 0);
           const name = (pet.RobotName || '') + (form === 1 ? '|初' : form === 2 ? '|中' : form === 3 ? '|终' : '');
           const level = String((_pet$Level = pet.Level) != null ? _pet$Level : 1);
           const cls = Number((_pet$Class = pet.Class) != null ? _pet$Class : 1); // MechaClass 图标键：兼容两种常见命名方式
@@ -897,9 +1020,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             const tl = tagN.getComponent(Label);
 
             if (tl) {
-              var _ref16, _ref17, _pet$pet_id2;
+              var _ref18, _ref19, _pet$pet_id3;
 
-              const pid = String((_ref16 = (_ref17 = (_pet$pet_id2 = pet.pet_id) != null ? _pet$pet_id2 : pet._id) != null ? _ref17 : pet.id) != null ? _ref16 : '');
+              const pid = String((_ref18 = (_ref19 = (_pet$pet_id3 = pet.pet_id) != null ? _pet$pet_id3 : pet._id) != null ? _ref19 : pet.id) != null ? _ref18 : '');
               const inTeam = !!pid && this.battleTeam.some(bid => this.normPetId(bid) === this.normPetId(pid));
               tl.string = inTeam ? '出战' : '';
             }
@@ -933,15 +1056,21 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 if (shouldDebug) {
                   var _matchedName;
 
-                  console.log(`[RobotList][Icon] index=${_index} pet.Class=${pet.Class} cls=${cls} iconKey=${iconKey} matched=${(_matchedName = matchedName) != null ? _matchedName : 'unknown'}`);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug(`[RobotList][Icon] index=${_index} pet.Class=${pet.Class} cls=${cls} iconKey=${iconKey} matched=${(_matchedName = matchedName) != null ? _matchedName : 'unknown'}`);
                 }
               } else {
-                console.warn(`[RobotList] MechaClass 图标帧未找到，cls=${cls}, candidates=${iconCandidates.join(',')}`, {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn(`[RobotList] MechaClass 图标帧未找到，cls=${cls}, candidates=${iconCandidates.join(',')}`, {
                   atlasFramesNotEnumerated: true
                 });
 
                 if (shouldDebug) {
-                  console.log(`[RobotList][Icon] index=${_index} pet.Class=${pet.Class} cls=${cls} iconKey=${iconKey} iconCandidates=${iconCandidates.join(',')}`);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug(`[RobotList][Icon] index=${_index} pet.Class=${pet.Class} cls=${cls} iconKey=${iconKey} iconCandidates=${iconCandidates.join(',')}`);
                 }
               }
             } // 兜底：atlas 没命中时，直接用外部拖拽的 SpriteFrame 替换，保证切换必然生效
@@ -954,7 +1083,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (fallback) {
                 s.spriteFrame = fallback;
               } else if (shouldDebug) {
-                console.warn(`[RobotList][Icon] fallback SpriteFrame 为空：cls=${cls}, mechaIconGedou=${!!this.mechaIconGedou}, mechaIconSheji=${!!this.mechaIconSheji}, mechaIconQuanneng=${!!this.mechaIconQuanneng}`);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn(`[RobotList][Icon] fallback SpriteFrame 为空：cls=${cls}, mechaIconGedou=${!!this.mechaIconGedou}, mechaIconSheji=${!!this.mechaIconSheji}, mechaIconQuanneng=${!!this.mechaIconQuanneng}`);
               }
             }
           }
@@ -996,52 +1127,52 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.setRowSelection(node, true);
           this.updateConfirmVisibility();
         }
+        /**
+         * 行底图：选中 / 常规 两态换 UI 图（不再用颜色滤镜）。
+         * 未选中时若有出战状态，仍用常规底图区分由 AttackState 节点承担。
+         */
 
-        setRowSelection(node, selected) {
+
+        applyRowBgSprite(node, selected) {
           var _bg$getComponent;
 
-          const bg = this.findChild(node, 'BG1') || this.findChild(node, 'BG2') || this.findChild(node, 'BG') || this.findChild(node, 'Background');
+          const bg = this.findRowBg(node);
           const sprite = (_bg$getComponent = bg == null ? void 0 : bg.getComponent(Sprite)) != null ? _bg$getComponent : node.getComponent(Sprite);
           if (!sprite) return;
+          const target = selected ? this.rowSelectedSprite : this.rowNormalSprite;
 
-          if (selected) {
-            // 选中时：保存当前颜色（可能是红色滤镜或白色），然后应用黄色
-            if (!this.bgColorMap.has(sprite.node)) {
-              this.bgColorMap.set(sprite.node, sprite.color.clone());
-            }
-
-            sprite.color = new Color(255, 255, 100, 255); // 黄色选中效果
+          if (target) {
+            sprite.spriteFrame = target;
+            sprite.color = new Color(255, 255, 255, 255);
           } else {
-            // 未选中时：恢复原始颜色（如果有保存），否则根据出战状态设置
-            const orig = this.bgColorMap.get(sprite.node);
-
-            if (orig) {
-              sprite.color = orig;
-              this.bgColorMap.delete(sprite.node);
-            } else {
-              // 关键修复：恢复时根据出战状态设置红色滤镜或白色
-              const petId = node._petId;
-              const inTeam = !!petId && this.battleTeam.some(bid => this.normPetId(bid) === this.normPetId(petId));
-              sprite.color = inTeam ? new Color(255, 100, 100, 255) : new Color(255, 255, 255, 255);
-            }
+            // 未配置 row 图时兜底：保持原有颜色区分（不破坏旧表现）
+            sprite.color = selected ? new Color(255, 255, 100, 255) : new Color(255, 255, 255, 255);
           }
         }
 
+        findRowBg(node) {
+          return this.findChild(node, 'BG1') || this.findChild(node, 'BG2') || this.findChild(node, 'BG') || this.findChild(node, 'Background');
+        }
+
+        setRowSelection(node, selected) {
+          this.applyRowBgSprite(node, selected);
+        }
+        /**
+         * 出战标记：直接控制 AttackState 节点显隐。
+         * 出战 → active=true；未出战 → active=false。
+         */
+
+
         updateRowBattleFilter(node, pet) {
-          var _ref18, _ref19, _pet$pet_id3, _bg$getComponent2;
+          var _ref20, _ref21, _pet$pet_id4;
 
-          // 关键修复：如果当前行被选中，不覆盖选中效果（黄色优先）
-          if (this.selectedNode === node) return;
-          const id = this.normPetId(String((_ref18 = (_ref19 = (_pet$pet_id3 = pet.pet_id) != null ? _pet$pet_id3 : pet._id) != null ? _ref19 : pet.id) != null ? _ref18 : ''));
-          const inTeam = this.battleTeam.some(bid => this.normPetId(bid) === id);
-          const bg = this.findChild(node, 'BG1') || this.findChild(node, 'BG2') || this.findChild(node, 'BG') || this.findChild(node, 'Background');
-          const sprite = (_bg$getComponent2 = bg == null ? void 0 : bg.getComponent(Sprite)) != null ? _bg$getComponent2 : node.getComponent(Sprite);
-          if (!sprite) return; // 关键修复：强制应用红色滤镜（如果不在选中状态且没有保存选中颜色）
-          // 只有在没有保存选中颜色时才更新（避免覆盖选中效果）
+          const id = this.normPetId(String((_ref20 = (_ref21 = (_pet$pet_id4 = pet == null ? void 0 : pet.pet_id) != null ? _pet$pet_id4 : pet == null ? void 0 : pet._id) != null ? _ref21 : pet == null ? void 0 : pet.id) != null ? _ref20 : ''));
+          const inTeam = !!id && this.battleTeam.some(bid => this.normPetId(bid) === id);
+          const flagN = this.findChild(node, 'AttackState');
+          if (flagN) flagN.active = inTeam; // 底图只在未选中行上刷新（选中态由 row_selected 承担）
 
-          if (!this.bgColorMap.has(sprite.node)) {
-            const targetColor = inTeam ? new Color(255, 100, 100, 255) : new Color(255, 255, 255, 255);
-            sprite.color = targetColor;
+          if (this.selectedNode !== node) {
+            this.applyRowBgSprite(node, false);
           }
         }
 
@@ -1051,7 +1182,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         bindSetAndActions(node, pet, index) {
-          var _ref20, _ref21, _pet$pet_id4;
+          var _ref22, _ref23, _pet$pet_id5;
 
           const setN = this.findChild(node, 'Set');
           if (!setN) return;
@@ -1059,7 +1190,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!panel) return;
           panel.active = false; // 关键修复：确保使用正确的 petId（服务器返回的是 pet_id 字段，对应数据库的 _id）
 
-          const petId = String((_ref20 = (_ref21 = (_pet$pet_id4 = pet.pet_id) != null ? _pet$pet_id4 : pet._id) != null ? _ref21 : pet.id) != null ? _ref20 : ''); // 将 pet 数据绑定到节点，方便后续使用
+          const petId = String((_ref22 = (_ref23 = (_pet$pet_id5 = pet.pet_id) != null ? _pet$pet_id5 : pet._id) != null ? _ref23 : pet.id) != null ? _ref22 : ''); // 将 pet 数据绑定到节点，方便后续使用
 
           node._pet = pet;
           node._petId = petId;
@@ -1255,22 +1386,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const nodePet = row._pet;
 
           if (nodePet) {
-            var _ref22, _ref23, _nodePet$pet_id;
+            var _ref24, _ref25, _nodePet$pet_id;
 
             // 从 pet 数据中获取正确的 pet_id（服务器返回的 pet_id 对应数据库的 _id）
-            const correctId = String((_ref22 = (_ref23 = (_nodePet$pet_id = nodePet.pet_id) != null ? _nodePet$pet_id : nodePet._id) != null ? _ref23 : nodePet.id) != null ? _ref22 : '');
+            const correctId = String((_ref24 = (_ref25 = (_nodePet$pet_id = nodePet.pet_id) != null ? _nodePet$pet_id : nodePet._id) != null ? _ref25 : nodePet.id) != null ? _ref24 : '');
 
             if (correctId && correctId.length === 24) {
               finalPetId = correctId;
-              console.log(`[RobotList] 使用 petId: ${finalPetId} (来自节点数据)`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[RobotList] 使用 petId: ${finalPetId} (来自节点数据)`);
             } else {
-              console.warn(`[RobotList] petId 格式异常: ${correctId}, 使用传入的: ${petId}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`[RobotList] petId 格式异常: ${correctId}, 使用传入的: ${petId}`);
             }
           } // 验证 petId 格式
 
 
           if (!finalPetId || finalPetId.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(finalPetId)) {
-            console.error(`[RobotList] 无效的 petId 格式: ${finalPetId}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error(`[RobotList] 无效的 petId 格式: ${finalPetId}`);
             return;
           } // 若已在出战队伍中，则下场：从队伍中移除并提交（用规范化 id 比较）
 
@@ -1284,7 +1421,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           const next = this.nextBattleTeam(finalPetId);
-          console.log(`[RobotList] 准备设置出战队伍，petId: ${finalPetId}, 当前队伍: ${this.battleTeam}, 新队伍: ${next}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`[RobotList] 准备设置出战队伍，petId: ${finalPetId}, 当前队伍: ${this.battleTeam}, 新队伍: ${next}`);
           this.submitBattleTeam(next);
         }
         /** 修复点：使用 normPetId 比较，避免大小写导致“已在队伍”误判 */
@@ -1342,7 +1481,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               } else {
                 var _r$message;
 
-                console.error('[RobotList] 设置出战队伍（空）失败:', (_r$message = r == null ? void 0 : r.message) != null ? _r$message : '未知错误', r);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('[RobotList] 设置出战队伍（空）失败:', (_r$message = r == null ? void 0 : r.message) != null ? _r$message : '未知错误', r);
                 this.refreshListUI();
               }
             }, true, 8000);
@@ -1356,20 +1497,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             const str = String(id).trim();
 
             if (!str || str.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(str)) {
-              console.warn(`[RobotList] 跳过无效的 petId 格式: ${str}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`[RobotList] 跳过无效的 petId 格式: ${str}`);
               continue;
             } // 验证这个 petId 是否在当前机甲列表中（确保属于当前角色，用规范化 id 比较）
 
 
             const pet = this.currentPets.find(p => {
-              var _ref24, _ref25, _p$pet_id4;
+              var _ref26, _ref27, _p$pet_id4;
 
-              const pid = this.normPetId(String((_ref24 = (_ref25 = (_p$pet_id4 = p.pet_id) != null ? _p$pet_id4 : p._id) != null ? _ref25 : p.id) != null ? _ref24 : ''));
+              const pid = this.normPetId(String((_ref26 = (_ref27 = (_p$pet_id4 = p.pet_id) != null ? _p$pet_id4 : p._id) != null ? _ref27 : p.id) != null ? _ref26 : ''));
               return pid === this.normPetId(str);
             });
 
             if (!pet) {
-              console.warn(`[RobotList] petId ${str} 不在当前机甲列表中，跳过`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`[RobotList] petId ${str} 不在当前机甲列表中，跳过`);
               continue;
             }
 
@@ -1377,7 +1522,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           if (normalizedTeam.length === 0) {
-            console.error('[RobotList] 没有有效的 petId 可以设置出战队伍');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[RobotList] 没有有效的 petId 可以设置出战队伍');
             this._submittingBattleTeam = false;
             this.setDeployReleaseButtonsInteractable(true);
             (_crd && UILockManager === void 0 ? (_reportPossibleCrUseOfUILockManager({
@@ -1390,19 +1537,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           const validPets = normalizedTeam.filter(pid => {
             const pn = this.normPetId(pid);
             const pet = this.currentPets.find(p => {
-              var _ref26, _ref27, _p$pet_id5;
+              var _ref28, _ref29, _p$pet_id5;
 
-              return this.normPetId(String((_ref26 = (_ref27 = (_p$pet_id5 = p.pet_id) != null ? _p$pet_id5 : p._id) != null ? _ref27 : p.id) != null ? _ref26 : '')) === pn;
+              return this.normPetId(String((_ref28 = (_ref29 = (_p$pet_id5 = p.pet_id) != null ? _p$pet_id5 : p._id) != null ? _ref29 : p.id) != null ? _ref28 : '')) === pn;
             });
 
             if (!pet) {
-              console.warn(`[RobotList] petId ${pid} 不在当前机甲列表中`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`[RobotList] petId ${pid} 不在当前机甲列表中`);
               return false;
             } // 验证机甲是否属于当前角色（如果数据中有 character_id 字段）
 
 
             if (pet.character_id && pet.character_id !== cid) {
-              console.warn(`[RobotList] petId ${pid} 不属于当前角色 ${cid}，属于 ${pet.character_id}`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn(`[RobotList] petId ${pid} 不属于当前角色 ${cid}，属于 ${pet.character_id}`);
               return false;
             }
 
@@ -1410,7 +1561,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           });
 
           if (validPets.length === 0) {
-            console.error('[RobotList] 没有有效的机甲可以设置出战队伍');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[RobotList] 没有有效的机甲可以设置出战队伍');
             this._submittingBattleTeam = false;
             this.setDeployReleaseButtonsInteractable(true);
             (_crd && UILockManager === void 0 ? (_reportPossibleCrUseOfUILockManager({
@@ -1420,14 +1573,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           if (validPets.length !== normalizedTeam.length) {
-            console.warn(`[RobotList] 过滤后有效机甲数量: ${validPets.length}/${normalizedTeam.length}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`[RobotList] 过滤后有效机甲数量: ${validPets.length}/${normalizedTeam.length}`);
           }
 
-          console.log('[RobotList] 设置出战队伍:', validPets, '当前角色ID:', cid);
-          console.log('[RobotList] 当前机甲列表 petIds:', this.currentPets.map(p => {
-            var _ref28, _ref29, _p$pet_id6;
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[RobotList] 设置出战队伍:', validPets, '当前角色ID:', cid);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[RobotList] 当前机甲列表 petIds:', this.currentPets.map(p => {
+            var _ref30, _ref31, _p$pet_id6;
 
-            return String((_ref28 = (_ref29 = (_p$pet_id6 = p.pet_id) != null ? _p$pet_id6 : p._id) != null ? _ref29 : p.id) != null ? _ref28 : '');
+            return String((_ref30 = (_ref31 = (_p$pet_id6 = p.pet_id) != null ? _p$pet_id6 : p._id) != null ? _ref31 : p.id) != null ? _ref30 : '');
           }));
           const setReq = {
             character_id: cid,
@@ -1483,7 +1642,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   var _resp$message;
 
                   this._didRetrySetBattleTeamAfterVersionMismatch = false;
-                  console.error('[RobotList] 同步队伍版本失败:', (_resp$message = resp == null ? void 0 : resp.message) != null ? _resp$message : resp, resp);
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).error('[RobotList] 同步队伍版本失败:', (_resp$message = resp == null ? void 0 : resp.message) != null ? _resp$message : resp, resp);
                   this.refreshListUI();
                   return;
                 }
@@ -1505,7 +1666,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             (_crd && UILockManager === void 0 ? (_reportPossibleCrUseOfUILockManager({
               error: Error()
             }), UILockManager) : UILockManager).instance.unlock('battle_team');
-            console.error('[RobotList] 设置出战队伍失败:', (_r$message2 = r == null ? void 0 : r.message) != null ? _r$message2 : '未知错误', r);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[RobotList] 设置出战队伍失败:', (_r$message2 = r == null ? void 0 : r.message) != null ? _r$message2 : '未知错误', r);
             this.refreshListUI();
           }, true, 8000);
         }
@@ -1534,7 +1697,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onRelease(petId, row, panel) {
-          var _ref32, _pet$Form2;
+          var _ref34, _pet$Form2;
 
           this.clearSelection();
           this.closeSetForRow(row);
@@ -1551,11 +1714,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           const pet = this.currentPets.find(p => {
-            var _ref30, _ref31, _p$pet_id7;
+            var _ref32, _ref33, _p$pet_id7;
 
-            return this.normPetId(String((_ref30 = (_ref31 = (_p$pet_id7 = p.pet_id) != null ? _p$pet_id7 : p._id) != null ? _ref31 : p.id) != null ? _ref30 : '')) === this.normPetId(petId);
+            return this.normPetId(String((_ref32 = (_ref33 = (_p$pet_id7 = p.pet_id) != null ? _p$pet_id7 : p._id) != null ? _ref33 : p.id) != null ? _ref32 : '')) === this.normPetId(petId);
           });
-          const form = Number((_ref32 = (_pet$Form2 = pet == null ? void 0 : pet.Form) != null ? _pet$Form2 : pet == null ? void 0 : pet.Fo) != null ? _ref32 : 0);
+          const form = Number((_ref34 = (_pet$Form2 = pet == null ? void 0 : pet.Form) != null ? _pet$Form2 : pet == null ? void 0 : pet.Fo) != null ? _ref34 : 0);
           const formSuffix = form === 1 ? '|初' : form === 2 ? '|中' : form === 3 ? '|终' : '';
           const petName = ((pet == null ? void 0 : pet.RobotName) || '该机甲') + formSuffix;
           const tip = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
@@ -1611,7 +1774,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               var _r$message3, _getInstance2;
 
               const msg = (_r$message3 = r == null ? void 0 : r.message) != null ? _r$message3 : '放生失败';
-              console.error('[RobotList] 放生失败:', msg);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[RobotList] 放生失败:', msg);
               (_getInstance2 = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
                 error: Error()
               }), TipWindows) : TipWindows).getInstance()) == null || _getInstance2.showAlert(msg, undefined, {
@@ -1632,11 +1797,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onConfirm() {
-          var _ref33, _ref34, _this$selectedPet$pet2;
+          var _ref35, _ref36, _this$selectedPet$pet2;
 
           if (this._confirming) return;
           if (this.selectedIndex < 0 || !this.selectedPet) return;
-          const petId = String((_ref33 = (_ref34 = (_this$selectedPet$pet2 = this.selectedPet.pet_id) != null ? _this$selectedPet$pet2 : this.selectedPet._id) != null ? _ref34 : this.selectedPet.id) != null ? _ref33 : '');
+          const petId = String((_ref35 = (_ref36 = (_this$selectedPet$pet2 = this.selectedPet.pet_id) != null ? _this$selectedPet$pet2 : this.selectedPet._id) != null ? _ref36 : this.selectedPet.id) != null ? _ref35 : '');
 
           if (this.confirmCb) {
             var _this$confirmButton4;
@@ -1776,6 +1941,27 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           return null;
         }
       }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "mechaIconQuanneng", [_dec10], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return null;
+        }
+      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "rowNormalSprite", [_dec11], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return null;
+        }
+      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "rowSelectedSprite", [_dec12], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function () {
+          return null;
+        }
+      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "countLabel", [_dec13], {
         configurable: true,
         enumerable: true,
         writable: true,

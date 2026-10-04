@@ -87,7 +87,7 @@ def _apply_equipment_bonus_to_attrs(base_attrs: dict, equipment_slots: dict, equ
         'Corrosion': 'corrosion',
         'Initiative': 'initiative',
         'Block': 'block',
-        'ParticleShield': 'particleShield',
+        'AttackCount': 'attackCount',
         'ArmorPenetration': 'armorPenetration',
         'Evasion': 'evasion',
         'Lethality': 'lethality',
@@ -161,7 +161,7 @@ async def handle_battle_generate_enemy(websocket, data, current_character_id=Non
     if player_pet_id:
         try:
             pet_object_id = ObjectId(player_pet_id)
-            player_pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({
+            player_pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
                 '_id': pet_object_id,
                 'user_id': user['_id']
             }))
@@ -172,7 +172,7 @@ async def handle_battle_generate_enemy(websocket, data, current_character_id=Non
 
     try:
         # 1) 随机抽一个 RobotBase
-        sample = utils.safe_mongo_operation(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
+        sample = await utils.async_mongo_operation_read(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
         if not sample:
             await utils.send_error_response(websocket, 'battle_generate_enemy', 'RobotBase集合为空', code=500, request_data=data)
             return
@@ -240,7 +240,7 @@ async def handle_battle_generate_enemy(websocket, data, current_character_id=Non
                 'Corrosion': enemy_pet.get('Corrosion', 0),
                 'Initiative': enemy_pet.get('Initiative', 0),
                 'Block': enemy_pet.get('Block', 0),
-                'ParticleShield': enemy_pet.get('ParticleShield', 0),
+                'AttackCount': enemy_pet.get('AttackCount', 1),
                 'ArmorPenetration': enemy_pet.get('ArmorPenetration', 0),
                 'Evasion': enemy_pet.get('Evasion', 0),
                 'Lethality': enemy_pet.get('Lethality', 0),
@@ -254,12 +254,14 @@ async def handle_battle_generate_enemy(websocket, data, current_character_id=Non
                 'CurrentCorrosion': enemy_pet.get('CurrentCorrosion', enemy_pet.get('Corrosion', 0)),
                 'CurrentInitiative': enemy_pet.get('CurrentInitiative', enemy_pet.get('Initiative', 0)),
                 'CurrentBlock': enemy_pet.get('CurrentBlock', enemy_pet.get('Block', 0)),
-                'CurrentParticleShield': enemy_pet.get('CurrentParticleShield', enemy_pet.get('ParticleShield', 0)),
+                'CurrentAttackCount': enemy_pet.get('CurrentAttackCount', enemy_pet.get('AttackCount', 1)),
                 'CurrentArmorPenetration': enemy_pet.get('CurrentArmorPenetration', enemy_pet.get('ArmorPenetration', 0)),
                 'CurrentEvasion': enemy_pet.get('CurrentEvasion', enemy_pet.get('Evasion', 0)),
                 'CurrentLethality': enemy_pet.get('CurrentLethality', enemy_pet.get('Lethality', 0)),
                 'CurrentResistance': enemy_pet.get('CurrentResistance', enemy_pet.get('Resistance', 0)),
                 'CurrentCounterattack': enemy_pet.get('CurrentCounterattack', enemy_pet.get('Counterattack', 0)),
+                # 已学技能（被动技能解锁依据）：机甲基础表里配了什么就带什么，没有则空
+                'Skills': enemy_pet.get('Skills', enemy_pet.get('skills', enemy_pet.get('LearnedSkills', []))),
                 'equipment': equipment_slots,
             }
         }

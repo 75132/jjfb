@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11", "__unresolved_12", "__unresolved_13"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, instantiate, Sprite, UITransform, SpriteAtlas, JsonAsset, assetManager, Color, input, Input, Vec3, Vec2, EditBox, UIOpacity, Graphics, WebSocketManager, GameConfig, RobotList, RobotEvolutionEffect, DataCacheManager, ResourceManager, UILockManager, TipWindows, emitBattleTeamUpdated, emitRobotDataUpdated, BagEventHub, normalizeBagItemsResponse, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _crd, ccclass, property, BagItem;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Label, instantiate, Sprite, UITransform, SpriteAtlas, JsonAsset, assetManager, Color, input, Input, Vec3, Vec2, EditBox, UIOpacity, Graphics, WebSocketManager, GameConfig, RobotList, RobotEvolutionEffect, DataCacheManager, ResourceManager, UILockManager, TipWindows, emitBattleTeamUpdated, emitRobotDataUpdated, BagEventHub, normalizeBagItemsResponse, Logger, MechSkillPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _crd, ccclass, property, BagItem;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -61,6 +61,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("BagItemSnapshot", "../global/protocol/BagProtocol", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfMechSkillPanel(extras) {
+    _reporterNs.report("MechSkillPanel", "./MechSkillPanel", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -110,6 +118,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       BagEventHub = _unresolved_11.BagEventHub;
     }, function (_unresolved_12) {
       normalizeBagItemsResponse = _unresolved_12.normalizeBagItemsResponse;
+    }, function (_unresolved_13) {
+      Logger = _unresolved_13.Logger;
+    }, function (_unresolved_14) {
+      MechSkillPanel = _unresolved_14.MechSkillPanel;
     }],
     execute: function () {
       _crd = true;
@@ -273,7 +285,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
            */
           this.onCharacterChanged = data => {
             if (data && data.reason === 'character_id_cleared') {
-              console.log('🗑️ [BagItem] 检测到角色切换，清除内部状态'); // 清除所有内部状态
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('🗑️ [BagItem] 检测到角色切换，清除内部状态'); // 清除所有内部状态
 
               this.items = [];
               this.currentPage = 1;
@@ -319,7 +333,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (delta && Array.isArray(delta.ops)) {
                 for (var op of delta.ops) {
                   if (op && op.op && op.op !== 'refetch') {
-                    console.log("[BagItem] bag_delta op=" + op.op + "\uFF08\u5F53\u524D\u4ECD\u8D70\u6574\u9875 refetch\uFF09");
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug("[BagItem] bag_delta op=" + op.op + "\uFF08\u5F53\u524D\u4ECD\u8D70\u6574\u9875 refetch\uFF09");
                   }
                 }
               }
@@ -350,12 +366,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (!data || !data.success) {
               var errorMsg = (data == null ? void 0 : data.error) || (data == null ? void 0 : data.message) || '未知错误';
-              console.error("\u274C [BagItem] \u4F7F\u7528\u7269\u54C1\u5931\u8D25: " + errorMsg); // 显示失败提示
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error("\u274C [BagItem] \u4F7F\u7528\u7269\u54C1\u5931\u8D25: " + errorMsg); // 显示失败提示
 
               this.showErrorTips(errorMsg, false); // 如果是因为物品不存在或数量不足，刷新背包数据
 
               if (errorMsg.includes('不存在') || errorMsg.includes('数量') || errorMsg.includes('不足') || errorMsg.includes('无效')) {
-                console.log('🔄 [BagItem] 检测到数据不同步，刷新背包数据'); // 关闭使用窗口
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('🔄 [BagItem] 检测到数据不同步，刷新背包数据'); // 关闭使用窗口
 
                 this.closeUseItemPanel(); // 立即刷新（MMO最佳实践：服务器是权威数据源）
 
@@ -392,13 +412,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 }
               }
 
-              console.log("\uD83D\uDDD1\uFE0F [BagItem] \u5BF9\u673A\u7532\u4F7F\u7528\u7269\u54C1\u540E\u6E05\u9664\u673A\u7532\u7F13\u5B58 (pet_id: " + pid + ", equipped: " + !!responseData.equipped + ")");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\uD83D\uDDD1\uFE0F [BagItem] \u5BF9\u673A\u7532\u4F7F\u7528\u7269\u54C1\u540E\u6E05\u9664\u673A\u7532\u7F13\u5B58 (pet_id: " + pid + ", equipped: " + !!responseData.equipped + ")");
             }
 
             var targetName = responseData.target_name || (responseData.pet_id ? "\u673A\u7532ID: " + responseData.pet_id : '玩家');
             var effectResult = responseData.effect_result || data.effect_result; // 兼容两种格式
 
-            console.log("\u2705 [BagItem] \u6210\u529F\u4F7F\u7528\u7269\u54C1: " + itemName + " (ID: " + itemId + ")\uFF0C\u76EE\u6807: " + targetName + " (" + targetType + ")");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u2705 [BagItem] \u6210\u529F\u4F7F\u7528\u7269\u54C1: " + itemName + " (ID: " + itemId + ")\uFF0C\u76EE\u6807: " + targetName + " (" + targetType + ")");
 
             if (String(targetType).toLowerCase() === 'pet' && responseData.pet_id) {
               var _this$ws2, _this$ws3;
@@ -415,21 +439,50 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 character_id: ((_this$ws3 = this.ws) == null || _this$ws3.getCharacterId == null ? void 0 : _this$ws3.getCharacterId()) || undefined
               });
             } // 显示成功提示
+            // ⚠ 技能书用更明确的文案：服务端返回结构化 `skill_book`（学会 + 等级 + 消耗书数），
+            //   比「成功使用物品: 技能书-肉搏攻击」清楚得多；同时刷新机甲技能面板。
+            //   注：技能书**只能用来「学会」**，已学会时服务端会直接拒绝（走失败分支提示）。
 
 
-            var successMsg = "\u6210\u529F\u4F7F\u7528\u7269\u54C1: " + itemName;
-            this.showErrorTips(successMsg, true); // 显示效果结果（如果有）
+            var skillBook = responseData.skill_book;
+
+            if (skillBook && skillBook.skill_key) {
+              var costTip = skillBook.books_consumed ? "\uFF0C\u6D88\u8017\u6280\u80FD\u4E66 \xD7" + skillBook.books_consumed : '';
+              var text = skillBook.action === 'upgrade' ? "\u300C" + (skillBook.name || itemName) + "\u300D\u5347\u7EA7\u81F3 Lv" + skillBook.to_level + costTip : "\u5DF2\u5B66\u4F1A\u6280\u80FD\u300C" + (skillBook.name || itemName) + "\u300D" + costTip;
+              this.showErrorTips(text, true);
+
+              try {
+                // 技能面板节点默认未激活，getComponentInChildren 找不到 → 走静态登记表
+                (_crd && MechSkillPanel === void 0 ? (_reportPossibleCrUseOfMechSkillPanel({
+                  error: Error()
+                }), MechSkillPanel) : MechSkillPanel).refreshForPet(skillBook.pet_id || responseData.pet_id);
+              } catch (err) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('⚠️ [BagItem] 刷新技能面板失败:', err);
+              }
+            } else {
+              var successMsg = "\u6210\u529F\u4F7F\u7528\u7269\u54C1: " + itemName;
+              this.showErrorTips(successMsg, true);
+            } // 显示效果结果（如果有）
+
 
             if (effectResult && effectResult.success) {
-              console.log("\u2728 [BagItem] \u6548\u679C\u5E94\u7528\u6210\u529F: " + (effectResult.message || '无消息')); // 显示详细效果信息
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2728 [BagItem] \u6548\u679C\u5E94\u7528\u6210\u529F: " + (effectResult.message || '无消息')); // 显示详细效果信息
 
               if (effectResult.results && effectResult.results.length > 0) {
                 effectResult.results.forEach((result, index) => {
                   if (result.success) {
-                    console.log("  [\u6548\u679C " + (index + 1) + "] " + result.effect_type + ": " + (result.message || '')); // 显示升级信息（如果有）
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug("  [\u6548\u679C " + (index + 1) + "] " + result.effect_type + ": " + (result.message || '')); // 显示升级信息（如果有）
 
                     if (result.data && result.data.level_up_count > 0) {
-                      console.log("    \uD83C\uDF89 \u5347\u7EA7\u4E86 " + result.data.level_up_count + " \u7EA7\uFF01");
+                      (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                        error: Error()
+                      }), Logger) : Logger).debug("    \uD83C\uDF89 \u5347\u7EA7\u4E86 " + result.data.level_up_count + " \u7EA7\uFF01");
                     }
                   }
                 }); // 触发进化动画（在关闭窗口之前，确保动画能正常播放）
@@ -445,7 +498,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   }), RobotEvolutionEffect) : RobotEvolutionEffect).getInstance();
 
                   if (evolver) {
-                    console.log("\uD83C\uDFAC [BagItem] \u89E6\u53D1\u8FDB\u5316\u52A8\u753B: " + oldAniId + " -> " + newAniId);
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug("\uD83C\uDFAC [BagItem] \u89E6\u53D1\u8FDB\u5316\u52A8\u753B: " + oldAniId + " -> " + newAniId);
                     evolver.playEvolution(oldAniId, newAniId);
                   }
                 }
@@ -462,7 +517,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.closeUseItemPanel(); // MMO最佳实践：如果是对机甲使用物品，强制刷新机甲列表
 
               if (targetType === 'Pet' && this.robotList) {
-                console.log('🔄 [BagItem] 对机甲使用物品成功，强制刷新机甲列表'); // 再延迟一小段时间，确保服务器数据已更新
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('🔄 [BagItem] 对机甲使用物品成功，强制刷新机甲列表'); // 再延迟一小段时间，确保服务器数据已更新
 
                 this.scheduleOnce(() => {
                   if (this.robotList) {
@@ -506,10 +563,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (!data || !data.success) {
               var errorMsg = (data == null ? void 0 : data.error) || (data == null ? void 0 : data.message) || '未知错误';
-              console.error("\u274C [BagItem] \u4E22\u5F03\u7269\u54C1\u5931\u8D25: " + errorMsg); // 如果是因为物品不存在或无效，刷新背包数据
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error("\u274C [BagItem] \u4E22\u5F03\u7269\u54C1\u5931\u8D25: " + errorMsg); // 如果是因为物品不存在或无效，刷新背包数据
 
               if (errorMsg.includes('不存在') || errorMsg.includes('无效')) {
-                console.log('🔄 [BagItem] 检测到数据不同步，刷新背包数据'); // 关闭使用窗口
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('🔄 [BagItem] 检测到数据不同步，刷新背包数据'); // 关闭使用窗口
 
                 this.closeUseItemPanel(); // 立即刷新（MMO最佳实践：服务器是权威数据源）
 
@@ -525,7 +586,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var itemId = responseData.item_id;
             var itemData = this.itemDataMap.get(itemId);
             var itemName = itemData ? itemData.name : "\u7269\u54C1ID: " + itemId;
-            console.log("\u2705 [BagItem] \u6210\u529F\u4E22\u5F03\u7269\u54C1: " + itemName + " (ID: " + itemId + ")"); // 关闭使用窗口（会自动恢复到合适位置）
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u2705 [BagItem] \u6210\u529F\u4E22\u5F03\u7269\u54C1: " + itemName + " (ID: " + itemId + ")"); // 关闭使用窗口（会自动恢复到合适位置）
 
             this.closeUseItemPanel(); // MMO最佳实践：不进行乐观更新，直接等待服务器返回最新数据
             // 避免客户端和服务器数据不一致的问题
@@ -731,11 +794,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var checkComplete = () => {
             if (loadedCount === jsonFiles.length) {
-              console.log("\u2705 [BagItem] \u5DF2\u52A0\u8F7D\u6240\u6709\u7269\u54C1\u548C\u88C5\u5907\u6570\u636E\uFF0C\u5171 " + totalItems + " \u4E2A");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\u2705 [BagItem] \u5DF2\u52A0\u8F7D\u6240\u6709\u7269\u54C1\u548C\u88C5\u5907\u6570\u636E\uFF0C\u5171 " + totalItems + " \u4E2A");
               this.itemsDataLoaded = true; // 如果已经有物品数据，重新渲染
 
               if (this.items.length > 0) {
-                console.log('🔄 [BagItem] 物品数据已加载，重新渲染物品列表');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('🔄 [BagItem] 物品数据已加载，重新渲染物品列表');
                 this.render();
               }
             }
@@ -755,14 +822,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               loadedCount++;
 
               if (err) {
-                console.warn("\u26A0\uFE0F [BagItem] \u52A0\u8F7D " + fileName + ".json \u5931\u8D25:", err);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] \u52A0\u8F7D " + fileName + ".json \u5931\u8D25:", err);
               } else if (asset && asset.json) {
                 var items = asset.json;
                 this.parseItemsData(items);
                 totalItems += items.length;
-                console.log("\u2705 [BagItem] \u5DF2\u52A0\u8F7D " + fileName + ".json: " + items.length + " \u4E2A\u7269\u54C1");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 [BagItem] \u5DF2\u52A0\u8F7D " + fileName + ".json: " + items.length + " \u4E2A\u7269\u54C1");
               } else {
-                console.error("\u274C [BagItem] " + fileName + ".json \u6570\u636E\u683C\u5F0F\u9519\u8BEF");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C [BagItem] " + fileName + ".json \u6570\u636E\u683C\u5F0F\u9519\u8BEF");
               }
 
               checkComplete(); // 延迟后加载下一个文件（给主线程喘息时间）
@@ -796,10 +869,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             type: JsonAsset
           }, (err, asset) => {
             if (err) {
-              console.error('❌ [BagItem] 所有加载方式都失败:', err);
-              console.error('💡 解决方案:');
-              console.error('   1. 将 Items.json 移动到 assets/resources/json/ 目录');
-              console.error('   2. 或者在 Cocos Creator 中右键 Items.json -> 设置为资源'); // 设置一个默认的图标映射，避免完全无法显示
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ [BagItem] 所有加载方式都失败:', err);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('💡 解决方案:');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('   1. 将 Items.json 移动到 assets/resources/json/ 目录');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('   2. 或者在 Cocos Creator 中右键 Items.json -> 设置为资源'); // 设置一个默认的图标映射，避免完全无法显示
 
               this.setupDefaultIcons();
               return;
@@ -808,7 +889,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (asset && asset.json) {
               this.parseItemsData(asset.json);
             } else {
-              console.error('❌ [BagItem] Items.json 数据格式错误');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ [BagItem] Items.json 数据格式错误');
             }
           });
         }
@@ -818,7 +901,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         setupDefaultIcons() {
-          console.warn('⚠️ [BagItem] 使用默认图标映射（建议修复 JSON 加载问题）'); // 这里可以设置一些默认的 item_id -> iconIndex 映射
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn('⚠️ [BagItem] 使用默认图标映射（建议修复 JSON 加载问题）'); // 这里可以设置一些默认的 item_id -> iconIndex 映射
           // 但最好还是修复 JSON 加载问题
         }
         /**
@@ -839,10 +924,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // 这个标记在 loadItemsData 的 checkComplete 中设置
 
 
-          console.log("\u2705 [BagItem] \u89E3\u6790\u4E86 " + addedCount + " \u4E2A\u7269\u54C1\uFF0C\u5F53\u524D\u603B\u8BA1 " + this.itemDataMap.size + " \u4E2A\u7269\u54C1\u6570\u636E"); // 如果已经有物品数据，重新渲染
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\u2705 [BagItem] \u89E3\u6790\u4E86 " + addedCount + " \u4E2A\u7269\u54C1\uFF0C\u5F53\u524D\u603B\u8BA1 " + this.itemDataMap.size + " \u4E2A\u7269\u54C1\u6570\u636E"); // 如果已经有物品数据，重新渲染
 
           if (this.items.length > 0) {
-            console.log('🔄 [BagItem] 物品数据已更新，重新渲染物品列表');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('🔄 [BagItem] 物品数据已更新，重新渲染物品列表');
             this.render();
           }
         }
@@ -991,7 +1080,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var cid = ((_this$ws$getCharacter2 = (_this$ws5 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter2.call(_this$ws5)) || undefined;
 
           if (!cid) {
-            console.warn('⚠️ [BagItem] 无法获取角色ID，无法请求背包数据');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 无法获取角色ID，无法请求背包数据');
             return;
           }
 
@@ -1014,7 +1105,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         applyBagSnapshot(snapshot) {
           if (!snapshot.success) {
             var msg = snapshot.message || '获取背包数据失败';
-            console.error("\u274C [BagItem] \u83B7\u53D6\u80CC\u5305\u7269\u54C1\u5931\u8D25: " + msg);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u83B7\u53D6\u80CC\u5305\u7269\u54C1\u5931\u8D25: " + msg);
 
             if (this.panel && this.panel.active) {
               this.showErrorTips(msg, false);
@@ -1029,7 +1122,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var serverTotalPages = snapshot.total_pages > 0 ? snapshot.total_pages : this.totalPages || 1;
 
           if (serverPage !== this.currentPage) {
-            console.log("\uD83D\uDD04 [BagItem] \u9875\u7801\u5DF2\u8C03\u6574\uFF1A\u8BF7\u6C42 " + this.currentPage + "\uFF0C\u670D\u52A1\u5668\u8FD4\u56DE " + serverPage);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDD04 [BagItem] \u9875\u7801\u5DF2\u8C03\u6574\uFF1A\u8BF7\u6C42 " + this.currentPage + "\uFF0C\u670D\u52A1\u5668\u8FD4\u56DE " + serverPage);
           }
 
           this.currentPage = serverPage;
@@ -1038,13 +1133,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.currentPage > this.totalPages && this.totalPages > 0) {
             var oldPage = this.currentPage;
             this.currentPage = this.totalPages;
-            console.log("\u26A0\uFE0F [BagItem] \u9875\u7801\u8D85\u51FA\u8303\u56F4\uFF0C\u4ECE " + oldPage + " \u8C03\u6574\u4E3A\u6700\u540E\u4E00\u9875: " + this.currentPage);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\u26A0\uFE0F [BagItem] \u9875\u7801\u8D85\u51FA\u8303\u56F4\uFF0C\u4ECE " + oldPage + " \u8C03\u6574\u4E3A\u6700\u540E\u4E00\u9875: " + this.currentPage);
             this.scheduleOnce(() => this.requestFetchBag(), 0.05);
             return;
           }
 
           if (serverItems.length === 0 && this.currentPage < this.totalPages && this.totalPages > 1) {
-            console.log("\uD83D\uDD04 [BagItem] \u5F53\u524D\u9875\u4E3A\u7A7A\uFF0C\u8C03\u6574\u5230\u524D\u4E00\u9875");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83D\uDD04 [BagItem] \u5F53\u524D\u9875\u4E3A\u7A7A\uFF0C\u8C03\u6574\u5230\u524D\u4E00\u9875");
             this.currentPage = Math.max(1, this.currentPage - 1);
             this.scheduleOnce(() => this.requestFetchBag(), 0.05);
             return;
@@ -1056,7 +1155,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             category: it.category
           }));
           this.updatePageNumberUI();
-          console.log("\uD83D\uDCE6 [BagItem] \u6536\u5230\u670D\u52A1\u5668\u6570\u636E\uFF1A" + this.items.length + " \u4E2A\u7269\u54C1\uFF0C\u9875\u7801 " + this.currentPage + "/" + this.totalPages);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDCE6 [BagItem] \u6536\u5230\u670D\u52A1\u5668\u6570\u636E\uFF1A" + this.items.length + " \u4E2A\u7269\u54C1\uFF0C\u9875\u7801 " + this.currentPage + "/" + this.totalPages);
           (_crd && BagEventHub === void 0 ? (_reportPossibleCrUseOfBagEventHub({
             error: Error()
           }), BagEventHub) : BagEventHub).emit('bag', {
@@ -1282,13 +1383,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var btn = node.getComponent(Button);
 
           if (!spr) {
-            console.warn("\u26A0\uFE0F [BagItem] \u8282\u70B9\u7F3A\u5C11 Sprite \u7EC4\u4EF6");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] \u8282\u70B9\u7F3A\u5C11 Sprite \u7EC4\u4EF6");
             return;
           } // 检查数据是否已加载
 
 
           if (!this.itemsDataLoaded) {
-            console.warn("\u26A0\uFE0F [BagItem] Items.json \u5C1A\u672A\u52A0\u8F7D\u5B8C\u6210\uFF0C\u7269\u54C1 " + itemId + " \u4F7F\u7528\u9ED8\u8BA4\u56FE\u6807");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] Items.json \u5C1A\u672A\u52A0\u8F7D\u5B8C\u6210\uFF0C\u7269\u54C1 " + itemId + " \u4F7F\u7528\u9ED8\u8BA4\u56FE\u6807");
             return;
           } // 从 Items.json 获取物品数据
 
@@ -1296,7 +1401,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var itemData = this.itemDataMap.get(itemId);
 
           if (!itemData || !itemData.iconIndex) {
-            console.warn("\u26A0\uFE0F [BagItem] \u7269\u54C1 " + itemId + " \u6CA1\u6709\u627E\u5230\u5BF9\u5E94\u7684\u56FE\u6807\u6570\u636E (itemDataMap\u5927\u5C0F: " + this.itemDataMap.size + ")");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] \u7269\u54C1 " + itemId + " \u6CA1\u6709\u627E\u5230\u5BF9\u5E94\u7684\u56FE\u6807\u6570\u636E (itemDataMap\u5927\u5C0F: " + this.itemDataMap.size + ")");
             return;
           }
 
@@ -1307,7 +1414,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var atlas = useUI2Atlas ? this.ui2Atlas : this.iconSet2Atlas;
 
           if (!atlas) {
-            console.error("\u274C [BagItem] \u56FE\u96C6\u672A\u8BBE\u7F6E: " + (useUI2Atlas ? 'UI2' : 'IconSet2') + "\uFF0C\u8BF7\u5728\u7F16\u8F91\u5668\u4E2D\u8BBE\u7F6E\u56FE\u96C6\u5C5E\u6027");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u56FE\u96C6\u672A\u8BBE\u7F6E: " + (useUI2Atlas ? 'UI2' : 'IconSet2') + "\uFF0C\u8BF7\u5728\u7F16\u8F91\u5668\u4E2D\u8BBE\u7F6E\u56FE\u96C6\u5C5E\u6027");
             return;
           } // 从图集中获取 SpriteFrame
 
@@ -1354,7 +1463,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               btn.normalSprite = sf;
             }
           } else {
-            console.error("\u274C [BagItem] \u5728\u56FE\u96C6\u4E2D\u672A\u627E\u5230\u56FE\u6807: " + iconIndex + " (\u56FE\u96C6: " + (useUI2Atlas ? 'UI2' : 'IconSet2') + ")");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u5728\u56FE\u96C6\u4E2D\u672A\u627E\u5230\u56FE\u6807: " + iconIndex + " (\u56FE\u96C6: " + (useUI2Atlas ? 'UI2' : 'IconSet2') + ")");
           }
         }
 
@@ -1617,13 +1728,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
           if (this.isProcessingUseItem || this.isProcessingDiscardItem) {
-            console.warn('⚠️ [BagItem] 操作进行中，忽略点击');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 操作进行中，忽略点击');
             return;
           } // 验证节点有效性
 
 
           if (!node || !node.isValid) {
-            console.warn('⚠️ [BagItem] 节点无效，忽略点击');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 节点无效，忽略点击');
             return;
           } // 双击检测：如果点击的是同一个物品，且在双击时间间隔内
 
@@ -1647,7 +1762,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.selectedItemSlotIndex = (this.currentPage - 1) * this.PAGE_SIZE + itemIndexInPage; // 应用选中效果
 
             this.applyYellowFilter(node, true);
-            console.log("\uD83C\uDFAF [BagItem] \u53CC\u51FB\u9009\u4E2D\u7269\u54C1 " + itemId + "\uFF0C\u5F53\u524D\u9875: " + this.currentPage + "\uFF0C\u9875\u5185\u7D22\u5F15: " + itemIndexInPage + "\uFF0C\u5168\u5C40slot_index: " + this.selectedItemSlotIndex);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("\uD83C\uDFAF [BagItem] \u53CC\u51FB\u9009\u4E2D\u7269\u54C1 " + itemId + "\uFF0C\u5F53\u524D\u9875: " + this.currentPage + "\uFF0C\u9875\u5185\u7D22\u5F15: " + itemIndexInPage + "\uFF0C\u5168\u5C40slot_index: " + this.selectedItemSlotIndex);
             this.showUseItemPanel(itemId);
             return;
           } // 如果点击的是已选中的物品，则取消选中
@@ -1669,7 +1786,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // slot_index = (当前页 - 1) * 每页大小 + 当前页内的索引（0-based）
 
           this.selectedItemSlotIndex = (this.currentPage - 1) * this.PAGE_SIZE + itemIndexInPage;
-          console.log("\uD83C\uDFAF [BagItem] \u9009\u4E2D\u7269\u54C1 " + itemId + "\uFF0C\u5F53\u524D\u9875: " + this.currentPage + "\uFF0C\u9875\u5185\u7D22\u5F15: " + itemIndexInPage + "\uFF0C\u5168\u5C40slot_index: " + this.selectedItemSlotIndex); // 清除悬浮状态（点击时应该关闭悬浮显示的简介）
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83C\uDFAF [BagItem] \u9009\u4E2D\u7269\u54C1 " + itemId + "\uFF0C\u5F53\u524D\u9875: " + this.currentPage + "\uFF0C\u9875\u5185\u7D22\u5F15: " + itemIndexInPage + "\uFF0C\u5168\u5C40slot_index: " + this.selectedItemSlotIndex); // 清除悬浮状态（点击时应该关闭悬浮显示的简介）
 
           if (this.hoveredItemNode && this.hoveredItemNode !== node) {
             this.onItemHoverLeave(this.hoveredItemNode);
@@ -1744,26 +1863,34 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         showIntroduction(itemId, itemNode) {
           if (!itemNode) {
-            console.warn('⚠️ [BagItem] 物品节点未提供');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 物品节点未提供');
             return;
           }
 
           if (!this.itemsDataLoaded) {
-            console.warn('⚠️ [BagItem] Items.json 尚未加载完成');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] Items.json 尚未加载完成');
             return;
           }
 
           var itemData = this.itemDataMap.get(itemId);
 
           if (!itemData) {
-            console.warn("\u26A0\uFE0F [BagItem] \u7269\u54C1 " + itemId + " \u6CA1\u6709\u627E\u5230\u5BF9\u5E94\u7684\u6570\u636E");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] \u7269\u54C1 " + itemId + " \u6CA1\u6709\u627E\u5230\u5BF9\u5E94\u7684\u6570\u636E");
             return;
           }
 
           var introPanel = this.introductionPanel;
 
           if (!introPanel) {
-            console.warn('⚠️ [BagItem] 未在 BagItem 脚本上绑定 Introduction 面板节点');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 未在 BagItem 脚本上绑定 Introduction 面板节点');
             return;
           }
 
@@ -1818,7 +1945,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               introPanel.setSiblingIndex(introPanel.parent.children.length - 1);
             }
           } catch (e) {
-            console.warn('⚠️ [BagItem] 设置 Introduction 面板位置失败:', e);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 设置 Introduction 面板位置失败:', e);
           } // 获取Introduction面板的子节点
 
 
@@ -1842,7 +1971,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 targetFrame = btn.normalSprite;
               } else {
                 // 如果Button没有normalSprite，从itemData重新加载图标
-                console.warn('⚠️ [BagItem] Button没有normalSprite，从itemData重新加载图标');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('⚠️ [BagItem] Button没有normalSprite，从itemData重新加载图标');
                 this.applyItemIconToSprite(iconNode, itemId);
                 return; // 已经设置了，直接返回
               }
@@ -2069,7 +2200,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               var baseUT = node.getComponent(UITransform);
 
               if (!baseUT) {
-                console.warn('⚠️ [BagItem] 物品格子节点缺少UITransform组件');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('⚠️ [BagItem] 物品格子节点缺少UITransform组件');
                 return;
               } // 确保尺寸完全一致
 
@@ -2168,7 +2301,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         showUseItemPanel(itemId) {
           if (!this.useItemPanel) {
-            console.warn('⚠️ [BagItem] 未绑定 UseItem 面板节点');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 未绑定 UseItem 面板节点');
             return;
           }
 
@@ -2341,13 +2476,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onUseItem(itemId) {
           // 防止重复操作（双重检查）
           if (this.isProcessingUseItem) {
-            console.warn('⚠️ [BagItem] 使用物品操作正在进行中，请稍候...');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 使用物品操作正在进行中，请稍候...');
             return;
           } // 验证基础数据
 
 
           if (!this.itemsDataLoaded) {
-            console.error('❌ [BagItem] Items.json 尚未加载完成，无法使用物品');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] Items.json 尚未加载完成，无法使用物品');
             return;
           } // 检查物品是否存在于本地数据
 
@@ -2355,7 +2494,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var itemData = this.itemDataMap.get(itemId);
 
           if (!itemData) {
-            console.error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u5728\u672C\u5730 Items.json \u4E2D\u4E0D\u5B58\u5728");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u5728\u672C\u5730 Items.json \u4E2D\u4E0D\u5B58\u5728");
             return;
           } // 检查物品是否在背包中（MMO最佳实践：客户端预检查，但服务器是权威）
 
@@ -2363,7 +2504,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var bagItem = this.items.find(item => item.item_id === itemId);
 
           if (!bagItem) {
-            console.error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u4E0D\u5728\u5F53\u524D\u80CC\u5305\u4E2D\uFF08\u53EF\u80FD\u5DF2\u88AB\u5220\u9664\u6216\u4E0D\u540C\u6B65\uFF09"); // 刷新背包数据，确保数据同步
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u4E0D\u5728\u5F53\u524D\u80CC\u5305\u4E2D\uFF08\u53EF\u80FD\u5DF2\u88AB\u5220\u9664\u6216\u4E0D\u540C\u6B65\uFF09"); // 刷新背包数据，确保数据同步
 
             this.requestFetchBag();
             return;
@@ -2371,7 +2514,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
           if (!this.selectedItemId || this.selectedItemId !== itemId || this.selectedItemSlotIndex < 0) {
-            console.warn("\u26A0\uFE0F [BagItem] \u9009\u4E2D\u72B6\u6001\u5F02\u5E38\uFF0C\u5C1D\u8BD5\u6062\u590D: selectedItemId=" + this.selectedItemId + ", itemId=" + itemId + ", slotIndex=" + this.selectedItemSlotIndex); // 尝试在当前页面查找该物品并恢复选中状态
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] \u9009\u4E2D\u72B6\u6001\u5F02\u5E38\uFF0C\u5C1D\u8BD5\u6062\u590D: selectedItemId=" + this.selectedItemId + ", itemId=" + itemId + ", slotIndex=" + this.selectedItemSlotIndex); // 尝试在当前页面查找该物品并恢复选中状态
 
             var itemIndex = this.items.findIndex(item => item.item_id === itemId);
 
@@ -2389,20 +2534,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 this.selectedItemId = itemId;
                 this.selectedItemSlotIndex = (this.currentPage - 1) * this.PAGE_SIZE + itemIndex;
                 this.applyYellowFilter(node, true);
-                console.log("\u2705 [BagItem] \u5DF2\u6062\u590D\u9009\u4E2D\u72B6\u6001: \u7269\u54C1 " + itemId + "\uFF0Cslot_index: " + this.selectedItemSlotIndex);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 [BagItem] \u5DF2\u6062\u590D\u9009\u4E2D\u72B6\u6001: \u7269\u54C1 " + itemId + "\uFF0Cslot_index: " + this.selectedItemSlotIndex);
               } else {
-                console.error("\u274C [BagItem] \u65E0\u6CD5\u6062\u590D\u9009\u4E2D\u72B6\u6001\uFF1A\u8282\u70B9\u65E0\u6548");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C [BagItem] \u65E0\u6CD5\u6062\u590D\u9009\u4E2D\u72B6\u6001\uFF1A\u8282\u70B9\u65E0\u6548");
                 return;
               }
             } else {
-              console.error("\u274C [BagItem] \u65E0\u6CD5\u6062\u590D\u9009\u4E2D\u72B6\u6001\uFF1A\u7269\u54C1\u4E0D\u5728\u5F53\u524D\u9875\u9762");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error("\u274C [BagItem] \u65E0\u6CD5\u6062\u590D\u9009\u4E2D\u72B6\u6001\uFF1A\u7269\u54C1\u4E0D\u5728\u5F53\u524D\u9875\u9762");
               return;
             }
           } // 最终验证：确保选中状态完整
 
 
           if (!this.selectedItemId || this.selectedItemId !== itemId || this.selectedItemSlotIndex < 0) {
-            console.error("\u274C [BagItem] \u9009\u4E2D\u72B6\u6001\u9A8C\u8BC1\u5931\u8D25\uFF0C\u65E0\u6CD5\u4F7F\u7528\u7269\u54C1");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u9009\u4E2D\u72B6\u6001\u9A8C\u8BC1\u5931\u8D25\uFF0C\u65E0\u6CD5\u4F7F\u7528\u7269\u54C1");
             return;
           } // 设置处理标志，防止重复操作
 
@@ -2418,7 +2571,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             // Pet 类型：需要选择机甲后使用
             this.useItemForPet(itemId, itemData);
           } else {
-            console.error("\u274C [BagItem] \u672A\u77E5\u7684 UsageTarget: " + usageTarget + "\uFF0C\u7269\u54C1ID: " + itemId); // 清除处理标志
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u672A\u77E5\u7684 UsageTarget: " + usageTarget + "\uFF0C\u7269\u54C1ID: " + itemId); // 清除处理标志
 
             this.isProcessingUseItem = false;
           }
@@ -2433,11 +2588,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         useItemForPlayer(itemId, itemData) {
           var _this$ws$getCharacter5, _this$ws8;
 
-          console.log("\uD83C\uDFAE [BagItem] \u5BF9\u73A9\u5BB6\u4F7F\u7528\u7269\u54C1: " + itemData.name + " (ID: " + itemId + ")");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83C\uDFAE [BagItem] \u5BF9\u73A9\u5BB6\u4F7F\u7528\u7269\u54C1: " + itemData.name + " (ID: " + itemId + ")");
           var cid = ((_this$ws$getCharacter5 = (_this$ws8 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter5.call(_this$ws8)) || undefined;
 
           if (!cid) {
-            console.error('❌ [BagItem] 无法获取角色ID，无法使用物品');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] 无法获取角色ID，无法使用物品');
             this.isProcessingUseItem = false;
             return;
           } // 发送使用物品请求到服务端
@@ -2445,7 +2604,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
           if (this.selectedItemSlotIndex < 0) {
-            console.error("\u274C [BagItem] \u65E0\u6CD5\u786E\u5B9A\u7269\u54C1\u7684slot\u7D22\u5F15\uFF0C\u65E0\u6CD5\u4F7F\u7528");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u65E0\u6CD5\u786E\u5B9A\u7269\u54C1\u7684slot\u7D22\u5F15\uFF0C\u65E0\u6CD5\u4F7F\u7528");
             this.isProcessingUseItem = false;
             return;
           } // 设置处理标志
@@ -2488,10 +2649,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         useItemForPet(itemId, itemData) {
-          console.log("\uD83E\uDD16 [BagItem] \u5BF9\u673A\u7532\u4F7F\u7528\u7269\u54C1: " + itemData.name + " (ID: " + itemId + ")\uFF0C\u6253\u5F00\u673A\u7532\u5217\u8868\u9009\u62E9\u76EE\u6807");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83E\uDD16 [BagItem] \u5BF9\u673A\u7532\u4F7F\u7528\u7269\u54C1: " + itemData.name + " (ID: " + itemId + ")\uFF0C\u6253\u5F00\u673A\u7532\u5217\u8868\u9009\u62E9\u76EE\u6807");
 
           if (!this.robotList) {
-            console.error('❌ [BagItem] RobotList 未绑定，无法选择机甲'); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] RobotList 未绑定，无法选择机甲'); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
 
             this.isProcessingUseItem = false;
             return;
@@ -2504,7 +2669,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.robotList && this.robotList.node) {
             this.robotList.node.active = true;
           } else {
-            console.error('❌ [BagItem] RobotList 未绑定或节点不存在'); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] RobotList 未绑定或节点不存在'); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
 
             this.isProcessingUseItem = false;
             return;
@@ -2541,17 +2708,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var itemData = this.itemDataMap.get(itemId);
 
           if (!itemData) {
-            console.error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u6570\u636E\u4E0D\u5B58\u5728"); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u6570\u636E\u4E0D\u5B58\u5728"); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
 
             this.isProcessingUseItem = false;
             return;
           }
 
-          console.log("\u2705 [BagItem] \u5BF9\u673A\u7532 " + (petData.RobotName || petId) + " \u4F7F\u7528\u7269\u54C1: " + itemData.name + " (ID: " + itemId + ")");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\u2705 [BagItem] \u5BF9\u673A\u7532 " + (petData.RobotName || petId) + " \u4F7F\u7528\u7269\u54C1: " + itemData.name + " (ID: " + itemId + ")");
           var pid = String(petId || '').trim();
 
           if (!pid || pid.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(pid)) {
-            console.error("\u274C [BagItem] petId \u65E0\u6548\uFF0C\u62D2\u7EDD\u53D1\u9001: " + petId);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] petId \u65E0\u6548\uFF0C\u62D2\u7EDD\u53D1\u9001: " + petId);
             this.isProcessingUseItem = false;
             this.showErrorTips('机甲 ID 无效', false);
             return;
@@ -2560,14 +2733,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var pdataId = String((_ref = (_ref2 = (_petData$pet_id = petData == null ? void 0 : petData.pet_id) != null ? _petData$pet_id : petData == null ? void 0 : petData._id) != null ? _ref2 : petData == null ? void 0 : petData.id) != null ? _ref : '').trim();
 
           if (pdataId && pdataId.toLowerCase() !== pid.toLowerCase()) {
-            console.error("\u274C [BagItem] petId \u4E0E\u6240\u9009\u673A\u7532\u6570\u636E\u4E0D\u4E00\u81F4: req=" + pid + " data=" + pdataId);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] petId \u4E0E\u6240\u9009\u673A\u7532\u6570\u636E\u4E0D\u4E00\u81F4: req=" + pid + " data=" + pdataId);
             this.isProcessingUseItem = false;
             this.showErrorTips('所选机甲与请求不一致', false);
             return;
           }
 
           if (this.robotList && !this.robotList.isPetInCurrentList(pid)) {
-            console.warn("\u26A0\uFE0F [BagItem] petId \u4E0D\u5728\u5F53\u524D\u5DF2\u52A0\u8F7D\u5217\u8868\uFF0C\u4ECD\u4EA4\u7531\u670D\u52A1\u7AEF\u6821\u9A8C: " + pid);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [BagItem] petId \u4E0D\u5728\u5F53\u524D\u5DF2\u52A0\u8F7D\u5217\u8868\uFF0C\u4ECD\u4EA4\u7531\u670D\u52A1\u7AEF\u6821\u9A8C: " + pid);
           }
 
           if (this.isPetRemovalItem(itemData) && (_this$robotList = this.robotList) != null && _this$robotList.isLastRobot()) {
@@ -2579,7 +2756,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var cid = ((_this$ws$getCharacter6 = (_this$ws9 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter6.call(_this$ws9)) || undefined;
 
           if (!cid) {
-            console.error('❌ [BagItem] 无法获取角色ID，无法使用物品'); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] 无法获取角色ID，无法使用物品'); // 修复点：错误路径恢复使用中的状态，避免后续操作被永久锁死
 
             this.isProcessingUseItem = false;
             return;
@@ -2596,7 +2775,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var slotIndex = this.selectedItemSlotIndex >= 0 ? this.selectedItemSlotIndex : -1;
 
           if (slotIndex < 0) {
-            console.error("\u274C [BagItem] \u65E0\u6CD5\u786E\u5B9A\u7269\u54C1\u7684slot\u7D22\u5F15\uFF0C\u65E0\u6CD5\u4F7F\u7528");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u65E0\u6CD5\u786E\u5B9A\u7269\u54C1\u7684slot\u7D22\u5F15\uFF0C\u65E0\u6CD5\u4F7F\u7528");
             this.isProcessingUseItem = false;
             return;
           } // 设置处理标志
@@ -2643,12 +2824,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onDiscardItem(itemId) {
           // 防止重复操作
           if (this.isProcessingDiscardItem) {
-            console.warn('⚠️ [BagItem] 丢弃物品操作正在进行中，请稍候...');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] 丢弃物品操作正在进行中，请稍候...');
             return;
           }
 
           if (!this.itemsDataLoaded) {
-            console.error('❌ [BagItem] Items.json 尚未加载完成，无法丢弃物品');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] Items.json 尚未加载完成，无法丢弃物品');
             return;
           } // 检查物品是否在背包中
 
@@ -2656,7 +2841,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var bagItem = this.items.find(item => item.item_id === itemId);
 
           if (!bagItem) {
-            console.error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u4E0D\u5728\u5F53\u524D\u80CC\u5305\u4E2D\uFF08\u53EF\u80FD\u5DF2\u88AB\u5220\u9664\u6216\u4E0D\u540C\u6B65\uFF09"); // 刷新背包数据，确保数据同步
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u7269\u54C1 " + itemId + " \u4E0D\u5728\u5F53\u524D\u80CC\u5305\u4E2D\uFF08\u53EF\u80FD\u5DF2\u88AB\u5220\u9664\u6216\u4E0D\u540C\u6B65\uFF09"); // 刷新背包数据，确保数据同步
 
             this.requestFetchBag();
             return;
@@ -2665,7 +2852,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var itemData = this.itemDataMap.get(itemId);
           var itemName = itemData ? itemData.name : "\u7269\u54C1ID: " + itemId;
           var quantity = bagItem.quantity;
-          console.log("\uD83D\uDDD1\uFE0F [BagItem] \u4E22\u5F03\u7269\u54C1: " + itemName + " (ID: " + itemId + ")\uFF0C\u6570\u91CF: " + quantity + "\uFF08\u5220\u9664\u6574\u4E2A\u683C\u5B50\uFF09");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83D\uDDD1\uFE0F [BagItem] \u4E22\u5F03\u7269\u54C1: " + itemName + " (ID: " + itemId + ")\uFF0C\u6570\u91CF: " + quantity + "\uFF08\u5220\u9664\u6574\u4E2A\u683C\u5B50\uFF09");
           var tip = (_crd && TipWindows === void 0 ? (_reportPossibleCrUseOfTipWindows({
             error: Error()
           }), TipWindows) : TipWindows).getInstance();
@@ -2692,7 +2881,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var cid = ((_this$ws$getCharacter7 = (_this$ws10 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter7.call(_this$ws10)) || undefined;
 
           if (!cid) {
-            console.error('❌ [BagItem] 无法获取角色ID，无法丢弃物品'); // 修复点：错误路径恢复丢弃中的状态，避免后续操作被永久锁死
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] 无法获取角色ID，无法丢弃物品'); // 修复点：错误路径恢复丢弃中的状态，避免后续操作被永久锁死
 
             this.isProcessingDiscardItem = false;
             return;
@@ -2703,7 +2894,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // MMO最佳实践：发送slot_index精确定位物品（在当前分类中的全局索引）
 
           if (this.selectedItemSlotIndex < 0) {
-            console.error("\u274C [BagItem] \u65E0\u6CD5\u786E\u5B9A\u7269\u54C1\u7684slot\u7D22\u5F15\uFF0C\u65E0\u6CD5\u4E22\u5F03");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("\u274C [BagItem] \u65E0\u6CD5\u786E\u5B9A\u7269\u54C1\u7684slot\u7D22\u5F15\uFF0C\u65E0\u6CD5\u4E22\u5F03");
             this.isProcessingDiscardItem = false;
             return;
           }
@@ -2752,7 +2945,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         handleRequestTimeout() {
-          console.warn('⚠️ [BagItem] 请求超时，恢复状态并刷新数据');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn('⚠️ [BagItem] 请求超时，恢复状态并刷新数据');
           this.clearRequestTimeout();
           (_crd && UILockManager === void 0 ? (_reportPossibleCrUseOfUILockManager({
             error: Error()
@@ -2933,7 +3128,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               uiTransform.convertToNodeSpaceAR(uiPos, localPos);
             } catch (error) {
               // 如果转换失败（可能因为camera引用问题），返回false
-              console.warn('⚠️ [BagItem] convertToNodeSpaceAR失败:', error);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [BagItem] convertToNodeSpaceAR失败:', error);
               return false;
             } // 获取节点的尺寸和锚点
 
@@ -2951,7 +3148,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var inBounds = localPos.x >= left && localPos.x <= right && localPos.y >= bottom && localPos.y <= top;
             return inBounds;
           } catch (error) {
-            console.error('❌ [BagItem] isPointInNode错误:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [BagItem] isPointInNode错误:', error);
             return false;
           }
         }
@@ -2973,7 +3172,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), TipWindows) : TipWindows).getInstance();
 
           if (!tip) {
-            console.warn('⚠️ [BagItem] TipWindows 未找到，无法显示提示:', message);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [BagItem] TipWindows 未找到，无法显示提示:', message);
             return;
           }
 

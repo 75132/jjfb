@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>e2e sheet running</title>
+<style>
+  body { background:#111; color:#ddd; font:12px/1.55 Consolas,"Microsoft YaHei",monospace; margin:0; padding:10px; }
+  #log { white-space:pre-wrap; }
+  #fr { width:1600px; height:900px; border:1px solid #333; position:absolute; left:-4000px; }
+  .h { color:#7ec8ff; font-weight:700; } .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+</style>
+</head>
+<body>
+<div id="log">running…</div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* =============================================================
+   图集列表 / 默认打开哪张 —— 回归
+   起因：用户报「地图素材加载失败」。排查结论不是加载失败，是
+   **默认打开了目录里排序第一的 bz.png（240×48 = 5×1 格）**，
+   一条 5 格的小图看着就像素材没出来。
+     [1] 默认打开必须是「地图」（≥2×2），且优先 map1*
+     [2] 下拉分组：地图 / 零散（1×N、N×1）
+     [3] 自然序：map2 排在 map10 前面
+     [4] 格数算对
+     [5] 手动打开条状小图仍然能成功（不是失败）
+     [6] 真失败时 ① 区顶上留下红字，别只靠一闪而过的 toast
+   ============================================================= */
+const OUT=[]; let PASS=0, FAIL=0;
+function head(s){OUT.push('<span class="h">'+s+'</span>');}
+function ck(n,c,e){ if(c){PASS++;OUT.push('  <span class="ok">[OK]  </span>'+n+(e?'  '+e:''));}
+                   else {FAIL++;OUT.push('  <span class="bad">[FAIL]</span> '+n+(e?'  '+e:''));} }
+function flush(){document.getElementById('log').innerHTML=OUT.join('\n')+
+  '\n<span class="h">==== 通过 '+PASS+'　失败 '+FAIL+' ====</span>';
+  document.title='e2e sheet '+PASS+'/'+(PASS+FAIL);}
+
+setTimeout(()=>{ run().catch(e=>{ck('run 抛异常',false,e.message); flush();}); },4500);
+
+async function run(){
+  const fr=document.getElementById('fr'), W=fr.contentWindow, D=fr.contentDocument;
+  const T=W.TS, S=T.S;
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const roots=await (await fetch('/api/roots')).json();
+
+  /* ---------- [1] 默认打开哪张 ---------- */
+  head('[1] 默认打开必须是「地图」，不能是排序第一的小图');
+  ck('素材目录存在', !!roots.mapSrc, roots.mapSrc||'');
+  const raw=await (await fetch('/api/list?dir='+encodeURIComponent(roots.mapSrc)+'&sizes=1')).json();
+  const first=raw.items.filter(x=>x.type==='img')[0];
+  ck('目录里排序第一张确实是小图（这才踩得到坑）',
+     first && (Math.floor(first.w/48)<2 || Math.floor(first.h/48)<2),
+     first ? first.name+' '+first.w+'×'+first.h : '无');
+  try{ W.localStorage.removeItem('ts.lastSheet');
+       W.localStorage.removeItem('ts.lastSheet::'+roots.mapSrc); }catch(e){}
+  await T.loadSheetList(roots.mapSrc);
+  await wait(120);
+  ck('★ 默认打开的 cols≥2 且 rows≥2',
+     !!S.sheet && S.sheet.cols>=2 && S.sheet.rows>=2,
+     S.sheet ? S.sheet.name+' '+S.sheet.cols+'×'+S.sheet.rows : '没有 sheet');
+  ck('★ 默认打开的不是排序第一张', !!S.sheet && S.sheet.path!==first.path,
+     'first='+first.name+'　pick='+(S.sheet&&S.sheet.name));
+  ck('★ 优先 map1*', !!S.sheet && /^map1([._\-]|$)/i.test(S.sheet.name), S.sheet&&S.sheet.name);
+  ck('★ 默认打开的格数 ≥ 4', !!S.sheet && S.sheet.cols*S.sheet.rows>=4,
+     S.sheet ? (S.sheet.cols*S.sheet.rows)+' 格' : '');
+  ck('srcMeta 显示了真实图名+格数',
+     (D.querySelector('#srcMeta').textContent||'').indexOf('map1_7x6.png')>=0,
+     D.querySelector('#srcMeta').textContent);
+
+  /* ---------- [2] 下拉分组 ---------- */
+  head('[2] 下拉分组：地图 / 零散');
+  const sel=D.querySelector('#sheetSelect');
+  const groups=[...sel.querySelectorAll('optgroup')].map(g=>({
+    label:g.label, opts:[...g.querySelectorAll('option')].map(o=>o.textContent.split(' ')[0])
+  }));
+  ck('有 2 个分组', groups.length===2, JSON.stringify(groups.map(g=>g.label)));
+  ck('组① 是地图且带张数', groups[0]&&/^地图（≥2×2 格）（\d+）$/.test(groups[0].label), groups[0]&&groups[0].label);
+  ck('组② 是零散素材', groups[1]&&groups[1].label.indexOf('零散素材')===0, groups[1]&&groups[1].label);
+  ck('★ 条状小图 bz.png 被归到「零散」组',
+     groups[1]&&groups[1].opts.some(n=>n==='bz.png'), groups[1]?groups[1].opts.join(','):'');
+  ck('★ 地图组里没有 1×N / N×1', groups[0]&&groups[0].opts.every(n=>!/^(bz|cs|yl)\.png$/.test(n)),
+     groups[0]?groups[0].opts.join(','):'');
+  ck('每张图都列出来了', groups.reduce((a,g)=>a+g.opts.length,0)===raw.items.filter(x=>x.type==='img').length,
+     groups.reduce((a,g)=>a+g.opts.length,0)+' / '+raw.items.filter(x=>x.type==='img').length);
+
+  /* ---------- [3] 自然序 ---------- */
+  head('[3] 自然序：map2 要在 map10 前面');
+  const names=groups[0].opts;
+  const i2=names.findIndex(n=>/^map2_/.test(n)), i10=names.findIndex(n=>/^map10_/.test(n));
+  ck('map2 排位 < map10 排位', i2>=0&&i10>=0&&i2<i10, 'map2@'+i2+'  map10@'+i10);
+  ck('map20 在 map3 之后', names.findIndex(n=>/^map20_/.test(n))>names.findIndex(n=>/^map3_/.test(n)),
+     'map3@'+names.findIndex(n=>/^map3_/.test(n))+'  map20@'+names.findIndex(n=>/^map20_/.test(n)));
+  ck('地图组第一项是 map1', /^map1_/.test(names[0]), names[0]);
+  ck('rootHint 标了「地图 N 张」',
+     (D.querySelector('#rootHint').textContent||'').indexOf('地图 ')>=0,
+     D.querySelector('#rootHint').textContent);
+
+  /* ---------- [4] 格数 ---------- */
+  head('[4] 格数算对');
+  ck('所有图都带 cells = cols×rows',
+     S.sheets.every(it=>it.cells===(it.cols||Math.floor(it.w/48))*(it.rows||Math.floor(it.h/48))),
+     S.sheets.map(it=>it.name+':'+it.cells).slice(0,4).join(' '));
+  ck('map4_8x7 = 56 格', (S.sheets.find(x=>x.name==='map4_8x7.png')||{}).cells===56,
+     String((S.sheets.find(x=>x.name==='map4_8x7.png')||{}).cells));
+  ck('bz.png = 5 格', (S.sheets.find(x=>x.name==='bz.png')||{}).cells===5);
+  ck('S.sheets 前面全是地图', S.sheets.slice(0,groups[0].opts.length)
+       .every(it=>it.cols>=2&&it.rows>=2));
+
+  /* ---------- [5] 手动打开条状小图仍然成功 ---------- */
+  head('[5] 手动选条状小图 → 仍然能加载（它不是失败，只是小）');
+  const bz=raw.items.find(x=>x.name==='bz.png');
+  await T.openSheetByPath(bz.path,bz.name);
+  await wait(120);
+  ck('bz.png 加载成功 5×1', S.sheet&&S.sheet.cols===5&&S.sheet.rows===1,
+     S.sheet?S.sheet.cols+'×'+S.sheet.rows:'');
+  ck('srcMeta 没变成红字失败',
+     (D.querySelector('#srcMeta').textContent||'').indexOf('加载失败')<0,
+     D.querySelector('#srcMeta').textContent);
+  ck('srcMeta 红色被清掉', (D.querySelector('#srcMeta').style.color||'')==='',
+     '"'+(D.querySelector('#srcMeta').style.color||'')+'"');
+
+  /* ---------- [6] 真失败要看得见 ---------- */
+  head('[6] 真失败 → ① 区顶上留红字（toast 会消失，红字不会）');
+  await T.openSheetByPath(roots.mapSrc+'\\__不存在__的图__.png','__不存在__的图__.png');
+  await wait(200);
+  const meta=D.querySelector('#srcMeta');
+  ck('★ 失败后 srcMeta 写着「加载失败」', (meta.textContent||'').indexOf('加载失败')>=0, meta.textContent);
+  ck('★ 失败后 srcMeta 是红色', /rgb\(255,\s*107,\s*107\)|#ff6b6b/i.test(meta.style.color||''),
+     meta.style.color||'（无颜色）');
+
+  /* 恢复：再加载一张好图，红字要清掉 */
+  await T.openSheetByPath(bz.path,bz.name);
+  await wait(120);
+  ck('重新加载成功 → 红字清掉',
+     (D.querySelector('#srcMeta').textContent||'').indexOf('加载失败')<0 &&
+     (D.querySelector('#srcMeta').style.color||'')==='',
+     D.querySelector('#srcMeta').textContent);
+
+  flush();
+}
+</script>
+</body>
+</html>

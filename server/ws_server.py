@@ -144,6 +144,7 @@ characters_col = db['characters']
 connected_clients = set()
 messages_col = db['messages']
 robotbase_col = db['RobotBase']
+monsterbase_col = db['MonsterBase']
 robotpet_col = db['RobotPet']
 inventory_col = db['inventory']
 daletou_draws_col = db['daletou_draws']
@@ -243,8 +244,8 @@ MAX_MESSAGE_SIZE = 10 * 1024 * 1024  # 10MB
 user_cache = {}  # {user_id: {data: user_data, timestamp: time}}
 CACHE_TTL = 60  # 缓存60秒
 
-# 网游级优化：查询结果缓存（减少重复查询）
-query_cache = {}  # {cache_key: {data: result, timestamp: time}}
+# 网游级优化：查询结果缓存（按前缀分桶，见 handlers/utils.py）
+query_cache = {}
 QUERY_CACHE_TTL = 30  # 查询缓存30秒
 
 # 网游级优化：防抖节流配置
@@ -504,7 +505,7 @@ def create_robot_pet(user_id, character_id, base_robot):
         'CurrentCorrosion': 'Corrosion',
         'CurrentInitiative': 'Initiative',
         'CurrentBlock': 'Block',
-        'CurrentParticleShield': 'ParticleShield',
+        'CurrentAttackCount': 'AttackCount',
         'CurrentArmorPenetration': 'ArmorPenetration',
         'CurrentShooting': 'Shooting',
         'CurrentEvasion': 'Evasion',
@@ -526,11 +527,11 @@ def create_robot_pet(user_id, character_id, base_robot):
         'HP', 'MaxHP', 'MP', 'MaxMP',
         'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
         'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-        'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+        'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
         'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
         'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
         'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-        'CurrentArmorPenetration', 'CurrentParticleShield'
+        'CurrentArmorPenetration', 'CurrentAttackCount'
     ]
     
     # 应用随机化
@@ -553,11 +554,11 @@ def create_robot_pet(user_id, character_id, base_robot):
         'HP', 'MaxHP', 'CurrentHP', 'MP', 'MaxMP', 'CurrentMP',
         'Melee', 'Shooting', 'Armor', 'Evasion', 'Accuracy',
         'Lethality', 'Corrosion', 'Resistance', 'Initiative',
-        'Counterattack', 'Block', 'ArmorPenetration', 'ParticleShield',
+        'Counterattack', 'Block', 'ArmorPenetration', 'AttackCount',
         'CurrentMelee', 'CurrentShooting', 'CurrentArmor', 'CurrentEvasion',
         'CurrentAccuracy', 'CurrentLethality', 'CurrentCorrosion', 'CurrentResistance',
         'CurrentInitiative', 'CurrentCounterattack', 'CurrentBlock',
-        'CurrentArmorPenetration', 'CurrentParticleShield',
+        'CurrentArmorPenetration', 'CurrentAttackCount',
         'Growth', 'Comprehension', 'StarLevel', 'Level', 'EXP',
         'RobotID', 'RobotName', 'Class', 'Form', 'AniID'
     ]
@@ -926,20 +927,12 @@ def get_user_by_token(token):
     return user
 
 def get_cached_query(cache_key):
-    """获取缓存的查询结果"""
-    cache_entry = query_cache.get(cache_key)
-    if cache_entry and time.time() - cache_entry['timestamp'] < QUERY_CACHE_TTL:
-        performance_stats['cache_hits'] += 1
-        return cache_entry['data']
-    performance_stats['cache_misses'] += 1
-    return None
+    """获取缓存的查询结果（与 handlers.utils 同一套分桶缓存）"""
+    return handler_utils.get_cached_query(cache_key)
 
 def set_cached_query(cache_key, result):
-    """设置查询结果缓存"""
-    query_cache[cache_key] = {
-        'data': result,
-        'timestamp': time.time()
-    }
+    """设置查询结果缓存（与 handlers.utils 同一套分桶缓存）"""
+    handler_utils.set_cached_query(cache_key, result)
 
 
 
@@ -987,13 +980,8 @@ async def main():
             for key in expired_keys:
                 user_cache.pop(key, None)
             
-            # 清理查询缓存
-            expired_query_keys = [
-                key for key, value in query_cache.items()
-                if current_time - value['timestamp'] > QUERY_CACHE_TTL
-            ]
-            for key in expired_query_keys:
-                query_cache.pop(key, None)
+            # 清理查询缓存（分桶结构在 handlers.utils）
+            expired_query_count = handler_utils.purge_expired_query_cache(current_time)
             
             # 清理节流计时器（清理超过1分钟未使用的）
             expired_throttles = []
@@ -1004,8 +992,8 @@ async def main():
             for ws_id in expired_throttles:
                 throttle_timers.pop(ws_id, None)
             
-            if expired_keys or expired_query_keys or expired_throttles:
-                print(f'清理缓存: 用户缓存 {len(expired_keys)} 个, 查询缓存 {len(expired_query_keys)} 个, 节流计时器 {len(expired_throttles)} 个')
+            if expired_keys or expired_query_count or expired_throttles:
+                print(f'清理缓存: 用户缓存 {len(expired_keys)} 个, 查询缓存 {expired_query_count} 个, 节流计时器 {len(expired_throttles)} 个')
     
     # 启动Session过期清理任务（定期清理过期Session）
     async def session_cleanup_task():
@@ -1071,7 +1059,7 @@ async def main():
     # 初始化handlers模块
     handler_utils.init_utils(
         users_col, account_limits_col, players_col, characters_col, messages_col,
-        robotbase_col, robotpet_col, inventory_col, user_clients,
+        robotbase_col, monsterbase_col, robotpet_col, inventory_col, user_clients,
         performance_stats, user_cache, ENCRYPTION_KEY,
         query_cache, LEVEL_TOTAL_EXP
     )
@@ -1417,14 +1405,9 @@ async def main():
                 
                 # Items.json
                 if clean_path == 'Items.json' or path.startswith('/Items.json') or path.endswith('/Items.json'):
-                    possible_paths = [
-                        os.path.join(data_dir, 'Items.json'),
-                        os.path.join(base_dir, 'handlers', 'json', 'Items.json'),
-                    ]
-                    for json_path in possible_paths:
-                        if os.path.exists(json_path):
-                            return json_path
-                    return os.path.join(data_dir, 'Items.json')
+                    from config_loader import resolve_items_json_path
+                    found = resolve_items_json_path()
+                    return found or os.path.join(data_dir, 'Items.json')
 
                 # Vue dist 静态资源
                 if clean_path == '' or clean_path == 'index.html':

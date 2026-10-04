@@ -1,0 +1,91 @@
+{
+  "name": "zuojia7",
+  "cn": "座驾-哈迪斯",
+  "mode": "piece_compose",
+  "rect_count": 3,
+  "piece_frames": 14,
+  "out_frames": 14,
+  "frame_sizes": [
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ],
+    [
+      86,
+      73
+    ]
+  ],
+  "compose": {
+    "mode": "piece_records",
+    "frame_count": 14,
+    "draw_order": "record_order",
+    "anchor_mode": "top_left",
+    "seam_fix": true,
+    "apply_flag_transform": true,
+    "canvas_box": [
+      -43,
+      -64,
+      43,
+      9
+    ],
+    "canvas_size": [
+      86,
+      73
+    ]
+  },
+  "parse": {
+    "frame_count": 14,
+    "tail_start": 63,
+    "tail_end": 469,
+    "remaining_bytes": 53
+  },
+  "chroma_changed": 3097
+}

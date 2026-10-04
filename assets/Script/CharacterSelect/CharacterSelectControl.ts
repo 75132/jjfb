@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, director } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
 
 /**
@@ -29,7 +30,7 @@ export class CharacterSelectControl extends Component {
 
     update(deltaTime: number) {
         if (this.wsManager && !this.wsManager.isConnected()) {
-            console.warn('WebSocket已断开，返回登录场景');
+            Logger.warn('WebSocket已断开，返回登录场景');
             director.loadScene(GameConfig.SCENE_NAMES.LOGIN);
         }
     }

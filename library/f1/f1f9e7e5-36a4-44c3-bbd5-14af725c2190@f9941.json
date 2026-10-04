@@ -79,7 +79,7 @@
       }
     },
     "texture": "f1f9e7e5-36a4-44c3-bbd5-14af725c2190@6c48a",
-    "packable": true,
+    "packable": false,
     "pixelsToUnit": 100,
     "pivot": {
       "x": 0.5,

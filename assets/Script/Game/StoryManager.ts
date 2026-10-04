@@ -30,6 +30,7 @@ import {
 } from 'cc';
 import { PlayerGridMove } from './GameArea/PlayerGridMove';
 import { BattleTriggerOnContact } from './GameArea/BattleTriggerOnContact';
+import { MapManager } from './GameArea/MapManager';
 import { ResourceManager } from './ResourceManager';
 import { StoryUIViewRefs } from './StoryUIViewRefs';
 import { WebSocketManager } from '../global/WebSocketManager';
@@ -78,6 +79,7 @@ import {
     type StoryRuntimeMode,
 } from './story-runtime-mode';
 import { GameConfig } from '../global/GameConfig';
+import { PerformanceMonitor } from '../global/PerformanceMonitor';
 
 const { ccclass, property, executionOrder } = _decorator;
 
@@ -87,9 +89,9 @@ type LogLevel = 'info' | 'warn' | 'error';
 function storyLog(level: LogLevel, message: string, context?: Record<string, unknown>): void {
     const tail = context && Object.keys(context).length ? ` ${JSON.stringify(context)}` : '';
     const line = `${PREFIX} ${message}${tail}`;
-    if (level === 'error') console.error(line);
-    else if (level === 'warn') console.warn(line);
-    else console.log(line);
+    if (level === 'error') Logger.error(line);
+    else if (level === 'warn') Logger.warn(line);
+    else Logger.debug(line);
 }
 
 /** 与 map JSON 对齐的格子像素（与 PlayerGridMove CELL 一致） */
@@ -100,6 +102,7 @@ import {
     resolveNpcTaskIndicatorKind,
     type NpcTaskIndicatorKind,
 } from './npc-task-indicator';
+import { Logger } from '../global/Logger';
 
 export type DialogueLineScript = { speaker: string; lines: string[] };
 
@@ -258,8 +261,12 @@ export class StoryManager extends Component {
     @property({ type: Node, tooltip: 'BattleScene 根节点（剧情战斗）' })
     battleRoot: Node | null = null;
 
-    @property({ tooltip: '地图 code，与 JSON mapCode 一致' })
-    mapCode = 'world_1782661910893';
+    /**
+     * 地图 code：由 mapConfig(JSON) 的 mapCode 在 _parseMap() 中自动注入，不暴露到属性检查器。
+     * JSON 缺 mapCode 时用此兜底；同时作为本地剧情存档 key（localStoryStorageKey）。
+     * 注意：换 json 只需保证各图 mapCode 唯一，无需手动改这里。
+     */
+    private mapCode = 'world_1782661910893';
 
     private _refs: StoryUIViewRefs | null = null;
     private _dialogueScripts: Record<string, DialogueLineScript> = {};
@@ -268,7 +275,7 @@ export class StoryManager extends Component {
     /** JSON 导出 mapWidth/mapHeight，与 TiledMap 不一致时用于诊断（运行时仍以 mapRoot UIT 为准） */
     private _jsonMapContentSize: { w: number; h: number } | null = null;
 
-    private _resolved: Array<{ npcUid: string; node: Node; events: MapNpcEvent[] }> = [];
+    private _resolved: Array<{ npcUid: string; node: Node; events: MapNpcEvent[]; box: BoxCollider2D | null }> = [];
     /** 由 StoryManager 克隆的节点，onDestroy / 重新解析时销毁 */
     private readonly _spawnedNpcRoots: Node[] = [];
     /** 与 _resolveNpcs 中 ordered 一致，用于逐个显示 NPC */
@@ -276,6 +283,8 @@ export class StoryManager extends Component {
     private _playerMove: PlayerGridMove | null = null;
     private _playerCollider: Collider2D | null = null;
     private _lastPlayerResolveAt = 0;
+    private _pollAccum = 0;
+    private _lastPollPosKey = '';
 
     private _playerTouchingNpcUid: string | null = null;
     /** 玩家在 NPC 碰撞箱内时显示 RMV 式交互提示（不再占用 Toast 队列） */
@@ -577,9 +586,9 @@ export class StoryManager extends Component {
         return parseEnemyGiverUid(npcUid);
     }
 
-    /** 该 NPC 是否仍有未完成剧情环（含「须先战斗」等暂不可交互的环） */
+    /** 该 NPC 是否仍有未完成剧情环（传送可重复，不计入未完成） */
     private _hasIncompleteStoryEvents(npcUid: string, events: MapNpcEvent[]): boolean {
-        return events.some((ev) => !this._isQuestStepComplete(npcUid, ev));
+        return events.some((ev) => ev.eventType !== 'teleport' && !this._isQuestStepComplete(npcUid, ev));
     }
 
     /** appear / 交付条件：地图无此 eventId 时，若所属 giver 链已全部完成则视为满足 */
@@ -610,6 +619,13 @@ export class StoryManager extends Component {
     }
 
     /** giver 是否已完成至少一环 task_accept */
+    /**
+     * 战斗敌人的「任务官链已启动」判定。
+     *
+     * 标准情形：链内存在 task_accept 且该事件已完成。
+     * 兼容跨 NPC 任务链（接取在别的 NPC 上、战斗官只负责推进/交付）：
+     * 只要链中引用的任务已被玩家接取，或该链已有任一事件完成，同样视为已启动。
+     */
     private _giverChainAccepted(giverUid: string, giverEvents: MapNpcEvent[]): boolean {
         for (const ev of giverEvents) {
             const hasAccept = (ev.server?.effects ?? []).some(
@@ -617,7 +633,16 @@ export class StoryManager extends Component {
             );
             if (hasAccept && this._isQuestStepComplete(giverUid, ev)) return true;
         }
-        return false;
+        for (const ev of giverEvents) {
+            const effects = (ev.server?.effects ?? []) as Array<{ action?: string; taskId?: number }>;
+            for (const raw of effects) {
+                const action = String(raw?.action ?? '');
+                if (action !== 'task_accept' && action !== 'task_complete') continue;
+                const tid = Number(raw?.taskId ?? 0);
+                if (tid > 0 && this._hasTaskBeenAccepted(tid)) return true;
+            }
+        }
+        return giverEvents.some((ev) => this._isQuestStepComplete(giverUid, ev));
     }
 
     private _enemyBattleEventIds(npcUid: string, events: MapNpcEvent[]): Set<string> {
@@ -631,24 +656,60 @@ export class StoryManager extends Component {
     /** 战斗敌人：所属任务官仍有未完成环且已接取时显现（不要求 pickInteract 非空） */
     private _shouldShowBattleEnemy(npcUid: string, events: MapNpcEvent[], currentMainlineUid: string | null): boolean {
         const giverUid = this._enemyGiverUid(npcUid);
-        if (!giverUid) return false;
-        if (currentMainlineUid && giverUid !== currentMainlineUid) return false;
-        if (!currentMainlineUid) return false;
+        if (!giverUid) {
+            this._diagBattleEnemyHidden(npcUid, 'uid 无法解析出任务官');
+            return false;
+        }
+        if (!currentMainlineUid) {
+            this._diagBattleEnemyHidden(npcUid, '当前无主线 NPC', { giverUid });
+            return false;
+        }
+        if (giverUid !== currentMainlineUid) {
+            this._diagBattleEnemyHidden(npcUid, '任务官不是当前主线 NPC', { giverUid, currentMainlineUid });
+            return false;
+        }
 
         const giverRow = this._npcRows.find((r) => r.npcUid === giverUid);
         const giverEvents = (giverRow?.events ?? []) as MapNpcEvent[];
-        if (!this._giverChainAccepted(giverUid, giverEvents)) return false;
-        if (!this._hasIncompleteStoryEvents(giverUid, giverEvents)) return false;
+        if (!this._giverChainAccepted(giverUid, giverEvents)) {
+            this._diagBattleEnemyHidden(npcUid, '任务官链未启动（无 task_accept / 任务未接取 / 无已完成事件）', {
+                giverUid,
+                giverEventIds: giverEvents.map((e) => this._stableEventId(giverUid, e)),
+            });
+            return false;
+        }
+        if (!this._hasIncompleteStoryEvents(giverUid, giverEvents)) {
+            this._diagBattleEnemyHidden(npcUid, '任务官链已全部完成', { giverUid });
+            return false;
+        }
 
         const row = this._npcRows.find((r) => r.npcUid === npcUid);
         if (row && visibilityHiddenUntilReveal(npcUid, row, this._revealedNpcUids, this._buildRequirementContext())) {
+            this._diagBattleEnemyHidden(npcUid, 'appear 条件未满足', {
+                requirements: row.appear?.requirements ?? [],
+            });
             return false;
         }
 
         const battleIds = this._enemyBattleEventIds(npcUid, events);
-        if (battleIds.size > 0 && [...battleIds].every((id) => this._isAppearEventDone(id))) return false;
+        if (battleIds.size > 0 && [...battleIds].every((id) => this._isAppearEventDone(id))) {
+            this._diagBattleEnemyHidden(npcUid, '战斗环已全部完成', { battleIds: [...battleIds] });
+            return false;
+        }
 
-        return this._pickInteractEvent(npcUid, events) !== null;
+        const pick = this._pickInteractEvent(npcUid, events) !== null;
+        if (!pick) {
+            this._diagBattleEnemyHidden(npcUid, '无可用可交互事件', {
+                eventIds: events.map((e) => this._stableEventId(npcUid, e)),
+            });
+        }
+        return pick;
+    }
+
+    /** 诊断：战斗敌人未显示的拦截面（debugLog 开启时输出） */
+    private _diagBattleEnemyHidden(npcUid: string, reason: string, extra?: Record<string, unknown>): void {
+        if (!this.debugLog) return;
+        storyLog('warn', 'StoryManager: 战斗敌人不显示', { npcUid, reason, ...(extra ?? {}) });
     }
 
     /** 任务状态图标用：战斗环须胜利才算完成 */
@@ -990,10 +1051,12 @@ export class StoryManager extends Component {
         if (this._isLocalPreview()) return;
         this._ws = WebSocketManager.getInstance();
         if (!this._ws?.getCharacterId?.()) return;
+        PerformanceMonitor.getInstance().startTimer('story_get_state');
         this._ws.request(
             GameConfig.MESSAGE_TYPES.STORY_GET_STATE,
             { map_code: this.mapCode },
             (resp: any) => {
+                PerformanceMonitor.getInstance().endTimer('story_get_state');
                 if (!this._alive()) return;
                 if (!resp?.success) {
                     this.showToast('剧情状态同步失败，请重登后再试', 3200);
@@ -1198,6 +1261,18 @@ export class StoryManager extends Component {
                 8000,
             );
             return (resp.data || resp) as StoryInteractPayload;
+        } catch (err) {
+            // 诊断：服务端拒绝交互（未知事件 / 条件不满足 / 地图未同步）会走到这里
+            storyLog('error', 'StoryManager: story_interact 失败', {
+                mapCode: this.mapCode,
+                npcUid,
+                eventId: this._stableEventId(npcUid, ev),
+                eventType: ev.eventType,
+                choiceId: choiceId ?? null,
+                err: err instanceof Error ? err.message : String(err),
+                hint: '若提示「未知事件/未知地图」，说明 server/data/story_maps 与客户端 JSON 不同步，需重新发布',
+            });
+            throw err;
         } finally {
             this._showFlowWaiting(false);
         }
@@ -1359,6 +1434,32 @@ export class StoryManager extends Component {
 
             const interactPayload = await this._promiseInteract(npcUid, ev);
 
+            // 纯传送：无需选项，完成事件后由 applied_effects 驱动 MapManager
+            if (ev.eventType === 'teleport' && !client.choiceScriptId && !interactPayload.choice_script_id) {
+                if (client.dialogueScriptId) {
+                    const scr = this._dialogueScripts[client.dialogueScriptId];
+                    if (scr) await this._promiseDialogue(scr);
+                } else {
+                    this.showStoryTip('正在传送…', 1200);
+                }
+                if (this._isLocalPreview()) {
+                    // buildLocalCompletePayload 已在 _promiseComplete 内 apply
+                    await this._promiseComplete(npcUid, ev, {});
+                    this._endActivation();
+                    return;
+                }
+                const data = await this._promiseComplete(npcUid, ev, {});
+                if (!data || Object.keys(data).length === 0) {
+                    this._applyTeleportFromEventConfig(ev);
+                    this._endActivation();
+                    return;
+                }
+                this._applyEffectsFromResponse(data);
+                // 可重复：不写入本地 completed，也不隐藏 NPC
+                this._endActivation();
+                return;
+            }
+
             if (ev.eventType === 'dialog' && client.dialogueScriptId) {
                 const scr = this._dialogueScripts[client.dialogueScriptId];
                 if (!scr) {
@@ -1376,7 +1477,7 @@ export class StoryManager extends Component {
             const choiceScriptId =
                 client.choiceScriptId ||
                 (interactPayload.choice_script_id as string | undefined);
-            if (choiceScriptId || ev.eventType === 'choice' || ev.eventType === 'teleport') {
+            if (choiceScriptId || ev.eventType === 'choice') {
                 const sid = choiceScriptId || client.choiceScriptId;
                 const ch = sid ? this._choiceScripts[sid] : null;
                 if (!ch) {
@@ -1536,25 +1637,119 @@ export class StoryManager extends Component {
         if (!this._storyNpcOrder.includes(uid)) {
             this._storyNpcOrder.push(uid);
         }
-        this._resolved.push({ npcUid: uid, node, events: row.events ?? [] });
+        this._resolved.push({
+            npcUid: uid,
+            node,
+            events: row.events ?? [],
+            box: node.getComponent(BoxCollider2D),
+        });
         this._bindNpcTouchHandlers();
         this._refreshNpcVisibility();
         if (this.debugLog) storyLog('info', 'StoryManager: 动态生成 NPC', { npcUid: uid });
     }
 
     private _applyTeleport(tp: Record<string, unknown>): void {
-        const mapId = Number(tp.toMapId ?? 0);
-        const x = Number(tp.toX ?? 0);
-        const y = Number(tp.toY ?? 0);
-        if (mapId === 1) {
-            this._resolveLocalPlayerOnce();
-            const node = this._playerMove?.node;
-            if (node?.isValid) {
-                node.setPosition(x, y, node.position.z);
-                this.showStoryTip('已传送至指定地点', 2800);
+        const mapId = Number(tp.toMapId ?? tp.to_map_id ?? 0);
+        const x = Number(tp.toX ?? tp.to_x ?? 0);
+        const y = Number(tp.toY ?? tp.to_y ?? 0);
+        if (!Number.isFinite(mapId) || mapId <= 0) return;
+
+        const mm = MapManager.find() ?? MapManager.ensureOnMapRoot(this._playerMove?.mapRoot ?? null);
+        if (mm) {
+            void mm.switchTo(mapId, x, y).then(() => {
+                if (mm.activeMapId === mapId) {
+                    this.showStoryTip('已传送至指定地点', 2800);
+                } else {
+                    this.showStoryTip('传送失败：目标地图未就绪', 3200);
+                }
+            });
+            return;
+        }
+
+        // 无 MapManager 时仅同图落点
+        this._resolveLocalPlayerOnce();
+        const node = this._playerMove?.node;
+        if (node?.isValid) {
+            node.setPosition(x, y, node.position.z);
+            this.showStoryTip('已传送至指定地点', 2800);
+        }
+    }
+
+    /** complete 失败时从事件配置兜底切图 */
+    private _applyTeleportFromEventConfig(ev: MapNpcEvent): void {
+        const effects = (ev.server?.effects ?? []) as Array<Record<string, unknown>>;
+        const tp =
+            effects.find((e) => String(e.action ?? '') === 'teleport') ??
+            ((ev as { eventParam?: Record<string, unknown> }).eventParam as Record<string, unknown> | undefined);
+        if (tp && (tp.toMapId != null || tp.to_map_id != null)) {
+            this._applyTeleport({
+                toMapId: tp.toMapId ?? tp.to_map_id,
+                toX: tp.toX ?? tp.to_x,
+                toY: tp.toY ?? tp.to_y,
+            });
+        }
+    }
+
+    /**
+     * MapManager 切图时调用：换 mapConfig / 重绑 NPC；无 JSON 时清空并隐藏旧图 NPC。
+     */
+    public bindMap(mapId: number, mapConfig: JsonAsset | null): void {
+        this.closeAll();
+        this._endActivation();
+        this._unbindNpcTouchHandlers();
+
+        for (let i = 0; i < this._resolved.length; i++) {
+            const n = this._resolved[i]?.node;
+            if (n?.isValid) n.active = false;
+        }
+        this._destroySpawnedNpcs();
+        this._resolved = [];
+        this._storyNpcOrder = [];
+
+        this.mapConfig = mapConfig;
+        this._dialogueScripts = {};
+        this._choiceScripts = {};
+        this._npcRows = [];
+        this._taskDefs = [];
+        this._jsonMapContentSize = null;
+
+        if (mapConfig?.json) {
+            this._parseMap();
+            this._resolveNpcs();
+            this._resetStoryRuntimeState();
+            if (this._isLocalPreview()) {
+                this._loadLocalStoryState();
+            } else {
+                this._fetchStoryStateFromServer();
             }
-        } else {
-            this.showStoryTip(`法西城（地图 ${mapId}）传送已登记，该地图场景后续接入`, 4500);
+            if (this.debugLog) {
+                storyLog('info', 'StoryManager.bindMap', {
+                    mapId,
+                    mapCode: this.mapCode,
+                    npcs: this._resolved.length,
+                });
+            }
+            return;
+        }
+
+        this._resetStoryRuntimeState();
+        this._hideSceneStoryNpcNodes();
+        if (this.debugLog) {
+            storyLog('info', 'StoryManager.bindMap: 无剧情 JSON，已隐藏 NPC', { mapId });
+        }
+    }
+
+    /** 无 mapConfig 时隐藏 WorldRoot 下剧情 NPC，避免旧图事件残留 */
+    private _hideSceneStoryNpcNodes(): void {
+        const scene = director.getScene();
+        if (!scene) return;
+        const wr = this._findNodeByName(scene, 'WorldRoot');
+        if (!wr) return;
+        const pmNode = this._playerMove?.node ?? null;
+        const nodes = this._collectColliderNpcNodes(wr, pmNode);
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            if (n?.isValid) n.active = false;
         }
     }
 
@@ -1643,9 +1838,23 @@ export class StoryManager extends Component {
         this._destroySpawnedNpcs();
     }
 
-    update(): void {
-        this._pollTouchOverlap();
+    update(dt: number): void {
         this._syncPlayerInputLock();
+        if (this.isBlocking) {
+            this._syncInteractRangeHint(null);
+            return;
+        }
+        this._resolveLocalPlayerOnce();
+        const p = this._playerMove?.node?.position;
+        const key = p ? `${p.x}|${p.y}` : '';
+        const moved = key !== this._lastPollPosKey;
+        this._lastPollPosKey = key;
+        if (!moved) {
+            this._pollAccum += dt;
+            if (this._pollAccum < 0.1) return;
+        }
+        this._pollAccum = 0;
+        this._pollTouchOverlap();
     }
 
     get isBlocking(): boolean {
@@ -1676,7 +1885,7 @@ export class StoryManager extends Component {
         const jsonMapCode = String(raw.mapCode ?? raw.map_code ?? '').trim();
         if (jsonMapCode && jsonMapCode !== this.mapCode) {
             if (this.debugLog) {
-                storyLog('warn', 'StoryManager: mapCode 与 JsonAsset 不一致，已以 JSON 为准', {
+                storyLog('info', 'StoryManager: mapCode 已按 JsonAsset 更新', {
                     sceneMapCode: this.mapCode,
                     jsonMapCode,
                 });
@@ -1880,14 +2089,31 @@ export class StoryManager extends Component {
         this._beginNpcChainSession(npcUid);
         const entry = this._resolved.find((x) => x.npcUid === npcUid);
         if (!entry) {
+            // 诊断：NPC 未解析到场景节点（配置有该 NPC 但场景树缺失 / 生成失败）
+            storyLog('warn', 'StoryManager: 激活失败，未解析到 NPC 节点', {
+                npcUid,
+                resolvedUids: this._resolved.map((r) => r.npcUid),
+            });
             this._endActivation();
             return;
         }
         this._facePlayerTowardNpc(entry.node);
         const ev = this._pickInteractEvent(npcUid, entry.events);
         if (!ev) {
+            // 诊断：具体原因已由 _pickInteractEvent 打出，这里标记本次激活结束
+            storyLog('warn', 'StoryManager: 激活中止（无可用交互事件）', {
+                npcUid,
+                eventCount: entry.events?.length ?? 0,
+            });
             this._endActivation();
             return;
+        }
+        if (this.debugLog) {
+            storyLog('info', 'StoryManager: 激活成功，开始事件流', {
+                npcUid,
+                eventId: this._stableEventId(npcUid, ev),
+                eventType: ev.eventType,
+            });
         }
         if (ev.client?.requiresApproach && !this._npcApproachOk) {
             this.showToast('请先离开再靠近 NPC', 2000);
@@ -2151,12 +2377,29 @@ export class StoryManager extends Component {
     private _pickInteractEvent(npcUid: string, events: MapNpcEvent[]): MapNpcEvent | null {
         const sorted = [...events].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         for (const ev of sorted) {
-            if (this._isQuestStepComplete(npcUid, ev)) continue;
+            // 传送可重复触发
+            if (ev.eventType !== 'teleport' && this._isQuestStepComplete(npcUid, ev)) continue;
             const reqs = ev.server?.requirements as unknown[] | undefined;
             // 首个未完成环未满足条件时不得跳到后面（如 e5 待战斗时禁止连到 e6/e8）
-            if (!this._evaluateRequirements(reqs)) return null;
+            if (!this._evaluateRequirements(reqs)) {
+                // 诊断：条件不满足是「按 E 无反应」最常见的静默原因，必须留痕
+                storyLog('warn', 'StoryManager: 交互事件条件未满足，交互中止', {
+                    npcUid,
+                    eventId: this._stableEventId(npcUid, ev),
+                    eventType: ev.eventType,
+                    requirements: reqs ?? [],
+                });
+                return null;
+            }
             return ev;
         }
+        // 诊断：说明该 NPC 的所有事件都已完成（或事件列表为空）
+        storyLog('warn', 'StoryManager: NPC 无可交互事件（全部已完成或列表为空）', {
+            npcUid,
+            eventCount: sorted.length,
+            eventIds: sorted.map((e) => this._stableEventId(npcUid, e)),
+            completed: sorted.map((e) => this._isQuestStepComplete(npcUid, e)),
+        });
         return null;
     }
 
@@ -2235,7 +2478,12 @@ export class StoryManager extends Component {
 
             this._applyNpcPortraitFromRow(node, row);
 
-            this._resolved.push({ npcUid, node, events });
+            this._resolved.push({
+                npcUid,
+                node,
+                events,
+                box: node.getComponent(BoxCollider2D),
+            });
             if (this.debugLog) {
                 storyLog('info', 'StoryManager: NPC 已绑定', { npcUid, node: node.name, spawned: this._spawnedNpcRoots.includes(node) });
             }
@@ -2618,9 +2866,13 @@ export class StoryManager extends Component {
         let bestUid: string | null = null;
         let bestDist = Number.POSITIVE_INFINITY;
 
-        for (const { npcUid, node } of this._resolved) {
+        for (const entry of this._resolved) {
+            const { npcUid, node } = entry;
             if (!node.isValid || !node.active) continue;
-            const trig = node.getComponent(BoxCollider2D) as unknown as Collider2D | null;
+            if (!entry.box || !entry.box.isValid) {
+                entry.box = node.getComponent(BoxCollider2D);
+            }
+            const trig = entry.box as unknown as Collider2D | null;
             const dist = this._distanceToPlayer(node);
             const prev = this._playerTouchingNpcUid === npcUid;
             const hasNpcBox = Boolean(trig?.enabled && this._aabbValid(trig.worldAABB));
@@ -2724,8 +2976,21 @@ export class StoryManager extends Component {
         }
 
         if (!this._isStoryInteractKey(e.keyCode)) return;
-        if (this._eventFlowRunning) return;
-        if (this._activationNpcUid) return;
+        if (this._eventFlowRunning) {
+            // 诊断：上一次事件流未结束就再次按 E（可能是流程卡住或战斗未回）
+            storyLog('warn', 'StoryManager: 交互键被忽略——事件流进行中', {
+                activationNpcUid: this._activationNpcUid,
+            });
+            return;
+        }
+        if (this._activationNpcUid) {
+            // 诊断：会话未收尾，_activationNpcUid 仍锁着（常见于战斗失败/异常中断未调用 _endActivation）
+            storyLog('warn', 'StoryManager: 交互键被忽略——上一会话未结束', {
+                activationNpcUid: this._activationNpcUid,
+                pausedForBattle: this._activationPausedForBattle,
+            });
+            return;
+        }
 
         const npcUid = this._playerTouchingNpcUid;
         if (!npcUid) {
@@ -2733,11 +2998,19 @@ export class StoryManager extends Component {
             if (now - this._lastOutOfRangeKeyLogAt > 2000) {
                 this._lastOutOfRangeKeyLogAt = now;
                 const seqHint = this._getSequentialBlockHint();
+                storyLog('info', 'StoryManager: 交互键按下但不在 NPC 范围内', {
+                    touchingNpcUid: this._playerTouchingNpcUid,
+                    resolvedCount: this._resolved.length,
+                    seqHint: seqHint || null,
+                });
                 this.showToast(seqHint || '靠近 NPC 再交谈', 2000);
             }
             return;
         }
 
+        if (this.debugLog) {
+            storyLog('info', 'StoryManager: 交互键触发激活', { npcUid });
+        }
         this._tryTriggerActivation(npcUid);
     };
 

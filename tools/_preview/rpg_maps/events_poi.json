@@ -1,0 +1,9332 @@
+[
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 3,
+   "y": 6
+  },
+  "logical": {
+   "x": 168,
+   "y": -264
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00003",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "挑战赢我会获得奖励哦！"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [
+    {
+     "code": 301,
+     "name": "战斗处理",
+     "params": [
+      0,
+      4,
+      true,
+      true
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      10,
+      0,
+      0,
+      1
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 9,
+   "y": 0
+  },
+  "logical": {
+   "x": 456,
+   "y": 24
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "Evil",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      25,
+      0,
+      0,
+      3
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      24,
+      0,
+      0,
+      4
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      12,
+      0,
+      0,
+      88
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      57,
+      0,
+      0,
+      88
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": [
+    "CreatePet(51, true);",
+    "CreatePet(97, true);",
+    "CreatePet(28, true);"
+   ]
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 1,
+   "y": 1
+  },
+  "logical": {
+   "x": 72,
+   "y": -24
+  },
+  "trigger": "并行处理",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "请选择你的初始机甲"
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "鹰眼",
+      "钢板",
+      "铁壁"
+     ],
+     "cancelType": 1
+    }
+   ],
+   "transfers": [],
+   "other": [
+    {
+     "code": 211,
+     "name": "更改地图画面",
+     "params": [
+      1
+     ]
+    },
+    {
+     "code": 129,
+     "name": "队员",
+     "params": [
+      46,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 129,
+     "name": "队员",
+     "params": [
+      46,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 129,
+     "name": "队员",
+     "params": [
+      46,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 123,
+     "name": "独立开关",
+     "params": [
+      "A",
+      0
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": [
+    "CreatePet(4, true);",
+    "CreatePet(7, true);",
+    "CreatePet(1, true);"
+   ]
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 1,
+  "tile": {
+   "x": 1,
+   "y": 1
+  },
+  "logical": {
+   "x": 72,
+   "y": -24
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": true,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 6
+  },
+  "logical": {
+   "x": 408,
+   "y": -264
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00008",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "全武器只能选一次哦"
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "是",
+      "否"
+     ],
+     "cancelType": 1
+    }
+   ],
+   "transfers": [],
+   "other": [
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      4,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      5,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      6,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      7,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      8,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      9,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      10,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      11,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      12,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      13,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      14,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      15,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      16,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      17,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      18,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      19,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      20,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      21,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      22,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      23,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      24,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      25,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      26,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      27,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      28,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      29,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      30,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      31,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      32,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      33,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      34,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      35,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      36,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      37,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      38,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      39,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      40,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      41,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      42,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      43,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      44,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      45,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      46,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      47,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      48,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      49,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      50,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      51,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      1,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      2,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      3,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      4,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      5,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      6,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      7,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      8,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      9,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      10,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      11,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      12,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      13,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      14,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      15,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      16,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      17,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      18,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      19,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      20,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      21,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      22,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      23,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      24,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      25,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      26,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      27,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      28,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      29,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      30,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      31,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      32,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      33,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      34,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      35,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      36,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      37,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      38,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      39,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      40,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      41,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      42,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      43,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      44,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      45,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      46,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      47,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      48,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      49,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      50,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      51,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      52,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      53,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      54,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      55,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      56,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      57,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      58,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      59,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      60,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      61,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      62,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      63,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      64,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      65,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      66,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      67,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      68,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      69,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      70,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      71,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      72,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      73,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      74,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      75,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      76,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      77,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      78,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      79,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      80,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      81,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      82,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      83,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      84,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      85,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      86,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      87,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      88,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      89,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      90,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      91,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      92,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      93,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      94,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      95,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      96,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      97,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      98,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      99,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      100,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      101,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      102,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      103,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      104,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      105,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      106,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      107,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      108,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      109,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      110,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      111,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      112,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      113,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      114,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      115,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      116,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      117,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      118,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      119,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      120,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      121,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      122,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      123,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      124,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      125,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      126,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      127,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      128,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      129,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      130,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      131,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      132,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      133,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      134,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      135,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      136,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      137,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      138,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      139,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      140,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      141,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      142,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      143,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      144,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      145,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      146,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      147,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      148,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      149,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      150,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      151,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      152,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      153,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      154,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      155,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      156,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      157,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      158,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      159,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      160,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      161,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      162,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      163,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      164,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      165,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      166,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      167,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      168,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      169,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 128,
+     "name": "防具",
+     "params": [
+      170,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 123,
+     "name": "独立开关",
+     "params": [
+      "A",
+      0
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 1,
+  "tile": {
+   "x": 8,
+   "y": 6
+  },
+  "logical": {
+   "x": 408,
+   "y": -264
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": true,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 7,
+   "y": 6
+  },
+  "logical": {
+   "x": 360,
+   "y": -264
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00004",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "新手福利包只能选择一次哦！"
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "是",
+      "否"
+     ],
+     "cancelType": 1
+    }
+   ],
+   "transfers": [],
+   "other": [
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      9,
+      0,
+      0,
+      10
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      3,
+      0,
+      0,
+      8
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      1,
+      0,
+      0,
+      20
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      8,
+      0,
+      0,
+      10
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      6,
+      0,
+      0,
+      2
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      7,
+      0,
+      0,
+      2
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      53,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      10,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "code": 123,
+     "name": "独立开关",
+     "params": [
+      "A",
+      0
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 1,
+  "tile": {
+   "x": 7,
+   "y": 6
+  },
+  "logical": {
+   "x": 360,
+   "y": -264
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00004",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": true,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "祝您玩得愉快！"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 7,
+   "y": 0
+  },
+  "logical": {
+   "x": 360,
+   "y": 24
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "Evil",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": [
+    "CreatePet(82, true);",
+    "CreatePet(85, true);",
+    "CreatePet(88, true);",
+    "CreatePet(91, true);",
+    "CreatePet(94, true);",
+    "CreatePet(97, true);",
+    "CreatePet(64, true);",
+    "CreatePet(70, true);"
+   ]
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 0
+  },
+  "logical": {
+   "x": 408,
+   "y": 24
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "CharacterName",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      4,
+      0,
+      0,
+      1,
+      false
+     ]
+    },
+    {
+     "code": 127,
+     "name": "武器",
+     "params": [
+      5,
+      0,
+      0,
+      1,
+      false
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 8,
+  "eventName": "EV008",
+  "page": 0,
+  "tile": {
+   "x": 10,
+   "y": 0
+  },
+  "logical": {
+   "x": 504,
+   "y": 24
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "Damage2",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      36,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      37,
+      0,
+      0,
+      1
+     ]
+    },
+    {
+     "code": 126,
+     "name": "物品",
+     "params": [
+      39,
+      0,
+      0,
+      1
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 9,
+  "eventName": "EV009",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 3
+  },
+  "logical": {
+   "x": 312,
+   "y": -120
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "!Crystal",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 6,
+     "x": 8,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 12,
+  "eventName": "EV012",
+  "page": 0,
+  "tile": {
+   "x": 39,
+   "y": 13
+  },
+  "logical": {
+   "x": 1896,
+   "y": -600
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 1,
+     "y": 7,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 1,
+  "mapName": "郊外",
+  "eventId": 13,
+  "eventName": "EV013",
+  "page": 0,
+  "tile": {
+   "x": 39,
+   "y": 14
+  },
+  "logical": {
+   "x": 1896,
+   "y": -648
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 1,
+     "y": 7,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 2,
+  "mapName": "塔拉斯森林",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 39,
+   "y": 36
+  },
+  "logical": {
+   "x": 1896,
+   "y": -1704
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 2,
+  "mapName": "塔拉斯森林",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 39,
+   "y": 37
+  },
+  "logical": {
+   "x": 1896,
+   "y": -1752
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 2,
+  "mapName": "塔拉斯森林",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 3
+  },
+  "logical": {
+   "x": 24,
+   "y": -120
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 4,
+     "x": 10,
+     "y": 60,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 2,
+  "mapName": "塔拉斯森林",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 2
+  },
+  "logical": {
+   "x": 24,
+   "y": -72
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 4,
+     "x": 9,
+     "y": 60,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 3,
+  "mapName": "尼利亚荒原",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 1,
+   "y": 50
+  },
+  "logical": {
+   "x": 72,
+   "y": -2376
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 10,
+     "y": 10,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 3,
+  "mapName": "尼利亚荒原",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 4,
+   "y": 1
+  },
+  "logical": {
+   "x": 216,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 11,
+     "x": 10,
+     "y": 53,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 3,
+  "mapName": "尼利亚荒原",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 1
+  },
+  "logical": {
+   "x": 264,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 11,
+     "x": 11,
+     "y": 53,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 4,
+  "mapName": "塔拉斯森林2",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 9,
+   "y": 62
+  },
+  "logical": {
+   "x": 456,
+   "y": -2952
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 2,
+     "x": 1,
+     "y": 1,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 4,
+  "mapName": "塔拉斯森林2",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 10,
+   "y": 62
+  },
+  "logical": {
+   "x": 504,
+   "y": -2952
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 2,
+     "x": 1,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 66,
+   "y": 1
+  },
+  "logical": {
+   "x": 3192,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 23,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 64,
+   "y": 1
+  },
+  "logical": {
+   "x": 3096,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 23,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 65,
+   "y": 1
+  },
+  "logical": {
+   "x": 3144,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 23,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 63,
+   "y": 1
+  },
+  "logical": {
+   "x": 3048,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 23,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 67,
+   "y": 1
+  },
+  "logical": {
+   "x": 3240,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 23,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 2,
+   "y": 1
+  },
+  "logical": {
+   "x": 120,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 1
+  },
+  "logical": {
+   "x": 312,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 8,
+  "eventName": "EV008",
+  "page": 0,
+  "tile": {
+   "x": 3,
+   "y": 1
+  },
+  "logical": {
+   "x": 168,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 9,
+  "eventName": "EV009",
+  "page": 0,
+  "tile": {
+   "x": 4,
+   "y": 1
+  },
+  "logical": {
+   "x": 216,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 10,
+  "eventName": "EV010",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 1
+  },
+  "logical": {
+   "x": 264,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 11,
+  "eventName": "EV011",
+  "page": 0,
+  "tile": {
+   "x": 7,
+   "y": 1
+  },
+  "logical": {
+   "x": 360,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 12,
+  "eventName": "EV012",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 1
+  },
+  "logical": {
+   "x": 408,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 13,
+  "eventName": "EV013",
+  "page": 0,
+  "tile": {
+   "x": 9,
+   "y": 1
+  },
+  "logical": {
+   "x": 456,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 14,
+  "eventName": "EV014",
+  "page": 0,
+  "tile": {
+   "x": 10,
+   "y": 1
+  },
+  "logical": {
+   "x": 504,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 5,
+  "mapName": "极北雪原",
+  "eventId": 15,
+  "eventName": "EV015",
+  "page": 0,
+  "tile": {
+   "x": 1,
+   "y": 1
+  },
+  "logical": {
+   "x": 72,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 28,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 6,
+  "mapName": "娱乐中心",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 2,
+   "y": 5
+  },
+  "logical": {
+   "x": 120,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00012",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "open tc"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 6,
+  "mapName": "娱乐中心",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 2
+  },
+  "logical": {
+   "x": 408,
+   "y": -72
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 6,
+  "mapName": "娱乐中心",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 5
+  },
+  "logical": {
+   "x": 696,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "Evil",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "open qh"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 7,
+  "mapName": "法西城",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 22,
+   "y": 7
+  },
+  "logical": {
+   "x": 1080,
+   "y": -312
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 20,
+     "x": 0,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 7,
+  "mapName": "法西城",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 8
+  },
+  "logical": {
+   "x": 24,
+   "y": -360
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 4,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 7,
+  "mapName": "法西城",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 18,
+   "y": 1
+  },
+  "logical": {
+   "x": 888,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 7,
+  "mapName": "法西城",
+  "eventId": 13,
+  "eventName": "EV013",
+  "page": 0,
+  "tile": {
+   "x": 29,
+   "y": 29
+  },
+  "logical": {
+   "x": 1416,
+   "y": -1368
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 5,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 18
+  },
+  "logical": {
+   "x": 312,
+   "y": -840
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 9,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 18
+  },
+  "logical": {
+   "x": 264,
+   "y": -840
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 9,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 7
+  },
+  "logical": {
+   "x": 24,
+   "y": -312
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 20,
+     "y": 12,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 22,
+   "y": 4
+  },
+  "logical": {
+   "x": 1080,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 10,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 4
+  },
+  "logical": {
+   "x": 312,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 6,
+     "x": 8,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 8,
+  "eventName": "EV008",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 4
+  },
+  "logical": {
+   "x": 264,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 6,
+     "x": 8,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 9,
+  "eventName": "EV009",
+  "page": 0,
+  "tile": {
+   "x": 21,
+   "y": 4
+  },
+  "logical": {
+   "x": 1032,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 10,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 8,
+  "mapName": "迪卡城",
+  "eventId": 10,
+  "eventName": "EV010",
+  "page": 0,
+  "tile": {
+   "x": 27,
+   "y": 21
+  },
+  "logical": {
+   "x": 1320,
+   "y": -984
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 20,
+     "y": 12,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 5
+  },
+  "logical": {
+   "x": 264,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00005",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 20,
+   "y": 5
+  },
+  "logical": {
+   "x": 984,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00007",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 14
+  },
+  "logical": {
+   "x": 264,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00010",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 21,
+   "y": 14
+  },
+  "logical": {
+   "x": 1032,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00011",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "你好"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 13,
+   "y": 20
+  },
+  "logical": {
+   "x": 648,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 6,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 12,
+   "y": 20
+  },
+  "logical": {
+   "x": 600,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 5,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 9,
+  "mapName": "购物中心",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 20
+  },
+  "logical": {
+   "x": 696,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 6,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 10,
+  "mapName": "经验挂机中心",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 13,
+   "y": 20
+  },
+  "logical": {
+   "x": 648,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 10,
+  "mapName": "经验挂机中心",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 12,
+   "y": 20
+  },
+  "logical": {
+   "x": 600,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 5,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 10,
+  "mapName": "经验挂机中心",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 20
+  },
+  "logical": {
+   "x": 696,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 11,
+  "mapName": "尼利亚荒原2",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 10,
+   "y": 56
+  },
+  "logical": {
+   "x": 504,
+   "y": -2664
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 3,
+     "x": 4,
+     "y": 1,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 11,
+  "mapName": "尼利亚荒原2",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 11,
+   "y": 56
+  },
+  "logical": {
+   "x": 552,
+   "y": -2664
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 3,
+     "x": 4,
+     "y": 1,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 11,
+  "mapName": "尼利亚荒原2",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 59,
+   "y": 11
+  },
+  "logical": {
+   "x": 2856,
+   "y": -504
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 12,
+     "x": 1,
+     "y": 3,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 11,
+  "mapName": "尼利亚荒原2",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 59,
+   "y": 12
+  },
+  "logical": {
+   "x": 2856,
+   "y": -552
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 12,
+     "x": 1,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 12,
+  "mapName": "尼利亚荒原3",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 4
+  },
+  "logical": {
+   "x": 24,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 11,
+     "x": 58,
+     "y": 10,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 12,
+  "mapName": "尼利亚荒原3",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 5
+  },
+  "logical": {
+   "x": 24,
+   "y": -216
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 11,
+     "x": 58,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 18
+  },
+  "logical": {
+   "x": 312,
+   "y": -840
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 14,
+     "x": 8,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 18
+  },
+  "logical": {
+   "x": 264,
+   "y": -840
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 14,
+     "x": 8,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 27,
+   "y": 21
+  },
+  "logical": {
+   "x": 1320,
+   "y": -984
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 10,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 22,
+   "y": 18
+  },
+  "logical": {
+   "x": 1080,
+   "y": -840
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 16,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 4
+  },
+  "logical": {
+   "x": 312,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 15,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 4
+  },
+  "logical": {
+   "x": 264,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 15,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 7
+  },
+  "logical": {
+   "x": 24,
+   "y": -312
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 10,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 8,
+  "eventName": "EV008",
+  "page": 0,
+  "tile": {
+   "x": 21,
+   "y": 18
+  },
+  "logical": {
+   "x": 1032,
+   "y": -840
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 16,
+     "x": 13,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 9,
+  "eventName": "EV009",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 1
+  },
+  "logical": {
+   "x": 696,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 10,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 13,
+  "mapName": "卡布雷萨",
+  "eventId": 10,
+  "eventName": "EV010",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 21
+  },
+  "logical": {
+   "x": 24,
+   "y": -984
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 10,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 14,
+  "mapName": "娱乐中心2",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 2,
+   "y": 5
+  },
+  "logical": {
+   "x": 120,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00012",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "open tc"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 14,
+  "mapName": "娱乐中心2",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 2
+  },
+  "logical": {
+   "x": 408,
+   "y": -72
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 6,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 14,
+  "mapName": "娱乐中心2",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 5
+  },
+  "logical": {
+   "x": 696,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "Evil",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "open qh"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 5
+  },
+  "logical": {
+   "x": 264,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00005",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 20,
+   "y": 5
+  },
+  "logical": {
+   "x": 984,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00007",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 14
+  },
+  "logical": {
+   "x": 264,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00010",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 21,
+   "y": 14
+  },
+  "logical": {
+   "x": 1032,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00011",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "你好"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 13,
+   "y": 20
+  },
+  "logical": {
+   "x": 648,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 12,
+   "y": 20
+  },
+  "logical": {
+   "x": 600,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 5,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 15,
+  "mapName": "购物中心2",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 20
+  },
+  "logical": {
+   "x": 696,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 6,
+     "y": 4,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 16,
+  "mapName": "技能学习中心",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 14
+  },
+  "logical": {
+   "x": 264,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00005",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "请选择购买的机甲职业："
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "格斗",
+      "射击",
+      "全能"
+     ],
+     "cancelType": 1
+    }
+   ],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 16,
+  "mapName": "技能学习中心",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 13,
+   "y": 20
+  },
+  "logical": {
+   "x": 648,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 22,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 16,
+  "mapName": "技能学习中心",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 12,
+   "y": 20
+  },
+  "logical": {
+   "x": 600,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 21,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 16,
+  "mapName": "技能学习中心",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 20
+  },
+  "logical": {
+   "x": 696,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 22,
+     "y": 18,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 17,
+  "mapName": "无尽森林",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 3,
+   "y": 38
+  },
+  "logical": {
+   "x": 168,
+   "y": -1800
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 12,
+     "y": 6,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 17,
+  "mapName": "无尽森林",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 52,
+   "y": 1
+  },
+  "logical": {
+   "x": 2520,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 18,
+     "x": 52,
+     "y": 38,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 17,
+  "mapName": "无尽森林",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 52,
+   "y": 0
+  },
+  "logical": {
+   "x": 2520,
+   "y": 24
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 18,
+  "mapName": "无尽森林2",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 52,
+   "y": 39
+  },
+  "logical": {
+   "x": 2520,
+   "y": -1848
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 17,
+     "x": 52,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 18,
+  "mapName": "无尽森林2",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 56,
+   "y": 1
+  },
+  "logical": {
+   "x": 2712,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 19,
+     "x": 46,
+     "y": 38,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 19,
+  "mapName": "无尽森林3",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 46,
+   "y": 39
+  },
+  "logical": {
+   "x": 2232,
+   "y": -1848
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 18,
+     "x": 56,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 19,
+  "mapName": "无尽森林3",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 37
+  },
+  "logical": {
+   "x": 24,
+   "y": -1752
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 14,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 4,
+   "y": 11
+  },
+  "logical": {
+   "x": 216,
+   "y": -504
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "$djtl",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "是否要进入训练模式？"
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "是",
+      "否"
+     ],
+     "cancelType": 1
+    }
+   ],
+   "transfers": [],
+   "other": [
+    {
+     "code": 301,
+     "name": "战斗处理",
+     "params": [
+      0,
+      4,
+      true,
+      true
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 11
+  },
+  "logical": {
+   "x": 312,
+   "y": -504
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "$djtl",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 16,
+   "y": 5
+  },
+  "logical": {
+   "x": 792,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "$djtl",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 17,
+   "y": 13
+  },
+  "logical": {
+   "x": 840,
+   "y": -600
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc1",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 24,
+   "y": 5
+  },
+  "logical": {
+   "x": 1176,
+   "y": -216
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 22,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 24,
+   "y": 6
+  },
+  "logical": {
+   "x": 1176,
+   "y": -264
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 22,
+     "y": 8,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 20,
+  "mapName": "训练室",
+  "eventId": 8,
+  "eventName": "EV008",
+  "page": 0,
+  "tile": {
+   "x": 3,
+   "y": 12
+  },
+  "logical": {
+   "x": 168,
+   "y": -552
+  },
+  "trigger": "并行处理",
+  "priority": "与玩家同层",
+  "characterName": "People3",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 1,
+   "y": 7
+  },
+  "logical": {
+   "x": 72,
+   "y": -312
+  },
+  "trigger": "并行处理",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "qd cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 3
+  },
+  "logical": {
+   "x": 264,
+   "y": -120
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 7,
+     "x": 28,
+     "y": 29,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 4
+  },
+  "logical": {
+   "x": 408,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 2,
+     "x": 38,
+     "y": 36,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 3,
+   "y": 4
+  },
+  "logical": {
+   "x": 168,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 1,
+     "x": 38,
+     "y": 13,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 10,
+   "y": 8
+  },
+  "logical": {
+   "x": 504,
+   "y": -360
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 13,
+     "x": 1,
+     "y": 7,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 10,
+   "y": 11
+  },
+  "logical": {
+   "x": 504,
+   "y": -504
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 3,
+     "x": 1,
+     "y": 49,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 12,
+   "y": 5
+  },
+  "logical": {
+   "x": 600,
+   "y": -216
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 17,
+     "x": 3,
+     "y": 37,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 8,
+  "eventName": "EV008",
+  "page": 0,
+  "tile": {
+   "x": 20,
+   "y": 11
+  },
+  "logical": {
+   "x": 984,
+   "y": -504
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 8,
+     "x": 1,
+     "y": 7,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 9,
+  "eventName": "EV009",
+  "page": 0,
+  "tile": {
+   "x": 24,
+   "y": 11
+  },
+  "logical": {
+   "x": 1176,
+   "y": -504
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 5,
+     "x": 65,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 10,
+  "eventName": "EV010",
+  "page": 0,
+  "tile": {
+   "x": 15,
+   "y": 10
+  },
+  "logical": {
+   "x": 744,
+   "y": -456
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 23,
+     "x": 1,
+     "y": 7,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [
+    "gb cs"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 11,
+  "eventName": "EV011",
+  "page": 0,
+  "tile": {
+   "x": 15,
+   "y": 14
+  },
+  "logical": {
+   "x": 744,
+   "y": -648
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "地图还未开发！"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 12,
+  "eventName": "EV012",
+  "page": 0,
+  "tile": {
+   "x": 20,
+   "y": 7
+  },
+  "logical": {
+   "x": 984,
+   "y": -312
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "地图还未开发！"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 13,
+  "eventName": "EV013",
+  "page": 0,
+  "tile": {
+   "x": 16,
+   "y": 7
+  },
+  "logical": {
+   "x": 792,
+   "y": -312
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 14,
+  "eventName": "EV014",
+  "page": 0,
+  "tile": {
+   "x": 8,
+   "y": 13
+  },
+  "logical": {
+   "x": 408,
+   "y": -600
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 15,
+  "eventName": "EV015",
+  "page": 0,
+  "tile": {
+   "x": 18,
+   "y": 9
+  },
+  "logical": {
+   "x": 888,
+   "y": -408
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 16,
+  "eventName": "EV016",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 16
+  },
+  "logical": {
+   "x": 696,
+   "y": -744
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 17,
+  "eventName": "EV017",
+  "page": 0,
+  "tile": {
+   "x": 20,
+   "y": 15
+  },
+  "logical": {
+   "x": 984,
+   "y": -696
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 18,
+  "eventName": "EV018",
+  "page": 0,
+  "tile": {
+   "x": 25,
+   "y": 7
+  },
+  "logical": {
+   "x": 1224,
+   "y": -312
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 19,
+  "eventName": "EV019",
+  "page": 0,
+  "tile": {
+   "x": 25,
+   "y": 4
+  },
+  "logical": {
+   "x": 1224,
+   "y": -168
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 21,
+  "mapName": "世界地图",
+  "eventId": 20,
+  "eventName": "EV020",
+  "page": 0,
+  "tile": {
+   "x": 29,
+   "y": 6
+  },
+  "logical": {
+   "x": 1416,
+   "y": -264
+  },
+  "trigger": "确定键",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 22,
+  "mapName": "剧情",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 7,
+   "y": 3
+  },
+  "logical": {
+   "x": 360,
+   "y": -120
+  },
+  "trigger": "自动执行",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "机甲风暴OL虫祸纷争起源。。。。。。",
+      "（剧情）"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 1,
+     "x": 5,
+     "y": 2,
+     "dir": 0
+    }
+   ],
+   "other": [
+    {
+     "code": 211,
+     "name": "更改地图画面",
+     "params": [
+      0
+     ]
+    }
+   ],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 23,
+  "mapName": "埃塞克",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 6,
+   "y": 4
+  },
+  "logical": {
+   "x": 312,
+   "y": -168
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "npc1",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 24,
+     "x": 13,
+     "y": 19,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 23,
+  "mapName": "埃塞克",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 27,
+   "y": 21
+  },
+  "logical": {
+   "x": 1320,
+   "y": -984
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 15,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 23,
+  "mapName": "埃塞克",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 7
+  },
+  "logical": {
+   "x": 24,
+   "y": -312
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 15,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 23,
+  "mapName": "埃塞克",
+  "eventId": 9,
+  "eventName": "EV009",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 1
+  },
+  "logical": {
+   "x": 696,
+   "y": -24
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 15,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 23,
+  "mapName": "埃塞克",
+  "eventId": 10,
+  "eventName": "EV010",
+  "page": 0,
+  "tile": {
+   "x": 0,
+   "y": 21
+  },
+  "logical": {
+   "x": 24,
+   "y": -984
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 21,
+     "x": 15,
+     "y": 11,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 1,
+  "eventName": "EV001",
+  "page": 0,
+  "tile": {
+   "x": 19,
+   "y": 14
+  },
+  "logical": {
+   "x": 936,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00005",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "机甲可以合成，合成后的机甲属性更强！"
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "合成",
+      "离开"
+     ],
+     "cancelType": 1
+    },
+    {
+     "options": [
+      "卡鲁",
+      "吉尼奥",
+      "克努",
+      "退出"
+     ],
+     "cancelType": 3
+    }
+   ],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "hc kl",
+    "hc jna",
+    "hc kn"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 2,
+  "eventName": "EV002",
+  "page": 0,
+  "tile": {
+   "x": 20,
+   "y": 5
+  },
+  "logical": {
+   "x": 984,
+   "y": -216
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00011",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 3,
+  "eventName": "EV003",
+  "page": 0,
+  "tile": {
+   "x": 5,
+   "y": 14
+  },
+  "logical": {
+   "x": 264,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00010",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "欢迎来到游戏。"
+     ]
+    }
+   ],
+   "choices": [],
+   "transfers": [],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 4,
+  "eventName": "EV004",
+  "page": 0,
+  "tile": {
+   "x": 21,
+   "y": 14
+  },
+  "logical": {
+   "x": 1032,
+   "y": -648
+  },
+  "trigger": "确定键",
+  "priority": "与玩家同层",
+  "characterName": "npc_00011",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [
+    {
+     "face": "",
+     "faceIndex": 0,
+     "lines": [
+      "合成机甲可以合成进阶机甲，进阶合成后的",
+      "机甲属性更强！"
+     ]
+    }
+   ],
+   "choices": [
+    {
+     "options": [
+      "合成",
+      "离开"
+     ],
+     "cancelType": 1
+    },
+    {
+     "options": [
+      "福萨",
+      "刀锋",
+      "玫瑰",
+      "退出"
+     ],
+     "cancelType": 3
+    }
+   ],
+   "transfers": [],
+   "other": [],
+   "plugins": [
+    "hc fs",
+    "hc df",
+    "hc mg"
+   ],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 5,
+  "eventName": "EV005",
+  "page": 0,
+  "tile": {
+   "x": 13,
+   "y": 20
+  },
+  "logical": {
+   "x": 648,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "与玩家同层",
+  "characterName": "npc_00002",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 23,
+     "x": 6,
+     "y": 5,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 6,
+  "eventName": "EV006",
+  "page": 0,
+  "tile": {
+   "x": 12,
+   "y": 20
+  },
+  "logical": {
+   "x": 600,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 23,
+     "x": 6,
+     "y": 5,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ },
+ {
+  "mapId": 24,
+  "mapName": "埃塞克中心",
+  "eventId": 7,
+  "eventName": "EV007",
+  "page": 0,
+  "tile": {
+   "x": 14,
+   "y": 20
+  },
+  "logical": {
+   "x": 696,
+   "y": -936
+  },
+  "trigger": "玩家接触",
+  "priority": "在玩家下方",
+  "characterName": "",
+  "conditions": {
+   "actorId": 1,
+   "actorValid": false,
+   "itemId": 1,
+   "itemValid": false,
+   "selfSwitchCh": "A",
+   "selfSwitchValid": false,
+   "switch1Id": 1,
+   "switch1Valid": false,
+   "switch2Id": 1,
+   "switch2Valid": false,
+   "variableId": 1,
+   "variableValid": false,
+   "variableValue": 0
+  },
+  "detail": {
+   "dialogue": [],
+   "choices": [],
+   "transfers": [
+    {
+     "mapId": 23,
+     "x": 6,
+     "y": 5,
+     "dir": 0
+    }
+   ],
+   "other": [],
+   "plugins": [],
+   "scripts": []
+  }
+ }
+]

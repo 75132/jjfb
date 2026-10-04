@@ -112,6 +112,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           _initializerDefineProperty(this, "shoukaiSlot", _descriptor10, this);
 
           this.ws = null;
+          this.unequipRefreshTimer = null;
           this.currentPetId = '';
           // 当前显示的机甲ID
           this.slotMap = new Map();
@@ -194,7 +195,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               } // 延迟一小段时间后重新请求机甲信息，确保服务器端数据已更新
 
 
-              setTimeout(() => {
+              this.unequipRefreshTimer = setTimeout(() => {
+                var _this$node;
+
+                this.unequipRefreshTimer = null;
+                if (!((_this$node = this.node) != null && _this$node.isValid)) return;
+
                 if (this.currentPetId) {
                   this.requestRobotPetInfo(this.currentPetId);
                 }
@@ -286,7 +292,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onDestroy() {
-          // 移除事件监听
+          if (this.unequipRefreshTimer !== null) {
+            clearTimeout(this.unequipRefreshTimer);
+            this.unequipRefreshTimer = null;
+          } // 移除事件监听
+
+
           if (this.ws) {
             this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()

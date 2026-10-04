@@ -24,6 +24,7 @@ import {
     type PendingResumeCache,
 } from './battle-resume-gate';
 import type { BattleScene } from './BattleScene';
+import { Logger } from '../global/Logger';
 
 const { ccclass } = _decorator;
 
@@ -106,18 +107,18 @@ export class BattleResumeController extends Component {
             // 仍允许清空：服务端可能已换房；以显式 finished 为准
         }
         this._gate.lastAppliedRoomId = null;
-        console.log(`[BattleResume] notifyRoomFinished room_id=${roomId}`);
+        Logger.debug(`[BattleResume] notifyRoomFinished room_id=${roomId}`);
     }
 
     /** @deprecated 使用 notifyRoomFinished */
     public notifyBattleSessionEnded(): void {
-        console.warn('[BattleResume] notifyBattleSessionEnded is deprecated; use notifyRoomFinished');
+        Logger.warn('[BattleResume] notifyBattleSessionEnded is deprecated; use notifyRoomFinished');
     }
 
     /** 角色切换时彻底失效旧 resume / 缓存 */
     public invalidateForCharacterChange(characterId?: string): void {
         invalidateForCharacterChange(this._gate, this._pendingCache, characterId);
-        console.log(`[BattleResume] invalidate character change cid=${characterId ?? 'null'} gen=${this._gate.generation}`);
+        Logger.debug(`[BattleResume] invalidate character change cid=${characterId ?? 'null'} gen=${this._gate.generation}`);
     }
 
     /**
@@ -126,7 +127,7 @@ export class BattleResumeController extends Component {
     public scheduleCheck(reason: string): void {
         scheduleDebounced(this._debounce, reason, RESUME_DEBOUNCE_MS, (merged) => {
             this.lastMergedReasons = merged;
-            console.log(`[BattleResume] debounce fire reasons=${merged.join(',')}`);
+            Logger.debug(`[BattleResume] debounce fire reasons=${merged.join(',')}`);
             this.checkAndRestore(merged.join('+'));
         });
     }
@@ -138,26 +139,26 @@ export class BattleResumeController extends Component {
         const ws = this._ws || WebSocketManager.getInstance();
         this._ws = ws;
         if (!ws?.isConnected?.()) {
-            console.log(`[BattleResume] skip (${reason}): not connected`);
+            Logger.debug(`[BattleResume] skip (${reason}): not connected`);
             return;
         }
         if (!ws.isSessionAuthenticated?.()) {
-            console.log(`[BattleResume] skip (${reason}): not authenticated`);
+            Logger.debug(`[BattleResume] skip (${reason}): not authenticated`);
             return;
         }
         const characterId = ws.getCharacterId?.();
         if (!characterId) {
-            console.log(`[BattleResume] skip (${reason}): no character`);
+            Logger.debug(`[BattleResume] skip (${reason}): no character`);
             return;
         }
         if (this._gate.inFlight) {
-            console.log(`[BattleResume] skip (${reason}): resume in-flight gen=${this._gate.generation}`);
+            Logger.debug(`[BattleResume] skip (${reason}): resume in-flight gen=${this._gate.generation}`);
             return;
         }
 
         const generation = beginResume(this._gate, characterId);
         const requestCharacterId = characterId;
-        console.log(`[BattleResume] resume start reason=${reason} gen=${generation} cid=${characterId}`);
+        Logger.debug(`[BattleResume] resume start reason=${reason} gen=${generation} cid=${characterId}`);
 
         ws.request(
             GameConfig.MESSAGE_TYPES.BATTLE_ROOM_RESUME,
@@ -186,7 +187,7 @@ export class BattleResumeController extends Component {
         });
         if (acceptable.ok === false) {
             const dropReason = acceptable.reason;
-            console.log(`[BattleResume] drop response reason=${dropReason} gen=${generation}`);
+            Logger.debug(`[BattleResume] drop response reason=${dropReason} gen=${generation}`);
             // stale / character 切换时 generation 已变；仅当仍是本次请求才解除 inFlight
             if (dropReason === 'stale_generation' || dropReason === 'character_changed') {
                 // invalidate / begin 已处理；若仍是同 gen 但角色变了，也要 end
@@ -202,7 +203,7 @@ export class BattleResumeController extends Component {
         endResume(this._gate, generation);
 
         if (!shouldOpenBattlePanel(resp)) {
-            console.log(`[BattleResume] no in-progress room (reason=${reason})`);
+            Logger.debug(`[BattleResume] no in-progress room (reason=${reason})`);
             return;
         }
 
@@ -219,7 +220,7 @@ export class BattleResumeController extends Component {
         const battle = this._resolveBattleScene();
         if (!battle) {
             cachePendingResume(this._pendingCache, state, characterId, this._gate.generation);
-            console.warn(
+            Logger.warn(
                 `[BattleResume] BattleScene not registered; cached state room_id=${state.room_id || state.roomId} reason=${reason}`,
             );
             return;
@@ -227,7 +228,7 @@ export class BattleResumeController extends Component {
 
         const result = applyResumeAfterRestore(this._gate, state, (s) => battle.restoreFromServerState(s));
         if (!result.restored) {
-            console.error(
+            Logger.error(
                 `[BattleResume] restore failed reason=${result.reason} room_id=${state.room_id || state.roomId} trigger=${reason}`,
             );
             // 保留一次可重试：不 mark；允许后续 scheduleCheck 再试
@@ -237,7 +238,7 @@ export class BattleResumeController extends Component {
         if (battle.node && !battle.node.active) {
             battle.node.active = true;
         }
-        console.log(`[BattleResume] restored room_id=${state.room_id || state.roomId} marked=${result.marked}`);
+        Logger.debug(`[BattleResume] restored room_id=${state.room_id || state.roomId} marked=${result.marked}`);
     }
 
     private _tryApplyPending(reason: string): void {
@@ -246,7 +247,7 @@ export class BattleResumeController extends Component {
         const valid = isPendingResumeStillValid(this._gate, this._pendingCache, cid);
         if (valid.ok === false) {
             if (valid.reason !== 'no_pending') {
-                console.log(`[BattleResume] drop pending cache reason=${valid.reason}`);
+                Logger.debug(`[BattleResume] drop pending cache reason=${valid.reason}`);
                 clearPendingResume(this._pendingCache);
             }
             return;
@@ -258,13 +259,13 @@ export class BattleResumeController extends Component {
         const result = applyResumeAfterRestore(this._gate, state, (s) => battle.restoreFromServerState(s));
         clearPendingResume(this._pendingCache);
         if (!result.restored) {
-            console.error(`[BattleResume] pending restore failed reason=${result.reason} trigger=${reason}`);
+            Logger.error(`[BattleResume] pending restore failed reason=${result.reason} trigger=${reason}`);
             return;
         }
         if (battle.node && !battle.node.active) {
             battle.node.active = true;
         }
-        console.log(`[BattleResume] pending applied room_id=${state.room_id || state.roomId}`);
+        Logger.debug(`[BattleResume] pending applied room_id=${state.room_id || state.roomId}`);
     }
 
     private _resolveBattleScene(): BattleScene | null {
@@ -320,7 +321,7 @@ export class BattleResumeController extends Component {
         // 请求期间断线：解除 inFlight，避免永久门控
         if (this._gate.inFlight) {
             forceClearInFlight(this._gate);
-            console.log('[BattleResume] disconnect cleared inFlight');
+            Logger.debug('[BattleResume] disconnect cleared inFlight');
         }
     };
 

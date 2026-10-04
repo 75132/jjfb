@@ -1,5 +1,6 @@
 import { _decorator, Component, Label, Node } from 'cc';
 import { WebSocketManager } from '../../global/WebSocketManager';
+import { MapManager } from './MapManager';
 import { PlayerGridMove } from './PlayerGridMove';
 import { PlayerAnimRuntime } from './PlayerAnimRuntime';
 
@@ -13,7 +14,7 @@ export class PlayerStateSync extends Component {
     @property({ type: PlayerAnimRuntime, tooltip: '运行时动画注入器（推荐绑定）' })
     animRuntime: PlayerAnimRuntime | null = null;
 
-    @property({ tooltip: '地图ID（当前固定 1）' })
+    @property({ tooltip: '地图 ID（与 MapManager / WorldOnlineSync / 服务端 position.map_id 一致）' })
     mapId = 1;
 
     @property({ tooltip: '是否用服务器 Sprite 强制覆盖本地 animPrefix（推荐开启，网游权威形象）' })
@@ -105,19 +106,30 @@ export class PlayerStateSync extends Component {
             if (nameLabel.node) nameLabel.node.active = roleName.length > 0;
         }
 
-        // 只在首次进入时用服务器权威坐标覆盖，避免后续打断本地移动。
+        // 只在首次进入时用服务器权威坐标 + map_id 切图，避免后续打断本地移动。
         if (!this.restored) {
+            const midRaw = Number(pos.map_id ?? this.mapId ?? 1);
+            const mid = Number.isFinite(midRaw) && midRaw > 0 ? Math.floor(midRaw) : 1;
+            this.mapId = mid;
+
             const mv = this.playerMove;
+            let px = x;
+            let py = y;
             if (mv?.isLikelyUninitializedPosition(x, y)) {
                 const fb = mv.getFallbackSpawn();
-                mv.setPixelPosition(fb.x, fb.y, true);
-                mv.markServerRestored();
-                this.restored = true;
-            } else {
-                mv?.setPixelPosition(x, y, true);
-                mv?.markServerRestored();
-                this.restored = true;
+                px = fb.x;
+                py = fb.y;
             }
+
+            const mapRoot = mv?.mapRoot ?? null;
+            const mm = MapManager.find() ?? MapManager.ensureOnMapRoot(mapRoot);
+            if (mm) {
+                void mm.switchTo(mid, px, py);
+            } else {
+                mv?.setPixelPosition(px, py, true);
+                mv?.markServerRestored();
+            }
+            this.restored = true;
         }
 
         const spriteIndex = Number(data.Sprite || 0);

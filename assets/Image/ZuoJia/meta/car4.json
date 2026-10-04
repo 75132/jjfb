@@ -1,0 +1,75 @@
+{
+  "name": "car4",
+  "cn": "神行座驾",
+  "mode": "piece_compose",
+  "rect_count": 7,
+  "piece_frames": 10,
+  "out_frames": 10,
+  "frame_sizes": [
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ],
+    [
+      46,
+      30
+    ]
+  ],
+  "compose": {
+    "mode": "piece_records",
+    "frame_count": 10,
+    "draw_order": "record_order",
+    "anchor_mode": "top_left",
+    "seam_fix": true,
+    "apply_flag_transform": true,
+    "canvas_box": [
+      -23,
+      -30,
+      23,
+      0
+    ],
+    "canvas_size": [
+      46,
+      30
+    ]
+  },
+  "parse": {
+    "frame_count": 10,
+    "tail_start": 92,
+    "tail_end": 478,
+    "remaining_bytes": 49
+  },
+  "chroma_changed": 604
+}

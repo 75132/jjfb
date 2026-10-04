@@ -1,9 +1,11 @@
 import { _decorator, Animation, Component, instantiate, Label, Node, Prefab } from 'cc';
 import { WebSocketManager } from '../../global/WebSocketManager';
+import { PerformanceMonitor } from '../../global/PerformanceMonitor';
 import { PlayerAnimBank } from './PlayerAnimBank';
 import { PlayerAnimRuntime } from './PlayerAnimRuntime';
 import { PlayerGridMove } from './PlayerGridMove';
 import { PlayerSceneRefs } from './PlayerSceneRefs';
+import { MapManager } from './MapManager';
 import { PlayerStateSync } from './PlayerStateSync';
 import { RemoteAvatarController } from './RemoteAvatarController';
 
@@ -45,7 +47,7 @@ export class WorldOnlineSync extends Component {
     enableOnline = true;
 
     @property({ tooltip: '每隔多少秒强制 world_enter 对齐同屏；0=关闭（重连/鉴权仍会拉一次）' })
-    worldResyncSec = 15;
+    worldResyncSec = 60;
 
     private ws: WebSocketManager = null!;
     private readonly _remoteByCid = new Map<string, Node>();
@@ -222,6 +224,12 @@ export class WorldOnlineSync extends Component {
         // 本地玩家名字显示：即使 PlayerStateSync 没挂在本地 Player 上，也能显示
         this._setLocalNameLabel(data.role_name);
 
+        // MapManager 负责按 position.map_id 切图后再 world_enter，避免进错房
+        const mm = MapManager.find();
+        if (mm?.shouldOwnWorldEnter()) {
+            return;
+        }
+
         const pos = data.position || {};
         let x = Number(pos.x);
         let y = Number(pos.y);
@@ -241,6 +249,7 @@ export class WorldOnlineSync extends Component {
         }
         if (this._pendingEnter) return;
         this._pendingEnter = true;
+        PerformanceMonitor.getInstance().startTimer('world_enter');
         this.ws.request(
             'world_enter',
             {
@@ -252,6 +261,7 @@ export class WorldOnlineSync extends Component {
             },
             (r: any) => {
                 this._pendingEnter = false;
+                PerformanceMonitor.getInstance().endTimer('world_enter');
                 if (!r || r.success !== true) {
                     return;
                 }
@@ -261,6 +271,74 @@ export class WorldOnlineSync extends Component {
             12000
         );
     };
+
+    /** 切图前离开当前同屏房间并清远端 */
+    public leaveCurrentMap(): void {
+        if (this._enteredCid && this.ws?.isConnected()) {
+            this.ws.notify(
+                'world_leave',
+                { map_id: this.mapId, request_id: `wl_${Date.now()}` },
+                true,
+            );
+        }
+        this._enteredCid = null;
+        this._pendingEnter = false;
+        this._deferredRemoteRawByCid.clear();
+        this.clearAllRemotes();
+    }
+
+    /** 以当前 mapId + 本地像素坐标进房（供 MapManager.switchTo 调用） */
+    public enterCurrentMap(): Promise<boolean> {
+        return new Promise((resolve) => {
+            if (!this.enableOnline) {
+                resolve(false);
+                return;
+            }
+            const cid = this.ws.getCharacterId();
+            if (!cid || !this.ws.isConnected()) {
+                resolve(false);
+                return;
+            }
+            const pos = this._resolveWorldEnterPosition();
+            if (!pos) {
+                resolve(false);
+                return;
+            }
+            const mv = this.localPlayerMove;
+            if (!mv) {
+                resolve(false);
+                return;
+            }
+            if (this._pendingEnter) {
+                resolve(false);
+                return;
+            }
+            this._pendingEnter = true;
+            PerformanceMonitor.getInstance().startTimer('world_enter');
+            this.ws.request(
+                'world_enter',
+                {
+                    map_id: this.mapId,
+                    x: pos.x,
+                    y: pos.y,
+                    facing: mv.getFacingDir(),
+                    request_id: `we_mm_${Date.now()}_${Math.floor(Math.random() * 1e6)}`,
+                },
+                (r: any) => {
+                    this._pendingEnter = false;
+                    PerformanceMonitor.getInstance().endTimer('world_enter');
+                    if (!r || r.success !== true) {
+                        resolve(false);
+                        return;
+                    }
+                    this._applyEnterOthers(r, cid);
+                    resolve(true);
+                },
+                true,
+                12000,
+            );
+        });
+    }
 
     /** 无 player_info 时兜底（例如缓存直进游戏） */
     private tryWorldEnterFallback() {
@@ -272,6 +350,7 @@ export class WorldOnlineSync extends Component {
         const mv = this.localPlayerMove;
         if (!mv) return;
         this._pendingEnter = true;
+        PerformanceMonitor.getInstance().startTimer('world_enter');
         this.ws.request(
             'world_enter',
             {
@@ -283,6 +362,7 @@ export class WorldOnlineSync extends Component {
             },
             (r: any) => {
                 this._pendingEnter = false;
+                PerformanceMonitor.getInstance().endTimer('world_enter');
                 if (!r || r.success !== true) return;
                 this._applyEnterOthers(r, cid);
             },
@@ -302,6 +382,7 @@ export class WorldOnlineSync extends Component {
         if (!mv) return;
         if (this._pendingEnter) return;
         this._pendingEnter = true;
+        PerformanceMonitor.getInstance().startTimer('world_enter');
         this.ws.request(
             'world_enter',
             {
@@ -313,6 +394,7 @@ export class WorldOnlineSync extends Component {
             },
             (r: any) => {
                 this._pendingEnter = false;
+                PerformanceMonitor.getInstance().endTimer('world_enter');
                 if (!r?.success) return;
                 this._applyEnterOthers(r, cid);
             },
@@ -328,10 +410,19 @@ export class WorldOnlineSync extends Component {
         this._enteredCid = cid;
         this._lastEnterOkAt = Date.now();
         this._deferredRemoteRawByCid.clear();
-        this.clearAllRemotes();
+        const keep = new Set<string>();
         for (let i = 0; i < list.length; i++) {
-            this.spawnOrUpdateRemote(list[i]);
+            const raw = list[i];
+            const ocid = String(raw?.character_id || '');
+            if (!ocid || ocid === cid) continue;
+            keep.add(ocid);
+            this.spawnOrUpdateRemote(raw);
         }
+        const stale: string[] = [];
+        this._remoteByCid.forEach((_n, k) => {
+            if (!keep.has(k)) stale.push(k);
+        });
+        for (const k of stale) this.removeRemote(k);
     }
 
     private onNetworkConnect = () => {

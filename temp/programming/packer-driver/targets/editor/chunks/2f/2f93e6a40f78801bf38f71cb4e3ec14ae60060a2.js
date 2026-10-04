@@ -1,7 +1,7 @@
 System.register(["cc"], function (_export, _context) {
   "use strict";
 
-  var _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, ScrollView, Label, Button, UITransform, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _crd, ccclass, property, Log;
+  var _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, ScrollView, Label, Button, UITransform, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _class3, _crd, ccclass, property, Log;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -38,7 +38,7 @@ System.register(["cc"], function (_export, _context) {
         tooltip: '追加时自动滚动到底部'
       }), _dec7 = property({
         tooltip: '自动调整内容高度以显示全部文本'
-      }), _dec(_class = (_class2 = class Log extends Component {
+      }), _dec(_class = (_class2 = (_class3 = class Log extends Component {
         constructor(...args) {
           super(...args);
 
@@ -58,6 +58,9 @@ System.register(["cc"], function (_export, _context) {
           this.origLog = void 0;
           this.origWarn = void 0;
           this.origError = void 0;
+          this.dirty = false;
+          this.flushScheduled = false;
+          this.flushTimer = -1;
         }
 
         onLoad() {
@@ -65,34 +68,19 @@ System.register(["cc"], function (_export, _context) {
           this.origWarn = console.warn.bind(console);
           this.origError = console.error.bind(console);
 
-          const append = (level, args) => {
-            try {
-              const msg = args.map(v => {
-                try {
-                  return typeof v === 'string' ? v : JSON.stringify(v);
-                } catch {
-                  return String(v);
-                }
-              }).join(' ');
-              const line = `[${level}] ${msg}`;
-              this.lines.push(line);
-              this.render();
-            } catch {}
-          };
-
           console.log = (...args) => {
             this.origLog(...args);
-            append('INFO', args);
+            this.append('INFO', args);
           };
 
           console.warn = (...args) => {
             this.origWarn(...args);
-            append('WARN', args);
+            this.append('WARN', args);
           };
 
           console.error = (...args) => {
             this.origError(...args);
-            append('ERROR', args);
+            this.append('ERROR', args);
           };
 
           if (this.openButton) this.openButton.node.on(Button.EventType.CLICK, this.togglePanel, this);
@@ -102,6 +90,11 @@ System.register(["cc"], function (_export, _context) {
         }
 
         onDestroy() {
+          if (this.flushTimer !== -1) {
+            clearTimeout(this.flushTimer);
+            this.flushTimer = -1;
+          }
+
           if (this.origLog) console.log = this.origLog;
           if (this.origWarn) console.warn = this.origWarn;
           if (this.origError) console.error = this.origError;
@@ -113,17 +106,56 @@ System.register(["cc"], function (_export, _context) {
 
         openPanel() {
           if (this.scrollView && this.scrollView.node) this.scrollView.node.active = true;
+          this.dirty = false;
+          this.render();
         }
 
         togglePanel() {
           if (this.scrollView && this.scrollView.node) {
             const n = this.scrollView.node;
             n.active = !n.active;
-            if (n.active && this.autoScroll) this.scrollView.scrollToBottom(0.2, true);
+
+            if (n.active) {
+              this.dirty = false;
+              this.render();
+            }
           }
         }
 
+        append(level, args) {
+          try {
+            const msg = args.map(v => {
+              try {
+                return typeof v === 'string' ? v : JSON.stringify(v);
+              } catch {
+                return String(v);
+              }
+            }).join(' ');
+            this.lines.push(`[${level}] ${msg}`);
+
+            if (this.lines.length > Log.MAX_LINES) {
+              this.lines.splice(0, this.lines.length - Log.MAX_LINES);
+            }
+
+            this.dirty = true;
+            this.scheduleFlush();
+          } catch {}
+        }
+
+        scheduleFlush() {
+          if (this.flushScheduled) return;
+          this.flushScheduled = true;
+          this.flushTimer = setTimeout(() => {
+            this.flushTimer = -1;
+            this.flushScheduled = false;
+            if (!this.isValid || !this.dirty) return;
+            this.dirty = false;
+            this.render();
+          }, 100);
+        }
+
         render() {
+          if (this.scrollView && this.scrollView.node && !this.scrollView.node.activeInHierarchy) return;
           if (this.text) this.text.string = this.lines.join('\n');
 
           if (this.autoResize && this.text && this.content) {
@@ -145,7 +177,7 @@ System.register(["cc"], function (_export, _context) {
           if (this.text) this.text.string = '';
         }
 
-      }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "scrollView", [_dec2], {
+      }, _class3.MAX_LINES = 300, _class3), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "scrollView", [_dec2], {
         configurable: true,
         enumerable: true,
         writable: true,

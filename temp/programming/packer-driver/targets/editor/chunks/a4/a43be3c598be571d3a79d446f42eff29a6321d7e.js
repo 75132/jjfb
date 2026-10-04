@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Label, WebSocketManager, PlayerGridMove, PlayerAnimRuntime, _dec, _dec2, _dec3, _dec4, _dec5, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _crd, ccclass, property, PlayerStateSync;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Label, WebSocketManager, MapManager, PlayerGridMove, PlayerAnimRuntime, _dec, _dec2, _dec3, _dec4, _dec5, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _crd, ccclass, property, PlayerStateSync;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -11,6 +11,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../../global/WebSocketManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfMapManager(extras) {
+    _reporterNs.report("MapManager", "./MapManager", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfPlayerGridMove(extras) {
@@ -34,9 +38,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_2) {
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
-      PlayerGridMove = _unresolved_3.PlayerGridMove;
+      MapManager = _unresolved_3.MapManager;
     }, function (_unresolved_4) {
-      PlayerAnimRuntime = _unresolved_4.PlayerAnimRuntime;
+      PlayerGridMove = _unresolved_4.PlayerGridMove;
+    }, function (_unresolved_5) {
+      PlayerAnimRuntime = _unresolved_5.PlayerAnimRuntime;
     }],
     execute: function () {
       _crd = true;
@@ -61,7 +67,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }), PlayerAnimRuntime) : PlayerAnimRuntime,
         tooltip: '运行时动画注入器（推荐绑定）'
       }), _dec4 = property({
-        tooltip: '地图ID（当前固定 1）'
+        tooltip: '地图 ID（与 MapManager / WorldOnlineSync / 服务端 position.map_id 一致）'
       }), _dec5 = property({
         tooltip: '是否用服务器 Sprite 强制覆盖本地 animPrefix（推荐开启，网游权威形象）'
       }), _dec(_class = (_class2 = class PlayerStateSync extends Component {
@@ -98,22 +104,40 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (nameLabel) {
               nameLabel.string = roleName;
               if (nameLabel.node) nameLabel.node.active = roleName.length > 0;
-            } // 只在首次进入时用服务器权威坐标覆盖，避免后续打断本地移动。
+            } // 只在首次进入时用服务器权威坐标 + map_id 切图，避免后续打断本地移动。
 
 
             if (!this.restored) {
+              var _ref, _pos$map_id, _mv$mapRoot, _find;
+
+              const midRaw = Number((_ref = (_pos$map_id = pos.map_id) != null ? _pos$map_id : this.mapId) != null ? _ref : 1);
+              const mid = Number.isFinite(midRaw) && midRaw > 0 ? Math.floor(midRaw) : 1;
+              this.mapId = mid;
               const mv = this.playerMove;
+              let px = x;
+              let py = y;
 
               if (mv != null && mv.isLikelyUninitializedPosition(x, y)) {
                 const fb = mv.getFallbackSpawn();
-                mv.setPixelPosition(fb.x, fb.y, true);
-                mv.markServerRestored();
-                this.restored = true;
-              } else {
-                mv == null || mv.setPixelPosition(x, y, true);
-                mv == null || mv.markServerRestored();
-                this.restored = true;
+                px = fb.x;
+                py = fb.y;
               }
+
+              const mapRoot = (_mv$mapRoot = mv == null ? void 0 : mv.mapRoot) != null ? _mv$mapRoot : null;
+              const mm = (_find = (_crd && MapManager === void 0 ? (_reportPossibleCrUseOfMapManager({
+                error: Error()
+              }), MapManager) : MapManager).find()) != null ? _find : (_crd && MapManager === void 0 ? (_reportPossibleCrUseOfMapManager({
+                error: Error()
+              }), MapManager) : MapManager).ensureOnMapRoot(mapRoot);
+
+              if (mm) {
+                void mm.switchTo(mid, px, py);
+              } else {
+                mv == null || mv.setPixelPosition(px, py, true);
+                mv == null || mv.markServerRestored();
+              }
+
+              this.restored = true;
             }
 
             const spriteIndex = Number(data.Sprite || 0);

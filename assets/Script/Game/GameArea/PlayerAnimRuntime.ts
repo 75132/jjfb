@@ -1,5 +1,6 @@
 import { _decorator, Component, Animation, AnimationClip } from 'cc';
 import { PlayerAnimBank } from './PlayerAnimBank';
+import { Logger } from '../../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -44,6 +45,9 @@ export class PlayerAnimRuntime extends Component {
         const bank = this.bank;
         const p = (prefix || '').trim();
         if (!anim || !bank || !p) return false;
+        if (p === this._prefix && anim.getState(`${p}_idle_down`)) {
+            return true;
+        }
 
         const neededNames = this._neededClipNames(p);
         const clips: AnimationClip[] = [];
@@ -55,7 +59,7 @@ export class PlayerAnimRuntime extends Component {
             else clips.push(clip);
         }
         if (missing.length) {
-            console.warn(`[PlayerAnimRuntime] 动画库缺少clip: ${missing.join(', ')}`);
+            Logger.warn(`[PlayerAnimRuntime] 动画库缺少clip: ${missing.join(', ')}`);
             return false;
         }
 
@@ -85,7 +89,7 @@ export class PlayerAnimRuntime extends Component {
         if (!anim) return;
         const st = anim.getState(name);
         if (!st) {
-            console.warn(`[PlayerAnimRuntime] Animation缺少state: ${name}（请先applyPrefix/applyServerSprite注入8个clip）`);
+            Logger.warn(`[PlayerAnimRuntime] Animation缺少state: ${name}（请先applyPrefix/applyServerSprite注入8个clip）`);
             return;
         }
         if (!force && st.isPlaying) return;

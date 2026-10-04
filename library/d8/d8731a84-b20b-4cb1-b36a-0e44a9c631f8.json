@@ -336,7 +336,7 @@
     "useAnchorAsGridOrigin": true,
     "startGridCol": 0,
     "startGridRow": 0,
-    "blockedLayerNames": "Wall,items",
+    "blockedLayerNames": "M1_B,M1_E",
     "passableEffectLayerNames": "plant",
     "tiledRowFromTop": true,
     "grassOpacity": 170,

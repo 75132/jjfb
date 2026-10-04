@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9", "__unresolved_10", "__unresolved_11"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Button, tween, Tween, Vec3, UITransform, Sprite, SpriteFrame, Color, WebSocketManager, GameConfig, DataCacheManager, RobotShow, BattleResumeController, ensureBattleResumeController, isActiveRoomConflict, roomIdOf, resolveOnEnableAction, validateStoryBattleCreate, validateBattleRestoreState, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _crd, ccclass, property, BattleState, BattleScene;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Label, Button, tween, Tween, Vec3, UITransform, Sprite, SpriteFrame, Color, resources, JsonAsset, WebSocketManager, GameConfig, DataCacheManager, RobotShow, BattleResumeController, ensureBattleResumeController, isActiveRoomConflict, roomIdOf, resolveOnEnableAction, validateStoryBattleCreate, validateBattleRestoreState, Logger, SkillData, SkillSelectPanel, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _dec12, _dec13, _dec14, _dec15, _dec16, _dec17, _dec18, _dec19, _dec20, _dec21, _dec22, _dec23, _dec24, _dec25, _dec26, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _descriptor11, _descriptor12, _descriptor13, _descriptor14, _descriptor15, _descriptor16, _descriptor17, _descriptor18, _descriptor19, _descriptor20, _descriptor21, _descriptor22, _descriptor23, _descriptor24, _descriptor25, _class3, _crd, ccclass, property, BattleState, BattleScene;
 
   function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -10,6 +10,123 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
   function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
 
   function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'transform-class-properties is enabled and runs after the decorators transform.'); }
+
+  /**
+   * 解析单位的「攻击次数」AttackCount（= 一次攻击拆成几段，默认 1）。
+   * 语义（用户口径）：AttackCount 就是装备那个攻击次数值，默认 1；
+   *   AttackCount = 1 → 单段；= 2 → 拆 2 段；以此类推。
+   * 取值优先级（非常重要）：
+   *   1) CurrentAttackCount / currentAttackCount —— **装备加成后的最终段数**（服务端已把
+   *      「机甲基础 AttackCount + 装备 attackCount 加成」写入 CurrentAttackCount）；
+   *      真实玩家机甲的顶层 AttackCount 恒为 1，装备效果只在 CurrentAttackCount 里，
+   *      所以必须优先读它，否则装备「攻击次数」永远不生效（PVP/PVE 都一样）。
+   *   2) 顶层 AttackCount / attackCount（服务端已聚合的直传字段，老数据兼容）
+   *   3) info.equipment 各槽位的 attackCount 字段累加 / effecttext「攻击次数+N」
+   *   4) 兜底 1
+   */
+  function resolveAttackTimes(info) {
+    var _info$CurrentAttackCo, _info$AttackCount, _info$data;
+
+    if (!info) return 1;
+
+    var pick = v => {
+      if (v === undefined || v === null || v === '') return null;
+      var n = Number(v);
+      return !Number.isNaN(n) && n >= 1 ? Math.floor(n) : null;
+    }; // 1) 装备加成后的最终段数（服务端权威）
+
+
+    var current = pick((_info$CurrentAttackCo = info.CurrentAttackCount) != null ? _info$CurrentAttackCo : info.currentAttackCount);
+    if (current !== null) return current; // 2) 兼容老结构：顶层直传
+
+    var direct = pick((_info$AttackCount = info.AttackCount) != null ? _info$AttackCount : info.attackCount);
+    if (direct !== null) return direct; // 3) 装备累加：每件装备的 attackCount 为"该装备提供的段数加成"（0/1/2），
+    //   总段数 = 1 + Σ(装备加成)
+
+    var equip = info.equipment || (info == null || (_info$data = info.data) == null ? void 0 : _info$data.equipment);
+
+    if (equip && typeof equip === 'object') {
+      var sum = 0;
+      var found = false;
+
+      for (var slot of Object.keys(equip)) {
+        var item = equip[slot];
+        if (!item) continue;
+
+        if (item.attackCount !== undefined && item.attackCount !== null) {
+          sum += Number(item.attackCount) || 0;
+          found = true;
+          continue;
+        }
+
+        var text = (item == null ? void 0 : item.effecttext) || (item == null ? void 0 : item.effect_text) || '';
+        var m = /攻击次数\s*\+\s*(\d+)/.exec(text || '');
+
+        if (m) {
+          sum += Number(m[1]);
+          found = true;
+        }
+      }
+
+      if (found) return Math.max(1, 1 + sum);
+    }
+
+    return 1;
+  }
+  /**
+   * 「攻击次数」机制（设计见 docs/攻击次数机制设计.md）
+   * ---------------------------------------------------------------
+   * 规则（用户口径）：
+   *   - 一次攻击的总伤害不变（仍是 damage = 攻击 − 防御）；
+   *   - 把这一次攻击**拆成 N 段**：N = attackCount（AttackCount 字段，默认 1）；
+   *   - 每段带小幅区间波动（如单段暴击 +X%），但**N 段总和相对单次伤害最多 +20%**，不离谱；
+   *   - 默认倾向「不超发」：多数情况总伤 ≈ 原伤害（0%~+20% 区间内浮动）。
+   *
+   * @param attackCount 总段数（= 单位的 AttackCount 字段，默认 1）
+   * 返回每段伤害数组（已取整，至少 1）；调用方依次扣血/弹数字。
+   */
+
+
+  function computeAttackSegments(baseDamage, attackCount, rng) {
+    var total = Math.max(1, Math.floor(baseDamage));
+    var segN = Math.max(1, Math.floor(attackCount || 1));
+
+    if (segN <= 1) {
+      return [total];
+    }
+
+    var rand = rng || Math.random; // 总体提升上限 20%：本轮实际提升量在 [0, 0.20] 内随机（偏向低值，避免每次都满 20%）
+
+    var boost = Math.pow(rand(), 1.6) * 0.20;
+    var grand = total * (1 + boost); // 每段权重大致均分，带 ±35% 的小幅波动（体现“每段有区间小变化”）
+
+    var weights = [];
+    var wsum = 0;
+
+    for (var i = 0; i < segN; i++) {
+      var w = 1.0 / segN * (0.65 + rand() * 0.70); // 0.65 ~ 1.35 相对权重
+
+      weights.push(w);
+      wsum += w;
+    } // 归一化 + 取整，最后一段吸收舍入误差，保证总和 == floor(grand)
+
+
+    var segs = [];
+    var acc = 0;
+    var targetTotal = Math.max(1, Math.floor(grand));
+
+    for (var _i = 0; _i < segN; _i++) {
+      if (_i === segN - 1) {
+        segs.push(Math.max(1, targetTotal - acc));
+      } else {
+        var v = Math.max(1, Math.round(targetTotal * (weights[_i] / wsum)));
+        segs.push(v);
+        acc += v;
+      }
+    }
+
+    return segs;
+  }
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
@@ -67,6 +184,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("StoryBattleFinishedResult", "./story-runtime-mode", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfSkillSelectPanel(extras) {
+    _reporterNs.report("SkillSelectPanel", "./SkillSelectPanel", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -86,6 +211,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       Sprite = _cc.Sprite;
       SpriteFrame = _cc.SpriteFrame;
       Color = _cc.Color;
+      resources = _cc.resources;
+      JsonAsset = _cc.JsonAsset;
     }, function (_unresolved_2) {
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
@@ -105,13 +232,19 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       validateStoryBattleCreate = _unresolved_8.validateStoryBattleCreate;
     }, function (_unresolved_9) {
       validateBattleRestoreState = _unresolved_9.validateBattleRestoreState;
+    }, function (_unresolved_10) {
+      Logger = _unresolved_10.Logger;
+    }, function (_unresolved_11) {
+      SkillData = _unresolved_11;
+    }, function (_unresolved_12) {
+      SkillSelectPanel = _unresolved_12.SkillSelectPanel;
     }],
     execute: function () {
       _crd = true;
 
       _cclegacy._RF.push({}, "90ca8rrJ/1FT4PR5nkVCiFP", "BattleScene", undefined);
 
-      __checkObsolete__(['_decorator', 'Component', 'Node', 'Label', 'Button', 'tween', 'Tween', 'Vec3', 'UITransform', 'Sprite', 'SpriteAtlas', 'SpriteFrame', 'Color']);
+      __checkObsolete__(['_decorator', 'Component', 'Node', 'Label', 'Button', 'tween', 'Tween', 'Vec3', 'UITransform', 'Sprite', 'SpriteAtlas', 'SpriteFrame', 'Color', 'resources', 'JsonAsset']);
 
       ({
         ccclass,
@@ -166,54 +299,62 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         type: Button,
         tooltip: '返回（仅切换操作面板显示，不退出战斗）'
       }), _dec9 = property({
-        type: Label,
-        tooltip: '倒计时文本（Time/Number）'
+        type: Button,
+        tooltip: '技能按钮（BattleSelectButton/Skill）——点击打开技能选择面板'
       }), _dec10 = property({
-        type: Node,
-        tooltip: 'Time 根节点（可选，仅用于显隐控制）'
+        type: _crd && SkillSelectPanel === void 0 ? (_reportPossibleCrUseOfSkillSelectPanel({
+          error: Error()
+        }), SkillSelectPanel) : SkillSelectPanel,
+        tooltip: '技能选择面板（场景内的 SkillSelect；选中技能后才出现「确认」）'
       }), _dec11 = property({
         type: Label,
-        tooltip: '战斗日志文本（可选）'
+        tooltip: '倒计时文本（Time/Number）'
       }), _dec12 = property({
         type: Node,
-        tooltip: '匹配 Loading 面板（PVP 匹配中显示，可选）'
+        tooltip: 'Time 根节点（可选，仅用于显隐控制）'
       }), _dec13 = property({
+        type: Label,
+        tooltip: '战斗日志文本（可选）'
+      }), _dec14 = property({
+        type: Node,
+        tooltip: '匹配 Loading 面板（PVP 匹配中显示，可选）'
+      }), _dec15 = property({
         type: Node,
         tooltip: '机甲属性面板根节点（场景内的 MechAttribute）'
-      }), _dec14 = property({
+      }), _dec16 = property({
         type: Sprite,
         tooltip: 'MechaClass 下 Player1 图标（Sprite）'
-      }), _dec15 = property({
-        type: SpriteFrame,
-        tooltip: '格斗 gedou 图标（SpriteFrame）'
-      }), _dec16 = property({
-        type: SpriteFrame,
-        tooltip: '全能 quanneng 图标（SpriteFrame）'
       }), _dec17 = property({
         type: SpriteFrame,
-        tooltip: '射击 sheji 图标（SpriteFrame）'
+        tooltip: '格斗 gedou 图标（SpriteFrame）'
       }), _dec18 = property({
-        type: Sprite,
-        tooltip: '敌方职业图标（Sprite）'
+        type: SpriteFrame,
+        tooltip: '全能 quanneng 图标（SpriteFrame）'
       }), _dec19 = property({
         type: SpriteFrame,
-        tooltip: '敌方格斗 gedou 图标（SpriteFrame）'
+        tooltip: '射击 sheji 图标（SpriteFrame）'
       }), _dec20 = property({
-        type: SpriteFrame,
-        tooltip: '敌方全能 quanneng 图标（SpriteFrame）'
+        type: Sprite,
+        tooltip: '敌方职业图标（Sprite）'
       }), _dec21 = property({
         type: SpriteFrame,
-        tooltip: '敌方射击 sheji 图标（SpriteFrame）'
+        tooltip: '敌方格斗 gedou 图标（SpriteFrame）'
       }), _dec22 = property({
+        type: SpriteFrame,
+        tooltip: '敌方全能 quanneng 图标（SpriteFrame）'
+      }), _dec23 = property({
+        type: SpriteFrame,
+        tooltip: '敌方射击 sheji 图标（SpriteFrame）'
+      }), _dec24 = property({
         type: Node,
         tooltip: '玩家角色显示根节点（PlayerShow，含 Player(Sprite) 与 Name(Label)）'
-      }), _dec23 = property({
+      }), _dec25 = property({
         type: Node,
         tooltip: '敌方角色显示根节点（EnemyPlayerShow，含 Player(Sprite) 与 Name(Label)）'
-      }), _dec24 = property({
+      }), _dec26 = property({
         type: [SpriteFrame],
         tooltip: '角色头像 SpriteFrames（与 Character 面板一致，Sprite=1 对应索引0）'
-      }), _dec(_class = (_class2 = class BattleScene extends Component {
+      }), _dec(_class = (_class2 = (_class3 = class BattleScene extends Component {
         constructor() {
           super(...arguments);
 
@@ -233,46 +374,52 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           _initializerDefineProperty(this, "backButton", _descriptor7, this);
 
-          // 倒计时显示（Time/Number）
-          _initializerDefineProperty(this, "timerLabel", _descriptor8, this);
+          // ========= 新增：战斗内「技能」按钮 + 技能选择面板（SkillSelect） =========
+          // 两者都可以留空：运行时按名字在场景里找（Skill / SkillSelect），找到后再兜底 addComponent。
+          _initializerDefineProperty(this, "skillButton", _descriptor8, this);
 
-          _initializerDefineProperty(this, "timerRoot", _descriptor9, this);
+          _initializerDefineProperty(this, "skillSelectPanel", _descriptor9, this);
+
+          // 倒计时显示（Time/Number）
+          _initializerDefineProperty(this, "timerLabel", _descriptor10, this);
+
+          _initializerDefineProperty(this, "timerRoot", _descriptor11, this);
 
           // 简单战斗日志（可选）
-          _initializerDefineProperty(this, "logLabel", _descriptor10, this);
+          _initializerDefineProperty(this, "logLabel", _descriptor12, this);
 
           // 匹配 Loading 面板（PVP 匹配中显示）
-          _initializerDefineProperty(this, "matchingLoadingPanel", _descriptor11, this);
+          _initializerDefineProperty(this, "matchingLoadingPanel", _descriptor13, this);
 
           // ========= 新增：战斗中机甲属性面板（实时刷新当前出场机甲） =========
-          _initializerDefineProperty(this, "mechAttributeRoot", _descriptor12, this);
+          _initializerDefineProperty(this, "mechAttributeRoot", _descriptor14, this);
 
           // ========= 新增：MechaClass/Player1 图标 =========
           // 图标帧由你在 Inspector 手动绑定（gedou / quanneng / sheji），避免依赖 spriteAtlas 命名/配置
-          _initializerDefineProperty(this, "player1ClassIcon", _descriptor13, this);
+          _initializerDefineProperty(this, "player1ClassIcon", _descriptor15, this);
 
-          _initializerDefineProperty(this, "player1ClassIconGedou", _descriptor14, this);
+          _initializerDefineProperty(this, "player1ClassIconGedou", _descriptor16, this);
 
-          _initializerDefineProperty(this, "player1ClassIconQuanneng", _descriptor15, this);
+          _initializerDefineProperty(this, "player1ClassIconQuanneng", _descriptor17, this);
 
-          _initializerDefineProperty(this, "player1ClassIconSheji", _descriptor16, this);
+          _initializerDefineProperty(this, "player1ClassIconSheji", _descriptor18, this);
 
           // ========= 新增：敌方职业图标 =========
           // 同样允许你在 Inspector 手动绑定帧，确保与当前 atlas/UI 配置无关
-          _initializerDefineProperty(this, "enemy1ClassIcon", _descriptor17, this);
+          _initializerDefineProperty(this, "enemy1ClassIcon", _descriptor19, this);
 
-          _initializerDefineProperty(this, "enemy1ClassIconGedou", _descriptor18, this);
+          _initializerDefineProperty(this, "enemy1ClassIconGedou", _descriptor20, this);
 
-          _initializerDefineProperty(this, "enemy1ClassIconQuanneng", _descriptor19, this);
+          _initializerDefineProperty(this, "enemy1ClassIconQuanneng", _descriptor21, this);
 
-          _initializerDefineProperty(this, "enemy1ClassIconSheji", _descriptor20, this);
+          _initializerDefineProperty(this, "enemy1ClassIconSheji", _descriptor22, this);
 
           // ========= 新增：左右角色形象与名字（PlayerShow / EnemyPlayerShow） =========
-          _initializerDefineProperty(this, "playerShowRoot", _descriptor21, this);
+          _initializerDefineProperty(this, "playerShowRoot", _descriptor23, this);
 
-          _initializerDefineProperty(this, "enemyPlayerShowRoot", _descriptor22, this);
+          _initializerDefineProperty(this, "enemyPlayerShowRoot", _descriptor24, this);
 
-          _initializerDefineProperty(this, "characterAvatarFrames", _descriptor23, this);
+          _initializerDefineProperty(this, "characterAvatarFrames", _descriptor25, this);
 
           this.ws = null;
           this.cacheManager = null;
@@ -282,8 +429,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // 玩家操作倒计时（秒）
           this.TURN_TIME_LIMIT = 30;
           this.turnTimeLeft = 0;
+          // 「空窗挽回期」：进入指令阶段后先静默观察 GRACE_SECONDS 秒，任一方/双方无操作才显示并启动倒计时
+          this.GRACE_SECONDS = 5;
+
+          /** 本回合空窗观察剩余秒数（>0 表示还在静默期，倒计时面板隐藏） */
+          this.graceTimeLeft = 0;
+
+          /** 倒计时是否已激活（激活后才显示「剩余时间」面板） */
+          this.graceActive = false;
+
+          /** PVP：已播放过动画的最大回合号，用于对服务端 pvp_round_update 推送去重 */
+          this._lastPlayedPvpRound = 0;
+
+          /** PVP：自己已提交本回合指令、正在等待对方（此期间倒计时继续显示，便于判断对方是否挂机） */
+          this._waitingOpponent = false;
+
+          /** PVP：倒计时归零后等待服务器推送的累计时长（秒），超过兜底自行提交普攻 */
+          this._afterZeroWait = 0;
           // 动画控制
           this.isAnimating = false;
+
+          /** 看门狗计时：ANIMATING 状态持续时长（秒），超阈值强制恢复，防止死锁 */
+          this.animWatchdog = 0;
           // 当前回合双方的指令（先选指令，再按先后手结算）
           this.pendingPlayerAction = null;
           this.pendingEnemyAction = null;
@@ -353,7 +520,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this._roomStateApplied) return; // 仅在服务端房间战斗模式下启用该兜底
 
             if (!this.useServerRoomBattle) return;
-            console.error('[BattleScene] 进入战斗房间超时：未能应用完整 room state，自动退出面板避免卡死');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 进入战斗房间超时：未能应用完整 room state，自动退出面板避免卡死');
             var storyCb = this._storyBattleCallback;
 
             if (storyCb) {
@@ -421,7 +590,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               return;
             }
 
-            console.log('[BattleScene] 机甲列表数据已更新，开始战斗');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[BattleScene] 机甲列表数据已更新，开始战斗');
             this.startNewBattle();
           };
 
@@ -441,7 +612,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (!success) {
               var _data$data2;
 
-              console.warn('[BattleScene] 获取机甲详情失败，使用列表基础数据:', data.message || ((_data$data2 = data.data) == null ? void 0 : _data$data2.message));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[BattleScene] 获取机甲详情失败，使用列表基础数据:', data.message || ((_data$data2 = data.data) == null ? void 0 : _data$data2.message));
               this.initPlayerUnitWithFallback();
 
               if (this.playerUnit) {
@@ -464,7 +637,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.cacheManager.setRobotPetInfoCache(String(petId), data);
             }
 
-            console.log('[BattleScene] 机甲详情数据已更新，重新初始化玩家单位'); // 数据已更新，重新初始化
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[BattleScene] 机甲详情数据已更新，重新初始化玩家单位'); // 数据已更新，重新初始化
 
             this.initPlayerUnit(); // 如果玩家单位初始化成功，继续初始化敌人单位
 
@@ -518,13 +693,63 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (this.backButton) {
             this.backButton.node.on(Button.EventType.CLICK, this.onBackClicked, this);
+          } // 技能按钮（BattleSelectButton/Skill）→ 打开技能选择面板。
+          //   没在 Inspector 挂也没关系：按名字在战斗操作面板下找。
+
+
+          var skillBtn = this.resolveSkillButton();
+
+          if (skillBtn) {
+            skillBtn.node.on(Button.EventType.CLICK, this.onSkillClicked, this);
+          } // 技能选择面板：先确保组件在（找不到就 addComponent），并初始关闭（场景里可能留着显示状态）
+
+
+          this.ensureSkillSelectPanel();
+          this.closeSkillSelectPanel(); // 监听服务端主动推送的「PVP 回合结算」消息：
+          //   挂机方从不发请求，靠该推送才能拿到新 state 并播放整回合动画（含自己被攻击）。
+
+          this.ws.on((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            error: Error()
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.PVP_ROUND_UPDATE, this.onPvpRoundUpdate, this); // 技能目录：技能名 / 特效名 / 能量消耗 / 可施放列表都从 Skills.json 读（服务端同源副本）
+
+          this.loadSkillCatalog();
+        }
+        /**
+         * 加载技能目录（`assets/resources/json/Skills.json`，v5）并注入 SkillData。
+         *
+         * 注入后 `SkillData` 才能提供：技能名/特效名查询、能量消耗、可施放技能列表（供后续技能面板接入）。
+         * ⚠ 加载失败不影响战斗：结算与表现的全部权威数据都由服务端 state.round_events 下发，
+         *   目录只用于「名称/特效/UI 列表」这类展示信息。
+         */
+
+
+        loadSkillCatalog() {
+          try {
+            resources.load('json/Skills', JsonAsset, (err, asset) => {
+              if (err || !asset) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('[BattleScene] 技能目录 json/Skills 加载失败（仅影响技能名/列表展示）:', err);
+                return;
+              }
+
+              var data = asset.json || null;
+              SkillData.setSkillCatalog(data);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).info("[BattleScene] \u6280\u80FD\u76EE\u5F55\u5DF2\u6CE8\u5165\uFF1Av" + (data == null ? void 0 : data.version) + " / " + ((Array.isArray(data == null ? void 0 : data.skills) ? data.skills.length : 0) + " \u6761"));
+            });
+          } catch (err) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 技能目录加载异常:', err);
           }
         }
         /** 修复点：onDestroy 解绑按钮，避免节点销毁后仍触发事件导致泄漏或报错 */
 
 
         onDestroy() {
-          var _this$attackButton, _this$defendButton, _this$escapeButton, _this$backButton;
+          var _this$attackButton, _this$defendButton, _this$escapeButton, _this$backButton, _this$skillButton;
 
           if ((_this$attackButton = this.attackButton) != null && _this$attackButton.node) {
             this.attackButton.node.off(Button.EventType.CLICK, this.onAttackClicked, this);
@@ -542,6 +767,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.backButton.node.off(Button.EventType.CLICK, this.onBackClicked, this);
           }
 
+          if ((_this$skillButton = this.skillButton) != null && _this$skillButton.node) {
+            this.skillButton.node.off(Button.EventType.CLICK, this.onSkillClicked, this);
+          }
+
+          this.ws.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            error: Error()
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.PVP_ROUND_UPDATE, this.onPvpRoundUpdate, this);
           this.clearPlayerInfoListener();
           this.clearEnemyInfoListener();
 
@@ -561,7 +793,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), resolveOnEnableAction) : resolveOnEnableAction)(intent); // resume：状态已由 restoreFromServerState 同步应用，禁止 create / resume 网络请求
 
           if (action === 'resume-ready') {
-            if (this.battleSelectPanel && this.state !== BattleState.WAITING_COMMANDS) {// 恢复路径已设置面板；此处仅做轻量 UI 对齐
+            // 加固：恢复战斗时，若当前状态卡在「动画中」等中间态，强制回到指令阶段，
+            //   避免残留的 ANIMATING 状态导致面板不可操作、无法退出。
+            //   注意：FINISHED 是合法终态（战斗已结束），不能强制恢复。
+            if (this.state !== BattleState.WAITING_COMMANDS && this.state !== BattleState.FINISHED) {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("[BattleScene] resume-ready \u72B6\u6001\u5F02\u5E38(state=" + this.state + ")\uFF0C\u5F3A\u5236\u6062\u590D\u6307\u4EE4\u9636\u6BB5");
+              this.isAnimating = false;
+              this.isRequestingAction = false;
+              this.animWatchdog = 0;
+              this.startCommandPhase();
             }
 
             this._syncBattlePortraitVisibility();
@@ -587,11 +829,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.pendingPlayerAction = null;
           this.pendingEnemyAction = null;
           this.turnTimeLeft = this.TURN_TIME_LIMIT;
+          this.graceActive = false;
+          this.graceTimeLeft = this.GRACE_SECONDS;
           this.lastRoundPlayerHp = 0;
           this.lastRoundEnemyHp = 0;
           this.lastRoundPlayerAction = null;
+          this._lastPlayedPvpRound = 0;
           if (this.battleSelectPanel) this.battleSelectPanel.active = false;
           if (this.timerRoot) this.timerRoot.active = false;
+          this.closeSkillSelectPanel();
           this.prepareRobotShowsForNewBattle();
 
           this._syncBattlePortraitVisibility();
@@ -616,10 +862,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         onDisable() {
           var _this$playerRobotShow, _this$enemyRobotShow;
 
-          // 清理状态
-          this.state = BattleState.FINISHED;
+          // 关键修复：关闭面板 ≠ 战斗结束。此前把 state 设为 FINISHED，会导致再次打开时
+          //   onEnable 的 resume-ready 分支带着 FINISHED 状态进入，入场动画播完后
+          //   startCommandPhase() 因 `state === FINISHED` 直接 return → 战斗卡死且退不出。
+          //   这里只清理动画/请求锁（保留 FINISHED 供结算逻辑判断），状态复位交由 onEnable 分支处理。
           this.isAnimating = false;
           this.isRequestingAction = false;
+          this.animWatchdog = 0; // 若当前不是「战斗结束」，说明是中途关闭面板，复位为 INIT，避免下次打开带着脏状态
+
+          if (this.state !== BattleState.FINISHED) {
+            this.state = BattleState.INIT;
+          }
+
           if (this.playerRobotShow) this.playerRobotShow.setBattleBarsVisible(false);
           if (this.enemyRobotShow) this.enemyRobotShow.setBattleBarsVisible(false); // 清理事件监听
 
@@ -672,7 +926,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var characterId = (_this$ws$getCharacter2 = (_this$ws2 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter2.call(_this$ws2);
 
           if (!characterId) {
-            console.error('[BattleScene] PVP 匹配：未获取到 characterId');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] PVP 匹配：未获取到 characterId');
             this.node.active = false;
             return;
           }
@@ -743,7 +999,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           });
 
           if (validated.ok === false) {
-            console.error('[BattleScene] 剧情战拒绝创建:', validated.reason);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 剧情战拒绝创建:', validated.reason);
             opts.onFinished({
               won: false,
               roomId: '',
@@ -771,7 +1029,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var characterId = (_this$ws$getCharacter3 = (_this$ws3 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter3.call(_this$ws3);
 
           if (!characterId) {
-            console.error('[BattleScene] 剧情战：未获取 characterId');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 剧情战：未获取 characterId');
             opts.onFinished({
               won: false,
               roomId: '',
@@ -805,7 +1065,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if ((_crd && isActiveRoomConflict === void 0 ? (_reportPossibleCrUseOfisActiveRoomConflict({
               error: Error()
             }), isActiveRoomConflict) : isActiveRoomConflict)(createResp)) {
-              console.log('[BattleScene] 剧情 create 冲突：转统一恢复');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[BattleScene] 剧情 create 冲突：转统一恢复');
               this._storyBattleCallback = null;
               this._storyContext = null;
               this._entryIntent = null;
@@ -820,7 +1082,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               var _this$_storyBattleCal;
 
               var msg = (createResp == null ? void 0 : createResp.message) || '剧情战斗房间创建失败';
-              console.error('[BattleScene] 剧情战斗房间创建失败', createResp);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 剧情战斗房间创建失败', createResp);
               (_this$_storyBattleCal = this._storyBattleCallback) == null || _this$_storyBattleCal.call(this, {
                 won: false,
                 roomId: '',
@@ -851,7 +1115,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var characterId = (_this$ws$getCharacter4 = (_this$ws4 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter4.call(_this$ws4);
 
           if (!characterId) {
-            console.error('[BattleScene] 未获取到 characterId，无法进入战斗房间');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 未获取到 characterId，无法进入战斗房间');
             return;
           }
 
@@ -868,7 +1134,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if ((_crd && isActiveRoomConflict === void 0 ? (_reportPossibleCrUseOfisActiveRoomConflict({
               error: Error()
             }), isActiveRoomConflict) : isActiveRoomConflict)(createResp)) {
-              console.log('[BattleScene] create 冲突：已有活动房间，转 BattleResumeController');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('[BattleScene] create 冲突：已有活动房间，转 BattleResumeController');
               this.node.active = false;
               (_crd && ensureBattleResumeController === void 0 ? (_reportPossibleCrUseOfensureBattleResumeController({
                 error: Error()
@@ -877,7 +1145,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             if (!(createResp != null && createResp.success) || !((_createResp$data2 = createResp.data) != null && _createResp$data2.state)) {
-              console.error('[BattleScene] 创建战斗房间失败:', (createResp == null ? void 0 : createResp.message) || createResp);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 创建战斗房间失败:', (createResp == null ? void 0 : createResp.message) || createResp);
               this.roomId = null;
               this.state = BattleState.FINISHED;
               this.pendingPlayerAction = null;
@@ -909,7 +1179,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           if (validated.ok === false) {
             var rejectReason = validated.reason;
-            console.error("[BattleScene] restore rejected: " + rejectReason);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error("[BattleScene] restore rejected: " + rejectReason);
             return false;
           }
 
@@ -926,7 +1198,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.roomId = prevRoomId;
               this._appliedRestoreRoomId = prevApplied;
               this._entryIntent = prevIntent;
-              console.error('[BattleScene] restore apply did not set roomId');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] restore apply did not set roomId');
               return false;
             }
 
@@ -936,7 +1210,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.roomId = prevRoomId;
             this._appliedRestoreRoomId = prevApplied;
             this._entryIntent = prevIntent;
-            console.error('[BattleScene] restore apply exception', e);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] restore apply exception', e);
             return false;
           }
         }
@@ -949,7 +1225,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         applyServerRoomState(state, isNewRoom, forRoundAnimation) {
-          var _ref3, _playerRaw$Class, _playerRaw$data, _ref4, _enemyRaw$Class, _enemyRaw$data;
+          var _ref5, _playerRaw$Class, _playerRaw$data, _ref6, _enemyRaw$Class, _enemyRaw$data;
 
           if (isNewRoom === void 0) {
             isNewRoom = false;
@@ -965,7 +1241,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), roomIdOf) : roomIdOf)(state); // 同一 room 已恢复过：仅同步数据，不重复入场动画
 
           if (!forRoundAnimation && !isNewRoom && incomingRoomId && this._appliedRestoreRoomId === incomingRoomId && this._roomStateApplied) {
-            console.log("[BattleScene] skip duplicate restore animation room_id=" + incomingRoomId);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("[BattleScene] skip duplicate restore animation room_id=" + incomingRoomId);
             return;
           }
 
@@ -990,7 +1268,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var enemyActor = state.enemy;
 
           if (!playerActor || !enemyActor) {
-            console.error('[BattleScene] 房间状态缺少 player/enemy');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 房间状态缺少 player/enemy');
             return;
           } // 只要拿到并解析出了 player/enemy，就认为“进入房间应用成功”，取消兜底超时
 
@@ -1001,33 +1281,37 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var playerRaw = playerActor.raw || {};
           var enemyRaw = enemyActor.raw || {};
           this.playerUnit = this.buildUnitFromRobotInfo('player', playerRaw.pet_id || '', playerRaw, playerActor.name || '玩家机甲');
-          this.enemyUnit = this.buildUnitFromRobotInfo('enemy', enemyRaw.pet_id || '', enemyRaw, enemyActor.name || '敌方机甲'); // 覆盖实时 HP / 攻防 / 出手值
+          this.enemyUnit = this.buildUnitFromRobotInfo('enemy', enemyRaw.pet_id || '', enemyRaw, enemyActor.name || '敌方机甲'); // 覆盖实时 HP / MP / 攻防 / 出手值
 
           if (this.playerUnit) {
-            var _ref, _playerActor$max_hp, _playerActor$hp, _playerActor$attack, _playerActor$defense, _playerActor$initiati;
+            var _ref, _playerActor$max_hp, _playerActor$hp, _ref2, _playerActor$max_mp, _playerActor$mp, _playerActor$attack, _playerActor$defense, _playerActor$initiati;
 
             this.playerUnit.maxHp = Number((_ref = (_playerActor$max_hp = playerActor.max_hp) != null ? _playerActor$max_hp : playerActor.maxHp) != null ? _ref : this.playerUnit.maxHp);
             this.playerUnit.hp = Number((_playerActor$hp = playerActor.hp) != null ? _playerActor$hp : this.playerUnit.hp);
+            this.playerUnit.maxMp = Number((_ref2 = (_playerActor$max_mp = playerActor.max_mp) != null ? _playerActor$max_mp : playerActor.maxMp) != null ? _ref2 : this.playerUnit.maxMp);
+            this.playerUnit.mp = Number((_playerActor$mp = playerActor.mp) != null ? _playerActor$mp : this.playerUnit.mp);
             this.playerUnit.attack = Number((_playerActor$attack = playerActor.attack) != null ? _playerActor$attack : this.playerUnit.attack);
             this.playerUnit.defense = Number((_playerActor$defense = playerActor.defense) != null ? _playerActor$defense : this.playerUnit.defense);
             this.playerUnit.initiative = Number((_playerActor$initiati = playerActor.initiative) != null ? _playerActor$initiati : this.playerUnit.initiative);
           }
 
           if (this.enemyUnit) {
-            var _ref2, _enemyActor$max_hp, _enemyActor$hp, _enemyActor$attack, _enemyActor$defense, _enemyActor$initiativ;
+            var _ref3, _enemyActor$max_hp, _enemyActor$hp, _ref4, _enemyActor$max_mp, _enemyActor$mp, _enemyActor$attack, _enemyActor$defense, _enemyActor$initiativ;
 
-            this.enemyUnit.maxHp = Number((_ref2 = (_enemyActor$max_hp = enemyActor.max_hp) != null ? _enemyActor$max_hp : enemyActor.maxHp) != null ? _ref2 : this.enemyUnit.maxHp);
+            this.enemyUnit.maxHp = Number((_ref3 = (_enemyActor$max_hp = enemyActor.max_hp) != null ? _enemyActor$max_hp : enemyActor.maxHp) != null ? _ref3 : this.enemyUnit.maxHp);
             this.enemyUnit.hp = Number((_enemyActor$hp = enemyActor.hp) != null ? _enemyActor$hp : this.enemyUnit.hp);
+            this.enemyUnit.maxMp = Number((_ref4 = (_enemyActor$max_mp = enemyActor.max_mp) != null ? _enemyActor$max_mp : enemyActor.maxMp) != null ? _ref4 : this.enemyUnit.maxMp);
+            this.enemyUnit.mp = Number((_enemyActor$mp = enemyActor.mp) != null ? _enemyActor$mp : this.enemyUnit.mp);
             this.enemyUnit.attack = Number((_enemyActor$attack = enemyActor.attack) != null ? _enemyActor$attack : this.enemyUnit.attack);
             this.enemyUnit.defense = Number((_enemyActor$defense = enemyActor.defense) != null ? _enemyActor$defense : this.enemyUnit.defense);
             this.enemyUnit.initiative = Number((_enemyActor$initiativ = enemyActor.initiative) != null ? _enemyActor$initiativ : this.enemyUnit.initiative);
           } // 根据出场职业（Class）刷新 Player1 图标（重连/恢复战斗也会走到这里）
 
 
-          var classValue = Number((_ref3 = (_playerRaw$Class = playerRaw == null ? void 0 : playerRaw.Class) != null ? _playerRaw$Class : playerRaw == null || (_playerRaw$data = playerRaw.data) == null ? void 0 : _playerRaw$data.Class) != null ? _ref3 : 1);
+          var classValue = Number((_ref5 = (_playerRaw$Class = playerRaw == null ? void 0 : playerRaw.Class) != null ? _playerRaw$Class : playerRaw == null || (_playerRaw$data = playerRaw.data) == null ? void 0 : _playerRaw$data.Class) != null ? _ref5 : 1);
           this.updatePlayer1ClassIcon(classValue); // 根据出场职业（Class）刷新 敌人职业图标（重连/恢复战斗也会走到这里）
 
-          var enemyClassValue = Number((_ref4 = (_enemyRaw$Class = enemyRaw == null ? void 0 : enemyRaw.Class) != null ? _enemyRaw$Class : enemyRaw == null || (_enemyRaw$data = enemyRaw.data) == null ? void 0 : _enemyRaw$data.Class) != null ? _ref4 : 1);
+          var enemyClassValue = Number((_ref6 = (_enemyRaw$Class = enemyRaw == null ? void 0 : enemyRaw.Class) != null ? _enemyRaw$Class : enemyRaw == null || (_enemyRaw$data = enemyRaw.data) == null ? void 0 : _enemyRaw$data.Class) != null ? _ref6 : 1);
           this.updateEnemy1ClassIcon(enemyClassValue); // 更新 RobotShow 展示
 
           if (this.playerRobotShow) {
@@ -1091,12 +1375,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.pendingEnemyAction = {
               side: 'enemy',
               type: 'ATTACK'
-            }; // 修复点：恢复战斗时使用服务器剩余时间，不重置为 30 秒（支持多种字段名与回合开始时间推算）
+            }; // 恢复战斗：按服务器 state 还原「空窗挽回期」状态与剩余时间，不重置为 30 秒
+            //   - grace_active=True  → 倒计时已在跑，显示面板并从服务器剩余秒数续跑；
+            //   - grace_active=False → 仍在 5 秒静默观察期，隐藏面板（若服务器给了 grace 剩余则用它）。
 
-            var remainingSec = this._getRemainingCommandSecondsFromState(state);
-
-            this.turnTimeLeft = remainingSec;
-            this.updateTimerLabel();
+            this.restoreGraceWindowFromState(state);
 
             if (this.battleSelectPanel) {
               this.battleSelectPanel.active = true;
@@ -1106,7 +1389,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.refreshBattleBarsVisibilityAndValue();
           }
         }
-        /** 战斗时显示双方局内血条并刷新为当前 HP（与机甲属性面板一致） */
+        /** 战斗时显示双方局内血条并刷新为当前 HP / MP（与机甲属性面板一致） */
 
 
         refreshBattleBarsVisibilityAndValue() {
@@ -1114,7 +1397,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.playerRobotShow.setBattleBarsVisible(true);
 
             if (this.playerUnit) {
-              this.playerRobotShow.updateBattleBars(this.playerUnit.hp, this.playerUnit.maxHp);
+              this.playerRobotShow.updateBattleBars(this.playerUnit.hp, this.playerUnit.maxHp, this.playerUnit.mp, this.playerUnit.maxMp);
             }
           }
 
@@ -1122,7 +1405,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.enemyRobotShow.setBattleBarsVisible(true);
 
             if (this.enemyUnit) {
-              this.enemyRobotShow.updateBattleBars(this.enemyUnit.hp, this.enemyUnit.maxHp);
+              this.enemyRobotShow.updateBattleBars(this.enemyUnit.hp, this.enemyUnit.maxHp, this.enemyUnit.mp, this.enemyUnit.maxMp);
             }
           }
         }
@@ -1133,7 +1416,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _getRemainingCommandSecondsFromState(state) {
-          var _ref5, _n, _n2, _ref6, _n3;
+          var _ref7, _n, _n2, _ref8, _n3;
 
           var limit = this.TURN_TIME_LIMIT;
           if (!state || typeof state !== 'object') return limit;
@@ -1142,7 +1425,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var now = Date.now(); // 1) 直接剩余秒数（多种命名）
 
-          var direct = (_ref5 = (_n = n(state.remaining_command_seconds)) != null ? _n : n(state.remaining_seconds)) != null ? _ref5 : n(state.command_remaining_seconds);
+          var direct = (_ref7 = (_n = n(state.remaining_command_seconds)) != null ? _n : n(state.remaining_seconds)) != null ? _ref7 : n(state.command_remaining_seconds);
           if (direct != null && direct >= 0) return Math.min(limit, Math.ceil(direct)); // 2) 截止时间戳（毫秒）
 
           var deadline = (_n2 = n(state.command_deadline_ts)) != null ? _n2 : n(state.command_deadline_ms);
@@ -1153,7 +1436,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           } // 3) 回合开始时间戳（毫秒），剩余 = 30 - 已过秒数
 
 
-          var startTs = (_ref6 = (_n3 = n(state.round_start_ts)) != null ? _n3 : n(state.round_start_time)) != null ? _ref6 : n(state.command_phase_start_ts);
+          var startTs = (_ref8 = (_n3 = n(state.round_start_ts)) != null ? _n3 : n(state.round_start_time)) != null ? _ref8 : n(state.command_phase_start_ts);
 
           if (startTs != null) {
             var elapsed = (now - startTs) / 1000;
@@ -1162,6 +1445,49 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           return limit;
+        }
+        /**
+         * 从服务器 state 还原「空窗挽回期」状态：
+         *   - grace_active=True  → 倒计时已激活：显示面板，turnTimeLeft 续用服务器剩余秒数；
+         *   - grace_active=False → 仍在静默观察期：隐藏面板，graceTimeLeft 用服务器 grace 截止时间推算（无则重置为满）。
+         */
+
+
+        restoreGraceWindowFromState(state) {
+          var n = v => v != null && typeof v === 'number' && !Number.isNaN(v) ? v : null;
+
+          this._waitingOpponent = false;
+          this._afterZeroWait = 0;
+          var activeRaw = state == null ? void 0 : state.grace_active;
+          var active = activeRaw === true || activeRaw === 1 || activeRaw === 'true' || activeRaw === '1';
+
+          if (active) {
+            this.graceActive = true;
+            this.turnTimeLeft = this._getRemainingCommandSecondsFromState(state);
+            if (this.timerRoot) this.timerRoot.active = true;
+            this.updateTimerLabel();
+            return;
+          } // 静默期
+
+
+          this.graceActive = false;
+          this.turnTimeLeft = this.TURN_TIME_LIMIT;
+          var graceLeft = this.GRACE_SECONDS;
+          var graceDl = n(state == null ? void 0 : state.grace_deadline_ts);
+
+          if (graceDl != null) {
+            graceLeft = Math.max(0, (graceDl - Date.now()) / 1000);
+          } else {
+            var startTs = n(state == null ? void 0 : state.command_phase_start_ts);
+
+            if (startTs != null) {
+              graceLeft = Math.max(0, this.GRACE_SECONDS - (Date.now() - startTs) / 1000);
+            }
+          }
+
+          this.graceTimeLeft = graceLeft;
+          if (this.timerRoot) this.timerRoot.active = false;
+          this.updateTimerLabel();
         }
         /**
          * 直接将机甲设置到战斗位置（用于恢复房间时，不需要动画）
@@ -1178,7 +1504,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.cacheEntranceAndBattlePositionsIfNeeded();
 
           if (!this.battlePlayerPos || !this.battleEnemyPos) {
-            console.warn('[BattleScene] 战斗位置未缓存，使用默认位置');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 战斗位置未缓存，使用默认位置');
             return;
           } // 直接设置到战斗位置
 
@@ -1218,7 +1546,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         _abortBattleEntry(errMsg) {
-          console.error('[BattleScene]', errMsg);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).error('[BattleScene]', errMsg);
           this.node.active = false;
         }
         /**
@@ -1250,7 +1580,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
           if (!pets || pets.length === 0) {
-            console.log('[BattleScene] 机甲列表缓存为空，正在请求数据...');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[BattleScene] 机甲列表缓存为空，正在请求数据...');
             this.requestRobotPetsAndStart();
             return;
           } // 缓存有数据，直接开始战斗
@@ -1293,7 +1625,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.ws.notify((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
             error: Error()
           }), GameConfig) : GameConfig).MESSAGE_TYPES.GET_ROBOT_PETS, requestData, true);
-          console.log('[BattleScene] 已发送机甲列表请求，等待响应...');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[BattleScene] 已发送机甲列表请求，等待响应...');
         }
 
         _extractPetsFromCache(raw) {
@@ -1308,9 +1642,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _battleTeamFromCache(listCache) {
-          var _ref7, _listCache$battle_tea, _listCache$data, _listCache$data2;
+          var _ref9, _listCache$battle_tea, _listCache$data, _listCache$data2;
 
-          var raw = (_ref7 = (_listCache$battle_tea = listCache == null ? void 0 : listCache.battle_team) != null ? _listCache$battle_tea : listCache == null || (_listCache$data = listCache.data) == null ? void 0 : _listCache$data.battle_team) != null ? _ref7 : listCache == null || (_listCache$data2 = listCache.data) == null || (_listCache$data2 = _listCache$data2.data) == null ? void 0 : _listCache$data2.battle_team;
+          var raw = (_ref9 = (_listCache$battle_tea = listCache == null ? void 0 : listCache.battle_team) != null ? _listCache$battle_tea : listCache == null || (_listCache$data = listCache.data) == null ? void 0 : _listCache$data.battle_team) != null ? _ref9 : listCache == null || (_listCache$data2 = listCache.data) == null || (_listCache$data2 = _listCache$data2.data) == null ? void 0 : _listCache$data2.battle_team;
           if (!Array.isArray(raw)) return [];
           return raw.map(x => String(x)).filter(x => x);
         }
@@ -1346,7 +1680,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         _applyPlayerPetFromInfo(petId, info) {
-          var _ref8, _Class, _data;
+          var _ref10, _Class, _data;
 
           this.playerUnit = this.buildUnitFromRobotInfo('player', petId, info, '玩家机甲');
 
@@ -1358,14 +1692,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               this.playerRobotShow.updateFromRobotData(dataForShow);
             } catch (e) {
-              console.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 更新玩家 RobotShow 失败:', e);
             }
           }
 
           this.ensureMechAttributeInited();
           this.refreshPlayerMechAttributeUI(true);
           this.startAttributeAutoRefresh();
-          var classValue = Number((_ref8 = (_Class = info == null ? void 0 : info.Class) != null ? _Class : info == null || (_data = info.data) == null ? void 0 : _data.Class) != null ? _ref8 : 1);
+          var classValue = Number((_ref10 = (_Class = info == null ? void 0 : info.Class) != null ? _Class : info == null || (_data = info.data) == null ? void 0 : _data.Class) != null ? _ref10 : 1);
           this.updatePlayer1ClassIcon(classValue);
           this.initEnemyUnit();
         }
@@ -1374,14 +1710,18 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.logClear();
           this.state = BattleState.INIT;
           this.turnTimeLeft = this.TURN_TIME_LIMIT;
+          this.graceActive = false;
+          this.graceTimeLeft = this.GRACE_SECONDS;
+          this._lastPlayedPvpRound = 0;
           this.updateTimerLabel(); // 每次开战都先把双方位置重置到入场起点
 
           this.resetEntrancePositions();
 
           if (this.battleSelectPanel) {
             this.battleSelectPanel.active = false; // 初始先隐藏，等轮到玩家时再显示
-          } // 刷新“玩家/敌人角色形象+名字”
+          }
 
+          this.closeSkillSelectPanel(); // 刷新“玩家/敌人角色形象+名字”
 
           this.refreshPlayerAndEnemyShows(); // 初始化玩家单位（会在准备好后触发 initEnemyUnit）
           // 注意：玩家单位可能需要异步请求（出战队伍/机甲详情），不能在这里立刻校验 playerUnit
@@ -1399,7 +1739,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         beginBattleAfterReady() {
           // 再次检查双方单位是否都初始化完成
           if (!this.playerUnit || !this.enemyUnit) {
-            console.error('[BattleScene] 双方单位未完全初始化，无法开始战斗');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 双方单位未完全初始化，无法开始战斗');
             return;
           } // 进入指令选择阶段前的本地提示（不再发送未注册的 battle_start；正式开战走 battle_room_*）
 
@@ -1420,7 +1762,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var enemyNode = (_this$enemyRobotShow5 = this.enemyRobotShow) == null ? void 0 : _this$enemyRobotShow5.node;
 
           if (!playerNode || !enemyNode) {
-            console.warn('[BattleScene] 入场动画：缺少 RobotShow 节点，跳过动画直接开始战斗');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 入场动画：缺少 RobotShow 节点，跳过动画直接开始战斗');
             this.startCommandPhase();
             return;
           } // 固定起点/终点（避免每次打开叠加）
@@ -1447,12 +1791,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var enemyAnimDone = false;
 
           var checkAllDone = () => {
+            this.log("[\u5165\u573A\u52A8\u753B] playerDone=" + playerAnimDone + " enemyDone=" + enemyAnimDone);
+
             if (playerAnimDone && enemyAnimDone) {
               // 动画完成，开始第一回合的指令选择
               this.startCommandPhase();
             }
-          }; // 玩家平移动画
+          }; // 超时保底：入场动画 1s，若 2.5s 后仍未进入指令阶段（tween 回调丢失），强制开始，避免卡死
 
+
+          this.scheduleOnce(() => {
+            if (!(playerAnimDone && enemyAnimDone)) {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[BattleScene] 入场动画超时未回调，强制进入指令阶段');
+              playerAnimDone = true;
+              enemyAnimDone = true;
+              checkAllDone();
+            }
+          }, 2.5); // 玩家平移动画
 
           tween(playerNode).to(animDuration, {
             position: playerTargetPos
@@ -1525,11 +1882,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               petId,
               firstPet
             } = picked;
-            console.log("[BattleScene] \u4F7F\u7528\u673A\u7532: " + petId);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("[BattleScene] \u4F7F\u7528\u673A\u7532: " + petId);
             var info = this.cacheManager.getRobotPetInfoCache(petId);
 
             if (!info) {
-              console.warn('[BattleScene] 未找到机甲详情缓存，正在请求详情数据...');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[BattleScene] 未找到机甲详情缓存，正在请求详情数据...');
               this.requestRobotPetInfoAndInit(petId, firstPet);
               return;
             }
@@ -1560,7 +1921,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             if (!(resp != null && resp.success)) {
-              console.warn('[BattleScene] GET_BATTLE_TEAM 失败，尝试缓存/列表回退:', resp == null ? void 0 : resp.message);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[BattleScene] GET_BATTLE_TEAM 失败，尝试缓存/列表回退:', resp == null ? void 0 : resp.message);
             }
 
             finishPick(cachedTeam.length > 0 ? cachedTeam : []);
@@ -1583,7 +1946,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             pet_id: petId
           }, response => {// request 回调会自动处理响应
           }, true, 10000);
-          console.log("[BattleScene] \u5DF2\u53D1\u9001\u673A\u7532\u8BE6\u60C5\u8BF7\u6C42 (pet_id: " + petId + ")\uFF0C\u7B49\u5F85\u54CD\u5E94...");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("[BattleScene] \u5DF2\u53D1\u9001\u673A\u7532\u8BE6\u60C5\u8BF7\u6C42 (pet_id: " + petId + ")\uFF0C\u7B49\u5F85\u54CD\u5E94...");
         }
 
         /**
@@ -1614,7 +1979,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             petId,
             firstPet
           } = picked;
-          console.warn('[BattleScene] 使用列表中的基础数据构建玩家单位（可能缺少完整属性）');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn('[BattleScene] 使用列表中的基础数据构建玩家单位（可能缺少完整属性）');
           this.playerUnit = this.buildUnitFromRobotInfo('player', petId, firstPet, '玩家机甲');
 
           if (this.playerRobotShow) {
@@ -1625,7 +1992,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
               this.playerRobotShow.updateFromRobotData(dataForShow);
             } catch (e) {
-              console.error('[BattleScene] 更新玩家 RobotShow 失败:', e);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 更新玩家 RobotShow 失败:', e);
             }
           }
 
@@ -1643,7 +2012,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         initEnemyUnit() {
           if (!this.playerUnit) {
-            console.error('[BattleScene] 玩家单位未初始化，无法构建敌人单位');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('[BattleScene] 玩家单位未初始化，无法构建敌人单位');
             return;
           } // 敌人由服务器生成（随机角色 + 满装备 + 最终属性 + 装备限制）
 
@@ -1657,38 +2028,49 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_GENERATE_ENEMY, {
             player_pet_id: playerPetId || undefined
           }, resp => {
-            var _this$node10, _resp$data2, _ref9, _enemy$CurrentMelee, _ref10, _enemy$CurrentShootin, _ref11, _enemy$CurrentArmor, _enemy$MaxHP, _enemy$CurrentHP, _ref12, _enemy$CurrentInitiat;
+            var _this$node10, _resp$data2, _ref11, _enemy$CurrentMelee, _ref12, _enemy$CurrentShootin, _ref13, _enemy$CurrentArmor, _enemy$MaxHP, _enemy$CurrentHP, _enemy$MaxMP, _enemy$CurrentMP, _ref14, _enemy$CurrentInitiat;
 
             this.isEnemyGenerating = false;
             if (!((_this$node10 = this.node) != null && _this$node10.isValid) || this._sessionId !== sessionId) return;
 
             if (!resp || resp.success === false) {
-              console.error('[BattleScene] 生成敌人失败:', (resp == null ? void 0 : resp.message) || (resp == null ? void 0 : resp.error) || resp);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 生成敌人失败:', (resp == null ? void 0 : resp.message) || (resp == null ? void 0 : resp.error) || resp);
               return;
             }
 
             var enemy = resp.enemy || ((_resp$data2 = resp.data) == null ? void 0 : _resp$data2.enemy) || null;
 
             if (!enemy) {
-              console.error('[BattleScene] 生成敌人失败：响应缺少 enemy 字段', resp);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 生成敌人失败：响应缺少 enemy 字段', resp);
               return;
             }
 
-            var melee = Number((_ref9 = (_enemy$CurrentMelee = enemy.CurrentMelee) != null ? _enemy$CurrentMelee : enemy.Melee) != null ? _ref9 : 0);
-            var shoot = Number((_ref10 = (_enemy$CurrentShootin = enemy.CurrentShooting) != null ? _enemy$CurrentShootin : enemy.Shooting) != null ? _ref10 : 0);
-            var armor = Number((_ref11 = (_enemy$CurrentArmor = enemy.CurrentArmor) != null ? _enemy$CurrentArmor : enemy.Armor) != null ? _ref11 : 0);
+            var melee = Number((_ref11 = (_enemy$CurrentMelee = enemy.CurrentMelee) != null ? _enemy$CurrentMelee : enemy.Melee) != null ? _ref11 : 0);
+            var shoot = Number((_ref12 = (_enemy$CurrentShootin = enemy.CurrentShooting) != null ? _enemy$CurrentShootin : enemy.Shooting) != null ? _ref12 : 0);
+            var armor = Number((_ref13 = (_enemy$CurrentArmor = enemy.CurrentArmor) != null ? _enemy$CurrentArmor : enemy.Armor) != null ? _ref13 : 0);
             var maxHp = Number((_enemy$MaxHP = enemy.MaxHP) != null ? _enemy$MaxHP : 1000);
             var hp = Number((_enemy$CurrentHP = enemy.CurrentHP) != null ? _enemy$CurrentHP : maxHp);
-            var initiative = Number((_ref12 = (_enemy$CurrentInitiat = enemy.CurrentInitiative) != null ? _enemy$CurrentInitiat : enemy.Initiative) != null ? _ref12 : 10);
+            var maxMp = Number((_enemy$MaxMP = enemy.MaxMP) != null ? _enemy$MaxMP : 0);
+            var mp = Number((_enemy$CurrentMP = enemy.CurrentMP) != null ? _enemy$CurrentMP : maxMp);
+            var initiative = Number((_ref14 = (_enemy$CurrentInitiat = enemy.CurrentInitiative) != null ? _enemy$CurrentInitiat : enemy.Initiative) != null ? _ref14 : 10); // 攻击次数：与玩家/在线路径一致，敌方也要带 attackTimes，否则 computeAttackSegments 只能按 1 段处理
+
+            var attackTimes = resolveAttackTimes(enemy);
             this.enemyUnit = {
               side: 'enemy',
               name: enemy.RobotName || '敌方机甲',
               level: Number(enemy.Level || 1),
               maxHp,
               hp,
+              maxMp,
+              mp,
               attack: melee + shoot,
               defense: armor,
               initiative,
+              attackTimes,
               petId: undefined,
               rawData: enemy
             };
@@ -1697,7 +2079,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               try {
                 this.enemyRobotShow.updateFromRobotData(enemy);
               } catch (e) {
-                console.error('[BattleScene] 更新敌人 RobotShow 失败:', e);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error('[BattleScene] 更新敌人 RobotShow 失败:', e);
               }
             }
 
@@ -1708,28 +2092,36 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         buildUnitFromRobotInfo(side, petId, info, defaultName) {
-          var _ref13, _ref14, _info$MaxHP, _ref15, _info$CurrentHP, _ref16, _info$Melee, _ref17, _info$Shooting, _ref18, _info$Armor, _ref19, _info$Initiative;
+          var _ref15, _ref16, _info$MaxHP, _ref17, _info$CurrentHP, _ref18, _info$MaxMP, _ref19, _info$CurrentMP, _ref20, _info$Melee, _ref21, _info$Shooting, _ref22, _info$Armor, _ref23, _info$Initiative;
 
           var name = (info == null ? void 0 : info.RobotName) || (info == null ? void 0 : info.name) || defaultName;
           var level = Number((info == null ? void 0 : info.Level) || (info == null ? void 0 : info.level) || 1); // 属性字段命名尽量兼容现有 MechAttributeTEST 使用的键
 
-          var maxHp = Number((_ref13 = (_ref14 = (_info$MaxHP = info == null ? void 0 : info.MaxHP) != null ? _info$MaxHP : info == null ? void 0 : info.max_hp) != null ? _ref14 : info == null ? void 0 : info.hp) != null ? _ref13 : 100);
-          var hp = Number((_ref15 = (_info$CurrentHP = info == null ? void 0 : info.CurrentHP) != null ? _info$CurrentHP : info == null ? void 0 : info.current_hp) != null ? _ref15 : maxHp);
-          var melee = Number((_ref16 = (_info$Melee = info == null ? void 0 : info.Melee) != null ? _info$Melee : info == null ? void 0 : info.melee) != null ? _ref16 : 0);
-          var shoot = Number((_ref17 = (_info$Shooting = info == null ? void 0 : info.Shooting) != null ? _info$Shooting : info == null ? void 0 : info.shoot) != null ? _ref17 : 0);
-          var armor = Number((_ref18 = (_info$Armor = info == null ? void 0 : info.Armor) != null ? _info$Armor : info == null ? void 0 : info.armor) != null ? _ref18 : 0);
+          var maxHp = Number((_ref15 = (_ref16 = (_info$MaxHP = info == null ? void 0 : info.MaxHP) != null ? _info$MaxHP : info == null ? void 0 : info.max_hp) != null ? _ref16 : info == null ? void 0 : info.hp) != null ? _ref15 : 100);
+          var hp = Number((_ref17 = (_info$CurrentHP = info == null ? void 0 : info.CurrentHP) != null ? _info$CurrentHP : info == null ? void 0 : info.current_hp) != null ? _ref17 : maxHp); // 能量：老数据可能没有 MP 字段 → 0（该单位不参与「能量恢复」）
+
+          var maxMp = Number((_ref18 = (_info$MaxMP = info == null ? void 0 : info.MaxMP) != null ? _info$MaxMP : info == null ? void 0 : info.max_mp) != null ? _ref18 : 0);
+          var mp = Number((_ref19 = (_info$CurrentMP = info == null ? void 0 : info.CurrentMP) != null ? _info$CurrentMP : info == null ? void 0 : info.current_mp) != null ? _ref19 : maxMp);
+          var melee = Number((_ref20 = (_info$Melee = info == null ? void 0 : info.Melee) != null ? _info$Melee : info == null ? void 0 : info.melee) != null ? _ref20 : 0);
+          var shoot = Number((_ref21 = (_info$Shooting = info == null ? void 0 : info.Shooting) != null ? _info$Shooting : info == null ? void 0 : info.shoot) != null ? _ref21 : 0);
+          var armor = Number((_ref22 = (_info$Armor = info == null ? void 0 : info.Armor) != null ? _info$Armor : info == null ? void 0 : info.armor) != null ? _ref22 : 0);
           var attack = melee + shoot;
           var defense = armor;
-          var initiative = Number((_ref19 = (_info$Initiative = info == null ? void 0 : info.Initiative) != null ? _info$Initiative : info == null ? void 0 : info.initiative) != null ? _ref19 : 10);
+          var initiative = Number((_ref23 = (_info$Initiative = info == null ? void 0 : info.Initiative) != null ? _info$Initiative : info == null ? void 0 : info.initiative) != null ? _ref23 : 10); // 攻击次数：优先直接字段，其次从装备累加（装备「攻击次数+N」已在服务端写入属性或 equipment）
+
+          var attackTimes = resolveAttackTimes(info);
           return {
             side,
             name,
             level,
             maxHp,
             hp,
+            maxMp,
+            mp,
             attack,
             defense,
             initiative,
+            attackTimes,
             petId,
             rawData: info
           };
@@ -1740,20 +2132,29 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
         /**
          * 指令选择阶段：双方都先选指令（当前敌方默认普攻，但不会提前出手）
+         *
+         * 「空窗挽回期」：进入指令阶段后**不立即倒计时**，先静默观察 GRACE_SECONDS 秒；
+         *   任一方/双方无操作满 5 秒才显示并启动「剩余时间」倒计时（见 update）。
          */
 
 
         startCommandPhase() {
-          if (this.state === BattleState.FINISHED) return;
+          var _this$attackButton2, _this$battleSelectPan;
+
+          if (this.state === BattleState.FINISHED) {
+            this.log('[指令阶段] 被跳过：战斗已结束');
+            return;
+          }
+
           this.state = BattleState.WAITING_COMMANDS;
           this.pendingPlayerAction = null; // 敌方 AI：默认普攻（后续可扩展技能/物品）
 
           this.pendingEnemyAction = {
             side: 'enemy',
             type: 'ATTACK'
-          };
-          this.turnTimeLeft = this.TURN_TIME_LIMIT;
-          this.updateTimerLabel();
+          }; // 空窗挽回期：先进入静默观察，不显示倒计时
+
+          this.enterGraceWindow();
 
           if (this.battleSelectPanel) {
             this.battleSelectPanel.active = true;
@@ -1761,46 +2162,127 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.setButtonsInteractable(true);
           this.refreshBattleBarsVisibilityAndValue();
-          this.log('请选择指令（普攻 / 逃跑）。30 秒未操作则自动选择普攻。');
+          this.log("[\u6307\u4EE4\u9636\u6BB5] \u5DF2\u6062\u590D\u64CD\u4F5C\uFF0C\u6309\u94AE\u53EF\u70B9=" + !!((_this$attackButton2 = this.attackButton) != null && _this$attackButton2.interactable) + "\uFF0C\u9762\u677F=" + !!((_this$battleSelectPan = this.battleSelectPanel) != null && _this$battleSelectPan.active));
+        }
+        /**
+         * 进入空窗观察期：隐藏「剩余时间」面板，开始静默 GRACE_SECONDS 秒
+         */
+
+
+        enterGraceWindow() {
+          this.graceActive = false;
+          this.graceTimeLeft = this.GRACE_SECONDS;
+          this.turnTimeLeft = this.TURN_TIME_LIMIT;
+          this._waitingOpponent = false;
+          this._afterZeroWait = 0; // 静默期不显示倒计时面板
+
+          if (this.timerRoot) this.timerRoot.active = false;
+          this.updateTimerLabel();
+        }
+        /**
+         * 激活倒计时：空窗满 5 秒后调用，显示「剩余时间」面板并开始计时
+         */
+
+
+        activateGraceCountdown() {
+          if (this.graceActive) return;
+          this.graceActive = true;
+          this.turnTimeLeft = this.TURN_TIME_LIMIT;
+          this._afterZeroWait = 0;
+          if (this.timerRoot) this.timerRoot.active = true;
+          this.updateTimerLabel();
+          this.log('[空窗] 无操作满 5 秒，开始倒计时');
         }
 
         update(dt) {
-          if (this.state === BattleState.WAITING_COMMANDS) {
-            this.turnTimeLeft -= dt;
+          // 看门狗：ANIMATING 状态若长时间未推进（回调链断裂），强制恢复到指令阶段，避免战斗死锁
+          //   注意：请求等待（isRequestingAction）期间也计时，但阈值更宽松（20s），防止请求永不返回时死锁
+          if (this.state === BattleState.ANIMATING) {
+            this.animWatchdog += dt; // 请求等待期（isRequestingAction）的阈值需覆盖服务端「空窗挽回期」最坏耗时：
+            //   PVP = 空窗静默 5s + 倒计时 30s = 35s，故 PVP 取 45s；PVE 无空窗，20s 足够。
 
-            if (this.turnTimeLeft <= 0) {
-              this.turnTimeLeft = 0;
-              this.updateTimerLabel(); // 超时自动普攻（仅触发一次）
+            var limit = 12;
 
-              if (!this.isAnimating) {
-                if (this.useServerRoomBattle && this.roomId) {
-                  this.log('超时未操作，自动选择普攻');
-                  this.sendBattleRoomAction('ATTACK');
-                } else {
-                  this.log('超时未操作，自动选择普攻');
+            if (this.isRequestingAction) {
+              limit = this.currentBattleMode === 'pvp' ? 45 : 20;
+            }
 
-                  if (!this.pendingPlayerAction) {
-                    this.pendingPlayerAction = {
-                      side: 'player',
-                      type: 'ATTACK'
-                    };
-                  }
+            if (this.animWatchdog > limit) {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("[BattleScene] \u770B\u95E8\u72D7\uFF1AANIMATING \u8D85\u65F6(" + limit + "s)\uFF0C\u5F3A\u5236\u6062\u590D\u6307\u4EE4\u9636\u6BB5");
+              this.log('[看门狗] 动画超时未推进，强制恢复操作');
+              this.animWatchdog = 0;
+              this.isAnimating = false;
+              this.isRequestingAction = false;
+              this._waitingOpponent = false;
+              this.startCommandPhase();
+            }
+          } else {
+            this.animWatchdog = 0;
+          } // 等待指令阶段，或「自己已提交、正在等对方」期间 —— 都需要推进空窗/倒计时。
+          //   后者保证：自己 5 秒后点了操作，但对方仍未动时，倒计时继续走完，玩家能看到对方是否挂机。
 
-                  this.tryResolveRound();
-                }
+
+          var tickingCommands = this.state === BattleState.WAITING_COMMANDS || this.state === BattleState.ANIMATING && this.isRequestingAction && this._waitingOpponent;
+
+          if (tickingCommands) {
+            if (!this.graceActive) {
+              // 阶段一：空窗静默观察期（不显示倒计时）。任一方/双方无操作满 5 秒才激活倒计时。
+              this.graceTimeLeft -= dt;
+
+              if (this.graceTimeLeft <= 0) {
+                this.graceTimeLeft = 0;
+                this.activateGraceCountdown();
               }
             } else {
-              this.updateTimerLabel();
+              // 阶段二：倒计时已激活，正常倒计时
+              this.turnTimeLeft -= dt;
+
+              if (this.turnTimeLeft <= 0) {
+                this.turnTimeLeft = 0;
+                this.updateTimerLabel(); // 倒计时归零：技能选择面板一并关掉（游戏原机制 —— 到点就关面板、改走普通攻击）
+
+                this.closeSkillSelectPanel(); // 服务器制 PVP：倒计时归零后的「自动补普攻」由服务端权威执行，
+                //   并通过 pvp_round_update 主动推送回双方。客户端优先等待推送，
+                //   避免自行发送的 ATTACK 被写进「下一回合」（玩家未决策却自动出招）。
+
+                if (!this.isAnimating && !this._waitingOpponent && this.state === BattleState.WAITING_COMMANDS) {
+                  if (this.useServerRoomBattle && this.roomId) {
+                    // 兜底：推送最多再等 3 秒；仍无响应则自行提交普攻，防止网络丢包导致永久卡住。
+                    this._afterZeroWait += dt;
+
+                    if (this._afterZeroWait >= 3) {
+                      this.log('倒计时结束且未收到服务器推送，兜底自动普攻');
+                      this.sendBattleRoomAction('ATTACK');
+                    }
+                  } else {
+                    this.log('超时未操作，自动选择普攻');
+
+                    if (!this.pendingPlayerAction) {
+                      this.pendingPlayerAction = {
+                        side: 'player',
+                        type: 'ATTACK'
+                      };
+                    }
+
+                    this.tryResolveRound();
+                  }
+                }
+              } else {
+                this.updateTimerLabel();
+              }
             }
           }
         }
 
         updateTimerLabel() {
           if (!this.timerLabel) return;
-          this.timerLabel.string = "" + Math.ceil(this.turnTimeLeft); // 在等待指令阶段显示倒计时
+          this.timerLabel.string = "" + Math.ceil(this.turnTimeLeft); // 显示条件：等待指令 + 倒计时已激活；或自己已提交、正等对方（此期间倒计时继续可见）
 
           if (this.timerRoot) {
-            this.timerRoot.active = this.state === BattleState.WAITING_COMMANDS;
+            var show = this.graceActive && (this.state === BattleState.WAITING_COMMANDS || this.state === BattleState.ANIMATING && this.isRequestingAction && this._waitingOpponent);
+            this.timerRoot.active = show;
           }
         }
 
@@ -1808,7 +2290,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.attackButton) this.attackButton.interactable = enable;
           if (this.defendButton) this.defendButton.interactable = enable;
           if (this.escapeButton) this.escapeButton.interactable = enable;
-          if (this.backButton) this.backButton.interactable = enable;
+          if (this.skillButton) this.skillButton.interactable = enable; // 返回键始终可点：保证任何时候都有逃生通道（卡死时也能恢复/退出）
+
+          if (this.backButton) this.backButton.interactable = true;
         } // ========== 按钮事件 ==========
 
 
@@ -1859,19 +2343,184 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             };
             this.tryResolveRound();
           }
+        } // ====== 技能按钮 / 技能选择面板（SkillSelect） ======
+
+        /** 找「技能」按钮：优先 Inspector 绑定，其次在战斗操作面板里按名字找（BattleSelectButton/Skill） */
+
+
+        resolveSkillButton() {
+          if (this.skillButton && this.skillButton.isValid) return this.skillButton;
+          var root = this.battleSelectPanel || this.node;
+          var node = root ? root.getChildByName('Skill') || this.findChildByName(root, 'Skill') : null;
+          var btn = node ? node.getComponent(Button) : null;
+
+          if (btn) {
+            this.skillButton = btn;
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).info('[BattleScene] 技能按钮已由运行时查找绑定：' + node.name);
+          } else {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 没找到技能按钮（期望 BattleSelectButton/Skill）');
+          }
+
+          return btn;
+        }
+        /**
+         * 确保技能选择面板组件存在。
+         * 面板节点 = `BattleScene/SkillSelect`（场景里已搭好）；组件没挂就运行时 `addComponent` 兜底
+         * （与机甲面板 `MechSkillPanel` 的零挂载风格一致）。
+         */
+
+
+        ensureSkillSelectPanel() {
+          if (this.skillSelectPanel && this.skillSelectPanel.isValid) return this.skillSelectPanel;
+          var node = this.findChildByName(this.node, 'SkillSelect');
+
+          if (!node) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 没找到技能选择面板节点（期望 BattleScene/SkillSelect）');
+            return null;
+          }
+
+          var comp = node.getComponent(_crd && SkillSelectPanel === void 0 ? (_reportPossibleCrUseOfSkillSelectPanel({
+            error: Error()
+          }), SkillSelectPanel) : SkillSelectPanel);
+          if (!comp) comp = node.addComponent(_crd && SkillSelectPanel === void 0 ? (_reportPossibleCrUseOfSkillSelectPanel({
+            error: Error()
+          }), SkillSelectPanel) : SkillSelectPanel);
+          this.skillSelectPanel = comp; // 场景里可能留着显示状态 → 战斗未开始/未点技能前一律不显示
+
+          if (node.active) node.active = false;
+          return comp;
+        }
+        /** 关闭技能选择面板（幂等；`notify=false` 不触发 onClosed，避免与战斗流程互相递归） */
+
+
+        closeSkillSelectPanel() {
+          var panel = this.skillSelectPanel;
+          if (panel && panel.isValid && panel.isOpen()) panel.close(false);
+        }
+        /**
+         * 点「技能」按钮 → 打开 / 收起技能选择面板。
+         *
+         * 面板里的技能来自服务端 `skill_list`（该机甲**已学且可主动施放**的技能，含能量消耗与可用性）；
+         * 面板内部「点技能槽 = 选中 → 出现确认 → 确认即施放」，确认后回调 `castSkill()`。
+         * 打开期间倒计时照常走（游戏原有机制），归零由 `update()` 关面板并自动普攻。
+         */
+
+
+        onSkillClicked() {
+          var _this$playerUnit;
+
+          if (this.state !== BattleState.WAITING_COMMANDS || this.isAnimating || this.isRequestingAction) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[BattleScene] \u6280\u80FD\u6309\u94AE\u88AB\u5FFD\u7565\uFF1Astate=" + this.state);
+            return;
+          }
+
+          var panel = this.ensureSkillSelectPanel();
+          if (!panel) return; // 已打开 → 再点一次收起（等同「返回」）
+
+          if (panel.isOpen()) {
+            panel.close();
+            return;
+          }
+
+          var petId = ((_this$playerUnit = this.playerUnit) == null ? void 0 : _this$playerUnit.petId) || null;
+
+          if (!petId) {
+            this.log('未找到出战机甲，暂时无法选择技能');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 技能面板打开失败：playerUnit.petId 为空');
+            return;
+          }
+
+          panel.open(petId, {
+            // 确认 → 用该技能提交本回合指令（服务端校验「已学 + 能量足够 + 主动技」）
+            onConfirm: skillKey => {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).info("[BattleScene] \u6280\u80FD\u9762\u677F\u786E\u8BA4\uFF0C\u65BD\u653E\u300C" + skillKey + "\u300D");
+              this.castSkill(skillKey);
+            }
+          });
+          this.log('打开技能选择面板');
+        }
+        /**
+         * 【技能指令入口】提交一次技能施放（供后续技能面板 / UI 调用）。
+         *
+         * 与服务端同口径：`{ type: 'SKILL', skill_key }`，服务端会校验「已学 + 能量足够 + 是主动技」。
+         * 返回 true 表示已发出请求；false 表示当前不在指令阶段（或缺少 skill_key）。
+         *
+         * @param skillKey 技能 key / 中文名 / 技能书 id 均可（客户端会先归一成 key）
+         */
+
+
+        castSkill(skillKey) {
+          var _SkillData$resolveSki;
+
+          if (this.state !== BattleState.WAITING_COMMANDS || this.isAnimating || this.isRequestingAction) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[BattleScene] castSkill \u88AB\u5FFD\u7565\uFF1Astate=" + this.state);
+            return false;
+          }
+
+          var key = (_SkillData$resolveSki = SkillData.resolveSkillRef(skillKey)) != null ? _SkillData$resolveSki : skillKey == null ? null : String(skillKey);
+
+          if (!key) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] castSkill 缺少有效 skill_key:', skillKey);
+            return false;
+          }
+
+          if (this.useServerRoomBattle && this.roomId) {
+            this.sendBattleRoomAction('SKILL', key);
+            return true;
+          } // 本地模拟模式：保留旧逻辑（本地模拟暂不结算技能，按待机处理）
+
+
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn('[BattleScene] 本地模拟模式暂不结算技能，本回合按待机处理');
+          this.pendingPlayerAction = {
+            side: 'player',
+            type: 'SKILL'
+          };
+          this.tryResolveRound();
+          return true;
         }
         /**
          * 房间制：向服务器提交一次指令，并用返回的新 state 刷新 UI + 播放本地动画
          * 伤害和胜负全部以服务器为准，本地只负责表现。
+         *
+         * @param action  ATTACK / DEFEND / ESCAPE / SKILL
+         * @param skillKey 仅 SKILL 需要（key / 名称 / 技能书 id，会被归一成 key）
          */
 
 
-        sendBattleRoomAction(action) {
+        sendBattleRoomAction(action, skillKey) {
           var _this$ws$getCharacter10, _this$ws10;
 
           if (!this.roomId || this.isRequestingAction) return;
           var characterId = (_this$ws$getCharacter10 = (_this$ws10 = this.ws).getCharacterId) == null ? void 0 : _this$ws$getCharacter10.call(_this$ws10);
-          if (!characterId) return; // 记录本回合开始前的 HP 快照和玩家动作
+          if (!characterId) return; // 【空窗挽回期】玩家主动操作 → 通知服务端解除本方关窗计数（_clear_side_noop）。
+          //   但「剩余时间」面板不隐藏：若自己已提交、对方仍未操作，倒计时继续走完，
+          //   让玩家能直观看到对方是否挂机（走完由服务端自动补普攻结算）。
+
+          this._waitingOpponent = true;
+
+          if (!this.graceActive) {
+            // 自己是在 5 秒静默期内操作的：对方此前可能也一直没动 → 立即激活倒计时展示
+            this.activateGraceCountdown();
+          } // 记录本回合开始前的 HP 快照和玩家动作
+
 
           if (this.playerUnit && this.enemyUnit) {
             this.lastRoundPlayerHp = this.playerUnit.hp;
@@ -1884,24 +2533,56 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }
 
           this.isRequestingAction = true;
-          this.setButtonsInteractable(false); // 修复点：提交指令时关闭操作面板，与本地模式 tryResolveRound 行为一致，避免动画期间面板仍显示
+          this.setButtonsInteractable(false); // 进入动画等待态并启动看门狗计时，保证后续任何一环断链都能被 update() 兜底恢复
+
+          this.state = BattleState.ANIMATING;
+          this.isAnimating = true;
+          this.animWatchdog = 0; // 关闭操作面板（已提交本回合指令，无需再点）；但「剩余时间」面板保持可见并可继续倒计时，
+          //   让玩家能看到对方是否仍在挂机（需求：自己操作后倒计时继续，直到对方也操作）。
 
           if (this.battleSelectPanel) this.battleSelectPanel.active = false;
-          var sessionId = this._sessionId;
-          this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
-            error: Error()
-          }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_ACTION, {
+          this.closeSkillSelectPanel(); // 已提交指令 → 技能面板一并收起
+
+          if (this.timerRoot) this.timerRoot.active = this.graceActive; // 组包：技能指令额外带 skill_key（服务端归一后校验「已学 + 能量足够 + 主动技」）
+
+          var payload = {
             room_id: this.roomId,
             action_type: action,
             character_id: characterId
-          }, resp => {
-            var _this$node11, _resp$data3, _ref20, _playerActor$hp2, _this$playerUnit, _ref21, _enemyActor$hp2, _this$enemyUnit;
+          };
+
+          if (action === 'SKILL') {
+            var _SkillData$resolveSki2;
+
+            var key = skillKey ? (_SkillData$resolveSki2 = SkillData.resolveSkillRef(skillKey)) != null ? _SkillData$resolveSki2 : skillKey : null;
+
+            if (!key) {
+              // 兜底：技能 key 丢失时按普攻提交，避免服务端 400 后本回合彻底卡住
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[BattleScene] 技能指令缺少可识别的 skill_key，已改为提交普攻');
+              payload.action_type = 'ATTACK';
+            } else {
+              payload.skill_key = key;
+            }
+          }
+
+          var sessionId = this._sessionId;
+          this.ws.request((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            error: Error()
+          }), GameConfig) : GameConfig).MESSAGE_TYPES.BATTLE_ROOM_ACTION, payload, resp => {
+            var _this$node11, _resp$data3, _state$round;
 
             this.isRequestingAction = false;
+            this._waitingOpponent = false;
             if (!((_this$node11 = this.node) != null && _this$node11.isValid) || this._sessionId !== sessionId) return;
 
             if (!(resp != null && resp.success) || !((_resp$data3 = resp.data) != null && _resp$data3.state)) {
-              console.error('[BattleScene] battle_room_action 失败:', (resp == null ? void 0 : resp.message) || resp);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] battle_room_action 失败:', (resp == null ? void 0 : resp.message) || resp);
+              this.state = BattleState.WAITING_COMMANDS;
+              this.isAnimating = false;
               this.setButtonsInteractable(true); // 修复点：请求失败时恢复操作面板显示，便于玩家重试
 
               if (this.battleSelectPanel) this.battleSelectPanel.active = true;
@@ -1909,37 +2590,62 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }
 
             var state = resp.data.state;
-            var playerActor = state.player;
-            var enemyActor = state.enemy; // 服务器结算后的最终 HP
-
-            var targetPlayerHp = Number((_ref20 = (_playerActor$hp2 = playerActor == null ? void 0 : playerActor.hp) != null ? _playerActor$hp2 : (_this$playerUnit = this.playerUnit) == null ? void 0 : _this$playerUnit.hp) != null ? _ref20 : 0);
-            var targetEnemyHp = Number((_ref21 = (_enemyActor$hp2 = enemyActor == null ? void 0 : enemyActor.hp) != null ? _enemyActor$hp2 : (_this$enemyUnit = this.enemyUnit) == null ? void 0 : _this$enemyUnit.hp) != null ? _ref21 : 0); // 修复点：只同步单位/展示数据，不调 finishBattle、不显示面板；击杀时先播完本回合双方动画，再在 playServerRoundAnimation 收尾时调 finishBattle
-
-            this.applyServerRoomState(state, false, true);
 
             if (!this.playerUnit || !this.enemyUnit || this.lastRoundPlayerAction == null) {
-              return; // 缺快照或单位，直接用静态 UI
-            } // 按服务器结果计算本回合掉血量（不能为负）
+              var _this$node12;
+
+              // 关键兜底：缺快照/单位时绝不能直接 return —— 那会让 state 永远停在 ANIMATING，
+              //   面板不显示、按钮不可点、退不出（战斗卡死）。
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("[BattleScene] \u56DE\u5408\u6570\u636E\u7F3A\u5931\uFF0C\u8DF3\u8FC7\u52A8\u753B\u76F4\u63A5\u6062\u590D\u64CD\u4F5C\uFF1A" + ("playerUnit=" + !!this.playerUnit + " enemyUnit=" + !!this.enemyUnit + " lastAction=" + this.lastRoundPlayerAction));
+              this.applyServerRoomState(state, false, true);
+              this.state = BattleState.INIT;
+              this.isAnimating = false;
+              this.isRequestingAction = false;
+              this.animWatchdog = 0;
+              if ((_this$node12 = this.node) != null && _this$node12.isValid) this.startCommandPhase();
+              return;
+            } // 标记本回合已由自己路径播放，避免随后的 pvp_round_update 推送重复播
 
 
-            var damageToPlayer = Math.max(0, this.lastRoundPlayerHp - targetPlayerHp);
-            var damageToEnemy = Math.max(0, this.lastRoundEnemyHp - targetEnemyHp); // 为了播动画，把本地 HP 暂时“回滚”到回合开始前
+            var respRound = Number((_state$round = state == null ? void 0 : state.round) != null ? _state$round : 0);
 
-            this.playerUnit.hp = this.lastRoundPlayerHp;
-            this.enemyUnit.hp = this.lastRoundEnemyHp;
-            this.syncUnitHpToRawData(this.playerUnit);
-            this.syncUnitHpToRawData(this.enemyUnit);
-            this.refreshPlayerMechAttributeUI(true); // 用服务器伤害驱动一轮动画，播完再落到服务器最终 HP
+            if (this.currentBattleMode === 'pvp' && respRound > 0) {
+              this._lastPlayedPvpRound = Math.max(this._lastPlayedPvpRound, respRound - 1);
+            } // 共用「按服务器 state 播整回合动画」的逻辑
 
-            this.playServerRoundAnimation(this.lastRoundPlayerAction, damageToPlayer, damageToEnemy, targetPlayerHp, targetEnemyHp, state);
-          }, true, this.currentBattleMode === 'pvp' ? 35000 : 10000);
+
+            this.playRoundFromServerState(state, this.lastRoundPlayerAction, this.lastRoundPlayerHp, this.lastRoundEnemyHp);
+          }, true, // PVP 最坏情况：空窗静默 5s + 倒计时 30s = 35s，服务器才结算返回。
+          //   请求超时必须大于该上限（留 10s 余量），否则会在服务器结算前被客户端提前判超时。
+          this.currentBattleMode === 'pvp' ? 45000 : 10000);
         }
 
         onBackClicked() {
-          // 只在指令选择阶段允许开关面板
-          if (this.state !== BattleState.WAITING_COMMANDS) return;
-          if (!this.battleSelectPanel) return;
-          this.battleSelectPanel.active = !this.battleSelectPanel.active;
+          // 【联动】技能选择面板开着时，返回键先关技能面板（不退出战斗、也不切换操作面板）
+          var skillPanel = this.skillSelectPanel;
+
+          if (skillPanel && skillPanel.isValid && skillPanel.isOpen()) {
+            skillPanel.close();
+            return;
+          } // 正常情况：只在指令选择阶段开关面板
+
+
+          if (this.state === BattleState.WAITING_COMMANDS) {
+            if (!this.battleSelectPanel) return;
+            this.battleSelectPanel.active = !this.battleSelectPanel.active;
+            return;
+          } // 逃生通道：非指令阶段（动画卡住 / 状态异常）时，点返回键强制恢复操作，避免彻底无法操作
+
+
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[BattleScene] \u8FD4\u56DE\u952E\u5728\u975E\u6307\u4EE4\u9636\u6BB5\u88AB\u70B9\u51FB\uFF08state=" + this.state + "\uFF09\uFF0C\u5F3A\u5236\u6062\u590D\u6307\u4EE4\u9636\u6BB5");
+          this.isAnimating = false;
+          this.isRequestingAction = false;
+          this.animWatchdog = 0;
+          this.startCommandPhase();
         } // ========== 战斗核心 ==========
 
 
@@ -1949,6 +2655,33 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         getOpponent(side) {
           return side === 'player' ? this.enemyUnit : this.playerUnit;
+        }
+        /**
+         * 伤害数字的弧形方向：向**受击者身后**（被击退的方向）抛出。
+         * 攻击方在左 → 受击者在右 → 数字向右（+）；
+         * 攻击方在右 → 受击者在左 → 数字向左（−）。
+         * 自己方受击同理（数字从自己身上向自己身后飞出，远离攻击方）。
+         * 返回的 y 仅作兼容占位（弧线由 RobotShow 内的重力自动生成）。
+         */
+
+
+        damageDriftFor(attackerSide) {
+          var attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+          var defenderShow = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow;
+          var aNode = attackerShow == null ? void 0 : attackerShow.node;
+          var dNode = defenderShow == null ? void 0 : defenderShow.node; // 用屏幕世界坐标判断左右（UI 下 worldPosition 即屏幕坐标）
+
+          var ax = aNode ? aNode.worldPosition.x : 0;
+          var dx = dNode ? dNode.worldPosition.x : 0; // 受击者在攻击者屏幕右侧 → +1（数字向右飞）；左侧 → −1
+
+          var dir = dx >= ax ? 1 : -1;
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u65B9\u5411\u8BCA\u65AD] \u653B\u65B9=" + attackerSide + " \u653B\u5C4F\u5E55x=" + ax.toFixed(0) + " \u5B88\u5C4F\u5E55x=" + dx.toFixed(0) + " \u2192 \u671F\u671B\u5C4F\u5E55\u65B9\u5411=" + dir);
+          return {
+            x: dir,
+            y: 0
+          };
         }
 
         performAttack(attackerSide, onDone) {
@@ -1962,23 +2695,65 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.isAnimating = true;
           this.setButtonsInteractable(false);
           var rawDamage = attacker.attack - defender.defense;
-          var damage = Math.max(1, rawDamage);
-          defender.hp = Math.max(0, defender.hp - damage);
-          this.syncUnitHpToRawData(defender); // 只在“玩家机甲”受伤时刷新属性面板（敌方不显示面板）
+          var damage = Math.max(1, rawDamage); // 伤害数字漂移方向：远离攻击方（与击退方向一致），形成"连续冒出→旧的后退消失"的轨迹
 
-          if (defender.side === 'player') {
-            this.refreshPlayerMechAttributeUI(true);
-          }
+          var drift = this.damageDriftFor(attackerSide); // 「攻击次数」：把这一次攻击拆成 N 段（总伤上限 +20%），逐段扣血/弹数字
 
-          this.log((attackerSide === 'player' ? '玩家' : '敌人') + " \u666E\u653B\u9020\u6210 " + damage + " \u70B9\u4F24\u5BB3\uFF08\u653B\u51FB " + attacker.attack + " - \u9632\u5FA1 " + defender.defense + "\uFF09"); // 判定是否为“远程攻击”（是否装备枪械）
+          var segments = computeAttackSegments(damage, attacker.attackTimes);
+
+          var applySegments = onApplied => {
+            var i = 0;
+            var defenderShowRef = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow;
+            var applied = false;
+
+            var step = () => {
+              if (i < segments.length) {
+                defender.hp = Math.max(0, defender.hp - segments[i]);
+
+                if (defenderShowRef) {
+                  defenderShowRef.showDamageNumber(segments[i], false, drift.x, drift.y);
+                }
+
+                this.syncUnitHpToRawData(defender);
+                i++;
+
+                if (i < segments.length) {
+                  // 包匿名闭包：避免同一 callback 引用被 Cocos 去重导致调度丢失
+                  this.scheduleOnce(() => step(), 0.18);
+                  return;
+                }
+              }
+
+              if (applied) return;
+              applied = true;
+              onApplied();
+            };
+
+            step();
+          };
+
+          this.log((attackerSide === 'player' ? '玩家' : '敌人') + " \u666E\u653B\u9020\u6210 " + damage + " \u70B9\u4F24\u5BB3" + (segments.length > 1 ? "\uFF08\u653B\u51FB " + attacker.attack + " - \u9632\u5FA1 " + defender.defense + "\uFF0C\u5206 " + segments.length + " \u6BB5\uFF09" : "\uFF08\u653B\u51FB " + attacker.attack + " - \u9632\u5FA1 " + defender.defense + "\uFF09")); // 判定是否为“远程攻击”（是否装备枪械）
 
           var attackerEquip = ((_attacker$rawData = attacker.rawData) == null ? void 0 : _attacker$rawData.equipment) || ((_attacker$rawData2 = attacker.rawData) == null || (_attacker$rawData2 = _attacker$rawData2.data) == null ? void 0 : _attacker$rawData2.equipment) || {};
           var attackerHasGun = !!(attackerEquip && attackerEquip.Gun && attackerEquip.Gun.item_id); // 播放攻击动画（根据是否有枪械区分远程/近战）
 
           var attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
-          var defenderShow = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow;
-          this.playAttackAnimation(attackerShow, defenderShow, attackerHasGun, () => {
-            // 检查是否有人死亡
+          var defenderShow = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow; // 结算与收尾解耦：
+          //   · 逐段扣血 + 弹伤害数字 → 挂在「接触到对方」的瞬间启动（onImpact）
+          //   · 死亡判定 / 解锁 → 必须等「动画播完」且「分段结算完」两者到齐
+
+          var segStarted = false;
+          var segDone = false;
+          var animFinished = false;
+
+          var afterAll = () => {
+            if (!segDone || !animFinished) return;
+
+            if (defender.side === 'player') {
+              this.refreshPlayerMechAttributeUI(true);
+            } // 检查是否有人死亡
+
+
             if (defender.hp <= 0) {
               var winner = attacker.side;
               this.log((winner === 'player' ? '玩家' : '敌人') + " \u83B7\u80DC\uFF01");
@@ -1996,6 +2771,35 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             this.isAnimating = false;
             onDone();
+          };
+
+          var startSegments = () => {
+            if (segStarted) return;
+            segStarted = true;
+
+            try {
+              applySegments(() => {
+                segDone = true;
+                afterAll();
+              });
+            } catch (e) {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 本地段结算异常，强制收尾:', e);
+              segDone = true;
+              this.isAnimating = false;
+              onDone();
+            }
+          };
+
+          this.playAttackAnimation(attackerShow, defenderShow, attackerHasGun, // onComplete：动画播完（兜底启动分段结算 + 补齐收尾条件）
+          () => {
+            animFinished = true;
+            startSegments();
+            afterAll();
+          }, // onImpact：接触到对方的瞬间 —— 只弹伤害数字（**普攻不播技能特效**，2026-09-30 用户要求去掉）
+          () => {
+            startSegments();
           });
         }
 
@@ -2011,6 +2815,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.battleSelectPanel.active = false;
           }
 
+          this.closeSkillSelectPanel();
           this.setButtonsInteractable(false); // 延迟一段时间再执行动作，让玩家有“确认选择→收板→再开打”的体验
 
           this.scheduleOnce(() => {
@@ -2088,6 +2893,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         playServerRoundAnimation(playerAction, damageToPlayer, damageToEnemy, targetPlayerHp, targetEnemyHp, serverState) {
           if (!this.playerUnit || !this.enemyUnit) {
+            var _this$node13;
+
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[BattleScene] playServerRoundAnimation \u5355\u4F4D\u7F3A\u5931\uFF0C\u76F4\u63A5\u6062\u590D\u64CD\u4F5C playerUnit=" + !!this.playerUnit + " enemyUnit=" + !!this.enemyUnit);
+            this.state = BattleState.INIT;
+            this.isAnimating = false;
+            this.isRequestingAction = false;
+            this.animWatchdog = 0;
+            if ((_this$node13 = this.node) != null && _this$node13.isValid) this.startCommandPhase();
             return;
           } // 逃跑：服务器已经把结果算好了，这里只做简单提示和 finish
 
@@ -2113,6 +2928,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               return;
             }
 
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] runAction side=" + side + " state=" + this.state);
+
             if (side === 'player') {
               if (playerAction === 'ATTACK' && damageToEnemy > 0) {
                 this.performAttackWithDamage('player', damageToEnemy, done);
@@ -2120,6 +2939,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 this.log('玩家选择了防御/待机（本回合不行动）');
                 this.scheduleOnce(done, 0.15);
               } else {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u73A9\u5BB6\u653B\u51FB\u88AB\u8DF3\u8FC7\uFF1AplayerAction=" + playerAction + " damageToEnemy=" + damageToEnemy);
                 this.scheduleOnce(done, 0.1);
               }
             } else {
@@ -2138,46 +2960,766 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.scheduleOnce(() => {
               if (this.state === BattleState.FINISHED) return;
               runAction(order[1], () => {
-                if (this.state === BattleState.FINISHED) return; // 动画播完后，将 HP 校准到服务器最终值
-
-                if (this.playerUnit) {
-                  this.playerUnit.hp = targetPlayerHp;
-                  this.syncUnitHpToRawData(this.playerUnit);
-                }
-
-                if (this.enemyUnit) {
-                  this.enemyUnit.hp = targetEnemyHp;
-                  this.syncUnitHpToRawData(this.enemyUnit);
-                }
-
-                this.refreshPlayerMechAttributeUI(true); // 根据服务器结果收尾：击杀/胜负在双方动画都播完后才结束战斗，符合回合制常规体验
-
-                if ((serverState == null ? void 0 : serverState.status) === 'finished' && serverState.result) {
-                  var _winner = serverState.result.winner === 'player' ? 'player' : 'enemy';
-
-                  var _reason = serverState.result.reason === 'escape' ? 'escape' : 'ko'; // 胜负已定：为被击破的一方播放同款击破动画（敌我一致），再结束战斗
-
-
-                  var defeatedShow = _winner === 'player' ? this.enemyRobotShow : this.playerRobotShow;
-
-                  if (defeatedShow) {
-                    this.playDefeatAnimation(defeatedShow, () => {
-                      if (this.state !== BattleState.FINISHED) this.finishBattle(_winner, _reason);
-                    });
-                  } else {
-                    this.scheduleOnce(() => {
-                      if (this.state !== BattleState.FINISHED) this.finishBattle(_winner, _reason);
-                    }, 0.5);
-                  }
-                } else {
-                  // 修复点：双方动画都结束后再延迟一小段时间才显示操作面板，避免「动作未播完就出按钮」
-                  this.scheduleOnce(() => {
-                    if (this.state !== BattleState.FINISHED) this.startCommandPhase();
-                  }, this.COMMAND_PANEL_DELAY_AFTER_ANIMATIONS);
-                }
+                if (this.state === BattleState.FINISHED) return;
+                this.finishRoundPresentation(serverState, targetPlayerHp, targetEnemyHp);
               });
             }, 1.0);
           });
+        }
+        /**
+         * 回合收尾（两条演绎路径共用）：
+         *   1) 把 HP 落到「攻击结算后、被动恢复前」的值；
+         *   2) 播回合结束被动恢复（生命恢复 / 能量恢复）；
+         *   3) 按服务器结果判胜负（播击破动画）或回到指令阶段。
+         *
+         * ⚠ 服务端给的 hp 是「攻击结算 + 被动恢复」后的最终值，算伤害前必须先把恢复量剥掉，
+         *   否则本回合伤害会被少算（伤害数字偏小、与真实掉血不符）。
+         */
+
+
+        finishRoundPresentation(serverState, targetPlayerHp, targetEnemyHp) {
+          var peList = side => {
+            var _serverState$round_pa;
+
+            var l = serverState == null || (_serverState$round_pa = serverState.round_passive_effects) == null ? void 0 : _serverState$round_pa[side];
+            return Array.isArray(l) ? l : [];
+          };
+
+          var hpBack = (side, finalHp) => Math.max(0, finalHp - peList(side).reduce((s, e) => s + ((e == null ? void 0 : e.attr) === 'hp' ? Number(e.value) || 0 : 0), 0));
+
+          if (this.playerUnit) {
+            this.playerUnit.hp = hpBack('player', targetPlayerHp);
+            this.syncUnitHpToRawData(this.playerUnit);
+          }
+
+          if (this.enemyUnit) {
+            this.enemyUnit.hp = hpBack('enemy', targetEnemyHp);
+            this.syncUnitHpToRawData(this.enemyUnit);
+          }
+
+          this.refreshPlayerMechAttributeUI(true); // 回合结束被动恢复表现（生命恢复 / 能量恢复）：特效 + 治疗数字 + 血/蓝条
+
+          this.playPassiveRecoverEffects(serverState, () => {
+            if (this.state === BattleState.FINISHED) return; // 根据服务器结果收尾：击杀/胜负在双方动画都播完后才结束战斗，符合回合制常规体验
+
+            if ((serverState == null ? void 0 : serverState.status) === 'finished' && serverState.result) {
+              var winner = serverState.result.winner === 'player' ? 'player' : 'enemy';
+              var reason = serverState.result.reason === 'escape' ? 'escape' : 'ko'; // 胜负已定：为被击破的一方播放同款击破动画（敌我一致），再结束战斗
+
+              var defeatedShow = winner === 'player' ? this.enemyRobotShow : this.playerRobotShow;
+
+              if (defeatedShow) {
+                this.playDefeatAnimation(defeatedShow, () => {
+                  if (this.state !== BattleState.FINISHED) this.finishBattle(winner, reason);
+                });
+              } else {
+                this.scheduleOnce(() => {
+                  if (this.state !== BattleState.FINISHED) this.finishBattle(winner, reason);
+                }, 0.5);
+              }
+            } else {
+              // 修复点：双方动画都结束后再延迟一小段时间才显示操作面板，避免「动作未播完就出按钮」
+              this.scheduleOnce(() => {
+                if (this.state !== BattleState.FINISHED) this.startCommandPhase();
+              }, this.COMMAND_PANEL_DELAY_AFTER_ANIMATIONS);
+            }
+          });
+        } // ========== 服务端出手明细（round_events）演绎 ==========
+
+        /**
+         * 按服务端「出手明细」`serverState.round_events` 演绎一整个回合。
+         *
+         * 与「HP 差值反推」路径相比，事件路径能精确表达：
+         *   - 本回合每一次出手用的技能 / 要播的特效（`anim`）；
+         *   - 每次出手的伤害、暴击、治疗，而不是只拿到一个「掉血总量」；
+         *   - 施放失败（技能不存在 / 能量不足 / 未实装）这类没有数值变化的出手。
+         *
+         * ⚠ 服务端是唯一权威：本方法**只做表现**，不重算任何伤害；单位最终 HP/MP 一律取 state。
+         *   服务端没给 round_events（老版本 / 空回合）时，调用方自动回落到 HP 差值路径。
+         */
+
+
+        playRoundEvents(serverState, events, targetPlayerHp, targetEnemyHp) {
+          var i = 0;
+
+          var step = () => {
+            var _this$node14;
+
+            if (!((_this$node14 = this.node) != null && _this$node14.isValid) || this.state === BattleState.FINISHED) return;
+
+            if (i >= events.length) {
+              this.finishRoundPresentation(serverState, targetPlayerHp, targetEnemyHp);
+              return;
+            }
+
+            var ev = events[i++];
+            this.playOneRoundEvent(ev, () => {
+              var _this$node15;
+
+              if (!((_this$node15 = this.node) != null && _this$node15.isValid) || this.state === BattleState.FINISHED) return; // 包一层匿名闭包：Cocos 以 target+callback 为唯一键，同一函数引用会被去重
+
+              this.scheduleOnce(() => step(), BattleScene.ROUND_EVENT_GAP);
+            });
+          };
+
+          step();
+        }
+        /**
+         * 演绎一次出手（一条 round_event）。
+         *
+         * 事件结构（服务端 `battle_room_service._exec_action`，view 已按视角交换）：
+         *   { side, action, skill_key, skill_name, anim, level, repeats, mp_cost, mp_after,
+         *     targets: [{ side, kind, damage, crit, hp_after, mp_after, drained }],
+         *     heals:   [{ side, attr, value, cur, max, from }],
+         *     effects: [], pending_effects: [], failed }
+         */
+
+
+        playOneRoundEvent(ev, done) {
+          var _this$getUnit, _this$getUnit2, _targets$, _SkillData$getSkillDe;
+
+          if (!ev || typeof ev !== 'object') {
+            done();
+            return;
+          }
+
+          var side = ev.side === 'enemy' ? 'enemy' : 'player';
+          var who = side === 'player' ? '你' : '敌方';
+          var atype = String(ev.action || '').toUpperCase();
+          var skillKey = SkillData.resolveSkillRef(ev.skill_key);
+          var skillName = String(ev.skill_name || '') || SkillData.roundEventLabel(ev) || '普通攻击';
+          var level = Math.max(1, Number(ev.level) || 1); // 施放失败（技能不存在 / 能量不足 / 未实装）：只提示，不改任何数值
+
+          if (ev.failed) {
+            this.log(who + " \u7684\u300C" + skillName + "\u300D\u672A\u80FD\u65BD\u653E\uFF1A" + ev.failed);
+            this.scheduleOnce(done, 0.15);
+            return;
+          } // 防御：本回合不出手，只进入防御姿态（「伤害减半」由服务端 applyGuard 算完）
+
+
+          if (atype === 'DEFEND') {
+            this.log(who + " \u8FDB\u5165\u9632\u5FA1\u59FF\u6001");
+            this.scheduleOnce(done, 0.15);
+            return;
+          }
+
+          if (atype !== 'ATTACK' && atype !== 'SKILL') {
+            done();
+            return;
+          }
+
+          var targets = Array.isArray(ev.targets) ? ev.targets : [];
+          var totalDamage = targets.reduce((s, t) => s + Math.max(0, Number(t == null ? void 0 : t.damage) || 0), 0); // ---- 普攻：沿用既有动画链路（远程/近战判定 + 按攻击次数拆段弹数字）----
+
+          if (atype === 'ATTACK') {
+            if (totalDamage <= 0) {
+              this.log(who + " \u7684\u666E\u901A\u653B\u51FB\u672A\u9020\u6210\u4F24\u5BB3");
+              this.applyRoundEventHeals(ev);
+              this.scheduleOnce(done, 0.15);
+              return;
+            }
+
+            this.performAttackWithDamage(side, totalDamage, () => {
+              this.applyRoundEventHeals(ev);
+              done();
+            });
+            return;
+          } // ---- 技能 ----
+          // 1) 能量：以服务端 mp_after 为权威（扣蓝已由服务端在结算时落地）
+
+
+          var attackerUnit = this.getUnit(side);
+
+          if (attackerUnit) {
+            var mpAfter = Number(ev.mp_after);
+
+            if (Number.isFinite(mpAfter)) {
+              attackerUnit.mp = Math.max(0, Math.min(attackerUnit.maxMp, mpAfter));
+              this.syncUnitMpToRawData(attackerUnit);
+            }
+          }
+
+          var cost = Math.max(0, Number(ev.mp_cost) || 0);
+          this.log(who + " \u65BD\u653E\u300C" + skillName + "\u300D" + (level > 1 ? "\uFF08Lv" + level + "\uFF09" : '') + (cost > 0 ? " \u2212" + cost + " \u80FD\u91CF" : '') + (totalDamage > 0 ? " \u2192 " + totalDamage + " \u70B9\u4F24\u5BB3" : '') + (totalDamage > 0 && (((_this$getUnit = this.getUnit(side)) == null ? void 0 : _this$getUnit.attackTimes) || 1) > 1 ? "\uFF08\u653B\u51FB\u6B21\u6570 " + ((_this$getUnit2 = this.getUnit(side)) == null ? void 0 : _this$getUnit2.attackTimes) + "\uFF09" : '')); // 2) 特效打在「本次出手的目标」身上；自身 / 己方技能（护盾、修理）打在自己身上
+
+          var t0 = (_targets$ = targets[0]) == null ? void 0 : _targets$.side;
+          var effectSide = t0 === 'enemy' ? 'enemy' : t0 === 'player' ? 'player' : side;
+          var effectShow = effectSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+          var anim = String(ev.anim || '') || (skillKey ? String(((_SkillData$getSkillDe = SkillData.getSkillDef(skillKey)) == null ? void 0 : _SkillData$getSkillDe.anim) || '') : ''); // 2.5) 距离：近身技必须先位移贴到目标身前再出招；远程技原地出招。
+          //    口径 = Skills.json 的 `range`（melee/ranged/dynamic/none），见 tools/skill_range_todo.md。
+          //    dynamic 按「是否持枪」判定（与普攻同口径）；自身/己方技能（护盾、修理）不以敌人为目标 → 不位移。
+          //    ⚠ 读不到技能定义（目录加载失败 / 技能不在目录）时**按普攻口径兜底**（持枪=远程，否则近身），
+          //      绝不默认成「远程」—— 否则近身技会一直在原地出招（2026-10-01 实测事故）。
+
+          var skillDef = skillKey ? SkillData.getSkillDef(skillKey) : null;
+          var attackerShow = side === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+          var rawAny = attackerUnit == null ? void 0 : attackerUnit.rawData;
+          var attackerHasGun = SkillData.hasGunEquipped(SkillData.equipmentOf(rawAny) || SkillData.equipmentOf(rawAny == null ? void 0 : rawAny.data));
+          var skillRanged = SkillData.isRangedSkill(skillDef, attackerHasGun);
+          var meleeMove = !skillRanged && effectShow && effectShow !== attackerShow ? this.moveInForMeleeSkill(attackerShow, effectShow, skillName) : null;
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u8FD1\u8EAB\u6280] \u300C" + skillName + "\u300D(key=" + (skillKey || '-') + ") " + (skillDef ? "range=" + (skillDef.range || '缺失') : '目录未命中→按普攻口径') + (" \u6301\u67AA=" + attackerHasGun + " \u2192 " + (skillRanged ? '远程/原地' : meleeMove ? '近身/位移' : '近身/无需位移')));
+          /** 近身技：技能动画一结束就归位，不等伤害数字播完。 */
+
+          var startMeleeRestore = () => {
+            meleeMove == null || meleeMove.restore(() => {});
+          };
+
+          var afterEffect = () => {
+            var _this$node16;
+
+            startMeleeRestore();
+
+            if (!((_this$node16 = this.node) != null && _this$node16.isValid) || this.state === BattleState.FINISHED) {
+              done();
+              return;
+            }
+
+            this.applyRoundEventDamage(ev, side, targets, () => {
+              this.applyRoundEventHeals(ev);
+              this.refreshPlayerMechAttributeUI(true);
+              done();
+            });
+          };
+
+          if (effectShow && anim) {
+            var fired = false;
+
+            var fire = () => {
+              if (fired) return;
+              fired = true;
+              afterEffect();
+            };
+
+            try {
+              effectShow.playSkillEffect(anim, 1, fire);
+            } catch (err) {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("[BattleScene] \u6280\u80FD\u7279\u6548\u64AD\u653E\u5931\u8D25 " + anim + ":", err);
+            } // 兜底：Skill 节点缺该动画 / 回调丢失时也要推进，避免战斗卡死
+
+
+            this.scheduleOnce(fire, 1.0);
+          } else {
+            this.scheduleOnce(afterEffect, 0.15);
+          }
+        }
+        /** 把一次出手的伤害落到单位身上（弹伤害数字 + 写 HP/MP + 刷血条）。
+         *
+         * 技能与普攻同口径：
+         *   - 总伤来自服务端（已含技能 `repeats` 多次公式求和）；
+         *   - 客户端再按攻击方 **AttackCount（攻击次数）** 拆段展示（`computeAttackSegments`）；
+         *   - **整次出手只击退一次**（首段 HP 伤害时抖动），多段只弹数字、不再重复击退。
+         * 技能特效 / 近身贴脸是**前置表现**，不替代本段击退。
+         */
+
+
+        applyRoundEventDamage(ev, attackerSide, targets, onDone) {
+          var attacker = this.getUnit(attackerSide);
+          var attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+          var attackTimes = Math.max(1, Math.floor(Number(attacker == null ? void 0 : attacker.attackTimes) || 1));
+          var drift = this.damageDriftFor(attackerSide);
+          var jobs = [];
+
+          for (var t of targets) {
+            var tSide = (t == null ? void 0 : t.side) === 'enemy' ? 'enemy' : (t == null ? void 0 : t.side) === 'player' ? 'player' : null;
+            if (!tSide) continue;
+            var unit = this.getUnit(tSide);
+            if (!unit) continue;
+            var show = tSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+            var kind = String((t == null ? void 0 : t.kind) || 'hp_damage');
+            var isMp = kind === 'mp_damage' || kind === 'mp_drain';
+            var dmg = Math.max(0, Number(t == null ? void 0 : t.damage) || 0);
+
+            if (dmg <= 0) {
+              // 无伤害（护盾 / 纯 buff）：仍要把服务端权威血蓝对齐
+              this.clampUnitToServer(unit, t);
+              this.syncUnitHpToRawData(unit);
+              this.syncUnitMpToRawData(unit);
+              if (show) show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+              continue;
+            } // HP：按攻击次数拆段（与普攻 performAttackWithDamage 同口径）
+            // MP：无攻击次数语义，仍均分到 skill.repeats（至少 1）
+
+
+            if (isMp) {
+              var repeats = Math.max(1, Math.floor(Number(ev == null ? void 0 : ev.repeats) || 1));
+
+              for (var seg of this.splitEvenly(dmg, repeats)) {
+                jobs.push({
+                  unit,
+                  show,
+                  value: seg,
+                  isMp: true,
+                  shake: false
+                });
+              }
+            } else {
+              var segs = computeAttackSegments(dmg, attackTimes);
+
+              for (var si = 0; si < segs.length; si++) {
+                // 每个目标整次出手只击退一次（首段）
+                jobs.push({
+                  unit,
+                  show,
+                  value: segs[si],
+                  isMp: false,
+                  shake: si === 0
+                });
+              }
+            } // 逐段取整可能与服务端总量差 1~2 点 → 该目标最后用服务端 hp_after/mp_after 兜底
+
+
+            jobs.push({
+              unit,
+              show,
+              value: -1,
+              isMp,
+              shake: false
+            });
+          }
+
+          if (jobs.length === 0) {
+            onDone();
+            return;
+          }
+
+          var i = 0;
+
+          var step = () => {
+            var _this$node17;
+
+            if (!((_this$node17 = this.node) != null && _this$node17.isValid) || this.state === BattleState.FINISHED) {
+              onDone();
+              return;
+            }
+
+            if (i >= jobs.length) {
+              onDone();
+              return;
+            }
+
+            var job = jobs[i++];
+
+            if (job.value < 0) {
+              // 哨兵：用服务端给的 hp_after / mp_after 对齐（避免分段取整误差累积）
+              this.clampUnitToServer(job.unit, null);
+              this.syncUnitHpToRawData(job.unit);
+              this.syncUnitMpToRawData(job.unit);
+
+              if (job.show) {
+                job.show.updateBattleBars(job.unit.hp, job.unit.maxHp, job.unit.mp, job.unit.maxMp);
+              }
+
+              this.scheduleOnce(() => step(), 0.05);
+              return;
+            }
+
+            if (job.isMp) {
+              job.unit.mp = Math.max(0, job.unit.mp - job.value);
+            } else {
+              job.unit.hp = Math.max(0, job.unit.hp - job.value);
+              if (job.show) job.show.showDamageNumber(job.value, false, drift.x, drift.y);
+            }
+
+            this.syncUnitHpToRawData(job.unit);
+            this.syncUnitMpToRawData(job.unit);
+
+            if (job.show) {
+              job.show.updateBattleBars(job.unit.hp, job.unit.maxHp, job.unit.mp, job.unit.maxMp);
+            } // 整次出手只在首段 HP 伤害时击退一次
+
+
+            if (job.shake) {
+              this.playDefenderHitShake(job.show, attackerShow, () => {
+                this.scheduleOnce(() => step(), 0.06);
+              });
+              return;
+            }
+
+            this.scheduleOnce(() => step(), Math.max(0.12, BattleScene.ROUND_EVENT_GAP / 3));
+          };
+
+          step();
+        }
+        /**
+         * 受击方「击退一小段再拉回」——普攻接触 / 技能段伤共用。
+         * 只动受击节点；攻击方站位由近身技前置位移单独管。
+         */
+
+
+        playDefenderHitShake(defenderShow, attackerShow, onDone) {
+          var dNode = defenderShow == null ? void 0 : defenderShow.node;
+
+          if (!(dNode != null && dNode.isValid)) {
+            onDone == null || onDone();
+            return;
+          }
+
+          var aNode = attackerShow == null ? void 0 : attackerShow.node;
+          var attackerOnLeft = defenderShow === this.enemyRobotShow;
+
+          if (aNode != null && aNode.isValid) {
+            attackerOnLeft = aNode.worldPosition.x < dNode.worldPosition.x;
+          }
+
+          var home = dNode.position.clone();
+          var delta = attackerOnLeft ? BattleScene.KNOCKBACK_DELTA : -BattleScene.KNOCKBACK_DELTA;
+          var knockPos = new Vec3(home.x + delta, home.y, home.z);
+          var fired = false;
+
+          var once = () => {
+            if (fired) return;
+            fired = true;
+            onDone == null || onDone();
+          };
+
+          try {
+            Tween.stopAllByTarget(dNode);
+            tween(dNode).to(0.08, {
+              position: knockPos
+            }).to(0.12, {
+              position: home
+            }).call(once).start();
+            this.scheduleOnce(once, 0.35);
+          } catch (err) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 受击抖动失败:', err);
+            if (dNode.isValid) dNode.setPosition(home);
+            once();
+          }
+        }
+        /**
+         * 落地一次出手的治疗 / 吸血 / 回蓝（`ev.heals`）。
+         * 服务端已在结算时把成长量写进 actor，这里只做表现 + 本地数值同步。
+         */
+
+
+        applyRoundEventHeals(ev) {
+          var list = Array.isArray(ev == null ? void 0 : ev.heals) ? ev.heals : [];
+
+          for (var h of list) {
+            var hSide = (h == null ? void 0 : h.side) === 'enemy' ? 'enemy' : (h == null ? void 0 : h.side) === 'player' ? 'player' : null;
+            if (!hSide) continue;
+            var unit = this.getUnit(hSide);
+            if (!unit) continue;
+            var show = hSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
+            var attr = String((h == null ? void 0 : h.attr) || '');
+            var value = Math.max(0, Number(h == null ? void 0 : h.value) || 0);
+            if (value <= 0) continue;
+
+            if (attr === 'hp') {
+              unit.hp = Math.min(unit.maxHp, unit.hp + value);
+              if (show) show.showDamageNumber(value, true); // isHeal → 治疗样式
+            } else if (attr === 'mp') {
+              unit.mp = Math.min(unit.maxMp, unit.mp + value);
+            } else {
+              continue;
+            }
+
+            this.syncUnitHpToRawData(unit);
+            this.syncUnitMpToRawData(unit);
+            if (show) show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+            var who = hSide === 'player' ? '你' : '敌方';
+            this.log(who + " \u6062\u590D " + value + " \u70B9" + (attr === 'hp' ? '生命' : '能量'));
+          }
+        }
+        /**
+         * 用服务端给的血蓝落地值对齐单位（`target` 为 null 时按当前单位自身上限夹取）。
+         * ⚠ 「死亡空血优先」：显式判 NaN，绝不用 `||`（`0 || maxHp` 会静默满血复活）。
+         */
+
+
+        clampUnitToServer(unit, target) {
+          var hpAfter = target ? Number(target.hp_after) : NaN;
+
+          if (Number.isFinite(hpAfter)) {
+            unit.hp = Math.max(0, Math.min(unit.maxHp, hpAfter));
+          } else {
+            unit.hp = Math.max(0, Math.min(unit.maxHp, unit.hp));
+          }
+
+          var mpAfter = target ? Number(target.mp_after) : NaN;
+
+          if (Number.isFinite(mpAfter)) {
+            unit.mp = Math.max(0, Math.min(unit.maxMp, mpAfter));
+          } else {
+            unit.mp = Math.max(0, Math.min(unit.maxMp, unit.mp));
+          }
+        }
+        /**
+         * 把总伤害平均拆成 n 段（末段吸收余数），保证 Σ段 === total。
+         * 只影响「跳几次数、每次多少」的打击感，不改总伤（对比：普攻用 computeAttackSegments 的加权拆段）。
+         */
+
+
+        splitEvenly(total, n) {
+          var count = Math.max(1, Math.floor(n || 1));
+          var amount = Math.max(0, Math.floor(total));
+          if (count === 1 || amount === 0) return [amount];
+          var base = Math.floor(amount / count);
+          var out = [];
+
+          for (var i = 0; i < count; i++) out.push(base);
+
+          out[count - 1] += amount - base * count;
+          return out.filter(v => v > 0);
+        }
+        /**
+         * 回合结束被动恢复表现（生命恢复 / 能量恢复）。
+         *
+         * 权威在服务端：服务端在「死亡判定**之后**」结算，并把结果放进
+         * `serverState.round_passive_effects`（按 side 分组，view 已按视角交换）。
+         * 这里只做表现、不重复判定 —— 空血单位服务端根本不会下发恢复效果；
+         * 客户端若自作主张补判，反而会与权威状态不一致。
+         *
+         * 每条效果：播对应动画（shengminghuifu / nenglianghuifu）+ 治疗数字 + 刷新血/蓝条；
+         * 多条之间按 PASSIVE_EFFECT_GAP 秒依次播，全部播完再回调（战斗收尾等它）。
+         */
+
+
+        playPassiveRecoverEffects(serverState, onDone) {
+          var _this = this;
+
+          var jobs = [];
+
+          var collect = (side, show) => {
+            var _serverState$round_pa2;
+
+            var list = serverState == null || (_serverState$round_pa2 = serverState.round_passive_effects) == null ? void 0 : _serverState$round_pa2[side];
+            if (!Array.isArray(list) || list.length === 0) return;
+            var unit = side === 'player' ? this.playerUnit : this.enemyUnit;
+            if (!unit) return;
+
+            var _loop = function _loop() {
+              var _e$cur;
+
+              var attr = String((e == null ? void 0 : e.attr) || '');
+              var healed = Number(e == null ? void 0 : e.value) || 0;
+              var cur = Number((_e$cur = e == null ? void 0 : e.cur) != null ? _e$cur : NaN);
+              var anim = String((e == null ? void 0 : e.anim) || '');
+              var skillName = String((e == null ? void 0 : e.name) || '被动技能');
+              if (healed <= 0) return 1; // continue
+
+              jobs.push(() => {
+                // 特效（名字须在 Skill 节点播放列表里），出错不影响战斗结算
+                if (show && anim) {
+                  try {
+                    show.playSkillEffect(anim, 1);
+                  } catch (err) {
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).warn("[BattleScene] \u88AB\u52A8\u6062\u590D\u7279\u6548\u64AD\u653E\u5931\u8D25 " + anim + ":", err);
+                  }
+                }
+
+                var who = side === 'player' ? '你' : '敌方';
+
+                if (attr === 'hp') {
+                  unit.hp = Number.isFinite(cur) ? Math.min(unit.maxHp, cur) : Math.min(unit.maxHp, unit.hp + healed);
+
+                  _this.syncUnitHpToRawData(unit);
+
+                  if (show) {
+                    show.showDamageNumber(healed, true); // isHeal = true → 治疗样式
+
+                    show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+                  }
+
+                  _this.log(who + "\u7684\u300C" + skillName + "\u300D\u6062\u590D " + healed + " \u70B9\u751F\u547D\uFF08" + unit.hp + "/" + unit.maxHp + "\uFF09");
+                } else if (attr === 'mp') {
+                  unit.mp = Number.isFinite(cur) ? Math.min(unit.maxMp, cur) : Math.min(unit.maxMp, unit.mp + healed);
+                  if (show) show.updateBattleBars(unit.hp, unit.maxHp, unit.mp, unit.maxMp);
+
+                  _this.log(who + "\u7684\u300C" + skillName + "\u300D\u6062\u590D " + healed + " \u70B9\u80FD\u91CF\uFF08" + unit.mp + "/" + unit.maxMp + "\uFF09");
+                }
+              });
+            };
+
+            for (var e of list) {
+              if (_loop()) continue;
+            }
+          };
+
+          collect('player', this.playerRobotShow);
+          collect('enemy', this.enemyRobotShow);
+
+          if (jobs.length === 0) {
+            onDone();
+            return;
+          }
+
+          var i = 0;
+
+          var step = () => {
+            var _this$node18;
+
+            if (!((_this$node18 = this.node) != null && _this$node18.isValid)) {
+              onDone();
+              return;
+            }
+
+            if (i >= jobs.length) {
+              this.refreshPlayerMechAttributeUI(true);
+              onDone();
+              return;
+            }
+
+            var job = jobs[i++];
+
+            try {
+              job();
+            } catch (err) {
+              // 表现层出错绝不吞掉战斗流程
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[BattleScene] 被动恢复表现异常（已吞掉，不影响战斗流程）:', err);
+            }
+
+            this.scheduleOnce(step, BattleScene.PASSIVE_EFFECT_GAP);
+          };
+
+          step();
+        }
+        /**
+         * 用一份服务器 state 演绎一整个回合（含双方攻击动画、伤害数字、血条）。
+         *
+         * 供两条路径共用：
+         *   1) 自己提交动作后 battle_room_action 的回调；
+         *   2) 服务端主动推送的 pvp_round_update（自己挂机时也能看到整回合）。
+         *
+         * playerAction：本回合「自己」的动作（用于决定是否播自己的攻击动画）。
+         *      推送到挂机方时是 'ATTACK'（服务器代打普攻），因此挂机方也能看到自己的攻击动画。
+         * basePlayerHp/baseEnemyHp：本回合开始前的 HP 快照（用于算伤害差）。
+         */
+
+
+        playRoundFromServerState(serverState, playerAction, basePlayerHp, baseEnemyHp) {
+          var _ref24, _serverState$player$h, _serverState$player, _ref25, _serverState$enemy$hp, _serverState$enemy;
+
+          if (!this.playerUnit || !this.enemyUnit) {
+            var _this$node19;
+
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[BattleScene] playRoundFromServerState \u5355\u4F4D\u7F3A\u5931\uFF0C\u76F4\u63A5\u6062\u590D\u64CD\u4F5C " + ("playerUnit=" + !!this.playerUnit + " enemyUnit=" + !!this.enemyUnit));
+            this.state = BattleState.INIT;
+            this.isAnimating = false;
+            this.isRequestingAction = false;
+            this.animWatchdog = 0;
+            if ((_this$node19 = this.node) != null && _this$node19.isValid) this.startCommandPhase();
+            return;
+          }
+
+          var targetPlayerHp = Number((_ref24 = (_serverState$player$h = serverState == null || (_serverState$player = serverState.player) == null ? void 0 : _serverState$player.hp) != null ? _serverState$player$h : this.playerUnit.hp) != null ? _ref24 : 0);
+          var targetEnemyHp = Number((_ref25 = (_serverState$enemy$hp = serverState == null || (_serverState$enemy = serverState.enemy) == null ? void 0 : _serverState$enemy.hp) != null ? _serverState$enemy$hp : this.enemyUnit.hp) != null ? _ref25 : 0); // 回合结束被动恢复（生命恢复 / 能量恢复）—— 服务端在「死亡判定之后」算好再下发。
+          // ⚠ 服务端给的 hp 是「攻击结算 + 被动恢复」后的最终值，算伤害时必须先把恢复量剥掉，
+          //   否则本回合伤害会被少算（伤害数字偏小、动画表现与真实掉血不符）。
+
+          var recoverHp = side => {
+            var _serverState$round_pa3;
+
+            var list = serverState == null || (_serverState$round_pa3 = serverState.round_passive_effects) == null ? void 0 : _serverState$round_pa3[side];
+            if (!Array.isArray(list)) return 0;
+            return list.reduce((sum, e) => sum + ((e == null ? void 0 : e.attr) === 'hp' ? Number(e.value) || 0 : 0), 0);
+          };
+
+          var hpAfterAttackPlayer = Math.max(0, targetPlayerHp - recoverHp('player'));
+          var hpAfterAttackEnemy = Math.max(0, targetEnemyHp - recoverHp('enemy')); // 攻击不改能量 → 回合开始前的 MP 就是被动恢复的动画起点
+
+          var basePlayerMp = this.playerUnit.mp;
+          var baseEnemyMp = this.enemyUnit.mp;
+          this.animWatchdog = 0;
+          this.state = BattleState.ANIMATING;
+          this.isAnimating = true;
+          this.setButtonsInteractable(false);
+          if (this.battleSelectPanel) this.battleSelectPanel.active = false;
+          this.closeSkillSelectPanel();
+          if (this.timerRoot) this.timerRoot.active = false; // 同步单位/展示数据（不结束战斗、不显示面板）
+
+          this.applyServerRoomState(serverState, false, true); // 按服务器结果计算本回合掉血量（不能为负）。基于「攻击后、被动恢复前」的 HP
+
+          var damageToPlayer = Math.max(0, basePlayerHp - hpAfterAttackPlayer);
+          var damageToEnemy = Math.max(0, baseEnemyHp - hpAfterAttackEnemy);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u670D\u52A1\u5668\u56DE\u5408\u7ED3\u679C: \u73A9\u5BB6HP " + basePlayerHp + "\u2192" + hpAfterAttackPlayer + "(\u4F24" + damageToPlayer + ") " + ("\u654C\u4EBAHP " + baseEnemyHp + "\u2192" + hpAfterAttackEnemy + "(\u4F24" + damageToEnemy + ") \u73A9\u5BB6\u52A8\u4F5C=" + playerAction + " ") + ("\u88AB\u52A8\u6062\u590D \u73A9\u5BB6+" + recoverHp('player') + "/\u654C\u4EBA+" + recoverHp('enemy'))); // 为了播动画，把本地 HP 暂时「回滚」到回合开始前（MP 同样回到回合开始值，
+          // 这样被动恢复能演出「涨上去」的过程；攻击不改 MP，回滚不会丢信息）
+
+          this.playerUnit.hp = basePlayerHp;
+          this.enemyUnit.hp = baseEnemyHp;
+          this.playerUnit.mp = basePlayerMp;
+          this.enemyUnit.mp = baseEnemyMp;
+          this.syncUnitHpToRawData(this.playerUnit);
+          this.syncUnitHpToRawData(this.enemyUnit);
+          this.refreshPlayerMechAttributeUI(true); // 演绎本回合：
+          //   ① 服务端给了「出手明细」（round_events）→ 走事件路径，逐次出手演绎（技能/普攻/防御、暴击、治疗都能还原）；
+          //   ② 没给（老服务端 / 空回合）→ 回落到「按 HP 差值反推」的旧路径，保证不回归。
+
+          var events = Array.isArray(serverState == null ? void 0 : serverState.round_events) ? serverState.round_events : [];
+
+          if (events.length > 0) {
+            this.playRoundEvents(serverState, events, targetPlayerHp, targetEnemyHp);
+          } else {
+            // 用服务器伤害驱动一轮动画，播完再落到服务器最终 HP
+            this.playServerRoundAnimation(playerAction, damageToPlayer, damageToEnemy, targetPlayerHp, targetEnemyHp, serverState);
+          }
+        }
+        /**
+         * 服务端主动推送「PVP 回合已结算」：
+         *   解决挂机方从不发请求 → 永远拿不到新 state → 看不到动画/血条不更新的缺陷。
+         *
+         * 去重：仅当推送的 settled_round >= 自己已知的回合数、且当前不在播同一回合时才处理。
+         */
+
+
+        onPvpRoundUpdate(msg) {
+          var _this$node20, _msg$data, _ref26, _data$settled_round, _state$round_actions, _this$playerUnit$hp, _this$playerUnit2, _state$player$hp, _state$player, _this$enemyUnit$hp, _this$enemyUnit, _state$enemy$hp, _state$enemy;
+
+          if (!((_this$node20 = this.node) != null && _this$node20.isValid)) return;
+          var data = (_msg$data = msg == null ? void 0 : msg.data) != null ? _msg$data : msg;
+          var state = data == null ? void 0 : data.state;
+          if (!state) return; // 只处理本房间的推送
+
+          var incomingRoomId = state.room_id || state.roomId || (data == null ? void 0 : data.room_id) || null;
+          if (this.roomId && incomingRoomId && incomingRoomId !== this.roomId) return;
+          var settledRound = Number((_ref26 = (_data$settled_round = data == null ? void 0 : data.settled_round) != null ? _data$settled_round : state.round) != null ? _ref26 : 0); // 去重：同一回合的推送只处理一次
+
+          if (settledRound > 0 && settledRound <= this._lastPlayedPvpRound) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("[BattleScene] \u5FFD\u7565\u91CD\u590D\u7684 pvp_round_update round=" + settledRound);
+            return;
+          } // 正在播自己的动作动画（请求还没回来）时，交给请求回调处理，避免重复播
+
+
+          if (this.isRequestingAction) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[BattleScene] 请求进行中，忽略 pvp_round_update（由请求回调统一处理）');
+            return;
+          } // 正在播动画（同一回合）时不打断
+
+
+          if (this.isAnimating) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('[BattleScene] 动画进行中，忽略 pvp_round_update');
+            return;
+          }
+
+          if (state.status === 'finished' && this.state === BattleState.FINISHED) return;
+          this._lastPlayedPvpRound = settledRound > 0 ? settledRound : this._lastPlayedPvpRound; // 推送里「自己」的动作由自己的 round_actions 决定（视角已交换）：
+          //   取不到时按 ATTACK 处理（服务器补普攻的场景）。
+
+          var myAction = ((_state$round_actions = state.round_actions) == null ? void 0 : _state$round_actions.player) || state.my_action || 'ATTACK';
+          var basePlayerHp = (_this$playerUnit$hp = (_this$playerUnit2 = this.playerUnit) == null ? void 0 : _this$playerUnit2.hp) != null ? _this$playerUnit$hp : Number((_state$player$hp = (_state$player = state.player) == null ? void 0 : _state$player.hp) != null ? _state$player$hp : 0);
+          var baseEnemyHp = (_this$enemyUnit$hp = (_this$enemyUnit = this.enemyUnit) == null ? void 0 : _this$enemyUnit.hp) != null ? _this$enemyUnit$hp : Number((_state$enemy$hp = (_state$enemy = state.enemy) == null ? void 0 : _state$enemy.hp) != null ? _state$enemy$hp : 0);
+          this.log('[PVP] 收到服务器回合推送，播放整回合动画');
+          this.playRoundFromServerState(state, myAction, basePlayerHp, baseEnemyHp);
         }
         /**
          * 在线模式专用：按服务器给定伤害值播放一次攻击动画（不再用本地公式算伤害）。
@@ -2190,13 +3732,22 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var attacker = this.getUnit(attackerSide);
           var defender = this.getOpponent(attackerSide);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u8FDB\u5165 performAttackWithDamage side=" + attackerSide + " damage=" + damage + " attacker=" + !!attacker + " defender=" + !!defender);
 
           if (!attacker || !defender) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[攻击诊断] attacker/defender 缺失，直接 onDone');
             onDone();
             return;
           }
 
           if (this.state === BattleState.FINISHED) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[攻击诊断] state=FINISHED，直接 onDone');
             onDone();
             return;
           }
@@ -2204,46 +3755,135 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           this.state = BattleState.ANIMATING;
           this.isAnimating = true;
           this.setButtonsInteractable(false);
-          damage = Math.max(1, Math.floor(damage));
-          this.log((attackerSide === 'player' ? '玩家' : '敌人') + " \u9020\u6210 " + damage + " \u70B9\u4F24\u5BB3\uFF08\u6309\u670D\u52A1\u5668\u7ED3\u679C\uFF09");
+          damage = Math.max(1, Math.floor(damage)); // 「攻击次数」：服务端给的是整次伤害，客户端按攻击次数拆段展示（总伤上限 +20%）
+
+          var segments = computeAttackSegments(damage, attacker.attackTimes);
+          var totalApplied = segments.reduce((a, b) => a + b, 0);
+          var drift = this.damageDriftFor(attackerSide);
+          this.log((attackerSide === 'player' ? '玩家' : '敌人') + " \u9020\u6210 " + totalApplied + " \u70B9\u4F24\u5BB3\uFF08\u6309\u670D\u52A1\u5668\u7ED3\u679C\uFF09" + (segments.length > 1 ? "\uFF0C\u5206 " + segments.length + " \u6BB5" : ''));
           var attackerShow = attackerSide === 'player' ? this.playerRobotShow : this.enemyRobotShow;
           var defenderShow = attackerSide === 'player' ? this.enemyRobotShow : this.playerRobotShow; // 是否远程：沿用原来判断
 
           var attackerEquip = ((_attacker$rawData3 = attacker.rawData) == null ? void 0 : _attacker$rawData3.equipment) || ((_attacker$rawData4 = attacker.rawData) == null || (_attacker$rawData4 = _attacker$rawData4.data) == null ? void 0 : _attacker$rawData4.equipment) || {};
           var attackerHasGun = !!(attackerEquip && attackerEquip.Gun && attackerEquip.Gun.item_id);
-          this.playAttackAnimation(attackerShow, defenderShow, attackerHasGun, () => {
-            this.isAnimating = false; // 动画结束后再扣血、弹伤害数字（此时不刷新任何血条，等伤害数字一起）
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u6BB5\u6570=" + segments.length + " \u603B\u4F24=" + totalApplied + " attackerShow=" + !!attackerShow + " defenderShow=" + !!defenderShow + " \u8FDC\u7A0B=" + attackerHasGun); // 逐段扣血、弹伤害数字（此时不刷新任何血条，等伤害数字一起）。
+          //   「攻击次数」：一次攻击的整段伤害拆成 N 段，间隔 0.18s 逐段弹出。
+          //   注意：绝不能用 `scheduleOnce(step, ...)` 递归调度同一个函数引用 —— Cocos 以
+          //   target+callback 为唯一键，同一函数重入时会被去重/覆盖（日志报
+          //   "Selector already scheduled"），导致第 2 段后再也不执行、战斗卡死。
+          //   这里每次调度都包一层新的匿名闭包，保证 callback 引用唯一。
 
-            defender.hp = Math.max(0, defender.hp - damage);
-            this.syncUnitHpToRawData(defender);
+          var segStarted = false;
 
-            if (defenderShow) {
-              defenderShow.showDamageNumber(damage, false);
-            } // 等伤害数字弹出后，上面战斗血条和底下属性面板血条一起更新，再结束本动作
+          var startSegments = () => {
+            // 幂等：接触瞬间与动画结束都会调用，保证只启动一次
+            if (segStarted) return;
+            segStarted = true;
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u5F00\u59CB\u9010\u6BB5\u7ED3\u7B97 segments=" + segments.length);
+            var i = 0;
 
+            var step = () => {
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] step \u6267\u884C i=" + i + " \u603B\u6BB5=" + segments.length);
 
-            this.scheduleOnce(() => {
-              if (this.state !== BattleState.FINISHED) {
+              if (i < segments.length) {
+                var segVal = segments[i];
+                defender.hp = Math.max(0, defender.hp - segVal);
+                this.syncUnitHpToRawData(defender);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u6BB5 " + (i + 1) + "/" + segments.length + " -" + segVal + " \u5269\u4F59HP=" + defender.hp + "/" + defender.maxHp + " defenderShow=" + !!defenderShow);
+
                 if (defenderShow) {
-                  defenderShow.updateBattleBars(defender.hp, defender.maxHp);
+                  defenderShow.showDamageNumber(segVal, false, drift.x, drift.y);
                 }
 
-                if (defender.side === 'player') {
-                  this.refreshPlayerMechAttributeUI(true);
-                }
-              }
+                i++;
 
-              onDone();
-            }, 0.35);
+                if (i < segments.length) {
+                  // 关键：包一层匿名闭包，避免同一 callback 引用被 Cocos 去重而丢失调度
+                  this.scheduleOnce(() => step(), 0.18);
+                  return;
+                }
+              } // 全部段落结束：等伤害数字弹出后，血条与属性面板一起更新，再结束本动作
+
+
+              this.scheduleOnce(() => {
+                var _this$node21;
+
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u6BB5\u7ED3\u7B97\u6536\u5C3E\u66F4\u65B0\u8840\u6761 defenderHP=" + defender.hp + "/" + defender.maxHp);
+
+                if (this.state !== BattleState.FINISHED) {
+                  if (defenderShow) {
+                    defenderShow.updateBattleBars(defender.hp, defender.maxHp, defender.mp, defender.maxMp);
+                  }
+
+                  if (defender.side === 'player') {
+                    this.refreshPlayerMechAttributeUI(true);
+                  }
+                }
+
+                if ((_this$node21 = this.node) != null && _this$node21.isValid) {
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn('[攻击诊断] 调用 onDone 解除锁定');
+                  onDone();
+                }
+              }, 0.35);
+            };
+
+            step();
+          };
+
+          this.playAttackAnimation(attackerShow, defenderShow, attackerHasGun, // onComplete：动画播完（兜底启动分段结算 + 解锁）
+          () => {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] \u653B\u51FB\u52A8\u753B\u56DE\u8C03\u5DF2\u89E6\u53D1\uFF08onComplete\uFF09segments=" + segments.length);
+            this.isAnimating = false;
+            startSegments();
+          }, // onImpact：接触到对方的瞬间 —— 只弹伤害数字（**普攻不播技能特效**，2026-09-30 用户要求去掉）
+          () => {
+            startSegments();
           });
         }
 
-        playAttackAnimation(attackerShow, defenderShow, isRanged, onComplete) {
+        playAttackAnimation(attackerShow, defenderShow, isRanged, onComplete,
+        /**
+         * 「接触瞬间」回调：攻击方触及受击者的那一刻触发（近战=瞬移到位即接触；远程=子弹命中击退开始）。
+         * 伤害数字/扣血由调用方挂在这里，做到「一打到就弹数字」，不等整段动画播完。
+         */
+        onImpact) {
           var attackerNode = (attackerShow == null ? void 0 : attackerShow.node) || null;
           var defenderNode = (defenderShow == null ? void 0 : defenderShow.node) || null;
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] playAttackAnimation \u8FDB\u5165 attackerNode=" + !!attackerNode + " defenderNode=" + !!defenderNode + " \u8FDC\u7A0B=" + isRanged); // 接触回调幂等：tween 回调与兜底可能都触发，保证只结算一次
+
+          var impactFired = false;
+
+          var fireImpact = () => {
+            if (impactFired) return;
+            impactFired = true;
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[攻击诊断] onImpact 接触瞬间触发');
+            onImpact == null || onImpact();
+          };
 
           if (!attackerNode || !defenderNode) {
-            console.warn('[BattleScene] 攻击动画：缺少 RobotShow 节点，跳过动画');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 攻击动画：缺少 RobotShow 节点，跳过动画');
+            fireImpact(); // 无动画也要先结算伤害
+
             onComplete();
             return;
           }
@@ -2252,11 +3892,31 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var defenderStart = defenderNode.position.clone(); // 敌人被击退方向：始终远离攻击方
 
           var attackerOnLeft = attackerNode.worldPosition.x < defenderNode.worldPosition.x;
-          var knockbackDelta = attackerOnLeft ? 30 : -30; // 击退 30 像素
+          var knockbackDelta = attackerOnLeft ? BattleScene.KNOCKBACK_DELTA : -BattleScene.KNOCKBACK_DELTA; // 击退像素（与近身技共用）
 
           var knockbackPos = new Vec3(defenderStart.x + knockbackDelta, defenderStart.y, defenderStart.z); // 为了避免双方动作重叠，这里统一用“全部 tween 结束后再回调”的计数逻辑
 
           var activeTweens = 0;
+          var animDone = false;
+          var animFallback = null;
+
+          var fireComplete = () => {
+            if (animDone) return; // 单次守卫：防止 tween 与兜底重复触发造成伤害重复结算
+
+            animDone = true; // 兜底：极端情况下接触回调未触发（tween 丢回调等），此处补发，保证伤害一定结算
+
+            fireImpact(); // 动画已正常完成：清掉兜底调度，避免每次攻击都往 scheduler 里堆积一个 2.2s 定时器
+
+            if (animFallback) {
+              this.unschedule(animFallback);
+              animFallback = null;
+            }
+
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[攻击诊断] playAttackAnimation 动画完成（fireComplete）');
+            onComplete();
+          };
 
           var onTweenStart = () => {
             activeTweens += 1;
@@ -2264,13 +3924,26 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           var onTweenDone = () => {
             activeTweens -= 1;
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("[\u653B\u51FB\u8BCA\u65AD] onTweenDone \u5269\u4F59 activeTweens=" + activeTweens);
 
             if (activeTweens <= 0) {
               // 所有本次攻击相关的 tween 都完成，才能开始下一方行为
-              onComplete();
+              fireComplete();
             }
-          }; // 远程（射击）：攻击方「后坐 + 回位」+ 敌人「中弹击退 + 拉回」，错开时序让“先开火→再中弹”更清晰
+          }; // 兜底：tween 若因节点失效/引擎原因丢回调，2.2s 后强制推进，避免战斗死锁
 
+
+          animFallback = () => {
+            if (animDone) return;
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[攻击诊断] playAttackAnimation 2.2s 兜底触发');
+            fireComplete();
+          };
+
+          this.scheduleOnce(animFallback, 2.2); // 远程（射击）：攻击方「后坐 + 回位」+ 敌人「中弹击退 + 拉回」，错开时序让“先开火→再中弹”更清晰
 
           if (isRanged) {
             var recoilDelta = attackerOnLeft ? -22 : 22; // 后坐方向：远离敌人
@@ -2285,18 +3958,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             onTweenStart();
             tween(defenderNode).delay(0.05).to(0.08, {
               position: knockbackPos
+            }) // 子弹命中（击退到位）的瞬间即视为「接触」，立即弹出伤害数字
+            .call(() => {
+              fireImpact();
             }).to(0.12, {
               position: defenderStart
             }).call(onTweenDone).start();
             return;
-          } // 近战：攻击方瞬移到对方面前（间隔 30 的 X），两者一起产生击退/拉回效果，然后攻击方快速回位
+          } // 近战：攻击方瞬移到对方面前（间隔 MELEE_CONTACT_GAP 的 X），两者一起产生击退/拉回效果，然后攻击方快速回位
 
 
-          var meleeGap = 30;
+          var meleeGap = BattleScene.MELEE_CONTACT_GAP;
           var meleeContactX = attackerOnLeft ? defenderStart.x - meleeGap : defenderStart.x + meleeGap;
           var meleeContactPos = new Vec3(meleeContactX, attackerStart.y, attackerStart.z); // 瞬移到近战位置
 
-          attackerNode.setPosition(meleeContactPos); // 敌人击退 + 拉回，同时攻击方稍微跟随一点拉回感，然后回原位
+          attackerNode.setPosition(meleeContactPos); // 瞬移到位即「接触到对方」——立刻弹出伤害数字，不留等待
+
+          fireImpact(); // 敌人击退 + 拉回，同时攻击方稍微跟随一点拉回感，然后回原位
 
           onTweenStart();
           tween(defenderNode).to(0.08, {
@@ -2319,13 +3997,82 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             onTweenDone();
           }).start();
         }
-        /** 新一场战斗开始前：恢复击破动画后的透明度，并清理上一场 schedule/tween */
+        /**
+         * 【近身技位移】把攻击方挪到目标身前（间隔 {@link MELEE_CONTACT_GAP} 像素，与普攻近战同口径）。
+         * 只做贴脸前置，**不在此处击退**——受击击退统一在伤害结算时打一次（见 {@link playDefenderHitShake}）。
+         *
+         * 调用方拿到的 `restore(cb)`：技能特效一结束即调用 —— 机甲滑回原位，不等伤害数字。
+         * 无需位移（节点缺失、敌我同一节点）时返回 `null`，调用方直接推进即可。
+         *
+         * ⚠ 只是**表现层**位移；伤害结算完全走服务端权威值，与位置无关。
+         */
+
+
+        moveInForMeleeSkill(attackerShow, targetShow, skillName) {
+          if (skillName === void 0) {
+            skillName = '';
+          }
+
+          var aNode = attackerShow == null ? void 0 : attackerShow.node;
+          var tNode = targetShow == null ? void 0 : targetShow.node;
+          if (!aNode || !tNode || aNode === tNode) return null; // 归位点优先用缓存的「战斗站位」（不受上一次击退残留影响），没有才用当前位置
+
+          var cachedHome = attackerShow === this.playerRobotShow ? this.battlePlayerPos : this.battleEnemyPos;
+          var home = cachedHome ? cachedHome.clone() : aNode.position.clone();
+          var targetStart = tNode.position.clone();
+          var attackerOnLeft = aNode.worldPosition.x < tNode.worldPosition.x;
+          var gap = BattleScene.MELEE_CONTACT_GAP;
+          var contactPos = new Vec3(attackerOnLeft ? targetStart.x - gap : targetStart.x + gap, home.y, home.z); // 清掉可能残留的位移 tween，避免叠加造成错位
+
+          try {
+            Tween.stopAllByTarget(aNode);
+          } catch (e) {
+            /* 忽略 */
+          }
+
+          aNode.setPosition(contactPos);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).warn("[\u8FD1\u8EAB\u6280] \u4F4D\u79FB\u300C" + (skillName || '技能') + "\u300D\uFF1Ax " + home.x.toFixed(0) + " \u2192 " + contactPos.x.toFixed(0) + ("\uFF08\u76EE\u6807 x=" + targetStart.x.toFixed(0) + "\uFF0C" + (attackerOnLeft ? '左→右' : '右→左') + "\uFF09"));
+          return {
+            restore: cb => {
+              // 幂等：tween 回调与兜底调度都可能触发，只推进一次
+              var fired = false;
+
+              var once = () => {
+                if (fired) return;
+                fired = true;
+                cb();
+              };
+
+              if (!aNode.isValid) {
+                once();
+                return;
+              }
+
+              try {
+                Tween.stopAllByTarget(aNode);
+                tween(aNode).to(BattleScene.MELEE_RETURN_TIME, {
+                  position: home
+                }).call(once).start(); // 兜底：tween 回调丢失（节点失效 / 战斗收尾）时也要归位并推进，避免死锁
+
+                this.scheduleOnce(once, BattleScene.MELEE_RETURN_TIME + 0.3);
+              } catch (err) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('[BattleScene] 近身技归位失败:', err);
+                if (aNode.isValid) aNode.setPosition(home);
+                once();
+              }
+            }
+          };
+        }
+        /** 新一场战斗开始前：恢复击破动画后的透明度，并清理上一场残留的 tween（不动本场已排程的 scheduleOnce） */
 
 
         prepareRobotShowsForNewBattle() {
           var _this$playerRobotShow6, _this$enemyRobotShow6;
 
-          this.unscheduleAllCallbacks();
           if ((_this$playerRobotShow6 = this.playerRobotShow) != null && _this$playerRobotShow6.node) Tween.stopAllByTarget(this.playerRobotShow.node);
           if ((_this$enemyRobotShow6 = this.enemyRobotShow) != null && _this$enemyRobotShow6.node) Tween.stopAllByTarget(this.enemyRobotShow.node);
           this.resetRobotShowOpacity(this.playerRobotShow);
@@ -2356,7 +4103,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         playDefeatAnimation(defeatedShow, onComplete) {
-          var _this = this;
+          var _this2 = this;
 
           var root = defeatedShow.node;
 
@@ -2401,15 +4148,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var equipFadeDur = 0.25;
           var equipSteps = 8;
 
-          var _loop = function _loop() {
+          var _loop2 = function _loop2() {
             var t = equipFadeStart + equipFadeDur * i / equipSteps;
             var alpha = 255 * (1 - i / equipSteps);
 
-            _this.scheduleOnce(() => setAlpha(equipSprites, alpha), t);
+            _this2.scheduleOnce(() => setAlpha(equipSprites, alpha), t);
           };
 
           for (var i = 0; i <= equipSteps; i++) {
-            _loop();
+            _loop2();
           } // 3) 0.35s 起：机甲本体透明度消失（约 0.4s 内消失）
 
 
@@ -2417,15 +4164,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var bodyFadeDur = 0.4;
           var bodySteps = 10;
 
-          var _loop2 = function _loop2() {
-            var t = bodyFadeStart + bodyFadeDur * _i / bodySteps;
-            var alpha = 255 * (1 - _i / bodySteps);
+          var _loop3 = function _loop3() {
+            var t = bodyFadeStart + bodyFadeDur * _i2 / bodySteps;
+            var alpha = 255 * (1 - _i2 / bodySteps);
 
-            _this.scheduleOnce(() => setAlpha(bodySprites, alpha), t);
+            _this2.scheduleOnce(() => setAlpha(bodySprites, alpha), t);
           };
 
-          for (var _i = 0; _i <= bodySteps; _i++) {
-            _loop2();
+          for (var _i2 = 0; _i2 <= bodySteps; _i2++) {
+            _loop3();
           }
 
           this.scheduleOnce(() => {
@@ -2443,8 +4190,19 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             this.battleSelectPanel.active = false;
           }
 
+          this.closeSkillSelectPanel();
           if (this.playerRobotShow) this.playerRobotShow.setBattleBarsVisible(false);
-          if (this.enemyRobotShow) this.enemyRobotShow.setBattleBarsVisible(false);
+          if (this.enemyRobotShow) this.enemyRobotShow.setBattleBarsVisible(false); // 战斗结束后：玩家机甲若在本场被打倒（血量归零），保底恢复 1 滴血
+          // （与服务端收尾回写口径一致）—— 回到大地图/属性面板应是「存活但残血」，
+          // 而不是永久 0 血（0 血会被当死尸，无法出战）。必须在发送 battle_result
+          // 与刷新属性面板之前执行，保证各处显示同源。
+
+          if (this.playerUnit && Number(this.playerUnit.hp) <= 0) {
+            this.playerUnit.hp = 1;
+            this.syncUnitHpToRawData(this.playerUnit);
+            this.log('机甲被击倒，战斗结束保底恢复 1 点血量');
+          }
+
           var result = {
             type: winner === 'player' ? 'win' : 'lose',
             reason
@@ -2460,14 +4218,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               enemy: this.enemyUnit ? this.buildUnitSummary(this.enemyUnit) : null
             }, true);
           } catch (e) {
-            console.warn('[BattleScene] 发送 battle_result 失败:', e);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 发送 battle_result 失败:', e);
           } // 战斗结束后：清除本场机甲详情缓存，保证回到机甲属性时重新拉取并显示实打实的血量/经验
 
 
           try {
-            var _this$playerUnit2, _this$ws$getCharacter11, _this$ws11;
+            var _this$playerUnit3, _this$ws$getCharacter11, _this$ws11;
 
-            var petId = ((_this$playerUnit2 = this.playerUnit) == null ? void 0 : _this$playerUnit2.petId) != null ? String(this.playerUnit.petId) : null;
+            var petId = ((_this$playerUnit3 = this.playerUnit) == null ? void 0 : _this$playerUnit3.petId) != null ? String(this.playerUnit.petId) : null;
 
             if (petId) {
               this.cacheManager.clearRobotPetInfoCache(petId);
@@ -2487,7 +4247,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.ws.send(req, true, true);
             }
           } catch (e) {
-            console.warn('[BattleScene] 战斗结束刷新缓存/拉取失败:', e);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[BattleScene] 战斗结束刷新缓存/拉取失败:', e);
           }
 
           this.log("\u6218\u6597\u7ED3\u675F\uFF1A" + (result.type === 'win' ? '玩家胜利' : '玩家失败') + "\uFF08\u539F\u56E0\uFF1A" + (reason === 'ko' ? '击倒' : '逃跑') + "\uFF09");
@@ -2542,7 +4304,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         log(msg) {
-          console.log('[BattleScene]', msg);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('[BattleScene]', msg);
           if (!this.logLabel) return;
           var old = this.logLabel.string || '';
           this.logLabel.string = old ? old + "\n" + msg : msg;
@@ -2798,7 +4562,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           } // 分割型（基础值/当前值）
 
 
-          var nodeKeys = ['Melee', 'Armor', 'Accuracy', 'Corrosion', 'Initiative', 'Block', 'ParticleShield', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'];
+          var nodeKeys = ['Melee', 'Armor', 'Accuracy', 'Corrosion', 'Initiative', 'Block', 'AttackCount', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'];
 
           for (var _key of nodeKeys) {
             var _layoutNode$getChildB, _layoutNode$getChildB2;
@@ -2946,13 +4710,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (!group || !group.left) continue;
             var baseValue = (_data$_key = data[_key2]) != null ? _data$_key : 0;
             var currentKey = 'Current' + _key2;
+            var hasCurrent = Object.prototype.hasOwnProperty.call(data, currentKey); // 有 Current 且节点含 RightLabel/SlashSprite → 显示 base/current 分割；
+            // 否则只显示 base（节点缺 right/slash 时也不能整块跳过）
 
-            if (Object.prototype.hasOwnProperty.call(data, currentKey)) {
+            if (hasCurrent && group.right && group.slash) {
               var _data$currentKey;
 
               group.left.string = String(baseValue);
-              if (group.right) group.right.string = String((_data$currentKey = data[currentKey]) != null ? _data$currentKey : 0);
-              if (group.slash) group.slash.active = true;
+              group.right.string = String((_data$currentKey = data[currentKey]) != null ? _data$currentKey : 0);
+              group.slash.active = true;
             } else {
               group.left.string = String(baseValue);
               if (group.right) group.right.string = '';
@@ -3016,6 +4782,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           } catch (_unused4) {}
         }
         /**
+         * 把单位 MP 回写进 rawData（与 `syncUnitHpToRawData` 同构）。
+         * 技能会扣蓝、吸血/回蓝会涨蓝，UI 读的是 rawData.CurrentMP，必须同步。
+         */
+
+
+        syncUnitMpToRawData(unit) {
+          if (!unit || !unit.rawData) return;
+
+          try {
+            unit.rawData.CurrentMP = unit.mp;
+
+            if (unit.rawData.data && typeof unit.rawData.data === 'object') {
+              unit.rawData.data.CurrentMP = unit.mp;
+            }
+          } catch (_unused5) {}
+        }
+        /**
          * 递归查找子节点（容错：找不到返回 null）
          */
 
@@ -3031,7 +4814,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           return null;
         }
 
-      }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "playerRobotShow", [_dec2], {
+      }, _class3.PASSIVE_EFFECT_GAP = 0.6, _class3.ROUND_EVENT_GAP = 0.55, _class3.MELEE_CONTACT_GAP = 30, _class3.KNOCKBACK_DELTA = 30, _class3.MELEE_RETURN_TIME = 0.14, _class3), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "playerRobotShow", [_dec2], {
         configurable: true,
         enumerable: true,
         writable: true,
@@ -3080,112 +4863,126 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "timerLabel", [_dec9], {
+      }), _descriptor8 = _applyDecoratedDescriptor(_class2.prototype, "skillButton", [_dec9], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "timerRoot", [_dec10], {
+      }), _descriptor9 = _applyDecoratedDescriptor(_class2.prototype, "skillSelectPanel", [_dec10], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "logLabel", [_dec11], {
+      }), _descriptor10 = _applyDecoratedDescriptor(_class2.prototype, "timerLabel", [_dec11], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "matchingLoadingPanel", [_dec12], {
+      }), _descriptor11 = _applyDecoratedDescriptor(_class2.prototype, "timerRoot", [_dec12], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "mechAttributeRoot", [_dec13], {
+      }), _descriptor12 = _applyDecoratedDescriptor(_class2.prototype, "logLabel", [_dec13], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIcon", [_dec14], {
+      }), _descriptor13 = _applyDecoratedDescriptor(_class2.prototype, "matchingLoadingPanel", [_dec14], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor14 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIconGedou", [_dec15], {
+      }), _descriptor14 = _applyDecoratedDescriptor(_class2.prototype, "mechAttributeRoot", [_dec15], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor15 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIconQuanneng", [_dec16], {
+      }), _descriptor15 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIcon", [_dec16], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIconSheji", [_dec17], {
+      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIconGedou", [_dec17], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor17 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIcon", [_dec18], {
+      }), _descriptor17 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIconQuanneng", [_dec18], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor18 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIconGedou", [_dec19], {
+      }), _descriptor18 = _applyDecoratedDescriptor(_class2.prototype, "player1ClassIconSheji", [_dec19], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor19 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIconQuanneng", [_dec20], {
+      }), _descriptor19 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIcon", [_dec20], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor20 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIconSheji", [_dec21], {
+      }), _descriptor20 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIconGedou", [_dec21], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor21 = _applyDecoratedDescriptor(_class2.prototype, "playerShowRoot", [_dec22], {
+      }), _descriptor21 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIconQuanneng", [_dec22], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor22 = _applyDecoratedDescriptor(_class2.prototype, "enemyPlayerShowRoot", [_dec23], {
+      }), _descriptor22 = _applyDecoratedDescriptor(_class2.prototype, "enemy1ClassIconSheji", [_dec23], {
         configurable: true,
         enumerable: true,
         writable: true,
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor23 = _applyDecoratedDescriptor(_class2.prototype, "characterAvatarFrames", [_dec24], {
+      }), _descriptor23 = _applyDecoratedDescriptor(_class2.prototype, "playerShowRoot", [_dec24], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return null;
+        }
+      }), _descriptor24 = _applyDecoratedDescriptor(_class2.prototype, "enemyPlayerShowRoot", [_dec25], {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        initializer: function initializer() {
+          return null;
+        }
+      }), _descriptor25 = _applyDecoratedDescriptor(_class2.prototype, "characterAvatarFrames", [_dec26], {
         configurable: true,
         enumerable: true,
         writable: true,

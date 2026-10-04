@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>SAVE E2E DONE</title>
+<style>body{background:#111;color:#ccc;font:13px/1.6 Consolas,"Microsoft YaHei",monospace;margin:0}#log{padding:14px 18px;white-space:pre-wrap}</style>
+</head>
+<body>
+<div id="log">图集: MAP1.png  16x15 = 240 格
+非空格子: 64 个  (前几个 index: 0,1,2,3,4,5,6,7)
+已标注: 64 格 → 全部「地面」(可通行)
+B 槽已生成: 256 / 256 格  (64 源 × 4 变换)
+导出目录: D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out
+PNG 已保存: 4 张
+   D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\MAP1_FLIP_B.png
+   D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\MAP1_FLIP_C.png
+   D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\MAP1_FLIP_D.png
+   D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\MAP1_FLIP_E.png
+flags: 不可通行 1 格, ★上层 1 格
+manifest: B 槽 256 格, 首格来源 = MAP1.png #0
+
+DONE OK</div>
+<iframe id="fr" src="/" style="width:1600px;height:900px;border:1px solid #333;margin:12px"></iframe>
+<script>
+const L = [];
+function p(s) { L.push(s); document.getElementById('log').textContent = L.join('\n'); }
+
+setTimeout(run, 5000);
+
+async function run() {
+  try {
+    const W = document.getElementById('fr').contentWindow;
+    const T = W.TS, S = T.S;
+    const D = W.document;
+
+    p('图集: ' + S.sheet.name + '  ' + S.sheet.cols + 'x' + S.sheet.rows + ' = ' + (S.sheet.cols * S.sheet.rows) + ' 格');
+
+    // ---- 1. 找前 64 个非空格 ----
+    function blank(i) {
+      const c = T.cellCanvasOf(i);
+      const d = c.getContext('2d').getImageData(0, 0, 48, 48).data;
+      for (let k = 3; k < d.length; k += 4) if (d[k] > 0) return false;
+      return true;
+    }
+    const picks = [];
+    for (let i = 0; i < S.sheet.cols * S.sheet.rows && picks.length < 64; i++) {
+      if (!blank(i)) picks.push(i);
+    }
+    p('非空格子: ' + picks.length + ' 个  (前几个 index: ' + picks.slice(0, 8).join(',') + ')');
+
+    // ---- 2. 标注 ----
+    S.sel.clear();
+    picks.forEach(i => S.sel.add(i));
+    T.applyTag('ground');
+    p('已标注: ' + Object.keys(S.tagOf).length + ' 格 → 全部「地面」(可通行)');
+
+    // ---- 3. 生成 4 变体 ----
+    S.curSlot = 'B';
+    S.out.B.fill(null);
+    T.doVariants('all');
+    const used = S.out.B.filter(Boolean).length;
+    p('B 槽已生成: ' + used + ' / 256 格  (64 源 × 4 变换)');
+
+    // 抽 4 格改成不可通行，验证 flags 会变
+    ['C'].forEach(k => S.out[k].fill(null));
+    S.out.C[0] = T.newCell(picks[0], 'none'); S.out.C[0].tag = 'wall';
+    S.out.E[0] = T.newCell(picks[1], 'none'); S.out.E[0].tag = 'over';
+    S.out.D[0] = T.newCell(picks[2], 'none'); S.out.D[0].tag = 'road';
+
+    // ---- 4. 保存 ----
+    D.querySelector('#prefixInput').value = 'MAP1_FLIP';
+    const dir = S.outDir;
+    p('导出目录: ' + dir);
+    const paths = [];
+    for (const s of T.SLOTS) {
+      const r = await T.savePng(s.id, dir, true);
+      if (r) paths.push(r);
+    }
+    p('PNG 已保存: ' + paths.length + ' 张');
+    paths.forEach(x => p('   ' + x));
+    const r2 = await T.saveJson();
+    const r3 = await T.saveFlags();
+
+    // ---- 5. 自检 ----
+    const f = T.computeFlags();
+    let nImp = 0, nUp = 0;
+    for (const v of f) { if (v & 0x000F) nImp++; if (v & 0x0010) nUp++; }
+    p('flags: 不可通行 ' + nImp + ' 格, ★上层 ' + nUp + ' 格');
+    const man = T.buildManifest();
+    p('manifest: B 槽 ' + man.slots.B.used + ' 格, 首格来源 = ' + man.slots.B.cells[0].srcSheet + ' #' + man.slots.B.cells[0].srcIndex);
+
+    p('\nDONE OK');
+    document.title = 'SAVE E2E DONE';
+  } catch (e) {
+    p('!! 出错: ' + e.message + '\n' + e.stack);
+    document.title = 'SAVE E2E FAIL';
+  }
+}
+</script>
+
+
+</body></html>

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5", "__unresolved_6", "__unresolved_7", "__unresolved_8", "__unresolved_9"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Animation, Component, instantiate, Label, Node, Prefab, WebSocketManager, PlayerAnimBank, PlayerAnimRuntime, PlayerGridMove, PlayerSceneRefs, PlayerStateSync, RemoteAvatarController, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _crd, ccclass, property, WorldOnlineSync;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Animation, Component, instantiate, Label, Node, Prefab, WebSocketManager, PerformanceMonitor, PlayerAnimBank, PlayerAnimRuntime, PlayerGridMove, PlayerSceneRefs, MapManager, PlayerStateSync, RemoteAvatarController, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _crd, ccclass, property, WorldOnlineSync;
 
   function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -13,6 +13,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../../global/WebSocketManager", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfPerformanceMonitor(extras) {
+    _reporterNs.report("PerformanceMonitor", "../../global/PerformanceMonitor", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfPlayerAnimBank(extras) {
@@ -29,6 +33,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfPlayerSceneRefs(extras) {
     _reporterNs.report("PlayerSceneRefs", "./PlayerSceneRefs", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfMapManager(extras) {
+    _reporterNs.report("MapManager", "./MapManager", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfPlayerStateSync(extras) {
@@ -56,17 +64,21 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     }, function (_unresolved_2) {
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
-      PlayerAnimBank = _unresolved_3.PlayerAnimBank;
+      PerformanceMonitor = _unresolved_3.PerformanceMonitor;
     }, function (_unresolved_4) {
-      PlayerAnimRuntime = _unresolved_4.PlayerAnimRuntime;
+      PlayerAnimBank = _unresolved_4.PlayerAnimBank;
     }, function (_unresolved_5) {
-      PlayerGridMove = _unresolved_5.PlayerGridMove;
+      PlayerAnimRuntime = _unresolved_5.PlayerAnimRuntime;
     }, function (_unresolved_6) {
-      PlayerSceneRefs = _unresolved_6.PlayerSceneRefs;
+      PlayerGridMove = _unresolved_6.PlayerGridMove;
     }, function (_unresolved_7) {
-      PlayerStateSync = _unresolved_7.PlayerStateSync;
+      PlayerSceneRefs = _unresolved_7.PlayerSceneRefs;
     }, function (_unresolved_8) {
-      RemoteAvatarController = _unresolved_8.RemoteAvatarController;
+      MapManager = _unresolved_8.MapManager;
+    }, function (_unresolved_9) {
+      PlayerStateSync = _unresolved_9.PlayerStateSync;
+    }, function (_unresolved_10) {
+      RemoteAvatarController = _unresolved_10.RemoteAvatarController;
     }],
     execute: function () {
       _crd = true;
@@ -162,7 +174,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var data = resp != null && resp.data && typeof resp.data === 'object' ? _extends({}, resp, resp.data) : resp;
             if (!data || data.success !== true || data.is_self !== true) return; // 本地玩家名字显示：即使 PlayerStateSync 没挂在本地 Player 上，也能显示
 
-            this._setLocalNameLabel(data.role_name);
+            this._setLocalNameLabel(data.role_name); // MapManager 负责按 position.map_id 切图后再 world_enter，避免进错房
+
+
+            var mm = (_crd && MapManager === void 0 ? (_reportPossibleCrUseOfMapManager({
+              error: Error()
+            }), MapManager) : MapManager).find();
+
+            if (mm != null && mm.shouldOwnWorldEnter()) {
+              return;
+            }
 
             var pos = data.position || {};
             var x = Number(pos.x);
@@ -185,6 +206,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
             if (this._pendingEnter) return;
             this._pendingEnter = true;
+            (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+              error: Error()
+            }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('world_enter');
             this.ws.request('world_enter', {
               map_id: this.mapId,
               x,
@@ -193,6 +217,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               request_id: "we_pi_" + Date.now() + "_" + Math.floor(Math.random() * 1e6)
             }, r => {
               this._pendingEnter = false;
+              (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+                error: Error()
+              }), PerformanceMonitor) : PerformanceMonitor).getInstance().endTimer('world_enter');
 
               if (!r || r.success !== true) {
                 return;
@@ -479,7 +506,90 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           };
         }
 
+        /** 切图前离开当前同屏房间并清远端 */
+        leaveCurrentMap() {
+          var _this$ws7;
+
+          if (this._enteredCid && (_this$ws7 = this.ws) != null && _this$ws7.isConnected()) {
+            this.ws.notify('world_leave', {
+              map_id: this.mapId,
+              request_id: "wl_" + Date.now()
+            }, true);
+          }
+
+          this._enteredCid = null;
+          this._pendingEnter = false;
+
+          this._deferredRemoteRawByCid.clear();
+
+          this.clearAllRemotes();
+        }
+        /** 以当前 mapId + 本地像素坐标进房（供 MapManager.switchTo 调用） */
+
+
+        enterCurrentMap() {
+          return new Promise(resolve => {
+            if (!this.enableOnline) {
+              resolve(false);
+              return;
+            }
+
+            var cid = this.ws.getCharacterId();
+
+            if (!cid || !this.ws.isConnected()) {
+              resolve(false);
+              return;
+            }
+
+            var pos = this._resolveWorldEnterPosition();
+
+            if (!pos) {
+              resolve(false);
+              return;
+            }
+
+            var mv = this.localPlayerMove;
+
+            if (!mv) {
+              resolve(false);
+              return;
+            }
+
+            if (this._pendingEnter) {
+              resolve(false);
+              return;
+            }
+
+            this._pendingEnter = true;
+            (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+              error: Error()
+            }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('world_enter');
+            this.ws.request('world_enter', {
+              map_id: this.mapId,
+              x: pos.x,
+              y: pos.y,
+              facing: mv.getFacingDir(),
+              request_id: "we_mm_" + Date.now() + "_" + Math.floor(Math.random() * 1e6)
+            }, r => {
+              this._pendingEnter = false;
+              (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+                error: Error()
+              }), PerformanceMonitor) : PerformanceMonitor).getInstance().endTimer('world_enter');
+
+              if (!r || r.success !== true) {
+                resolve(false);
+                return;
+              }
+
+              this._applyEnterOthers(r, cid);
+
+              resolve(true);
+            }, true, 12000);
+          });
+        }
         /** 无 player_info 时兜底（例如缓存直进游戏） */
+
+
         tryWorldEnterFallback() {
           if (!this.enableOnline || this._enteredCid || this._pendingEnter) return;
           var cid = this.ws.getCharacterId();
@@ -491,6 +601,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var mv = this.localPlayerMove;
           if (!mv) return;
           this._pendingEnter = true;
+          (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+            error: Error()
+          }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('world_enter');
           this.ws.request('world_enter', {
             map_id: this.mapId,
             x: pos.x,
@@ -499,6 +612,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             request_id: "we_fb_" + Date.now()
           }, r => {
             this._pendingEnter = false;
+            (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+              error: Error()
+            }), PerformanceMonitor) : PerformanceMonitor).getInstance().endTimer('world_enter');
             if (!r || r.success !== true) return;
 
             this._applyEnterOthers(r, cid);
@@ -519,6 +635,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!mv) return;
           if (this._pendingEnter) return;
           this._pendingEnter = true;
+          (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+            error: Error()
+          }), PerformanceMonitor) : PerformanceMonitor).getInstance().startTimer('world_enter');
           this.ws.request('world_enter', {
             map_id: this.mapId,
             x: pos.x,
@@ -527,6 +646,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             request_id: "we_sync_" + Date.now()
           }, r => {
             this._pendingEnter = false;
+            (_crd && PerformanceMonitor === void 0 ? (_reportPossibleCrUseOfPerformanceMonitor({
+              error: Error()
+            }), PerformanceMonitor) : PerformanceMonitor).getInstance().endTimer('world_enter');
             if (!(r != null && r.success)) return;
 
             this._applyEnterOthers(r, cid);
@@ -544,11 +666,23 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this._deferredRemoteRawByCid.clear();
 
-          this.clearAllRemotes();
+          var keep = new Set();
 
           for (var i = 0; i < list.length; i++) {
-            this.spawnOrUpdateRemote(list[i]);
+            var raw = list[i];
+            var ocid = String((raw == null ? void 0 : raw.character_id) || '');
+            if (!ocid || ocid === cid) continue;
+            keep.add(ocid);
+            this.spawnOrUpdateRemote(raw);
           }
+
+          var stale = [];
+
+          this._remoteByCid.forEach((_n, k) => {
+            if (!keep.has(k)) stale.push(k);
+          });
+
+          for (var k of stale) this.removeRemote(k);
         }
 
         onLocalStepEnd(dir, x, y) {
@@ -748,7 +882,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         enumerable: true,
         writable: true,
         initializer: function initializer() {
-          return 15;
+          return 60;
         }
       })), _class2)) || _class));
 

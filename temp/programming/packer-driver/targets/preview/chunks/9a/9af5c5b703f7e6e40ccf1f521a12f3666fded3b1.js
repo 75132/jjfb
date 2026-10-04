@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, WebSocketManager, GameConfig, _dec, _class, _crd, ccclass, property, AutoLoginUser;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, WebSocketManager, GameConfig, Logger, _dec, _class, _crd, ccclass, property, AutoLoginUser;
 
   function _reportPossibleCrUseOfWebSocketManager(extras) {
     _reporterNs.report("WebSocketManager", "../global/WebSocketManager", _context.meta, extras);
@@ -9,6 +9,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
   function _reportPossibleCrUseOfGameConfig(extras) {
     _reporterNs.report("GameConfig", "../global/GameConfig", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -24,6 +28,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
       WebSocketManager = _unresolved_2.WebSocketManager;
     }, function (_unresolved_3) {
       GameConfig = _unresolved_3.GameConfig;
+    }, function (_unresolved_4) {
+      Logger = _unresolved_4.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -53,7 +59,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            * 网络连接成功回调
            */
           this.onNetworkConnect = () => {
-            console.log('👤 AutoLoginUser: 网络连接成功，凭证已自动应用到WebSocketManager'); // 凭证已经在autoLogin中应用，WebSocketManager连接成功后会自动发送auth_request验证token
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('👤 AutoLoginUser: 网络连接成功，凭证已自动应用到WebSocketManager'); // 凭证已经在autoLogin中应用，WebSocketManager连接成功后会自动发送auth_request验证token
             // 但为了确保user_id和character_id也被发送（测试模式），我们也手动发送一次
 
             this.scheduleOnce(() => {
@@ -66,7 +74,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            */
           this.onAuthResponse = data => {
             if (data.success) {
-              console.log('✅ [AutoLoginUser] Token验证成功，自动登录成功'); // 断线重连容错：服务端可能返回 character_id=null，
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [AutoLoginUser] Token验证成功，自动登录成功'); // 断线重连容错：服务端可能返回 character_id=null，
               // 此时优先使用 WebSocketManager 当前内存里的 character_id，避免把角色覆盖成 ''。
 
               var wsCharacterId = this.wsManager.getCharacterId();
@@ -77,19 +87,25 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
               if (data.user_id) {
-                console.log("\u2705 [AutoLoginUser] \u66F4\u65B0 user_id: " + data.user_id);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 [AutoLoginUser] \u66F4\u65B0 user_id: " + data.user_id);
                 this.currentUserId = data.user_id;
               } // 如果服务器端返回了 character_id（说明自动选择角色成功），使用服务器返回的
 
 
               if (data.character_id) {
-                console.log("\u2705 [AutoLoginUser] \u670D\u52A1\u5668\u7AEF\u5DF2\u81EA\u52A8\u9009\u62E9\u89D2\u8272: " + data.character_id);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 [AutoLoginUser] \u670D\u52A1\u5668\u7AEF\u5DF2\u81EA\u52A8\u9009\u62E9\u89D2\u8272: " + data.character_id);
                 this.currentCharacterId = data.character_id; // 重新应用凭证（包含更新后的 user_id 和 character_id）
 
                 this.applyCredentials(); // 标记为已认证
 
                 this.isAuthenticated = true;
-                console.log('✅ [AutoLoginUser] 认证完成，可以正常使用游戏功能');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug('✅ [AutoLoginUser] 认证完成，可以正常使用游戏功能');
               } else {
                 // 服务器未返回角色ID时，主动清空本地角色，避免脏ID导致状态错乱/误跳转。
                 this.currentCharacterId = '';
@@ -98,7 +114,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
                 this.isAuthenticated = true;
               }
             } else {
-              console.error('❌ [AutoLoginUser] Token验证失败:', data.message);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ [AutoLoginUser] Token验证失败:', data.message);
               this.isAuthenticated = false; // Token验证失败，但这里不做自动登录，因为可能需要用户输入账号密码
               // 如果需要自动登录，可以在这里调用登录接口（如果有账号密码的话）
             }
@@ -109,7 +127,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            */
           this.onLoginResponse = data => {
             if (data.success && data.token && data.user_id) {
-              console.log('👤 AutoLoginUser: 检测到登录成功，更新凭证');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('👤 AutoLoginUser: 检测到登录成功，更新凭证');
               this.currentToken = data.token;
               this.currentUserId = data.user_id; // 注意：登录时还没有 character_id，所以不更新它
               // character_id 会在选择角色或创建角色时更新
@@ -121,7 +141,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            */
           this.onSelectCharacterResponse = data => {
             if (data.success && data.character_id) {
-              console.log('✅ [AutoLoginUser] 检测到选择角色成功，更新凭证');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [AutoLoginUser] 检测到选择角色成功，更新凭证');
               var userId = this.wsManager.getUserId();
 
               if (userId) {
@@ -133,7 +155,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
               this.applyCredentials(); // 标记为已认证
 
               this.isAuthenticated = true;
-              console.log('✅ [AutoLoginUser] 选择角色完成，认证状态已更新');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [AutoLoginUser] 选择角色完成，认证状态已更新');
             }
           };
 
@@ -142,7 +166,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
            */
           this.onCreateCharacterResponse = data => {
             if (data.success && data.character_id) {
-              console.log('👤 AutoLoginUser: 检测到创建角色成功，更新凭证');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('👤 AutoLoginUser: 检测到创建角色成功，更新凭证');
               var userId = this.wsManager.getUserId();
               var token = this.wsManager.getToken();
 
@@ -162,13 +188,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         }
 
         onLoad() {
-          console.log('👤 AutoLoginUser: Auto-login script loaded.');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('👤 AutoLoginUser: Auto-login script loaded.');
           this.wsManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
             error: Error()
           }), WebSocketManager) : WebSocketManager).getInstance();
 
           if (!this.wsManager) {
-            console.error('❌ AutoLoginUser: WebSocketManager instance not found.');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ AutoLoginUser: WebSocketManager instance not found.');
             return;
           } // 监听登录、选择角色、创建角色事件，以便更新凭证
 
@@ -220,9 +250,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.currentCharacterId = existingCharacterId || '';
 
           if (this.currentToken) {
-            console.log('👤 AutoLoginUser: 检测到本地 token，准备自动认证');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('👤 AutoLoginUser: 检测到本地 token，准备自动认证');
           } else {
-            console.log('👤 AutoLoginUser: 本地 token 不存在，自动登录跳过');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('👤 AutoLoginUser: 本地 token 不存在，自动登录跳过');
           }
         }
 
@@ -249,27 +283,43 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
 
         autoLogin() {
-          console.log('👤 AutoLoginUser: Setting credentials...'); // 应用凭证
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('👤 AutoLoginUser: Setting credentials...'); // 应用凭证
 
           this.applyCredentials(); // 没有 token 就不做自动登录
 
           if (!this.currentToken) {
-            console.log('👤 AutoLoginUser: token 不存在，自动登录跳过');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('👤 AutoLoginUser: token 不存在，自动登录跳过');
             return;
           } // Ensure connection
 
 
           if (!this.wsManager.isConnected()) {
-            console.log('👤 AutoLoginUser: WebSocket not connected. Initiating connection...');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('👤 AutoLoginUser: WebSocket not connected. Initiating connection...');
             this.wsManager.connect();
           } else {
-            console.log('👤 AutoLoginUser: WebSocket already connected.'); // 认证请求由 WebSocketManager 在握手/重连阶段自动触发
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('👤 AutoLoginUser: WebSocket already connected.'); // 认证请求由 WebSocketManager 在握手/重连阶段自动触发
           }
 
-          console.log('✅ AutoLoginUser: Credentials set successfully.');
-          console.log("   Token: " + this.currentToken.substring(0, 10) + "...");
-          console.log("   UserID: " + this.currentUserId);
-          console.log("   CharID: " + this.currentCharacterId);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('✅ AutoLoginUser: Credentials set successfully.');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("   Token: " + this.currentToken.substring(0, 10) + "...");
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("   UserID: " + this.currentUserId);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("   CharID: " + this.currentCharacterId);
         }
         /**
          * 发送认证请求（包含user_id和character_id作为备用验证）
@@ -288,7 +338,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
               token: token,
               character_id: this.currentCharacterId
             };
-            console.log('🔄 [AutoLoginUser] 发送认证请求');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('🔄 [AutoLoginUser] 发送认证请求');
             this.wsManager.send(authMsg, false, true);
           }
         }

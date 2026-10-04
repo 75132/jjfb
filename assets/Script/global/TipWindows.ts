@@ -1,4 +1,5 @@
 import { _decorator, BlockInputEvents, Button, Color, Component, director, Label, Node } from 'cc';
+import { Logger } from './Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -46,12 +47,12 @@ export class TipWindows extends Component {
         const canvas = scene?.getChildByName('Canvas');
         const node = canvas?.getChildByName('TipWindows') ?? scene?.getChildByName('TipWindows');
         if (!node) {
-            console.warn('[TipWindows] 场景中未找到 TipWindows 节点');
+            Logger.warn('[TipWindows] 场景中未找到 TipWindows 节点');
             return null;
         }
         const comp = node.getComponent(TipWindows);
         if (!comp) {
-            console.warn('[TipWindows] 预制体上未挂载 TipWindows 组件，请在编辑器中绑定');
+            Logger.warn('[TipWindows] 预制体上未挂载 TipWindows 组件，请在编辑器中绑定');
             return null;
         }
         return comp;
@@ -201,7 +202,7 @@ export class TipWindows extends Component {
             label.string = options.message;
             label.color = options.messageColor ?? new Color(255, 255, 255, 255);
         } else {
-            console.warn('[TipWindows] 未找到正文 Label，无法显示:', options.message);
+            Logger.warn('[TipWindows] 未找到正文 Label，无法显示:', options.message);
         }
 
         const showCancel = options.showCancel !== false && !!this.cancelButton;

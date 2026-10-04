@@ -77,6 +77,7 @@ async def handle_equip_enhance(websocket, data, current_character_id):
         lambda: utils.robotpet_col.update_one({"_id": pet_oid}, {"$set": {"equipment": equipment}}),
         timeout=2.0,
     )
+    utils.invalidate_robot_pets_cache(user["_id"], cid)
     await utils.async_mongo_operation(
         lambda: utils.players_col.update_one({"_id": player["_id"]}, {"$set": {"gold": gold - cost}}),
         timeout=2.0,
@@ -160,6 +161,7 @@ async def handle_equip_socket(websocket, data, current_character_id):
         lambda: utils.robotpet_col.update_one({"_id": pet_oid}, {"$set": {"equipment": equipment}}),
         timeout=2.0,
     )
+    utils.invalidate_robot_pets_cache(user["_id"], cid)
     consume = await bag_handler.consume_item_from_bag(user["_id"], cid, gem_item_id, 1)
     if not consume.get("success"):
         await utils.send_error_response(websocket, "equip_socket", consume.get("error", "扣除宝石失败"), code=400, request_data=data)

@@ -79,14 +79,15 @@ def load_equipment_data():
     
     equipment_files = ['Weapon.json', 'Gun.json', 'Wing.json', 'Dun.json', 'Armor.json']
     all_equipment = []
-    
+    from config_loader import load_json_file
+
     for filename in equipment_files:
         filepath = os.path.join(data_dir, filename)
         if os.path.exists(filepath):
             try:
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    equipment = json.load(f)
-                    all_equipment.extend(equipment)
+                equipment, from_cache = load_json_file(filepath)
+                all_equipment.extend(equipment)
+                if not from_cache:
                     print(f'✅ [EquipmentHandler] 已加载 {filename}: {len(equipment)} 个装备')
             except Exception as e:
                 print(f'⚠️ [EquipmentHandler] 加载 {filename} 失败: {e}')
@@ -129,22 +130,8 @@ def load_all_item_ids_data():
 
 def _load_items_json_directly():
     """直接加载 Items.json（备用方案，避免循环依赖）"""
-    try:
-        base_dir = os.path.dirname(os.path.dirname(__file__))  # server
-        possible_paths = [
-            os.path.join(base_dir, 'data', 'Items.json'),
-            os.path.join(os.path.dirname(__file__), 'json', 'Items.json'),
-            os.path.join(base_dir, 'assets', 'resources', 'json', 'Items.json'),
-        ]
-        
-        for path in possible_paths:
-            if os.path.exists(path):
-                with open(path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-        return []
-    except Exception as e:
-        print(f'❌ [EquipmentHandler] 加载Items.json失败: {e}')
-        return []
+    from config_loader import load_items_json
+    return load_items_json()
 
 def get_equipment_config(item_id: int):
     """
@@ -426,7 +413,7 @@ def calculate_total_attributes(pet, equipment_slots: dict) -> dict:
         'Counterattack': int(pet.get('Counterattack', 0) or 0),
         'Block': int(pet.get('Block', 0) or 0),
         'ArmorPenetration': int(pet.get('ArmorPenetration', 0) or 0),
-        'ParticleShield': int(pet.get('ParticleShield', 0) or 0),
+        'AttackCount': int(pet.get('AttackCount', 1) or 0),
         'EnergyRecovery': int(pet.get('EnergyRecovery', 0) or 0),
         'LifeRecovery': int(pet.get('LifeRecovery', 0) or 0),
         'AttackTimes': int(pet.get('AttackTimes', 0) or 0),
@@ -437,7 +424,7 @@ def calculate_total_attributes(pet, equipment_slots: dict) -> dict:
         'HP': 0, 'MP': 0, 'Melee': 0, 'Shooting': 0, 'Armor': 0,
         'Evasion': 0, 'Accuracy': 0, 'Lethality': 0, 'Corrosion': 0,
         'Resistance': 0, 'Initiative': 0, 'Counterattack': 0, 'Block': 0,
-        'ArmorPenetration': 0, 'ParticleShield': 0, 'EnergyRecovery': 0,
+        'ArmorPenetration': 0, 'AttackCount': 1, 'EnergyRecovery': 0,
         'LifeRecovery': 0, 'AttackTimes': 0,
     }
     
@@ -448,7 +435,7 @@ def calculate_total_attributes(pet, equipment_slots: dict) -> dict:
         'lethality': 'Lethality', 'corrosion': 'Corrosion',
         'resistance': 'Resistance', 'initiative': 'Initiative',
         'counterattack': 'Counterattack', 'block': 'Block',
-        'armorPenetration': 'ArmorPenetration', 'particleShield': 'ParticleShield',
+        'armorPenetration': 'ArmorPenetration', 'attackCount': 'AttackCount',
         'energyRecovery': 'EnergyRecovery', 'lifeRecovery': 'LifeRecovery',
         'attackTimes': 'AttackTimes'
     }
@@ -521,11 +508,11 @@ async def equip_item_to_pet(item_data: dict, item_id: int, slot_name: str,
         return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
     
     # 获取机甲数据
-    pet = utils.robotpet_col.find_one({
+    pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
         '_id': pet_object_id,
         'user_id': user_id,
         'character_id': character_id
-    })
+    }))
     
     if not pet:
         _equipment_operation_stats['equip_errors'] += 1
@@ -566,10 +553,10 @@ async def equip_item_to_pet(item_data: dict, item_id: int, slot_name: str,
         # 如果数据损坏，尝试修复
         if integrity_check['fixed_slots'] != current_equipment:
             print(f'🔄 [EquipmentHandler] 自动修复装备数据')
-            utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
                 {'$set': {'equipment': integrity_check['fixed_slots']}}
-            )
+            ))
             current_equipment = integrity_check['fixed_slots']
     
     # 获取当前装备槽位数据（使用修复后的数据）
@@ -681,10 +668,10 @@ async def equip_item_to_pet(item_data: dict, item_id: int, slot_name: str,
     }
     
     # 更新数据库：保存装备槽位数据
-    update_result = utils.robotpet_col.update_one(
+    update_result = await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
         {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
         {'$set': {'equipment': new_equipment_slots}}
-    )
+    ))
     
     if update_result.matched_count == 0:
         # 更新失败，需要回滚属性
@@ -758,6 +745,8 @@ async def equip_item_to_pet(item_data: dict, item_id: int, slot_name: str,
             traceback.print_exc()
     else:
         print(f'ℹ️ [EquipmentHandler] 槽位 {slot_name} 之前没有装备，无需处理旧装备')
+
+    utils.invalidate_robot_pets_cache(user_id, character_id)
     
     # 性能监控：记录成功
     elapsed_time = time.time() - start_time
@@ -805,11 +794,11 @@ async def remove_equipment_attributes(item_data: dict, user_id, character_id,
         return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
     
     # 获取机甲数据
-    pet = utils.robotpet_col.find_one({
+    pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
         '_id': pet_object_id,
         'user_id': user_id,
         'character_id': character_id
-    })
+    }))
     
     if not pet:
         return {'success': False, 'error': '机甲不存在'}
@@ -830,7 +819,7 @@ async def remove_equipment_attributes(item_data: dict, user_id, character_id,
         'counterattack': 'Counterattack',
         'block': 'Block',
         'armorPenetration': 'ArmorPenetration',
-        'particleShield': 'ParticleShield',
+        'attackCount': 'AttackCount',
         'energyRecovery': 'EnergyRecovery',
         'lifeRecovery': 'LifeRecovery',
         'attackTimes': 'AttackTimes'
@@ -875,10 +864,11 @@ async def remove_equipment_attributes(item_data: dict, user_id, character_id,
         return {'success': True, 'message': '装备无属性加成，无需移除'}
     
     # 更新数据库
-    utils.robotpet_col.update_one(
+    await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
         {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
         {'$set': attribute_updates}
-    )
+    ))
+    utils.invalidate_robot_pets_cache(user_id, character_id)
     
     return {
         'success': True,
@@ -1014,11 +1004,11 @@ async def unequip_slot_to_bag(
     except Exception:
         return {'success': False, 'error': f'无效的机甲ID: {pet_id}'}
 
-    pet = utils.robotpet_col.find_one({
+    pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
         '_id': pet_object_id,
         'user_id': user_id,
         'character_id': character_id,
-    })
+    }))
     if not pet:
         return {'success': False, 'error': '机甲不存在'}
 
@@ -1030,38 +1020,38 @@ async def unequip_slot_to_bag(
         if slot_name in equipment_slots:
             equipment_slots = dict(equipment_slots)
             equipment_slots.pop(slot_name, None)
-            utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
                 {'$set': {'equipment': equipment_slots}},
-            )
+            ))
         return {'success': True, 'skipped': True, 'message': '槽位为空'}
 
     if not isinstance(equipped_item, dict):
         equipment_slots = dict(equipment_slots)
         equipment_slots.pop(slot_name, None)
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': {'equipment': equipment_slots}},
-        )
+        ))
         return {'success': True, 'skipped': True, 'message': '槽位数据已清除'}
 
     item_id = _equipment_item_id_raw(equipped_item)
     if not item_id:
         equipment_slots.pop(slot_name, None)
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': {'equipment': equipment_slots}},
-        )
+        ))
         return {'success': True, 'message': '已清除无效槽位数据'}
 
     try:
         item_id_int = int(item_id)
     except (TypeError, ValueError):
         equipment_slots.pop(slot_name, None)
-        utils.robotpet_col.update_one(
+        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
             {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
             {'$set': {'equipment': equipment_slots}},
-        )
+        ))
         return {'success': True, 'message': '已清除无效 item_id'}
 
     item_data = get_equipment_config(item_id_int)
@@ -1079,20 +1069,21 @@ async def unequip_slot_to_bag(
         if not remove_result.get('success'):
             return {'success': False, 'error': remove_result.get('error', '移除装备属性失败')}
 
-    pet_after = utils.robotpet_col.find_one({
+    pet_after = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
         '_id': pet_object_id,
         'user_id': user_id,
         'character_id': character_id,
-    })
+    }))
     eq2 = (pet_after or pet).get('equipment', {}) or {}
     if not isinstance(eq2, dict):
         eq2 = {}
     eq2 = dict(eq2)
     eq2.pop(slot_name, None)
-    utils.robotpet_col.update_one(
+    await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
         {'_id': pet_object_id, 'user_id': user_id, 'character_id': character_id},
         {'$set': {'equipment': eq2}},
-    )
+    ))
+    utils.invalidate_robot_pets_cache(user_id, character_id)
 
     add_result = await add_item_to_inventory_func(user_id, character_id, item_id_int, 1)
     if not add_result or not add_result.get('success'):
@@ -1112,11 +1103,11 @@ async def strip_all_equipment_to_bag(user_id, character_id: str, pet_id: str, ad
     stripped_slots = []
     max_rounds = 32
     for _ in range(max_rounds):
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': _pet_oid,
             'user_id': user_id,
             'character_id': character_id,
-        })
+        }))
         if not pet:
             return {'success': False, 'error': '机甲不存在', 'stripped_slots': stripped_slots}
         eq_raw = pet.get('equipment') or {}
@@ -1124,10 +1115,10 @@ async def strip_all_equipment_to_bag(user_id, character_id: str, pet_id: str, ad
             eq_raw = {}
         pruned = _prune_empty_equipment_slots(eq_raw)
         if pruned != eq_raw:
-            utils.robotpet_col.update_one(
+            await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                 {'_id': _pet_oid, 'user_id': user_id, 'character_id': character_id},
                 {'$set': {'equipment': pruned}},
-            )
+            ))
         eq = pruned
         if not eq:
             return {'success': True, 'stripped_slots': stripped_slots}
@@ -1150,11 +1141,11 @@ async def strip_invalid_equipment_for_pet(user_id, character_id: str, pet_id: st
         return {'success': False, 'error': '无效的机甲ID', 'stripped_slots': []}
     stripped = []
     for _ in range(32):
-        pet = utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': ObjectId(pet_id),
             'user_id': user_id,
             'character_id': character_id,
-        })
+        }))
         if not pet:
             return {'success': False, 'error': '机甲不存在', 'stripped_slots': stripped}
         invalid = list_invalid_equipment_slots(pet)

@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, instantiate, Label, ScrollView, UITransform, Layout, EditBox, Button, Sprite, Color } from 'cc';
 import { WebSocketManager } from '../../global/WebSocketManager';
 import { GameConfig } from '../../global/GameConfig';
+import { Logger } from '../../global/Logger';
 const { ccclass, property } = _decorator;
 
 @ccclass('ChatRoomFull')
@@ -72,13 +73,13 @@ export class ChatRoomFull extends Component {
         if (this.messageTemplate) {
             // 隐藏模板节点，避免在场景中显示（但保留用于克隆）
             this.messageTemplate.active = false;
-            console.log('[ChatRoomFull] 使用手动绑定的 Message 模板节点');
+            Logger.debug('[ChatRoomFull] 使用手动绑定的 Message 模板节点');
             return;
         }
         
         // 如果没有手动绑定，尝试自动查找（兼容旧代码）
         if (!this.content) { 
-            console.warn('[ChatRoomFull] content 节点不存在');
+            Logger.warn('[ChatRoomFull] content 节点不存在');
             return; 
         }
         const children = this.content.children;
@@ -87,13 +88,13 @@ export class ChatRoomFull extends Component {
                 this.messageTemplate = children[i];
                 if (this.messageTemplate) {
                     this.messageTemplate.active = false;
-                    console.log('[ChatRoomFull] 自动找到 Message 模板节点');
+                    Logger.debug('[ChatRoomFull] 自动找到 Message 模板节点');
                 }
                 break;
             }
         }
         if (!this.messageTemplate) {
-            console.error('[ChatRoomFull] 未找到 Message 模板节点，请在编辑器中手动绑定 messageTemplate 属性');
+            Logger.error('[ChatRoomFull] 未找到 Message 模板节点，请在编辑器中手动绑定 messageTemplate 属性');
         }
     }
 
@@ -173,7 +174,7 @@ export class ChatRoomFull extends Component {
     }
 
     private onChatHistory(data: any) {
-        console.log('📥 [ChatRoomFull] 收到chat_history响应:', data);
+        Logger.debug('📥 [ChatRoomFull] 收到chat_history响应:', data);
         // 兼容服务器返回的格式：可能是 data.messages 或 data.list 或 data.data.messages
         let list: any[] = [];
         if (data && data.data && Array.isArray(data.data.messages)) {
@@ -185,12 +186,12 @@ export class ChatRoomFull extends Component {
         }
         this.chatList = list;
         this.chatLoaded = true;
-        console.log(`✅ [ChatRoomFull] 聊天历史已加载，共 ${list.length} 条`);
+        Logger.debug(`✅ [ChatRoomFull] 聊天历史已加载，共 ${list.length} 条`);
         this.renderCombinedHistory();
     }
 
     private onAnnouncementList(data: any) {
-        console.log('📥 [ChatRoomFull] 收到announcement_list响应:', data);
+        Logger.debug('📥 [ChatRoomFull] 收到announcement_list响应:', data);
         // 兼容服务器返回的格式：可能是 data.announcements 或 data.list 或 data.data.announcements
         let list: any[] = [];
         if (data && data.data && Array.isArray(data.data.announcements)) {
@@ -202,7 +203,7 @@ export class ChatRoomFull extends Component {
         }
         this.annList = list;
         this.annLoaded = true;
-        console.log(`✅ [ChatRoomFull] 公告列表已加载，共 ${list.length} 条`);
+        Logger.debug(`✅ [ChatRoomFull] 公告列表已加载，共 ${list.length} 条`);
         this.renderCombinedHistory();
     }
 
@@ -211,7 +212,7 @@ export class ChatRoomFull extends Component {
      */
     private onAuthResponse = (data: any) => {
         if (data && data.success) {
-            console.log('✅ [ChatRoomFull] 认证成功，准备请求聊天历史');
+            Logger.debug('✅ [ChatRoomFull] 认证成功，准备请求聊天历史');
             // 认证成功后，延迟一小段时间确保服务器端current_user_id已设置
             this.scheduleOnce(() => {
                 if (!this.historyLoaded && this.node && this.node.active) {
@@ -225,7 +226,7 @@ export class ChatRoomFull extends Component {
      * 请求历史记录（优化：使用request方法，自动生成request_id并匹配响应）
      */
     private requestHistory() {
-        console.log('📤 [ChatRoomFull] 发送请求: get_chat_history, get_announcements_history');
+        Logger.debug('📤 [ChatRoomFull] 发送请求: get_chat_history, get_announcements_history');
         
         // 优化：使用request方法，自动生成request_id并匹配响应
         this.ws.request(
@@ -301,7 +302,7 @@ export class ChatRoomFull extends Component {
 
     private addMessage(text: string, scrollTop: boolean) {
         if (!this.content || !this.messageTemplate) { 
-            console.warn('[ChatRoomFull] addMessage: content 或 messageTemplate 不存在', {
+            Logger.warn('[ChatRoomFull] addMessage: content 或 messageTemplate 不存在', {
                 hasContent: !!this.content,
                 hasTemplate: !!this.messageTemplate
             });
@@ -329,7 +330,7 @@ export class ChatRoomFull extends Component {
         }
         
         if (!templateTextNode) {
-            console.error('[ChatRoomFull] 模板中未找到 Text 子节点');
+            Logger.error('[ChatRoomFull] 模板中未找到 Text 子节点');
             if (!wasActive) {
                 this.messageTemplate.active = false;
             }
@@ -339,7 +340,7 @@ export class ChatRoomFull extends Component {
         // 在模板激活状态下获取原始属性（关键：此时获取的位置是准确的）
         const templateTextUT = templateTextNode.getComponent(UITransform);
         if (!templateTextUT) {
-            console.error('[ChatRoomFull] Text 节点没有 UITransform 组件');
+            Logger.error('[ChatRoomFull] Text 节点没有 UITransform 组件');
             if (!wasActive) {
                 this.messageTemplate.active = false;
             }
@@ -362,7 +363,7 @@ export class ChatRoomFull extends Component {
         }
         
         if (!messageNode) {
-            console.error('[ChatRoomFull] 克隆 Message 模板失败');
+            Logger.error('[ChatRoomFull] 克隆 Message 模板失败');
             return;
         }
         
@@ -380,25 +381,25 @@ export class ChatRoomFull extends Component {
             for (let i = 0; i < children.length; i++) {
                 if (children[i].getComponent(Label)) {
                     textNode = children[i];
-                    console.log(`[ChatRoomFull] 通过搜索找到 Text 节点: ${textNode.name}`);
+                    Logger.debug(`[ChatRoomFull] 通过搜索找到 Text 节点: ${textNode.name}`);
                     break;
                 }
             }
         }
         
         if (!textNode) {
-            console.error('[ChatRoomFull] 未找到 Text 子节点，Message 节点下必须有带 Label 组件的 Text 子节点');
-            console.error('[ChatRoomFull] Message 节点的子节点:', messageNode.children.map(c => c.name));
+            Logger.error('[ChatRoomFull] 未找到 Text 子节点，Message 节点下必须有带 Label 组件的 Text 子节点');
+            Logger.error('[ChatRoomFull] Message 节点的子节点:', messageNode.children.map(c => c.name));
             messageNode.destroy();
             return;
         }
         
-        console.log(`[ChatRoomFull] 找到 Text 节点: ${textNode.name}`);
+        Logger.debug(`[ChatRoomFull] 找到 Text 节点: ${textNode.name}`);
         
         // Text 节点本身就有 Label 组件
         const label = textNode.getComponent(Label);
         if (!label) { 
-            console.error('[ChatRoomFull] Text 节点没有 Label 组件');
+            Logger.error('[ChatRoomFull] Text 节点没有 Label 组件');
             messageNode.destroy();
             return; 
         }
@@ -444,7 +445,7 @@ export class ChatRoomFull extends Component {
         label.enableWrapText = true;
         label.verticalAlign = Label.VerticalAlign.TOP;
         
-        console.log(`[ChatRoomFull] 准备添加消息: ${text.substring(0, 20)}...`);
+        Logger.debug(`[ChatRoomFull] 准备添加消息: ${text.substring(0, 20)}...`);
         
         // 关键修复：根据最佳实践，在插入到 content 之前暂时禁用 Layout 组件
         // 这样可以防止 Layout 在插入节点时自动调整子节点位置
@@ -456,7 +457,7 @@ export class ChatRoomFull extends Component {
         
         // 插入到 content 的第一个位置（排除模板节点）
         this.content.insertChild(messageNode, 0);
-        console.log(`[ChatRoomFull] 消息节点已插入，content 子节点数: ${this.content.children.length}`);
+        Logger.debug(`[ChatRoomFull] 消息节点已插入，content 子节点数: ${this.content.children.length}`);
         
         // 初始化消息项的图片显示状态：默认隐藏图片（未选中状态）
         this.setMessageImageVisible(messageNode, false);
@@ -501,7 +502,7 @@ export class ChatRoomFull extends Component {
         // 等待一帧让 Label 渲染完成，然后调整 Message 节点高度
         this.scheduleOnce(() => {
             if (!label.isValid || !messageNode.isValid || !textNode.isValid) { 
-                console.warn('[ChatRoomFull] 节点已失效，跳过高度调整');
+                Logger.warn('[ChatRoomFull] 节点已失效，跳过高度调整');
                 return; 
             }
             
@@ -535,7 +536,7 @@ export class ChatRoomFull extends Component {
                 labelUT.anchorY = textAnchorY;
                 textNode.setPosition(textLocalPos.x, -14, textLocalPos.z);
                 
-                console.log(`[ChatRoomFull] 调整 Message 高度: 文本高度=${textHeight}, Message高度=${messageHeight}, Text位置=(${textLocalPos.x}, -14)`);
+                Logger.debug(`[ChatRoomFull] 调整 Message 高度: 文本高度=${textHeight}, Message高度=${messageHeight}, Text位置=(${textLocalPos.x}, -14)`);
                 
                 // 恢复 Layout 并更新布局
                 if (layout && layoutWasEnabled) {
@@ -633,9 +634,9 @@ export class ChatRoomFull extends Component {
                 // 通过request_id匹配的响应回调
                 if (!response || !response.success) {
                     const errorMsg = response?.error || response?.message || '发送失败';
-                    console.error(`❌ [ChatRoomFull] 发送聊天消息失败: ${errorMsg}`);
+                    Logger.error(`❌ [ChatRoomFull] 发送聊天消息失败: ${errorMsg}`);
                 } else {
-                    console.log('✅ [ChatRoomFull] 聊天消息发送成功');
+                    Logger.debug('✅ [ChatRoomFull] 聊天消息发送成功');
                 }
             },
             true, // 需要认证

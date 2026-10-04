@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>shot</title>
+<style>html,body{margin:0;padding:0;background:#111;overflow:hidden}
+#fr{width:1680px;height:900px;border:0;display:block}</style>
+</head>
+<body>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* 截图/演示用：把工坊驱动到「整块贴 + 一变四」的状态 */
+const Q = new URLSearchParams(location.search);
+const MODE = Q.get('m') || 'block';
+setTimeout(async () => {
+  try {
+    const W = document.getElementById('fr').contentWindow;
+    const T = W.TS, S = T.S;
+    const roots = await (await fetch('/api/roots')).json();
+    await T.openSheetByPath(roots.mapSrc + '\\map1_7x6.png', 'map1_7x6.png');
+    T.setMode(MODE);
+    T.setBlkFlip('order');
+
+    const n = S.sheet.cols * S.sheet.rows;
+    S.sel.clear(); for (let i = 0; i < n; i++) S.sel.add(i);
+    T.applyTag('ground');
+    [[5, 'wall'], [8, 'plant_np'], [20, 'over']].forEach(([i, t]) => {
+      S.sel.clear(); S.sel.add(i); T.applyTag(t);
+    });
+
+    S.curSlot = 'B';
+    T.SLOTS.forEach(s => S.out[s.id].fill(null));
+    S.sel.clear(); for (let i = 0; i < n; i++) S.sel.add(i);
+    if (Q.get('variants') === '1') {
+      T.doVariants('all');
+      T.S.lastBlk = null;                       // 让黄框都是淡的，看清四块
+    } else {
+      T.doPlace();
+    }
+
+    /* scene=v3 —— 演示「框选一块 → 整块镜像」+ 撤回栈非空 + 导出目录在桌面 */
+    if (Q.get('scene') === 'v3') {
+      const slot = T.SLOT_BY_ID.B, arr = S.out.B;
+      arr.fill(null);
+      const blk = { id: ++S.blkSeq, c0: 0, r0: 0, w: 4, h: 3 };
+      for (let y = 0; y < 3; y++) {
+        for (let x = 0; x < 4; x++) arr[y * 16 + x] = T.newCell(y * 4 + x, 'none', blk);
+      }
+      T.pushHist('整块贴入 B');
+      T.pushHist('标注→地面');
+      T.setBlkFlip('order');
+      T.setOutMode('select');
+      // 框选 2×2 区域（留下框选矩形 → ⑤ 区提示「整块镜像」）
+      S.outSel.clear();
+      for (let r = 1; r <= 2; r++) for (let c = 1; c <= 2; c++) S.outSel.add(r * 16 + c);
+      S.outSelRect = { c0: 1, r0: 1, w: 2, h: 2 };
+      T.updateOutSelInfo();
+      // 顺带画一个拖拽中的预览框，把两种框都展示出来
+      T.reqOut();
+    }
+    document.title = 'SHOT READY';
+  } catch (e) { document.title = 'SHOT FAIL ' + e.message; }
+}, 4500);
+</script>
+</body>
+</html>

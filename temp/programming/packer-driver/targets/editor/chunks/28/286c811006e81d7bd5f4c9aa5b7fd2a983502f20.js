@@ -141,6 +141,8 @@ System.register(["cc"], function (_export, _context) {
         BATTLE_ROOM_ACTION_RESPONSE: 'battle_room_action_response',
         BATTLE_ROOM_RESUME: 'battle_room_resume',
         BATTLE_ROOM_RESUME_RESPONSE: 'battle_room_resume_response',
+        // PVP 回合结算主动推送（服务端发起，非请求响应；解决挂机方收不到状态的问题）
+        PVP_ROUND_UPDATE: 'pvp_round_update',
         // PVP 匹配（平匹配）
         PVP_FLAT_MATCH: 'pvp_flat_match',
         ROBOTCOUNT_UPDATE: 'robotcount_update',
@@ -155,7 +157,10 @@ System.register(["cc"], function (_export, _context) {
         MAIL_CLAIM: 'mail_claim',
         MAIL_DELETE: 'mail_delete',
         EQUIP_ENHANCE: 'equip_enhance',
-        EQUIP_SOCKET: 'equip_socket'
+        EQUIP_SOCKET: 'equip_socket',
+        // 技能系统（MechSkill 面板 / 技能升级）
+        SKILL_LIST: 'skill_list',
+        SKILL_LEVEL_UP: 'skill_level_up'
       };
       // 事件名称
       GameConfig.EVENTS = {
@@ -172,9 +177,11 @@ System.register(["cc"], function (_export, _context) {
         LOGOUT_FAILURE: 'logout_failure',
         LOGOUT_RESPONSE: 'logout_response'
       };
-      // 调试模式
-      GameConfig.DEBUG_MODE = true;
-      // 开发环境设为true，生产环境设为false
+      // 发布默认关闭。本地排查可临时改为 true；勿把刷屏日志带上线。
+      GameConfig.DEBUG_MODE = false;
+
+      /** 入站消息全文 / request_id 匹配成功日志。发布必须 false。 */
+      GameConfig.LOG_WS_TRAFFIC = false;
       // 错误码常量
       GameConfig.ERROR_CODES = {
         SUCCESS: 200,

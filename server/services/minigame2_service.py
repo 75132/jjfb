@@ -28,6 +28,7 @@ except ImportError:  # pragma: no cover
 
 from pymongo.errors import DuplicateKeyError
 from pymongo import ReturnDocument, UpdateOne
+from handlers import utils
 
 TZ_NAME = "Asia/Shanghai"
 ROUND_HOURS = 3
@@ -204,7 +205,7 @@ async def ensure_round_finalized(issue_key: str, now_dt: Optional[datetime] = No
         drawn_at = time.time()
         # upsert：若并发到点只允许最终写入一次（unique index 负责幂等）
         try:
-            _rounds_col.update_one(
+            await utils.async_mongo_operation(lambda: _rounds_col.update_one(
                 {"issue_key": issue_key},
                 {
                     "$set": {
@@ -217,7 +218,7 @@ async def ensure_round_finalized(issue_key: str, now_dt: Optional[datetime] = No
                     }
                 },
                 upsert=True,
-            )
+            ))
         except Exception:
             # 如果写入冲突等，直接再取一次
             doc = _round_doc(issue_key)
@@ -227,10 +228,10 @@ async def ensure_round_finalized(issue_key: str, now_dt: Optional[datetime] = No
 
         # 结算：遍历 bets_col
         # 失败不返还：bets 已在下注时扣除本金，因此仅给赢家发放
-        bets_cursor = _bets_col.find(
+        bets_cursor = await utils.async_mongo_operation_read(lambda: list(_bets_col.find(
             {"issue_key": issue_key, "selected_key": winner_key},
             {"character_id": 1, "bet_amount": 1},
-        )
+        )))
         ops = []
         for b in bets_cursor:
             cid = str(b.get("character_id", "")).strip()
@@ -242,7 +243,7 @@ async def ensure_round_finalized(issue_key: str, now_dt: Optional[datetime] = No
 
         if ops:
             # ordered=False：尽可能提高吞吐
-            _players_col.bulk_write(ops, ordered=False)
+            await utils.async_mongo_operation(lambda: _players_col.bulk_write(ops, ordered=False))
 
         return _round_doc(issue_key)
 
@@ -330,16 +331,16 @@ async def place_bet(
             return False, "round_drawn", None
 
         # 原子扣除本金：energy_blocks >= amt
-        upd = _players_col.update_one(
+        upd = await utils.async_mongo_operation(lambda: _players_col.update_one(
             {"character_id": cid, "energy_blocks": {"$gte": amt}},
             {"$inc": {"energy_blocks": -amt}},
-        )
+        ))
         if upd.matched_count != 1:
             return False, "insufficient_energy", None
 
         # 多类目下注：同一期、同角色、同类目累加（用 upsert + $inc，避免并发下 insert 冲突）
         try:
-            _bets_col.update_one(
+            await utils.async_mongo_operation(lambda: _bets_col.update_one(
                 {"issue_key": issue_key, "character_id": cid, "selected_key": cat.key},
                 {
                     "$inc": {"bet_amount": amt},
@@ -352,11 +353,11 @@ async def place_bet(
                     },
                 },
                 upsert=True,
-            )
+            ))
         except DuplicateKeyError:
             # 仍然冲突：通常是数据库里残留旧的唯一索引（issue_key, character_id）
             # 回滚本次扣款并提示重试/清理索引
-            _players_col.update_one({"character_id": cid}, {"$inc": {"energy_blocks": amt}})
+            await utils.async_mongo_operation(lambda: _players_col.update_one({"character_id": cid}, {"$inc": {"energy_blocks": amt}}))
             return False, "concurrent_bet_conflict", None
 
         balance = _get_player_balance(cid)
@@ -482,10 +483,10 @@ async def get_today_return_history(
                 await ensure_round_finalized(ik, now_dt)
 
     # 取出数据库中已有的轮次结果
-    rounds_cursor = _rounds_col.find(
+    rounds_cursor = await utils.async_mongo_operation_read(lambda: list(_rounds_col.find(
         {"issue_key": {"$in": candidate_issue_keys}},
         {"issue_key": 1, "winner_key": 1, "winner_multiplier": 1, "close_time": 1, "drawn": 1},
-    )
+    )))
     round_by_issue: Dict[str, Dict[str, Any]] = {}
     for r in rounds_cursor:
         ik = str(r.get("issue_key", "")).strip()
@@ -498,10 +499,10 @@ async def get_today_return_history(
     if not issue_keys:
         return {"day_key": day_key, "total_profit": 0, "history": []}
 
-    bets_cursor = _bets_col.find(
+    bets_cursor = await utils.async_mongo_operation_read(lambda: list(_bets_col.find(
         {"character_id": cid, "issue_key": {"$in": issue_keys}},
         {"issue_key": 1, "selected_key": 1, "bet_amount": 1},
-    )
+    )))
     # issue_key -> {selected_key -> bet_amount}
     bets_by_issue: Dict[str, Dict[str, int]] = {}
     for b in bets_cursor:

@@ -1,1 +1,88 @@
-2026-09-18 00:16:38 | ERROR    | game_server | 端口 8001 已被占用（PID=22484），拒绝启动
+2026-10-01 00:48:18 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:1ba0e877d5934d53a1d4e5044507e461 cid=cid-1 room=1ba0e877d5934d53a1d4e5044507e461 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 00:48:36 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:cd093108686c4676a01a06e42927e64a cid=cid-1 room=cd093108686c4676a01a06e42927e64a err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 00:48:45 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:ba82aac1024e45aa9d5e4ccc2984d729 cid=cid-1 room=ba82aac1024e45aa9d5e4ccc2984d729 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 00:48:49 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:dcabd0f24bf24f3fa887b060afbfef8e cid=cid-1 room=dcabd0f24bf24f3fa887b060afbfef8e err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 00:48:58 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:210893f14bb144a29b9fd0e77c3f7213 cid=cid-1 room=210893f14bb144a29b9fd0e77c3f7213 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 00:51:16 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:bf7f0f0a786545b58efba6bd302063a8 cid=cid-1 room=bf7f0f0a786545b58efba6bd302063a8 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 01:01:08 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:f6684559bbd14252ad97433f0787c747 cid=cid-1 room=f6684559bbd14252ad97433f0787c747 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 01:01:17 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:722cd8e63db842749e5dbe4bfd27e8f4 cid=cid-1 room=722cd8e63db842749e5dbe4bfd27e8f4 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 01:01:26 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:3c5f03dfe5094379a68b04103a979757 cid=cid-1 room=3c5f03dfe5094379a68b04103a979757 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 01:20:39 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:31960a472a624c169932779763e32d33 cid=cid-1 room=31960a472a624c169932779763e32d33 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed
+2026-10-01 01:38:33 | ERROR    | game_server | finalize_story_battle failed | trace=finalize:cid-1:evt-battle-1:b40276b21cfd4d12bdad3e3190569348 cid=cid-1 room=b40276b21cfd4d12bdad3e3190569348 err=reward write failed
+Traceback (most recent call last):
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\services\story_battle_service.py", line 656, in finalize_story_battle
+    applied = await apply_effects(
+              ^^^^^^^^^^^^^^^^^^^^
+  File "D:\jjfbol-cocos\jjfbol-cocos\jjfb\server\tests\test_story_battle_finalize.py", line 481, in _boom
+    raise RuntimeError("reward write failed")
+RuntimeError: reward write failed

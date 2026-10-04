@@ -1,7 +1,7 @@
 {
   "configVersion": "1.0.1",
   "mapId": 0,
-  "mapCode": "world_1783159547543",
+  "mapCode": "world_1788102496297",
   "mapName": "新大地图",
   "tileSize": 48,
   "mapWidth": 1584,
@@ -17,341 +17,198 @@
       "taskId": 100001,
       "taskName": "新大地图",
       "mainlineStep": 1
+    },
+    {
+      "taskId": 1001,
+      "taskName": "郊外·阶段1",
+      "mainlineStep": 1
+    },
+    {
+      "taskId": 1002,
+      "taskName": "郊外·阶段2",
+      "mainlineStep": 1
+    },
+    {
+      "taskId": 1003,
+      "taskName": "郊外·阶段3",
+      "mainlineStep": 1
     }
   ],
   "client": {
     "dialogueScripts": {
-      "dlg_node_5a1396b9_e201_4fb1_90a6_9b27b6ce1820": {
+      "dlg_node_4f182297_8945_4048_9f78_a1e13cd92325": {
+        "speaker": "罗威·教官",
+        "lines": [
+          "（登记处的窗口后头坐着个穿旧军装的中年人，肩章磨得发白。他把登记表推过来，笔尖点在代号那一栏。）",
+          "罗威：会开吗？",
+          "玩家：（默认：没碰过机甲。）",
+          "罗威：那正好，从零带。这儿不看你会不会开——看你签不签得下契。签了，它就是你的兵，指哪儿打哪儿；不签，你回后勤拧螺丝去。代号，报一个。",
+          "凯尔博士：（对警卫，压低）科研处的货。别往册子上记。",
+          "玩家：博士——那是什么东西？",
+          "凯尔博士：（把舱盖往下按了按）一颗蛋。别问我孵出什么。",
+          "罗威：（起身，往你腕上扣了个黑环）跟我走。城外头给你留了台旧的，先拿它练手。开车之前，得先学会怎么叫它出来。"
+        ]
+      },
+      "dlg_node_cffb70c3_5fbd_4ad1_a7ed_31b484e50483": {
+        "speaker": "罗威·教官",
+        "lines": [
+          "罗威：就它了。往后立契、授机，都认这个。"
+        ]
+      },
+      "dlg_node_367a8b70_9a71_4ff3_a039_a64c7d350614": {
+        "speaker": "罗威·教官",
+        "lines": [
+          "罗威：那先空着，回头补。"
+        ]
+      },
+      "dlg_node_adb10ae4_18b8_4c6e_a995_4e2df82fd3b4": {
+        "speaker": "罗威·教官",
+        "lines": [
+          "罗威：腕环已给你扣上了。跟着出城，先去看看那台留给你练手的旧家伙。"
+        ]
+      },
+      "dlg_node_4b980982_a7be_4904_b900_b17af862dd61": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "（停机坪上停着一排同款的旧机甲，蒙着防尘布，编号都磨掉了。凯尔掀开其中一台的布，维塔抱着个平板跟在后头。）",
+          "凯尔博士：这台，路上归你用。进城之前还回来。别磕坏了，账上要销的。",
+          "维塔：（敲了敲腕环）先学怎么召。腕环接上机甲那一下，你手心能感觉到——那是契。召出来、收回去，练两遍。",
+          "（你照着做。腕环一亮，那台旧机甲哐地立起来。）",
+          "凯尔博士：行。上路上车，跟着车队走。"
+        ]
+      },
+      "dlg_node_9113b19a_b4af_4c53_9f9f_ae4a608d0f50": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "凯尔博士：车在坡下等着。上了路跟紧车队，林道那段不太平。"
+        ]
+      },
+      "dlg_node_8db2ad32_8a09_4b49_ab6b_9b841c98fc56": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "（车队刚进林道，头车就碾上了什么。地面翻开，三只虫族幼体从土里窜出来，直扑车队尾部。凯尔的护卫机甲先动的——他反应比谁都快。）",
+          "凯尔博士：（一把将你按到身后）第一次？手别离腕环。突击。",
+          "（他那台支援机甲横插进来，能量刃一扫，把扑向你的那只劈成两截。剩下两只绕到你侧面——这次，得你自己来。）",
+          "玩家：（可操作：指令临时机甲迎击。）"
+        ]
+      },
+      "dlg_node_25ec9751_1fa9_4803_9afc_a6c648947c49": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "凯尔博士：虫族已到近前。召出机甲迎上去，别让它们靠近车队。"
+        ]
+      },
+      "dlg_node_e73123eb_c5f4_4416_8401_2092d33d86be": {
+        "speaker": "凯尔博士",
+        "lines": [
+          "凯尔博士：（收刃，看你打完）记住这个手感。刚才救你一次，下次不一定赶得上。"
+        ]
+      },
+      "dlg_node_c9246a09_c6ff_47d0_8449_4f1c1ea38a3a": {
         "speaker": "韩诺",
         "lines": [
-          "欢迎来到前线阵地，新兵。我是你的引导员，韩诺。",
-          "这里曾是人类与虫族交锋的最前沿，但现在我们面对的已不仅仅是虫子…",
-          "上头决定让你这样的新兵也接受机甲召唤师的训练。你准备好了吗？"
+          "（夜里在残墙根下歇脚。凯尔把样本舱搁在脚边，谁靠近他都看一眼。韩诺不知什么时候站在了墙影里，胳膊上缠着旧绷带，看那舱子的眼神不太对。）",
+          "（两个叛军从废墟口探出来，往地上撂了两只补给箱，扭头就跑。凯尔抬腕想追，被韩诺抬手拦下。）",
+          "韩诺：别追。这是引路的饵。",
+          "玩家：叛军？他们不是帝国的人吗？",
+          "韩诺：（踢了踢箱子）帝国的逃兵，也抢平民。比虫子难缠。箱子你收着，路上缺东西。"
         ]
       },
-      "dlg_node_484787ab_9cdd_47aa_bc33_319bb91a7bd8": {
+      "dlg_node_f8e0396d_825b_4f2f_995a_0053e304aa81": {
         "speaker": "韩诺",
         "lines": [
-          "你在之前的训练中表现不错，但现在没时间庆祝了。",
-          "前方补给站发来求救信号，有一只虫族正在破坏我们的补给物资。",
-          "去补给站消灭那只该死的虫子，然后回来向我报告。"
+          "韩诺：箱子先收着。前头信号塔那边还有一件，捡齐了一起给博士。"
         ]
       },
-      "dlg_node_09bf0c71_8a2b_42fc_bb34_2b2e0c7ae55e": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕：有件事需要你帮忙。"
-        ]
-      },
-      "dlg_node_9f77a86d_1696_4681_ab79_74cc1e04a8f3": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕：有件事需要你帮忙。"
-        ]
-      },
-      "dlg_node_f0f87533_c6b1_4e78_b107_1d5b8dabeb8e": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕：敌人已在附近出现，找到并击败后再来找我交任务。"
-        ]
-      },
-      "dlg_node_c53f5738_917f_4941_8f1b_a12f4ef89083": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕：敌人已在附近出现，找到并击败后再来找我交任务。"
-        ]
-      },
-      "dlg_node_a5e44c83_ec74_459c_a99d_314aef7a437d": {
+      "dlg_node_4050dfd7_44ea_41fc_8ff6_88dc12a8d6d6": {
         "speaker": "韩诺",
         "lines": [
-          "干得漂亮，补给站的危机解除了。但更糟糕的消息传来…",
-          "我们的前哨站遭到了虫族的猛烈攻击，守卫部队正在苦战。",
-          "现在是时候启动你的机甲了。去哨站支援他们，你需要面对 2 只成虫。"
+          "（第三件物资，是枚被虫甲压了一半的通讯模块——翻过来，背面是枚鹰徽。凯尔盯着它看了两秒，没接话。）",
+          "韩诺：（把鹰徽抠下来，塞进你手里）拿着。帝国的东西，装在自己人身上。",
+          "玩家：你是哪边的人？",
+          "韩诺：（没答，转身去牵自己的车）以后碰上跟你说「信我」的，先看这个。谁也别说准。",
+          "凯尔博士：（拎起样本舱，走在最前）天亮了。进城。"
         ]
       },
-      "dlg_node_041b933e_961f_4a36_a7cc_e2f60e384364": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第3幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第3幕：有件事需要你帮忙。"
-        ]
-      },
-      "dlg_node_f759bdc9_8447_4b6c_a9b3_4974bc620f16": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第3幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第3幕：附近出现了 2 个敌人，逐个击败后再来找我交任务。"
-        ]
-      },
-      "dlg_node_48ba7c51_b625_4e1a_995e_306d253a4493": {
+      "dlg_node_12a0e42f_d35d_4d61_83e4_b25d75c58b43": {
         "speaker": "韩诺",
         "lines": [
-          "该死…监测到不仅有虫族，还有人类的武装反应。是叛军！",
-          "他们一定是趁着虫族攻击的机会渗透进来了，这些家伙比虫族更阴险狡猾。",
-          "这次要面对 3 个敌人，可能有叛军潜入者混在虫群中。别让他们偷走我们的机密数据！"
-        ]
-      },
-      "dlg_node_ff573cfe_6475_4350_9aa1_98c72a7f0592": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第4幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第4幕：有件事需要你帮忙。"
-        ]
-      },
-      "dlg_node_71274cb1_607b_46a8_8ecc_bb262793ffdc": {
-        "speaker": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第4幕",
-        "lines": [
-          "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第4幕：附近出现了 3 个敌人，逐个击败后再来找我交任务。"
-        ]
-      },
-      "dlg_node_b577bb9d_5487_4bcb_af55_bb159a88f46e": {
-        "speaker": "韩诺",
-        "lines": [
-          "难以置信，你竟然真的撑过来了。刚才那一战，你已经有了几分王牌机师的样子。",
-          "从初次接触机甲，到现在直面叛军与虫群，你已经是合格的机甲召唤师了。",
-          "不过这条防线还需要你，我们还有很多仗要打。欢迎正式加入，战友。"
+          "凯尔博士：（拎起样本舱，往城门方向抬了抬下巴）东西齐了。城里有报到点，跟我进去点名。"
         ]
       }
     },
     "choiceScripts": {
-      "choice_node_b745d918_0c9c_42f3_88b0_45b7792e676e": {
-        "title": "命运的抉择",
+      "choice_node_3742e1c2_5d25_4cd6_a0fa_632be92e8899": {
+        "title": "接取任务 1001",
         "options": [
           {
-            "id": "opt_f84a4455-e291-4c52-a693-252feab6f4eb",
-            "text": "接受训练，成为召唤师！",
-            "completesEvent": true
-          },
-          {
-            "id": "opt_e9659d43-9839-41a9-821a-d6ac7366ad73",
-            "text": "我需要考虑一下",
-            "systemTip": "你暂时没有接受训练。做好准备后再来找韩诺吧。",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_86cca102_4bc3_4503_a895_881759097e5c": {
-        "title": "是否出击",
-        "options": [
-          {
-            "id": "opt_3855ff5d-b560-412f-b5a5-d3dc2587f66b",
-            "text": "立刻出发，交给我吧！",
-            "completesEvent": true
-          },
-          {
-            "id": "opt_e0c81e7f-e116-4235-b873-922848ec1c57",
-            "text": "准备还不充分…",
-            "systemTip": "你决定暂时观望。补给站的情况刻不容缓，准备好了再来。",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_c19158d0_0b5b_4de3_a903_dc0a9dca55df": {
-        "title": "接取任务",
-        "options": [
-          {
-            "id": "opt_7dbc0b90-718c-4fb3-aafb-a51c3db11093",
+            "id": "opt_f43ee23a-a90f-40b4-b923-e50894cb68a5",
             "text": "接受任务"
           },
           {
-            "id": "opt_49f89413-c711-4e85-8cee-102bbf209848",
+            "id": "opt_b0354714-5583-4a54-8410-48abe014a741",
             "text": "再想想",
             "completesEvent": false,
             "forcedResult": "block"
           }
         ]
       },
-      "choice_node_32fd4927_a379_43f3_a984_c0c5e06d9c80": {
-        "title": "接取任务",
+      "choice_node_daa4fc51_e82d_40ef_9254_e2cb867256cc": {
+        "title": "接取任务 1002",
         "options": [
           {
-            "id": "opt_85450774-8a73-492f-be85-9dc6fae4e427",
+            "id": "opt_b77d7103-bbc7-4109-b148-fe5bd585813d",
             "text": "接受任务"
           },
           {
-            "id": "opt_ac6bd826-d3c6-41c4-8838-dc8f69972736",
+            "id": "opt_f68a9b9f-1e2e-42c6-9274-6f1de83b5f33",
             "text": "再想想",
             "completesEvent": false,
             "forcedResult": "block"
           }
         ]
       },
-      "choice_node_cffb1deb_b701_421f_9588_5b88ece7f952": {
-        "title": "核心出击",
+      "choice_node_5d8fff95_ea1a_48fe_bd48_e14e5bc36e0a": {
+        "title": "接取任务 1003",
         "options": [
           {
-            "id": "opt_82d1c969-8a8b-4aca-a88e-07cd34de9c2a",
-            "text": "启动机甲，全速支援！",
-            "completesEvent": true
+            "id": "opt_896cbe85-fdce-489f-b9ce-6ac30f40bdd4",
+            "text": "接受任务"
           },
           {
-            "id": "opt_92ad40e6-f535-4d20-82f7-c1655a85ab81",
-            "text": "我需要调整一下机甲配置",
-            "systemTip": "你决定先调整装备。前线每一秒都在流血，尽快做出决定。",
+            "id": "opt_3e87b38c-41e3-4615-8cf8-ed1cc6e1484e",
+            "text": "再想想",
             "completesEvent": false,
             "forcedResult": "block"
           }
         ]
       },
-      "choice_node_b80888fe_4f68_4f0e_b4f6_257f00fbfd2c": {
-        "title": "接取任务",
+      "choice_node_2104443d_1394_472b_a703_de3aabeedded": {
+        "title": "接取任务 1004",
         "options": [
           {
-            "id": "opt_01c2e753-118b-41a3-844c-cd41eda38ca8",
-            "text": "接取任务"
+            "id": "opt_7c223c2e-0042-4634-85c1-f8edfde5a927",
+            "text": "接受任务"
           },
           {
-            "id": "opt_cc50819b-112b-4ee3-ad2b-12e698d7f4f5",
-            "text": "暂缓",
+            "id": "opt_5002e9b7-0b39-49b8-99de-057914af8d2d",
+            "text": "再想想",
             "completesEvent": false,
             "forcedResult": "block"
           }
         ]
       },
-      "choice_node_3e246d45_e2e7_4071_aad6_abf91a2eaaf2": {
-        "title": "内忧外患",
-        "options": [
-          {
-            "id": "opt_39fe8fa8-ed2c-465e-8fb6-8212b47947be",
-            "text": "为了防线，不胜不归！",
-            "completesEvent": true
-          },
-          {
-            "id": "opt_e70f73c5-301e-4a2c-b1ea-5360ea25b1d0",
-            "text": "叛军向来诡计多端，我需要策略",
-            "systemTip": "你暂时停留在了掩体后。但如果不立刻行动，资料库可能很快就会被突破。",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_95b15888_3c0a_4e90_a4b1_ac16bfc75151": {
-        "title": "接取任务",
-        "options": [
-          {
-            "id": "opt_a7f8c932-e55c-4746-bd20-53f6083bc58b",
-            "text": "接取任务"
-          },
-          {
-            "id": "opt_f1150414-d9e0-4fdd-ad25-02341f3bbf23",
-            "text": "暂缓",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_b99b04e1_ca75_4408_a3ea_76118adf4e2d": {
+      "choice_node_9ce75bc3_43de_4cb3_995c_868321dbfe54": {
         "title": "战前选择",
         "options": [
           {
-            "id": "opt_07d970f1-4c93-4bf6-b929-360caa0a11a3",
+            "id": "opt_6ec3083e-6a01-432d-a425-275a622d86bb",
             "text": "进入战斗",
             "completesEvent": true,
             "forcedResult": "start_battle"
           },
           {
-            "id": "opt_06187bd2-f004-4c99-b0b4-228f1274c16b",
-            "text": "稍后再来",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_9b314805_c594_4a4b_b037_430366a11ad5": {
-        "title": "战前选择",
-        "options": [
-          {
-            "id": "opt_5f0a5451-26f5-40fe-8dd0-351cdc37beda",
-            "text": "进入战斗",
-            "completesEvent": true,
-            "forcedResult": "start_battle"
-          },
-          {
-            "id": "opt_1129bf81-037e-493f-80da-96afaa88d28e",
-            "text": "稍后再来",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_4ca3a01a_5fa0_49fd_8872_b59b1ade951f": {
-        "title": "战前选择",
-        "options": [
-          {
-            "id": "opt_bd967041-ed70-4c82-88f3-dc516fb42bf6",
-            "text": "进入战斗",
-            "completesEvent": true,
-            "forcedResult": "start_battle"
-          },
-          {
-            "id": "opt_7664f4f3-ce92-479f-9415-b151b41629ac",
-            "text": "稍后再来",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_d45020c9_fa0b_4587_ab1a_96a86d031cbc": {
-        "title": "战前选择",
-        "options": [
-          {
-            "id": "opt_eb2a5a02-4cdc-4a71-ba7f-65dea2fec22c",
-            "text": "进入战斗",
-            "completesEvent": true,
-            "forcedResult": "start_battle"
-          },
-          {
-            "id": "opt_a62585a6-dfa5-4fc0-a45d-7f0264e198a2",
-            "text": "稍后再来",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_67a49fc1_a762_41ce_901f_bf52169d016a": {
-        "title": "战前选择",
-        "options": [
-          {
-            "id": "opt_582163ed-edc6-458c-a8cb-317bfe6c5658",
-            "text": "进入战斗",
-            "completesEvent": true,
-            "forcedResult": "start_battle"
-          },
-          {
-            "id": "opt_257a2349-7c07-4735-99a9-20fb898e5db3",
-            "text": "稍后再来",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_5124b9ba_6c6d_4e0f_bf33_1ed7dbe990ea": {
-        "title": "战前选择",
-        "options": [
-          {
-            "id": "opt_6f7b53cf-db07-49b9-ab1c-13e2eed4a72a",
-            "text": "进入战斗",
-            "completesEvent": true,
-            "forcedResult": "start_battle"
-          },
-          {
-            "id": "opt_aca9c31e-cc2b-4719-ae36-e7da774e84db",
-            "text": "稍后再来",
-            "completesEvent": false,
-            "forcedResult": "block"
-          }
-        ]
-      },
-      "choice_node_a99940bc_3874_47c8_b6d9_51dc42aac59c": {
-        "title": "战前选择",
-        "options": [
-          {
-            "id": "opt_417e737e-c298-4d64-8a84-b2289286a47d",
-            "text": "进入战斗",
-            "completesEvent": true,
-            "forcedResult": "start_battle"
-          },
-          {
-            "id": "opt_a95cf419-14d7-4d14-a56b-d58dcf7a30ee",
+            "id": "opt_b6d9a6d1-63e9-4122-a942-849cbd2f9c2e",
             "text": "稍后再来",
             "completesEvent": false,
             "forcedResult": "block"
@@ -362,64 +219,85 @@
   },
   "npcs": [
     {
-      "npcUid": "world_1783159547543_chain_1",
-      "npcName": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第1幕",
-      "characterName": "韩诺",
-      "prefabKey": "Npc/Npc_03",
+      "npcUid": "npc_suburb_reception",
+      "npcName": "S-01 郊外",
+      "characterName": "罗威·教官",
+      "prefabKey": "Npc/Npc_15",
       "x": 216,
       "y": -168,
       "events": [
         {
-          "eventId": "world_1783159547543_chain_1_e1",
+          "eventId": "npc_suburb_reception_e1",
           "eventType": "dialog",
-          "eventTypeDesc": "机甲召唤师之路",
+          "eventTypeDesc": "S-01 郊外·征召接待处",
           "order": 1,
           "server": {
             "requirements": [],
             "effects": []
           },
           "client": {
-            "dialogueScriptId": "dlg_node_5a1396b9_e201_4fb1_90a6_9b27b6ce1820"
+            "dialogueScriptId": "dlg_node_4f182297_8945_4048_9f78_a1e13cd92325"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_1_e2",
-          "eventType": "choice",
-          "eventTypeDesc": "命运的抉择",
+          "eventId": "npc_suburb_reception_e2",
+          "eventType": "dialog",
+          "eventTypeDesc": "选项1",
           "order": 2,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_cffb70c3_5fbd_4ad1_a7ed_31b484e50483"
+          }
+        },
+        {
+          "eventId": "npc_suburb_reception_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "选项2",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_367a8b70_9a71_4ff3_a039_a64c7d350614"
+          }
+        },
+        {
+          "eventId": "npc_suburb_reception_e4",
+          "eventType": "choice",
+          "eventTypeDesc": "接取任务 1001",
+          "order": 4,
           "server": {
             "requirements": [],
             "effects": [
               {
                 "action": "task_accept",
                 "taskId": 100001,
-                "choiceId": "opt_f84a4455-e291-4c52-a693-252feab6f4eb"
+                "choiceId": "opt_f43ee23a-a90f-40b4-b923-e50894cb68a5"
               }
             ],
             "allowedChoiceIds": [
-              "opt_f84a4455-e291-4c52-a693-252feab6f4eb"
+              "opt_f43ee23a-a90f-40b4-b923-e50894cb68a5"
             ]
           },
           "client": {
-            "choiceScriptId": "choice_node_b745d918_0c9c_42f3_88b0_45b7792e676e"
+            "choiceScriptId": "choice_node_3742e1c2_5d25_4cd6_a0fa_632be92e8899"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_1_e3",
-          "eventType": "task",
-          "eventTypeDesc": "训练任务完成",
-          "order": 3,
+          "eventId": "npc_suburb_reception_e5",
+          "eventType": "dialog",
+          "eventTypeDesc": "任务提示",
+          "order": 5,
           "server": {
             "requirements": [],
-            "effects": [
-              {
-                "action": "task_complete",
-                "taskId": 100001
-              }
-            ]
+            "effects": []
           },
           "client": {
-            "taskUiHint": "完成任务：新大地图",
+            "dialogueScriptId": "dlg_node_adb10ae4_18b8_4c6e_a995_4e2df82fd3b4",
             "endsSession": true
           }
         }
@@ -432,511 +310,206 @@
       "hideWhenComplete": true
     },
     {
-      "npcUid": "world_1783159547543_chain_2",
-      "npcName": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第2幕",
-      "characterName": "韩诺",
-      "prefabKey": "Npc/Npc_06",
+      "npcUid": "npc_suburb_pad",
+      "npcName": "S-02 郊外",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_03",
       "x": 72,
       "y": -456,
       "events": [
         {
-          "eventId": "world_1783159547543_chain_2_e1",
+          "eventId": "npc_suburb_pad_e1",
           "eventType": "dialog",
-          "eventTypeDesc": "补给站危情",
+          "eventTypeDesc": "S-02 郊外·停机坪",
           "order": 1,
           "server": {
             "requirements": [],
             "effects": []
           },
           "client": {
-            "dialogueScriptId": "dlg_node_484787ab_9cdd_47aa_bc33_319bb91a7bd8"
+            "dialogueScriptId": "dlg_node_4b980982_a7be_4904_b900_b17af862dd61"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_2_e2",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务对话",
+          "eventId": "npc_suburb_pad_e2",
+          "eventType": "choice",
+          "eventTypeDesc": "接取任务 1002",
           "order": 2,
           "server": {
             "requirements": [],
-            "effects": []
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_b77d7103-bbc7-4109-b148-fe5bd585813d"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_b77d7103-bbc7-4109-b148-fe5bd585813d"
+            ]
           },
           "client": {
-            "dialogueScriptId": "dlg_node_09bf0c71_8a2b_42fc_bb34_2b2e0c7ae55e"
+            "choiceScriptId": "choice_node_daa4fc51_e82d_40ef_9254_e2cb867256cc"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_2_e3",
-          "eventType": "choice",
-          "eventTypeDesc": "是否出击",
+          "eventId": "npc_suburb_pad_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "任务提示",
           "order": 3,
           "server": {
             "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_3855ff5d-b560-412f-b5a5-d3dc2587f66b"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_3855ff5d-b560-412f-b5a5-d3dc2587f66b"
-            ]
+            "effects": []
           },
           "client": {
-            "choiceScriptId": "choice_node_86cca102_4bc3_4503_a895_881759097e5c"
+            "dialogueScriptId": "dlg_node_9113b19a_b4af_4c53_9f9f_ae4a608d0f50"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_2_e4",
+          "eventId": "npc_suburb_pad_e4",
           "eventType": "task",
-          "eventTypeDesc": "交任务",
+          "eventTypeDesc": "完成任务 1001",
           "order": 4,
           "server": {
-            "requirements": [
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_2_enemy_e2"
-              },
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_2_enemy_2_e2"
-              }
-            ],
+            "requirements": [],
             "effects": [
               {
                 "action": "task_complete",
-                "taskId": 100001
+                "taskId": 1001
               }
             ]
           },
           "client": {
-            "taskUiHint": "完成任务：新大地图"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_e5",
-          "eventType": "choice",
-          "eventTypeDesc": "接取任务",
-          "order": 5,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_7dbc0b90-718c-4fb3-aafb-a51c3db11093"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_7dbc0b90-718c-4fb3-aafb-a51c3db11093"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_c19158d0_0b5b_4de3_a903_dc0a9dca55df"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_e6",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务对话",
-          "order": 6,
-          "server": {
-            "requirements": [],
-            "effects": []
-          },
-          "client": {
-            "dialogueScriptId": "dlg_node_9f77a86d_1696_4681_ab79_74cc1e04a8f3"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_e7",
-          "eventType": "task",
-          "eventTypeDesc": "交任务",
-          "order": 7,
-          "server": {
-            "requirements": [
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_2_enemy_e2"
-              }
-            ],
-            "effects": [
-              {
-                "action": "task_complete",
-                "taskId": 100001
-              }
-            ]
-          },
-          "client": {
-            "taskUiHint": "完成任务：新大地图"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_e8",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务提示",
-          "order": 8,
-          "server": {
-            "requirements": [],
-            "effects": []
-          },
-          "client": {
-            "dialogueScriptId": "dlg_node_f0f87533_c6b1_4e78_b107_1d5b8dabeb8e"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_e9",
-          "eventType": "choice",
-          "eventTypeDesc": "接取任务",
-          "order": 9,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_85450774-8a73-492f-be85-9dc6fae4e427"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_85450774-8a73-492f-be85-9dc6fae4e427"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_32fd4927_a379_43f3_a984_c0c5e06d9c80"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_e10",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务提示",
-          "order": 10,
-          "server": {
-            "requirements": [],
-            "effects": []
-          },
-          "client": {
-            "dialogueScriptId": "dlg_node_c53f5738_917f_4941_8f1b_a12f4ef89083",
+            "taskUiHint": "完成任务：郊外·阶段1",
             "endsSession": true
           }
         }
       ],
-      "initialHidden": true,
       "appear": {
-        "mode": "conditional",
+        "mode": "always",
         "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_1_e3"
-          }
-        ]
+        "requirements": []
       },
       "hideWhenComplete": true
     },
     {
-      "npcUid": "world_1783159547543_chain_2_enemy",
-      "npcName": "敌人",
-      "prefabKey": "Npc/Npc_15",
-      "x": 216,
-      "y": -408,
-      "initialHidden": true,
-      "appear": {
-        "mode": "conditional",
-        "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_1_e3"
-          }
-        ]
-      },
-      "hideWhenComplete": true,
-      "events": [
-        {
-          "eventId": "world_1783159547543_chain_2_enemy_e1",
-          "eventType": "choice",
-          "eventTypeDesc": "战前选择",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_07d970f1-4c93-4bf6-b929-360caa0a11a3"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_07d970f1-4c93-4bf6-b929-360caa0a11a3"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_b99b04e1_ca75_4408_a3ea_76118adf4e2d"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_enemy_e2",
-          "eventType": "battle",
-          "eventTypeDesc": "战斗",
-          "order": 2,
-          "server": {
-            "requirements": [
-              {
-                "type": "task_active",
-                "taskId": 100001
-              }
-            ],
-            "effects": [],
-            "battleRef": "battle_1-50"
-          },
-          "client": {
-            "endsSession": true
-          }
-        }
-      ]
-    },
-    {
-      "npcUid": "world_1783159547543_chain_2_enemy_2",
-      "npcName": "敌人",
-      "prefabKey": "Npc/Npc_15",
-      "x": 216,
-      "y": -456,
-      "initialHidden": true,
-      "appear": {
-        "mode": "conditional",
-        "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_1_e3"
-          }
-        ]
-      },
-      "hideWhenComplete": true,
-      "events": [
-        {
-          "eventId": "world_1783159547543_chain_2_enemy_2_e1",
-          "eventType": "choice",
-          "eventTypeDesc": "战前选择",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_5f0a5451-26f5-40fe-8dd0-351cdc37beda"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_5f0a5451-26f5-40fe-8dd0-351cdc37beda"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_9b314805_c594_4a4b_b037_430366a11ad5"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_2_enemy_2_e2",
-          "eventType": "battle",
-          "eventTypeDesc": "战斗",
-          "order": 2,
-          "server": {
-            "requirements": [
-              {
-                "type": "task_active",
-                "taskId": 100001
-              }
-            ],
-            "effects": [],
-            "battleRef": "battle_1-50"
-          },
-          "client": {
-            "endsSession": true
-          }
-        }
-      ]
-    },
-    {
-      "npcUid": "world_1783159547543_chain_3",
-      "npcName": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第3幕",
-      "characterName": "韩诺",
-      "prefabKey": "Npc/Npc_09",
+      "npcUid": "npc_suburb_forest",
+      "npcName": "S-03 郊外",
+      "characterName": "凯尔博士",
+      "prefabKey": "Npc/Npc_03",
       "x": 264,
-      "y": -744,
+      "y": -840,
       "events": [
         {
-          "eventId": "world_1783159547543_chain_3_e1",
+          "eventId": "npc_suburb_forest_e1",
           "eventType": "dialog",
-          "eventTypeDesc": "前哨站遇袭",
+          "eventTypeDesc": "S-03 郊外·废林道",
           "order": 1,
           "server": {
             "requirements": [],
             "effects": []
           },
           "client": {
-            "dialogueScriptId": "dlg_node_a5e44c83_ec74_459c_a99d_314aef7a437d"
+            "dialogueScriptId": "dlg_node_8db2ad32_8a09_4b49_ab6b_9b841c98fc56"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_3_e2",
-          "eventType": "choice",
-          "eventTypeDesc": "核心出击",
+          "eventId": "npc_suburb_forest_e2",
+          "eventType": "dialog",
+          "eventTypeDesc": "任务提示",
           "order": 2,
           "server": {
             "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_82d1c969-8a8b-4aca-a88e-07cd34de9c2a"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_82d1c969-8a8b-4aca-a88e-07cd34de9c2a"
-            ]
+            "effects": []
           },
           "client": {
-            "choiceScriptId": "choice_node_cffb1deb_b701_421f_9588_5b88ece7f952"
+            "dialogueScriptId": "dlg_node_25ec9751_1fa9_4803_9afc_a6c648947c49"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_3_e3",
-          "eventType": "task",
-          "eventTypeDesc": "交任务",
+          "eventId": "npc_suburb_forest_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "战后",
           "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_e73123eb_c5f4_4416_8401_2092d33d86be"
+          }
+        },
+        {
+          "eventId": "npc_suburb_forest_e4",
+          "eventType": "task",
+          "eventTypeDesc": "完成任务 1002",
+          "order": 4,
           "server": {
             "requirements": [
               {
                 "type": "event_done",
-                "eventId": "world_1783159547543_chain_3_enemy_e2"
-              },
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_3_enemy_2_e2"
+                "eventId": "npc_suburb_forest_enemy_e2"
               }
             ],
             "effects": [
               {
                 "action": "task_complete",
-                "taskId": 100001
+                "taskId": 1002
               }
             ]
           },
           "client": {
-            "taskUiHint": "完成任务：新大地图"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_3_e4",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务对话",
-          "order": 4,
-          "server": {
-            "requirements": [],
-            "effects": []
-          },
-          "client": {
-            "dialogueScriptId": "dlg_node_041b933e_961f_4a36_a7cc_e2f60e384364"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_3_e5",
-          "eventType": "choice",
-          "eventTypeDesc": "接取任务",
-          "order": 5,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_01c2e753-118b-41a3-844c-cd41eda38ca8"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_01c2e753-118b-41a3-844c-cd41eda38ca8"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_b80888fe_4f68_4f0e_b4f6_257f00fbfd2c"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_3_e6",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务提示",
-          "order": 6,
-          "server": {
-            "requirements": [],
-            "effects": []
-          },
-          "client": {
-            "dialogueScriptId": "dlg_node_f759bdc9_8447_4b6c_a9b3_4974bc620f16",
+            "taskUiHint": "完成任务：郊外·阶段2",
             "endsSession": true
           }
         }
       ],
-      "initialHidden": true,
       "appear": {
-        "mode": "conditional",
+        "mode": "always",
         "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_2_e10"
-          }
-        ]
+        "requirements": []
       },
       "hideWhenComplete": true
     },
     {
-      "npcUid": "world_1783159547543_chain_3_enemy",
-      "npcName": "敌人",
-      "prefabKey": "Npc/Npc_05",
-      "x": 168,
-      "y": -696,
+      "npcUid": "npc_suburb_forest_enemy",
+      "npcName": "虫族幼体",
+      "prefabKey": "Npc/Npc_10",
+      "x": 216,
+      "y": -840,
       "initialHidden": true,
       "appear": {
         "mode": "conditional",
         "matchMode": "ALL",
         "requirements": [
           {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_2_e10"
+            "type": "task_active",
+            "taskId": 100001
           }
         ]
       },
       "hideWhenComplete": true,
       "events": [
         {
-          "eventId": "world_1783159547543_chain_3_enemy_e1",
+          "eventId": "npc_suburb_forest_enemy_e1",
           "eventType": "choice",
           "eventTypeDesc": "战前选择",
           "order": 1,
           "server": {
             "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_bd967041-ed70-4c82-88f3-dc516fb42bf6"
-              }
-            ],
+            "effects": [],
             "allowedChoiceIds": [
-              "opt_bd967041-ed70-4c82-88f3-dc516fb42bf6"
+              "opt_6ec3083e-6a01-432d-a425-275a622d86bb"
             ]
           },
           "client": {
-            "choiceScriptId": "choice_node_4ca3a01a_5fa0_49fd_8872_b59b1ade951f"
+            "choiceScriptId": "choice_node_9ce75bc3_43de_4cb3_995c_868321dbfe54"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_3_enemy_e2",
+          "eventId": "npc_suburb_forest_enemy_e2",
           "eventType": "battle",
-          "eventTypeDesc": "战斗",
+          "eventTypeDesc": "战斗 · 虫族幼体",
           "order": 2,
           "server": {
             "requirements": [
@@ -949,98 +522,37 @@
             "battleRef": "battle_1-50"
           },
           "client": {
+            "markerHint": "与虫族幼体对战",
             "endsSession": true
           }
         }
       ]
     },
     {
-      "npcUid": "world_1783159547543_chain_3_enemy_2",
-      "npcName": "敌人2",
-      "prefabKey": "Npc/Npc_05",
-      "x": 168,
-      "y": -744,
-      "initialHidden": true,
-      "appear": {
-        "mode": "conditional",
-        "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_2_e10"
-          }
-        ]
-      },
-      "hideWhenComplete": true,
-      "events": [
-        {
-          "eventId": "world_1783159547543_chain_3_enemy_2_e1",
-          "eventType": "choice",
-          "eventTypeDesc": "战前选择",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_eb2a5a02-4cdc-4a71-ba7f-65dea2fec22c"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_eb2a5a02-4cdc-4a71-ba7f-65dea2fec22c"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_d45020c9_fa0b_4587_ab1a_96a86d031cbc"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_3_enemy_2_e2",
-          "eventType": "battle",
-          "eventTypeDesc": "战斗",
-          "order": 2,
-          "server": {
-            "requirements": [
-              {
-                "type": "task_active",
-                "taskId": 100001
-              }
-            ],
-            "effects": [],
-            "battleRef": "battle_1-50"
-          },
-          "client": {
-            "endsSession": true
-          }
-        }
-      ]
-    },
-    {
-      "npcUid": "world_1783159547543_chain_4",
-      "npcName": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第4幕",
+      "npcUid": "npc_suburb_ruins",
+      "npcName": "S-04 郊外",
       "characterName": "韩诺",
       "prefabKey": "Npc/Npc_14",
-      "x": 408,
-      "y": -888,
+      "x": 840,
+      "y": -408,
       "events": [
         {
-          "eventId": "world_1783159547543_chain_4_e1",
+          "eventId": "npc_suburb_ruins_e1",
           "eventType": "dialog",
-          "eventTypeDesc": "意想不到的背叛",
+          "eventTypeDesc": "S-04 郊外·残路废墟",
           "order": 1,
           "server": {
             "requirements": [],
             "effects": []
           },
           "client": {
-            "dialogueScriptId": "dlg_node_48ba7c51_b625_4e1a_995e_306d253a4493"
+            "dialogueScriptId": "dlg_node_c9246a09_c6ff_47d0_8449_4f1c1ea38a3a"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_4_e2",
+          "eventId": "npc_suburb_ruins_e2",
           "eventType": "choice",
-          "eventTypeDesc": "内忧外患",
+          "eventTypeDesc": "接取任务 1003",
           "order": 2,
           "server": {
             "requirements": [],
@@ -1048,366 +560,119 @@
               {
                 "action": "task_accept",
                 "taskId": 100001,
-                "choiceId": "opt_39fe8fa8-ed2c-465e-8fb6-8212b47947be"
+                "choiceId": "opt_896cbe85-fdce-489f-b9ce-6ac30f40bdd4"
               }
             ],
             "allowedChoiceIds": [
-              "opt_39fe8fa8-ed2c-465e-8fb6-8212b47947be"
+              "opt_896cbe85-fdce-489f-b9ce-6ac30f40bdd4"
             ]
           },
           "client": {
-            "choiceScriptId": "choice_node_3e246d45_e2e7_4071_aad6_abf91a2eaaf2"
+            "choiceScriptId": "choice_node_5d8fff95_ea1a_48fe_bd48_e14e5bc36e0a"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_4_e3",
-          "eventType": "task",
-          "eventTypeDesc": "交任务",
-          "order": 3,
-          "server": {
-            "requirements": [
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_4_enemy_e2"
-              },
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_4_enemy_2_e2"
-              },
-              {
-                "type": "event_done",
-                "eventId": "world_1783159547543_chain_4_enemy_3_e2"
-              }
-            ],
-            "effects": [
-              {
-                "action": "task_complete",
-                "taskId": 100001
-              }
-            ]
-          },
-          "client": {
-            "taskUiHint": "完成任务：新大地图"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_4_e4",
-          "eventType": "dialog",
-          "eventTypeDesc": "任务对话",
-          "order": 4,
-          "server": {
-            "requirements": [],
-            "effects": []
-          },
-          "client": {
-            "dialogueScriptId": "dlg_node_ff573cfe_6475_4350_9aa1_98c72a7f0592"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_4_e5",
-          "eventType": "choice",
-          "eventTypeDesc": "接取任务",
-          "order": 5,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_a7f8c932-e55c-4746-bd20-53f6083bc58b"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_a7f8c932-e55c-4746-bd20-53f6083bc58b"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_95b15888_3c0a_4e90_a4b1_ac16bfc75151"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_4_e6",
+          "eventId": "npc_suburb_ruins_e3",
           "eventType": "dialog",
           "eventTypeDesc": "任务提示",
-          "order": 6,
+          "order": 3,
           "server": {
             "requirements": [],
             "effects": []
           },
           "client": {
-            "dialogueScriptId": "dlg_node_71274cb1_607b_46a8_8ecc_bb262793ffdc",
+            "dialogueScriptId": "dlg_node_f8e0396d_825b_4f2f_995a_0053e304aa81",
             "endsSession": true
           }
         }
       ],
-      "initialHidden": true,
       "appear": {
-        "mode": "conditional",
+        "mode": "always",
         "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_3_e6"
-          }
-        ]
+        "requirements": []
       },
       "hideWhenComplete": true
     },
     {
-      "npcUid": "world_1783159547543_chain_4_enemy",
-      "npcName": "敌人",
-      "prefabKey": "Npc/Npc_07",
-      "x": 312,
-      "y": -984,
-      "initialHidden": true,
-      "appear": {
-        "mode": "conditional",
-        "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_3_e6"
-          }
-        ]
-      },
-      "hideWhenComplete": true,
-      "events": [
-        {
-          "eventId": "world_1783159547543_chain_4_enemy_e1",
-          "eventType": "choice",
-          "eventTypeDesc": "战前选择",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_582163ed-edc6-458c-a8cb-317bfe6c5658"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_582163ed-edc6-458c-a8cb-317bfe6c5658"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_67a49fc1_a762_41ce_901f_bf52169d016a"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_4_enemy_e2",
-          "eventType": "battle",
-          "eventTypeDesc": "战斗",
-          "order": 2,
-          "server": {
-            "requirements": [
-              {
-                "type": "task_active",
-                "taskId": 100001
-              }
-            ],
-            "effects": [],
-            "battleRef": "battle_1-50"
-          },
-          "client": {
-            "endsSession": true
-          }
-        }
-      ]
-    },
-    {
-      "npcUid": "world_1783159547543_chain_4_enemy_2",
-      "npcName": "敌人2",
-      "prefabKey": "Npc/Npc_13",
-      "x": 408,
-      "y": -984,
-      "initialHidden": true,
-      "appear": {
-        "mode": "conditional",
-        "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_3_e6"
-          }
-        ]
-      },
-      "hideWhenComplete": true,
-      "events": [
-        {
-          "eventId": "world_1783159547543_chain_4_enemy_2_e1",
-          "eventType": "choice",
-          "eventTypeDesc": "战前选择",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_6f7b53cf-db07-49b9-ab1c-13e2eed4a72a"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_6f7b53cf-db07-49b9-ab1c-13e2eed4a72a"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_5124b9ba_6c6d_4e0f_bf33_1ed7dbe990ea"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_4_enemy_2_e2",
-          "eventType": "battle",
-          "eventTypeDesc": "战斗",
-          "order": 2,
-          "server": {
-            "requirements": [
-              {
-                "type": "task_active",
-                "taskId": 100001
-              }
-            ],
-            "effects": [],
-            "battleRef": "battle_1-50"
-          },
-          "client": {
-            "endsSession": true
-          }
-        }
-      ]
-    },
-    {
-      "npcUid": "world_1783159547543_chain_4_enemy_3",
-      "npcName": "敌人3",
-      "prefabKey": "Npc/Npc_10",
-      "x": 504,
-      "y": -984,
-      "initialHidden": true,
-      "appear": {
-        "mode": "conditional",
-        "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_3_e6"
-          }
-        ]
-      },
-      "hideWhenComplete": true,
-      "events": [
-        {
-          "eventId": "world_1783159547543_chain_4_enemy_3_e1",
-          "eventType": "choice",
-          "eventTypeDesc": "战前选择",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001,
-                "choiceId": "opt_417e737e-c298-4d64-8a84-b2289286a47d"
-              }
-            ],
-            "allowedChoiceIds": [
-              "opt_417e737e-c298-4d64-8a84-b2289286a47d"
-            ]
-          },
-          "client": {
-            "choiceScriptId": "choice_node_a99940bc_3874_47c8_b6d9_51dc42aac59c"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_4_enemy_3_e2",
-          "eventType": "battle",
-          "eventTypeDesc": "战斗",
-          "order": 2,
-          "server": {
-            "requirements": [
-              {
-                "type": "task_active",
-                "taskId": 100001
-              }
-            ],
-            "effects": [],
-            "battleRef": "battle_1-50"
-          },
-          "client": {
-            "endsSession": true
-          }
-        }
-      ]
-    },
-    {
-      "npcUid": "world_1783159547543_chain_5",
-      "npcName": "引导玩家称为机甲召唤师，中途遇袭，和叛军 · 第5幕",
+      "npcUid": "npc_suburb_tower",
+      "npcName": "S-05 郊外",
       "characterName": "韩诺",
-      "prefabKey": "Npc/Npc_11",
-      "x": 744,
-      "y": -888,
+      "prefabKey": "Npc/Npc_14",
+      "x": 1512,
+      "y": -600,
       "events": [
         {
-          "eventId": "world_1783159547543_chain_5_e1",
-          "eventType": "task",
-          "eventTypeDesc": "接取任务",
-          "order": 1,
-          "server": {
-            "requirements": [],
-            "effects": [
-              {
-                "action": "task_accept",
-                "taskId": 100001
-              }
-            ]
-          },
-          "client": {
-            "taskUiHint": "接取任务：新大地图"
-          }
-        },
-        {
-          "eventId": "world_1783159547543_chain_5_e2",
+          "eventId": "npc_suburb_tower_e1",
           "eventType": "dialog",
-          "eventTypeDesc": "硝烟中的战友情",
-          "order": 2,
+          "eventTypeDesc": "S-05 郊外·信号塔残骸",
+          "order": 1,
           "server": {
             "requirements": [],
             "effects": []
           },
           "client": {
-            "dialogueScriptId": "dlg_node_b577bb9d_5487_4bcb_af55_bb159a88f46e"
+            "dialogueScriptId": "dlg_node_4050dfd7_44ea_41fc_8ff6_88dc12a8d6d6"
           }
         },
         {
-          "eventId": "world_1783159547543_chain_5_e3",
+          "eventId": "npc_suburb_tower_e2",
           "eventType": "task",
-          "eventTypeDesc": "正式缔结羁绊",
-          "order": 3,
+          "eventTypeDesc": "完成任务 1003",
+          "order": 2,
           "server": {
             "requirements": [],
             "effects": [
               {
                 "action": "task_complete",
-                "taskId": 100001
+                "taskId": 1003
               }
             ]
           },
           "client": {
-            "taskUiHint": "完成任务：新大地图",
+            "taskUiHint": "完成任务：郊外·阶段3"
+          }
+        },
+        {
+          "eventId": "npc_suburb_tower_e3",
+          "eventType": "dialog",
+          "eventTypeDesc": "后续委托",
+          "order": 3,
+          "server": {
+            "requirements": [],
+            "effects": []
+          },
+          "client": {
+            "dialogueScriptId": "dlg_node_12a0e42f_d35d_4d61_83e4_b25d75c58b43"
+          }
+        },
+        {
+          "eventId": "npc_suburb_tower_e4",
+          "eventType": "choice",
+          "eventTypeDesc": "接取任务 1004",
+          "order": 4,
+          "server": {
+            "requirements": [],
+            "effects": [
+              {
+                "action": "task_accept",
+                "taskId": 100001,
+                "choiceId": "opt_7c223c2e-0042-4634-85c1-f8edfde5a927"
+              }
+            ],
+            "allowedChoiceIds": [
+              "opt_7c223c2e-0042-4634-85c1-f8edfde5a927"
+            ]
+          },
+          "client": {
+            "choiceScriptId": "choice_node_2104443d_1394_472b_a703_de3aabeedded",
             "endsSession": true
           }
         }
       ],
-      "initialHidden": true,
       "appear": {
-        "mode": "conditional",
+        "mode": "always",
         "matchMode": "ALL",
-        "requirements": [
-          {
-            "type": "event_done",
-            "eventId": "world_1783159547543_chain_4_e6"
-          }
-        ]
+        "requirements": []
       },
       "hideWhenComplete": true
     }

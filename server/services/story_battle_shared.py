@@ -51,7 +51,7 @@ async def generate_story_enemy(
     base_level = 1
     if player_pet_id:
         try:
-            pet = utils.safe_mongo_operation(
+            pet = await utils.async_mongo_operation_read(
                 lambda: utils.robotpet_col.find_one({"_id": ObjectId(player_pet_id), "user_id": user_id})
             )
             if pet:
@@ -59,7 +59,7 @@ async def generate_story_enemy(
         except Exception:
             pass
     else:
-        player = utils.safe_mongo_operation(
+        player = await utils.async_mongo_operation_read(
             lambda: utils.players_col.find_one({"user_id": user_id, "character_id": character_id})
         )
         if player:
@@ -78,7 +78,7 @@ async def generate_story_enemy(
         offset = int(ref_cfg.get("level_offset", 0) or 0)
         level = max(1, base_level + offset)
 
-    sample = utils.safe_mongo_operation(lambda: list(utils.robotbase_col.aggregate([{"$sample": {"size": 1}}])))
+    sample = await utils.async_mongo_operation_read(lambda: list(utils.robotbase_col.aggregate([{"$sample": {"size": 1}}])))
     if not sample:
         return None, "RobotBase集合为空"
     base_robot = sample[0]

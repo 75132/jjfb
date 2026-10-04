@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Label, GameCommonData, _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2, _crd, ccclass, property, TopRole;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Label, GameCommonData, Logger, _dec, _dec2, _dec3, _class, _class2, _descriptor, _descriptor2, _crd, ccclass, property, TopRole;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -11,6 +11,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
 
   function _reportPossibleCrUseOfGameCommonData(extras) {
     _reporterNs.report("GameCommonData", "./GameCommonData", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -25,6 +29,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
       Label = _cc.Label;
     }, function (_unresolved_2) {
       GameCommonData = _unresolved_2.GameCommonData;
+    }, function (_unresolved_3) {
+      Logger = _unresolved_3.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -63,7 +69,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _
             this.updateUI(); // 如果有升级，可以在这里播放升级特效等
 
             if (data.levelUpCount && data.levelUpCount > 0) {
-              console.log(`[TopRole] 角色升级了 ${data.levelUpCount} 级！`);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug(`[TopRole] 角色升级了 ${data.levelUpCount} 级！`);
             }
           };
         }

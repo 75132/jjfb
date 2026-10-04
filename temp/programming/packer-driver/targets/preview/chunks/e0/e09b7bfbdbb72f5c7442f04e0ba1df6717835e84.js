@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4", "__unresolved_5"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, director, GameConfig, RequestRetryManager, RouteDictionary, DataCacheManager, _dec, _class, _class2, _crd, ccclass, property, WebSocketManager;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, director, GameConfig, RequestRetryManager, RouteDictionary, DataCacheManager, Logger, _dec, _class, _class2, _crd, ccclass, property, WebSocketManager;
 
   function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
@@ -25,6 +25,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
     _reporterNs.report("DataCacheManager", "./DataCacheManager", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "./Logger", _context.meta, extras);
+  }
+
   return {
     setters: [function (_unresolved_) {
       _reporterNs = _unresolved_;
@@ -44,6 +48,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       RouteDictionary = _unresolved_4.RouteDictionary;
     }, function (_unresolved_5) {
       DataCacheManager = _unresolved_5.DataCacheManager;
+    }, function (_unresolved_6) {
+      Logger = _unresolved_6.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -476,17 +482,33 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (response.request_id !== undefined && response.request_id !== null) {
                 if (response.request_id !== requestId) {
                   // request_id 不匹配，忽略此响应（可能是其他请求的响应）
-                  console.log("[Request] \u23ED\uFE0F \u5FFD\u7565 request_id \u4E0D\u5339\u914D\u7684\u54CD\u5E94 (" + route + "):", {
-                    received: response.request_id,
-                    expected: requestId
-                  });
+                  if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                    error: Error()
+                  }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).ws("[Request] \u5FFD\u7565 request_id \u4E0D\u5339\u914D\u7684\u54CD\u5E94 (" + route + "):", {
+                      received: response.request_id,
+                      expected: requestId
+                    });
+                  }
+
                   return;
                 }
 
-                console.log("[Request] \u2705 request_id \u5339\u914D (" + route + "):", requestId);
-              } else {
-                // 如果没有 request_id，使用旧的匹配方式（向后兼容）
-                console.log("[Request] \u26A0\uFE0F \u54CD\u5E94\u7F3A\u5C11 request_id\uFF0C\u4F7F\u7528\u65E7\u5339\u914D\u65B9\u5F0F (" + route + ")");
+                if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                  error: Error()
+                }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).ws("[Request] request_id \u5339\u914D (" + route + "):", requestId);
+                }
+              } else if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                error: Error()
+              }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).ws("[Request] \u54CD\u5E94\u7F3A\u5C11 request_id\uFF0C\u4F7F\u7528\u65E7\u5339\u914D\u65B9\u5F0F (" + route + ")");
               }
 
               responded = true;
@@ -502,18 +524,24 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 var code = response.code || 500; // 限流错误（429）- 不自动重试，显示友好提示
 
                 if (code === 429) {
-                  console.warn("\u26A0\uFE0F [WebSocketManager] \u8BF7\u6C42\u9650\u6D41: " + route); // 可以在这里显示友好提示（如果有UI提示组件）
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u8BF7\u6C42\u9650\u6D41: " + route); // 可以在这里显示友好提示（如果有UI提示组件）
                   // 例如：ToastManager.getInstance()?.show('操作过于频繁，请稍后再试');
                 } // 服务器繁忙（503）- 延迟后重试（最多重试1次）
 
 
                 if (code === 503) {
-                  console.warn("\u26A0\uFE0F [WebSocketManager] \u670D\u52A1\u5668\u7E41\u5FD9: " + route); // 延迟3秒后重试（最多重试1次）
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u670D\u52A1\u5668\u7E41\u5FD9: " + route); // 延迟3秒后重试（最多重试1次）
 
                   var retryCount = (data._retryCount || 0) + 1;
 
                   if (retryCount <= 1) {
-                    console.log("\uD83D\uDD04 [WebSocketManager] 3\u79D2\u540E\u81EA\u52A8\u91CD\u8BD5 (" + route + ")");
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug("\uD83D\uDD04 [WebSocketManager] 3\u79D2\u540E\u81EA\u52A8\u91CD\u8BD5 (" + route + ")");
                     setTimeout(() => {
                       var retryData = _extends({}, data, {
                         _retryCount: retryCount
@@ -523,7 +551,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                     }, 3000);
                     return; // 不调用回调，等待重试结果
                   } else {
-                    console.warn("\u26A0\uFE0F [WebSocketManager] \u91CD\u8BD5\u6B21\u6570\u5DF2\u8FBE\u4E0A\u9650\uFF0C\u653E\u5F03\u91CD\u8BD5 (" + route + ")"); // 可以显示友好提示
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u91CD\u8BD5\u6B21\u6570\u5DF2\u8FBE\u4E0A\u9650\uFF0C\u653E\u5F03\u91CD\u8BD5 (" + route + ")"); // 可以显示友好提示
                     // 例如：ToastManager.getInstance()?.show('服务器繁忙，请稍后再试');
                   }
                 }
@@ -533,7 +563,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               try {
                 callback(response);
               } catch (error) {
-                console.error("[Request] \u56DE\u8C03\u6267\u884C\u9519\u8BEF (" + route + "):", error);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("[Request] \u56DE\u8C03\u6267\u884C\u9519\u8BEF (" + route + "):", error);
               }
             }; // 设置超时
 
@@ -542,13 +574,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               if (!responded) {
                 responded = true;
                 this.off(responseType, responseHandler);
-                console.warn("[Request] \u8BF7\u6C42\u8D85\u65F6 (" + route + "), request_id: " + requestId); // 仅对部分只读路由执行一次超时重试
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("[Request] \u8BF7\u6C42\u8D85\u65F6 (" + route + "), request_id: " + requestId); // 仅对部分只读路由执行一次超时重试
 
                 var canRetry = RETRY_ON_TIMEOUT_ROUTES.has(route);
                 var timeoutRetryCount = (data._timeoutRetryCount || 0) + 1;
 
                 if (canRetry && timeoutRetryCount <= 1) {
-                  console.log("\uD83D\uDD04 [WebSocketManager] \u8BF7\u6C42\u8D85\u65F6\u81EA\u52A8\u91CD\u8BD5 (" + route + ")\uFF0C\u7B2C " + timeoutRetryCount + " \u6B21");
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).debug("\uD83D\uDD04 [WebSocketManager] \u8BF7\u6C42\u8D85\u65F6\u81EA\u52A8\u91CD\u8BD5 (" + route + ")\uFF0C\u7B2C " + timeoutRetryCount + " \u6B21");
                   setTimeout(() => {
                     var retryData = _extends({}, data, {
                       _timeoutRetryCount: timeoutRetryCount
@@ -948,7 +984,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (this.isReloginRequiredByIdle()) {
             var _director$getScene;
 
-            console.warn("\u26A0\uFE0F [WebSocketManager] \u79BB\u7EBF\u8D85\u8FC7\u9608\u503C\uFF08" + (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u79BB\u7EBF\u8D85\u8FC7\u9608\u503C\uFF08" + (_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
             }), GameConfig) : GameConfig).AUTH_INACTIVITY_RELOGIN_MS + "ms\uFF09\uFF0C\u6E05\u9664\u672C\u5730\u4F1A\u8BDD\u540E\u7EE7\u7EED\u8FDE\u63A5");
             this.clearAll();
@@ -984,7 +1022,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), GameConfig) : GameConfig).getWsUrl();
 
           try {
-            console.log("WebSocket \u8FDE\u63A5\u5730\u5740: " + this.url);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("WebSocket \u8FDE\u63A5\u5730\u5740: " + this.url);
           } catch (_unused7) {}
 
           var seq = ++this._connectSeq;
@@ -996,7 +1036,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket !== ws || this._connectSeq !== seq) return;
 
             try {
-              console.log("[WS] \u5DF2\u8FDE\u63A5: " + this.url);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("[WS] \u5DF2\u8FDE\u63A5: " + this.url);
             } catch (_unused8) {}
 
             this.invalidateSessionAuth();
@@ -1021,7 +1063,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket !== ws || this._connectSeq !== seq) return;
 
             try {
-              console.warn("[WS] \u8FDE\u63A5\u5173\u95ED code=" + (ev == null ? void 0 : ev.code) + " reason=" + ((ev == null ? void 0 : ev.reason) || ''));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("[WS] \u8FDE\u63A5\u5173\u95ED code=" + (ev == null ? void 0 : ev.code) + " reason=" + ((ev == null ? void 0 : ev.reason) || ''));
             } catch (_unused9) {}
 
             this.stopHeartbeat(); // 停止心跳
@@ -1037,7 +1081,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (this.isSwitchingCharacterSession) {
-              console.log('ℹ️ [WS] 切换角色会话结束（保留账号），将重建连接');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('ℹ️ [WS] 切换角色会话结束（保留账号），将重建连接');
               this.isSwitchingCharacterSession = false;
               var token = this.getToken();
               var userId = this.getUserId();
@@ -1048,10 +1094,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   if (this.isConnectedFlag || this.isConnecting) return;
 
                   try {
-                    console.log('🔄 [WS] 切换角色后重建 WebSocket（返回选角）');
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).debug('🔄 [WS] 切换角色后重建 WebSocket（返回选角）');
                     this.connect();
                   } catch (e) {
-                    console.warn('[WS] 切换角色后重建连接失败', e);
+                    (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                      error: Error()
+                    }), Logger) : Logger).warn('[WS] 切换角色后重建连接失败', e);
                   }
                 }, 120);
               }
@@ -1077,7 +1127,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               this.isReconnecting = true; // 使用优化后的指数退避策略，根据网络状况调整重连延迟
 
               var backoffDelay = this.getReconnectDelay();
-              console.log("\uD83D\uDD04 [WebSocketManager] \u5C06\u5728 " + backoffDelay + "ms \u540E\u5C1D\u8BD5\u91CD\u8FDE (\u5C1D\u8BD5 " + this.reconnectAttempts + "/" + this.maxReconnectAttempts + ")");
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug("\uD83D\uDD04 [WebSocketManager] \u5C06\u5728 " + backoffDelay + "ms \u540E\u5C1D\u8BD5\u91CD\u8FDE (\u5C1D\u8BD5 " + this.reconnectAttempts + "/" + this.maxReconnectAttempts + ")");
 
               if (this._reconnectTimerId !== -1) {
                 clearTimeout(this._reconnectTimerId);
@@ -1093,7 +1145,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               // 登录页/主动 logout/fullLogout 触发 close 时，reconnectAttempts 可能被预设到上限，
               // 这类情况下不应再打印 error（避免日志噪音，并避免误清 token）。
               if (this.isGameRunning) {
-                console.error("\u274C [WebSocketManager] \u91CD\u8FDE\u5931\u8D25\uFF0C\u5DF2\u8FBE\u5230\u6700\u5927\u91CD\u8BD5\u6B21\u6570 (" + this.maxReconnectAttempts + ")");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).error("\u274C [WebSocketManager] \u91CD\u8FDE\u5931\u8D25\uFF0C\u5DF2\u8FBE\u5230\u6700\u5927\u91CD\u8BD5\u6B21\u6570 (" + this.maxReconnectAttempts + ")");
                 this.clearAll();
                 this.returnToLogin();
               }
@@ -1104,7 +1158,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             if (this.socket !== ws || this._connectSeq !== seq) return;
 
             try {
-              console.error('[WS] 错误', (e == null ? void 0 : e.message) || e);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('[WS] 错误', (e == null ? void 0 : e.message) || e);
             } catch (_unused10) {}
 
             this.stopHeartbeat(); // 停止心跳
@@ -1334,7 +1390,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           this.handshakeTimeout = setTimeout(() => {
             if (!this.handshakeCompleted) {
-              console.warn('⚠️ [WebSocketManager] 握手超时，继续正常流程（向后兼容）');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [WebSocketManager] 握手超时，继续正常流程（向后兼容）');
               this.onHandshakeCompleteOrTimeout();
             }
           }, 3000);
@@ -1426,7 +1484,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
             if (data && data.type === 'handshake_ack') {
-              console.log('✅ [WebSocketManager] 握手成功');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('✅ [WebSocketManager] 握手成功');
               this.handshakeCompleted = true; // 清除握手超时定时器
 
               if (this.handshakeTimeout !== -1) {
@@ -1442,13 +1502,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                   id_to_route: data.sys.code_to_route || {}
                 });
                 this.useRouteDict = data.sys.use_dict === true;
-                console.log("\u2705 [WebSocketManager] \u5B57\u5178\u5DF2\u52A0\u8F7D\uFF0C\u542F\u7528\u538B\u7F29: " + this.useRouteDict);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\u2705 [WebSocketManager] \u5B57\u5178\u5DF2\u52A0\u8F7D\uFF0C\u542F\u7528\u538B\u7F29: " + this.useRouteDict);
               } // 更新心跳配置（如果服务器返回）
 
 
               if (data.sys && data.sys.heartbeat) {
                 // 可以更新心跳间隔（当前是固定30秒）
-                console.log("\uD83D\uDCE1 [WebSocketManager] \u5FC3\u8DF3\u95F4\u9694: " + data.sys.heartbeat + "\u79D2");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).debug("\uD83D\uDCE1 [WebSocketManager] \u5FC3\u8DF3\u95F4\u9694: " + data.sys.heartbeat + "\u79D2");
               } // 握手成功后，继续正常流程（发送认证请求等）
 
 
@@ -1464,13 +1528,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 // 假设是响应消息，添加 _response 后缀
                 data.type = route + '_response';
               } else {
-                console.warn("\u26A0\uFE0F [WebSocketManager] \u65E0\u6CD5\u89E3\u7801 route_id: " + data.route_id);
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u65E0\u6CD5\u89E3\u7801 route_id: " + data.route_id);
               }
             } // 检查消息版本（可选，用于兼容性检查）
 
 
             if (data.version && data.version !== this.MESSAGE_PROTOCOL_VERSION) {
-              console.warn("\u26A0\uFE0F [WebSocketManager] \u6D88\u606F\u7248\u672C\u4E0D\u5339\u914D: \u671F\u671B " + this.MESSAGE_PROTOCOL_VERSION + "\uFF0C\u6536\u5230 " + data.version);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u6D88\u606F\u7248\u672C\u4E0D\u5339\u914D: \u671F\u671B " + this.MESSAGE_PROTOCOL_VERSION + "\uFF0C\u6536\u5230 " + data.version);
             }
 
             if (data && data.type) {
@@ -1499,29 +1567,42 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 if (resp != null && resp.success && resp.characters && typeof resp.characters === 'object') {
                   this.lastAllCharactersFingerprint = WebSocketManager.fingerprintAllCharactersPayload(resp.characters);
                 }
-              } // 添加调试日志，方便排查消息接收问题
+              }
 
-
-              try {
-                console.log("\uD83D\uDCE5 [WebSocketManager] \u6536\u5230\u6D88\u606F: type=" + data.type, data);
-              } catch (_unused14) {}
+              if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                error: Error()
+              }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).ws("[WebSocketManager] \u6536\u5230\u6D88\u606F: type=" + data.type, data);
+              }
 
               var node = this.node;
 
               if (node && typeof node.emit === 'function') {
                 node.emit(data.type, data);
 
-                try {
-                  console.log("\u2705 [WebSocketManager] \u5DF2\u89E6\u53D1\u4E8B\u4EF6: " + data.type);
-                } catch (_unused15) {}
+                if ((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
+                  error: Error()
+                }), GameConfig) : GameConfig).LOG_WS_TRAFFIC) {
+                  (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                    error: Error()
+                  }), Logger) : Logger).ws("[WebSocketManager] \u5DF2\u89E6\u53D1\u4E8B\u4EF6: " + data.type);
+                }
               } else {
-                console.warn("\u26A0\uFE0F [WebSocketManager] \u65E0\u6CD5\u89E6\u53D1\u4E8B\u4EF6 " + data.type + "\uFF0Cnode\u65E0\u6548");
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn("\u26A0\uFE0F [WebSocketManager] \u65E0\u6CD5\u89E6\u53D1\u4E8B\u4EF6 " + data.type + "\uFF0Cnode\u65E0\u6548");
               }
             } else {
-              console.warn('⚠️ [WebSocketManager] 收到无type的消息:', data);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('⚠️ [WebSocketManager] 收到无type的消息:', data);
             }
           } catch (error) {
-            console.error('❌ [WebSocketManager] 处理消息失败:', error, message);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ [WebSocketManager] 处理消息失败:', error, message);
           }
         }
         /**

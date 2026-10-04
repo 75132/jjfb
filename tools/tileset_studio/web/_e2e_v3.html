@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>e2e v3 running</title>
+<style>
+  body { background:#111; color:#ddd; font:13px/1.6 Consolas,"Microsoft YaHei",monospace; margin:0; }
+  #log { padding:12px 16px; white-space:pre-wrap; }
+  #fr { width:1680px; height:920px; border:1px solid #444; display:block; margin:12px; }
+  .h { color:#7ec8ff; font-weight:700; }
+  .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+</style>
+</head>
+<body>
+<div id="log">running…</div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* =============================================================
+   第三轮端到端自测
+     [1] 撤回 / 重做
+     [2] 输出区矩形框选（RPG Maker 手感）
+     [3] 变换口径：选 1 格 = 单翻；选多格 = 整块镜像（含逐像素）
+     [4] 橡皮擦
+     [5] 导出目录 = 桌面
+   素材固定：制作进行素材/地图素材/map1_7x6.png（7×6 = 42 格）
+   ============================================================= */
+const OUT = []; let PASS = 0, FAIL = 0;
+function head(s) { OUT.push('<span class="h">' + s + '</span>'); }
+function ck(name, cond, extra) {
+  if (cond) { PASS++; OUT.push('  <span class="ok">[OK]  </span>' + name + (extra ? '  ' + extra : '')); }
+  else { FAIL++; OUT.push('  <span class="bad">[FAIL]</span> ' + name + (extra ? '  ' + extra : '')); }
+}
+function flush() {
+  document.getElementById('log').innerHTML = OUT.join('\n') +
+    '\n\n<span class="h">==== 通过 ' + PASS + '　失败 ' + FAIL + ' ====</span>';
+  document.title = 'e2e v3 ' + PASS + '/' + (PASS + FAIL);
+}
+
+setTimeout(() => { run().catch(e => { ck('run 抛异常', false, e.message + '\n' + (e.stack || '')); flush(); }); }, 4500);
+
+/* 只比「有效像素」：alpha=0 的像素 RGB 是预乘噪声，不参与比较 */
+function same(da, i, db, j) {
+  if (da[i + 3] !== db[j + 3]) return false;
+  if (da[i + 3] === 0) return true;
+  return da[i] === db[j] && da[i + 1] === db[j + 1] && da[i + 2] === db[j + 2];
+}
+
+async function run() {
+  const fr = document.getElementById('fr');
+  const W = fr.contentWindow;
+  const T = W.TS, S = T.S, D = fr.contentDocument;
+  window.__TS__ = T;
+  ck('window.TS 已暴露', !!T);
+  if (!T) { flush(); return; }
+
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const roots = await (await fetch('/api/roots')).json();
+
+  /* ---------- 0 固定素材 ---------- */
+  const list = await (await fetch('/api/list?dir=' + encodeURIComponent(roots.mapSrc) + '&sizes=1')).json();
+  const map1 = list.items.find(x => x.name === 'map1_7x6.png');
+  await T.openSheetByPath(map1.path, map1.name);
+  ck('素材固定为 map1_7x6.png（7×6）', S.sheet && S.sheet.cols === 7 && S.sheet.rows === 6,
+    S.sheet ? S.sheet.cols + '×' + S.sheet.rows : '');
+
+  /* ---------- 鼠标模拟（真的走 mousedown/mousemove/mouseup） ---------- */
+  const cv = D.querySelector('#outCanvas');
+  function xyOf(col, row) {
+    const r = cv.getBoundingClientRect();
+    const cs = 48 * S.outZoom;
+    return { x: r.left + col * cs + cs / 2, y: r.top + row * cs + cs / 2 };
+  }
+  function mouseAt(type, col, row, opt) {
+    const p = xyOf(col, row);
+    const o = Object.assign({ bubbles: true, cancelable: true, clientX: p.x, clientY: p.y, button: 0 }, opt || {});
+    cv.dispatchEvent(new W.MouseEvent(type, o));   // 冒泡到 window，两个监听器都能收到
+  }
+
+  /** 往槽里造一个 srcIndex = y*w+x 的已知块，方便验证「排布」 */
+  function makeBlock(slotId, c0, r0, w, h, tf) {
+    const slot = T.SLOT_BY_ID[slotId], arr = S.out[slotId];
+    const blk = { id: ++S.blkSeq, c0, r0, w, h };
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        arr[(r0 + y) * slot.cols + (c0 + x)] = T.newCell(y * w + x, tf || 'none', blk);
+      }
+    }
+    return blk;
+  }
+  function gridOf(slotId, c0, r0, w, h) {
+    const slot = T.SLOT_BY_ID[slotId], arr = S.out[slotId], g = [];
+    for (let y = 0; y < h; y++) {
+      const row = [];
+      for (let x = 0; x < w; x++) { const c = arr[(r0 + y) * slot.cols + (c0 + x)]; row.push(c ? c.src.index : -1); }
+      g.push(row);
+    }
+    return g;
+  }
+  function tfOf(slotId, c, r) {
+    const slot = T.SLOT_BY_ID[slotId], cell = S.out[slotId][r * slot.cols + c];
+    return cell ? cell.tf : null;
+  }
+  function wipe() { T.SLOTS.forEach(s => S.out[s.id].fill(null)); T.clearOutSel(); }
+
+  /* ================= [1] 撤回 / 重做 ================= */
+  head('[1] 撤回 / 重做');
+  wipe();
+  T.HIST.undo.length = 0; T.HIST.redo.length = 0; T.updateHistUI();
+  ck('撤回栈初始为空', T.HIST.undo.length === 0);
+  ck('撤回按钮初始禁用', D.querySelector('#btnUndo').disabled);
+
+  S.curSlot = 'B';
+  S.sel.clear(); for (let i = 0; i < 42; i++) S.sel.add(i);
+  T.doPlace();
+  ck('操作① 整块贴入 42 格', S.out.B.filter(Boolean).length === 42, S.out.B.filter(Boolean).length + '');
+  ck('撤回栈记到 1 步', T.HIST.undo.length === 1, T.HIST.undo.length + '');
+  ck('撤回按钮已解禁', !D.querySelector('#btnUndo').disabled);
+  ck('按钮标题带操作名', /整块贴入/.test(D.querySelector('#btnUndo').title), D.querySelector('#btnUndo').title);
+
+  T.undoStep();
+  ck('↶ 撤回后输出区清空', S.out.B.filter(Boolean).length === 0, S.out.B.filter(Boolean).length + '');
+  ck('重做栈记到 1 步', T.HIST.redo.length === 1);
+  ck('重做按钮已解禁', !D.querySelector('#btnRedo').disabled);
+
+  T.redoStep();
+  ck('↷ 重做后回到 42 格', S.out.B.filter(Boolean).length === 42, S.out.B.filter(Boolean).length + '');
+
+  T.undoStep();
+  T.doPlace();                                  // 撤回后做新操作
+  ck('撤回后产生新操作 → 重做栈清空', T.HIST.redo.length === 0, T.HIST.redo.length + '');
+  ck('新操作照常生效', S.out.B.filter(Boolean).length === 42, S.out.B.filter(Boolean).length + '');
+
+  /* 语义标注也进历史 */
+  S.sel.clear(); [0, 1, 2].forEach(i => S.sel.add(i));
+  T.applyTag('ground');
+  ck('标注 3 格为「地面」', Object.keys(S.tagOf).length === 3, Object.keys(S.tagOf).length + '');
+  T.undoStep();
+  ck('↶ 撤回把标注一起还原', Object.keys(S.tagOf).length === 0, Object.keys(S.tagOf).length + '');
+  T.redoStep();
+  ck('↷ 重做把标注恢复', S.tagOf[0] === 'ground' && S.tagOf[2] === 'ground');
+
+  /* 空栈边界 */
+  T.HIST.undo.length = 0; T.HIST.redo.length = 0;
+  let noThrow = true;
+  try { T.undoStep(); } catch (e) { noThrow = false; }
+  ck('空栈撤回不抛异常', noThrow);
+
+  /* 深度上限 */
+  wipe(); S.sel.clear(); S.sel.add(0);
+  T.HIST.undo.length = 0;
+  const slotB = T.SLOT_BY_ID.B;
+  for (let i = 0; i < 100; i++) if (S.out.B.filter(Boolean).length < slotB.cols * slotB.rows) T.doPlace();
+  ck('撤回栈不超过上限 80', T.HIST.undo.length <= 80, T.HIST.undo.length + '');
+
+  /* ================= [2] 输出区矩形框选 ================= */
+  head('[2] 输出区矩形框选（RPG Maker 手感）');
+  wipe();
+  S.curSlot = 'B';
+  T.setOutMode('select');
+  makeBlock('B', 0, 0, 4, 3);                   // 4×3 = 12 格
+
+  mouseAt('mousedown', 1, 1);
+  mouseAt('mousemove', 2, 2);
+  ck('拖动中显示预览矩形', !!S.outRect && S.outRect.c0 === 1 && S.outRect.c1 === 2,
+    JSON.stringify(S.outRect));
+  mouseAt('mouseup', 2, 2);
+  await wait(180);
+  ck('松手后选中 2×2 = 4 格', S.outSel.size === 4, S.outSel.size + '');
+  ck('松开后预览矩形消失', !S.outRect);
+  ck('记录了框选矩形 2×2', S.outSelRect && S.outSelRect.w === 2 && S.outSelRect.h === 2,
+    JSON.stringify(S.outSelRect));
+  ck('⑤ 区提示写明「整块镜像」', /整块镜像/.test(D.querySelector('#outSelInfo').textContent),
+    D.querySelector('#outSelInfo').textContent.trim());
+
+  mouseAt('mousedown', 10, 10); mouseAt('mouseup', 10, 10);
+  ck('框空白处 → 选中 0 格', S.outSel.size === 0, S.outSel.size + '');
+
+  /* 反向拖（右下 → 左上）也要对 */
+  mouseAt('mousedown', 3, 2); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  ck('反向拖动框选同样成立（2×2）', S.outSel.size === 4 && S.outSelRect.w === 2,
+    S.outSel.size + ' 格 ' + JSON.stringify(S.outSelRect));
+
+  /* Shift 加选：选区外的 (0,0) 加进来 */
+  ck('（诊断）加选前 4 格 = (2,1)(3,1)(2,2)(3,2)',
+    [...S.outSel].sort((a, b) => a - b).join(',') === '18,19,34,35', [...S.outSel].join(','));
+  mouseAt('mousedown', 0, 0, { shiftKey: true });
+  ck('（诊断）Shift 按下 → outRectAdd=true', S.outRectAdd === true, String(S.outRectAdd));
+  ck('（诊断）Shift 按下 → 预览矩形在 (0,0)', !!S.outRect && S.outRect.c0 === 0 && S.outRect.r0 === 0,
+    JSON.stringify(S.outRect));
+  mouseAt('mouseup', 0, 0, { shiftKey: true });
+  ck('Shift 加选累加（4 → 5）', S.outSel.size === 5,
+    S.outSel.size + ' 选区=' + [...S.outSel].sort((a, b) => a - b).join(','));
+  const RR = T.selRectOut();
+  ck('加选后外接矩形自动扩到 4×3', RR.w === 4 && RR.h === 3, JSON.stringify(RR));
+
+  /* 不加 Shift 再点一下 → 只留新的那格 */
+  mouseAt('mousedown', 1, 2); mouseAt('mouseup', 1, 2);
+  ck('不加 Shift 会替换选区（只剩 1 格）', S.outSel.size === 1, S.outSel.size + '');
+
+  /* 单击 = 只选 1 格（关键：这样才能单独翻） */
+  T.clearOutSel();
+  mouseAt('mousedown', 2, 1); mouseAt('mouseup', 2, 1);
+  await wait(180);
+  ck('单击只选 1 格', S.outSel.size === 1, S.outSel.size + '');
+  ck('单击时不留框选矩形', !S.outSelRect, JSON.stringify(S.outSelRect));
+  ck('⑤ 区提示写明「只翻这一格」', /只翻这一格/.test(D.querySelector('#outSelInfo').textContent),
+    D.querySelector('#outSelInfo').textContent.trim());
+
+  /* 框了 3×2 但只有 1 格有内容 → 仍算「一块」 */
+  wipe();
+  S.out.B[5 * 16 + 5] = T.newCell(0, 'none');
+  mouseAt('mousedown', 4, 4); mouseAt('mousemove', 6, 5); mouseAt('mouseup', 6, 5);
+  ck('3×2 区域里只有 1 格有内容', S.outSel.size === 1, S.outSel.size + '');
+  ck('…但仍按 3×2 当「一块」（不被当成单格）',
+    !!S.outSelRect && S.outSelRect.w === 3 && S.outSelRect.h === 2, JSON.stringify(S.outSelRect));
+  const R = T.selRectOut();
+  ck('selRectOut 返回框选矩形（3×2）', R.w === 3 && R.h === 2, JSON.stringify(R));
+
+  /* 双击 = 选中整块 */
+  wipe();
+  makeBlock('B', 0, 0, 4, 3);
+  mouseAt('dblclick', 2, 1);
+  ck('双击块内任意格 → 选中整块 12 格', S.outSel.size === 12, S.outSel.size + '');
+
+  T.setOutMode('brush');
+
+  /* ================= [3] 变换口径 ================= */
+  head('[3] 变换：选 1 格单翻 / 选多格整块镜像');
+  T.setOutMode('select');                       // 后面全部用框选/单击来选中
+  wipe();
+  S.curSlot = 'B';
+  makeBlock('B', 0, 0, 3, 2);
+  ck('造出 3×2 块，排布 = [[0,1,2],[3,4,5]]',
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)) === JSON.stringify([[0, 1, 2], [3, 4, 5]]),
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)));
+
+  /* — 单格 — */
+  T.clearOutSel();
+  mouseAt('mousedown', 1, 0); mouseAt('mouseup', 1, 0);
+  ck('单击选中 1 格', S.outSel.size === 1, S.outSel.size + '');
+  T.transformOut('h');
+  ck('单格：位置没动（srcIndex 仍是 1）', S.out.B[1] && S.out.B[1].src.index === 1,
+    S.out.B[1] ? String(S.out.B[1].src.index) : 'null');
+  ck('单格：这一格 tf = h', tfOf('B', 1, 0) === 'h', String(tfOf('B', 1, 0)));
+  let othersTf = 0;
+  for (let y = 0; y < 2; y++) for (let x = 0; x < 3; x++) {
+    if (!(x === 1 && y === 0) && tfOf('B', x, y) !== 'none') othersTf++;
+  }
+  ck('单格：同块其它格没被翻', othersTf === 0, othersTf + ' 格被动');
+
+  /* — 整块镜像 h — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2);
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  ck('框选整块 3×2 = 6 格', S.outSel.size === 6, S.outSel.size + '');
+  T.transformOut('h');
+  const gh = gridOf('B', 0, 0, 3, 2);
+  ck('整块镜像 h：排布整体左右反 → [[2,1,0],[5,4,3]]',
+    JSON.stringify(gh) === JSON.stringify([[2, 1, 0], [5, 4, 3]]), JSON.stringify(gh));
+  ck('整块镜像 h：每格内容也翻 → tf = h',
+    tfOf('B', 0, 0) === 'h' && tfOf('B', 2, 1) === 'h',
+    tfOf('B', 0, 0) + '/' + tfOf('B', 2, 1));
+  ck('整块镜像后选区仍覆盖 6 格', S.outSel.size === 6, S.outSel.size + '');
+
+  /* 再来一次 → 完全复原（h∘h = 恒等） */
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  T.transformOut('h');
+  ck('再翻一次 h → 位置复原',
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)) === JSON.stringify([[0, 1, 2], [3, 4, 5]]),
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)));
+  ck('再翻一次 h → tf 回 none（叠加不是覆盖）',
+    tfOf('B', 0, 0) === 'none' && tfOf('B', 2, 1) === 'none',
+    tfOf('B', 0, 0) + '/' + tfOf('B', 2, 1));
+
+  /* — 整块镜像 v — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2);
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  T.transformOut('v');
+  ck('整块镜像 v：上下反 → [[3,4,5],[0,1,2]]',
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)) === JSON.stringify([[3, 4, 5], [0, 1, 2]]),
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)));
+
+  /* — 整块镜像 hv — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2);
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  T.transformOut('hv');
+  ck('整块镜像 180°：中心对称 → [[5,4,3],[2,1,0]]',
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)) === JSON.stringify([[5, 4, 3], [2, 1, 0]]),
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)));
+
+  /* — 「原图」按钮 = 强制清翻法 — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2, 'h');
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  T.transformOut('none');
+  ck('点「原图」把整块 tf 全部清成 none',
+    S.out.B.filter(c => c && c.tf !== 'none').length === 0,
+    S.out.B.filter(c => c && c.tf !== 'none').length + ' 格还有翻法');
+
+  /* — 切到「只翻每格」时，多格也不重排 — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2);
+  T.setBlkFlip('tile');
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  T.transformOut('h');
+  ck('「只翻每格」模式下排布不动',
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)) === JSON.stringify([[0, 1, 2], [3, 4, 5]]),
+    JSON.stringify(gridOf('B', 0, 0, 3, 2)));
+  ck('「只翻每格」模式下每格 tf = h',
+    tfOf('B', 0, 0) === 'h' && tfOf('B', 2, 1) === 'h');
+  T.setBlkFlip('order');
+
+  /* — 逐像素：整块镜像 h == 整块区域左右翻转 — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2);
+  const g0 = T.slotToCanvas('B').getContext('2d').getImageData(0, 0, 768, 768).data;
+  T.clearOutSel();
+  mouseAt('mousedown', 0, 0); mouseAt('mousemove', 2, 1); mouseAt('mouseup', 2, 1);
+  T.transformOut('h');
+  const g1 = T.slotToCanvas('B').getContext('2d').getImageData(0, 0, 768, 768).data;
+  const PW = 3 * 48, PH = 2 * 48;
+  let pxBad = 0;
+  for (let y = 0; y < PH; y++) {
+    for (let x = 0; x < PW; x++) {
+      if (!same(g0, (y * 768 + x) * 4, g1, (y * 768 + (PW - 1 - x)) * 4)) pxBad++;
+    }
+  }
+  ck('整块镜像 h == 3×2 区域左右翻转（逐像素）', pxBad === 0, '不符 ' + pxBad + '/' + (PW * PH));
+
+  /* — 逐像素：单格 h 只影响那一格 — */
+  wipe();
+  makeBlock('B', 0, 0, 3, 2);
+  const s0 = T.slotToCanvas('B').getContext('2d').getImageData(0, 0, 768, 768).data;
+  T.clearOutSel();
+  mouseAt('mousedown', 1, 0); mouseAt('mouseup', 1, 0);
+  T.transformOut('h');
+  const s1 = T.slotToCanvas('B').getContext('2d').getImageData(0, 0, 768, 768).data;
+  let onlyOne = 0, restBad = 0;
+  for (let y = 0; y < PH; y++) {
+    for (let x = 0; x < PW; x++) {
+      if (x >= 48 && x < 96 && y < 48) {          // 第 (1,0) 格：应该整体左右翻
+        if (!same(s0, (y * 768 + x) * 4, s1, (y * 768 + (48 + (47 - (x - 48)))) * 4)) onlyOne++;
+      } else {
+        if (!same(s0, (y * 768 + x) * 4, s1, (y * 768 + x) * 4)) restBad++;
+      }
+    }
+  }
+  ck('单格 h：目标格内容确实翻转（逐像素）', onlyOne === 0, '不符 ' + onlyOne + '/2304');
+  ck('单格 h：其它格一个像素都没动', restBad === 0, '被动像素 ' + restBad);
+
+  /* ================= [4] 橡皮擦 ================= */
+  head('[4] 橡皮擦');
+  wipe();
+  S.curSlot = 'B';
+  makeBlock('B', 0, 0, 4, 3);                   // 12 格
+
+  T.setOutMode('erase');
+  ck('切到橡皮模式', S.outMode === 'erase', S.outMode);
+  ck('模式按钮高亮同步', D.querySelector('#segOutMode > button[data-omode="erase"]').classList.contains('on'));
+  ck('body 加 erasing 类（光标变十字）', D.body.classList.contains('erasing'));
+  ck('⑤ 区橡皮按钮显示「（开）」', /开/.test(D.querySelector('#btnErase').textContent),
+    D.querySelector('#btnErase').textContent);
+  ck('输出区提示已切换', /擦/.test(D.querySelector('#outHint').textContent),
+    D.querySelector('#outHint').textContent);
+
+  /* 拖动连擦 3 格 */
+  mouseAt('mousedown', 1, 0);
+  mouseAt('mousemove', 1, 1);
+  mouseAt('mousemove', 1, 2);
+  mouseAt('mouseup', 1, 2);
+  ck('橡皮拖过 3 格 → 剩 9 格', S.out.B.filter(Boolean).length === 9,
+    S.out.B.filter(Boolean).length + ' 格');
+
+  /* 单击 → 擦整块 */
+  const nBefore = S.out.B.filter(Boolean).length;
+  mouseAt('mousedown', 3, 0);
+  const nDown = S.out.B.filter(Boolean).length;
+  ck('（诊断）按下时擦掉 1 格', nDown === nBefore - 1, nBefore + ' → ' + nDown);
+  mouseAt('mouseup', 3, 0);
+  const nUp = S.out.B.filter(Boolean).length;
+  ck('单击块内任意格 → 擦掉整块', nUp === 0, nUp + ' 格');
+
+  /* 直接调 eraseBlockAt 的对照实验（定位是 API 问题还是鼠标链路问题） */
+  wipe();
+  makeBlock('B', 0, 0, 4, 3);
+  ck('（诊断）blockCellsOf 找到 12 格', T.blockCellsOf(S.out.B[0]).length === 12,
+    T.blockCellsOf(S.out.B[0]).length + '');
+  const nn = T.eraseBlockAt(S.out.B[0], false);
+  ck('（诊断）eraseBlockAt(cell,false) 擦 12 格', nn === 12, nn + '');
+
+  /* Alt+单击 → 只擦单格 */
+  wipe();
+  makeBlock('B', 0, 0, 4, 3);
+  mouseAt('mousedown', 1, 1, { altKey: true });
+  mouseAt('mouseup', 1, 1, { altKey: true });
+  ck('Alt+单击 → 只擦 1 格（剩 11）', S.out.B.filter(Boolean).length === 11,
+    S.out.B.filter(Boolean).length + ' 格');
+
+  /* 橡皮可撤回 */
+  T.undoStep();
+  ck('橡皮操作可撤回（回到 12 格）', S.out.B.filter(Boolean).length === 12,
+    S.out.B.filter(Boolean).length + ' 格');
+
+  /* 切回刷块 */
+  T.setOutMode('brush');
+  ck('切回刷块模式', S.outMode === 'brush', S.outMode);
+  ck('erasing 类已移除', !D.body.classList.contains('erasing'));
+  ck('橡皮按钮恢复正常文案', !/（开）/.test(D.querySelector('#btnErase').textContent),
+    D.querySelector('#btnErase').textContent);
+
+  /* ================= [5] 导出目录 ================= */
+  head('[5] 导出目录 = 桌面');
+  ck('S.outDir 在桌面', /Desktop/i.test(S.outDir || ''), S.outDir);
+  ck('导出目录名带「图块工坊导出」', /图块工坊导出/.test(S.exportDir || ''), S.exportDir);
+  ck('导出目录在白名单内（能落盘）', roots.roots.indexOf(S.outDir) >= 0);
+  ck('下拉默认选中桌面导出目录', D.querySelector('#dirSelect').value === S.outDir,
+    D.querySelector('#dirSelect').value);
+  ck('下拉里含「选择其他目录…」', !!D.querySelector('#dirSelect option[value="__pick__"]'));
+  ck('底栏提示已显示目录', /图块工坊导出/.test(D.querySelector('#outDirHint').textContent),
+    D.querySelector('#outDirHint').textContent);
+
+  /* ================= [6] 历史与导出互不干扰 ================= */
+  head('[6] 撤回栈与槽位切换');
+  wipe();
+  S.curSlot = 'C';
+  T.HIST.undo.length = 0;
+  S.sel.clear(); S.sel.add(0);
+  T.doPlace();
+  ck('在 C 槽放入 1 格', S.out.C.filter(Boolean).length === 1);
+  T.undoStep();
+  ck('撤回后 C 槽清空', S.out.C.filter(Boolean).length === 0);
+  ck('撤回不影响其它槽', S.out.B.filter(Boolean).length === 0);
+
+  flush();
+}
+</script>
+</body>
+</html>

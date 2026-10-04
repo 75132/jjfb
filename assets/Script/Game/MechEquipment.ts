@@ -42,6 +42,7 @@ export class MechEquipment extends Component {
     shoukaiSlot: Node = null!;
     
     private ws: WebSocketManager = null!;
+    private unequipRefreshTimer: ReturnType<typeof setTimeout> | null = null;
     private currentPetId: string = '';  // 当前显示的机甲ID
     private slotMap: Map<string, Node> = new Map();  // 槽位名称到节点的映射
     private slotLabelMap: Map<string, Label> = new Map();  // 槽位名称到Label的映射
@@ -127,6 +128,10 @@ export class MechEquipment extends Component {
     }
     
     onDestroy() {
+        if (this.unequipRefreshTimer !== null) {
+            clearTimeout(this.unequipRefreshTimer);
+            this.unequipRefreshTimer = null;
+        }
         // 移除事件监听
         if (this.ws) {
             this.ws.off(GameConfig.MESSAGE_TYPES.ROBOT_PET_INFO_RESPONSE, this.onRobotPetInfo, this);
@@ -327,7 +332,9 @@ export class MechEquipment extends Component {
             }
             
             // 延迟一小段时间后重新请求机甲信息，确保服务器端数据已更新
-            setTimeout(() => {
+            this.unequipRefreshTimer = setTimeout(() => {
+                this.unequipRefreshTimer = null;
+                if (!this.node?.isValid) return;
                 if (this.currentPetId) {
                     this.requestRobotPetInfo(this.currentPetId);
                 }

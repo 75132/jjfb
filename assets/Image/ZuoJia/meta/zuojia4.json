@@ -1,0 +1,91 @@
+{
+  "name": "zuojia4",
+  "cn": "座驾-宙斯",
+  "mode": "piece_compose",
+  "rect_count": 6,
+  "piece_frames": 14,
+  "out_frames": 14,
+  "frame_sizes": [
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ],
+    [
+      78,
+      77
+    ]
+  ],
+  "compose": {
+    "mode": "piece_records",
+    "frame_count": 14,
+    "draw_order": "record_order",
+    "anchor_mode": "top_left",
+    "seam_fix": true,
+    "apply_flag_transform": true,
+    "canvas_box": [
+      -39,
+      -72,
+      39,
+      5
+    ],
+    "canvas_size": [
+      78,
+      77
+    ]
+  },
+  "parse": {
+    "frame_count": 14,
+    "tail_start": 87,
+    "tail_end": 605,
+    "remaining_bytes": 57
+  },
+  "chroma_changed": 2240
+}

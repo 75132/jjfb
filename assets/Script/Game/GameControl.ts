@@ -8,7 +8,9 @@ import { ResourceManager } from './ResourceManager';
 import { RobotShow } from './RobotShow';
 import { ensureBattleResumeController } from './BattleResumeController';
 import { ensureStarterMechPicker } from './StarterMechPicker';
+import { ensureIntroWorldview } from '../Intro/IntroWorldviewController';
 import { TipWindows } from '../global/TipWindows';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -69,8 +71,11 @@ export class GameControl extends BaseSceneController {
         ensureBattleResumeController();
 
         // 无机甲时弹出初始三选一（先预热 TipWindows，避免首次确认弹窗被 onLoad 关掉）
+        // 新角色开屏世界观优先于初始机甲选择
         TipWindows.warmup();
-        ensureStarterMechPicker().checkAndPrompt();
+        ensureIntroWorldview().tryPlay(() => {
+            ensureStarterMechPicker().checkAndPrompt();
+        });
 
         // 延迟初始化非关键操作，避免阻塞场景加载
         // 先让场景快速显示出来，再初始化其他功能
@@ -114,11 +119,11 @@ export class GameControl extends BaseSceneController {
     protected onDataChanged(data: any): void {
         // 处理 GameControl 特有的逻辑
         if (data && typeof data === 'object' && data.reason) {
-            console.log(`🚨 [GameControl] 检测到数据变化：${data.reason}`);
+            Logger.debug(`🚨 [GameControl] 检测到数据变化：${data.reason}`);
             
             // 切换角色回选角（清除 characterId），不应按断线处理 Loading/重连
             if (data.reason === 'character_id_cleared') {
-                console.log('ℹ️ [GameControl] 检测到切换角色（清除角色ID），不触发 Loading');
+                Logger.debug('ℹ️ [GameControl] 检测到切换角色（清除角色ID），不触发 Loading');
                 // 停止监控，准备场景切换
                 this.stopMonitoring();
                 return;
@@ -126,7 +131,7 @@ export class GameControl extends BaseSceneController {
             
             // 如果是完全清除所有数据（all_cleared），说明是异常情况或完全退出登录
             if (data.reason === 'all_cleared') {
-                console.log('⚠️ [GameControl] 检测到所有数据被清除，停止监控');
+                Logger.debug('⚠️ [GameControl] 检测到所有数据被清除，停止监控');
                 this.stopMonitoring();
                 return;
             }
@@ -140,7 +145,7 @@ export class GameControl extends BaseSceneController {
             
             // 如果任何关键数据缺失，立即显示Loading
             if (!isConnected || !hasToken || !hasUserId || !hasCharacterId) {
-                console.log('❌ [GameControl] 数据不完整，立即显示Loading');
+                Logger.debug('❌ [GameControl] 数据不完整，立即显示Loading');
                 this.showLoadingAndReconnect(`data_changed: ${data.reason}`);
                 return;
             }
@@ -242,7 +247,7 @@ export class GameControl extends BaseSceneController {
     protected startMonitoring(): void {
         // 🔧 检查是否禁用服务器验证
         if (GameControl.DISABLE_SERVER_VALIDATION) {
-            console.log('🚫 服务器验证已禁用，跳过监控启动');
+            Logger.debug('🚫 服务器验证已禁用，跳过监控启动');
             return;
         }
 
@@ -263,7 +268,7 @@ export class GameControl extends BaseSceneController {
         // 使用 requestAnimationFrame 优化检查频率（仅在游戏运行时）
         // 这样可以减少不必要的检查，提高性能
 
-        console.log(`🔍 游戏状态监控已启动 - 检查间隔: ${this.tokenCheckInterval}ms`);
+        Logger.debug(`🔍 游戏状态监控已启动 - 检查间隔: ${this.tokenCheckInterval}ms`);
 
         // 立即检查一次
         this.checkStatus();
@@ -278,7 +283,7 @@ export class GameControl extends BaseSceneController {
             this.tokenCheckTimer = -1;
         }
         this.isMonitoring = false;
-        console.log('⏹️ 游戏状态监控已停止');
+        Logger.debug('⏹️ 游戏状态监控已停止');
     }
 
     /**
@@ -287,7 +292,7 @@ export class GameControl extends BaseSceneController {
     protected checkStatus(): void {
         // 🔧 如果禁用服务器验证，直接返回
         if (GameControl.DISABLE_SERVER_VALIDATION) {
-            console.log('🚫 服务器验证已禁用，跳过状态检查');
+            Logger.debug('🚫 服务器验证已禁用，跳过状态检查');
             return;
         }
 
@@ -299,26 +304,26 @@ export class GameControl extends BaseSceneController {
 
             // 立即检查：任何数据缺失都立刻显示Loading
             if (!wsManager.isConnected()) {
-                console.warn(`⚠️ WebSocket连接断开 - 场景: ${this.currentSceneName}`);
+                Logger.warn(`⚠️ WebSocket连接断开 - 场景: ${this.currentSceneName}`);
                 this.handleConnectionLost();
                 return;
             }
 
             if (!this.isTokenValid(currentToken)) {
-                console.warn(`⚠️ Token已失效 - 场景: ${this.currentSceneName}`);
+                Logger.warn(`⚠️ Token已失效 - 场景: ${this.currentSceneName}`);
                 this.handleTokenInvalid();
                 return;
             }
 
             // Game场景需要完整的验证：Token、UserId和CharacterId都必须存在
             if (!currentUserId || currentUserId.length === 0) {
-                console.warn(`⚠️ 用户ID缺失 - 场景: ${this.currentSceneName}`);
+                Logger.warn(`⚠️ 用户ID缺失 - 场景: ${this.currentSceneName}`);
                 this.handleTokenInvalid();
                 return;
             }
 
             if (!currentCharacterId || currentCharacterId.length === 0) {
-                console.warn(`⚠️ 角色ID缺失 - 场景: ${this.currentSceneName}`);
+                Logger.warn(`⚠️ 角色ID缺失 - 场景: ${this.currentSceneName}`);
                 this.handleTokenInvalid();
                 return;
             }
@@ -327,14 +332,14 @@ export class GameControl extends BaseSceneController {
             if (this.lastToken !== currentToken ||
                 this.lastUserId !== currentUserId ||
                 this.lastCharacterId !== currentCharacterId) {
-                console.log(`🔄 游戏状态已更新 - 场景: ${this.currentSceneName}`);
+                Logger.debug(`🔄 游戏状态已更新 - 场景: ${this.currentSceneName}`);
                 this.lastToken = currentToken;
                 this.lastUserId = currentUserId;
                 this.lastCharacterId = currentCharacterId;
             }
 
         } catch (error) {
-            console.error(`❌ 游戏状态检查失败 - 场景: ${this.currentSceneName}:`, error);
+            Logger.error(`❌ 游戏状态检查失败 - 场景: ${this.currentSceneName}:`, error);
             this.handleTokenInvalid();
         }
     }
@@ -343,7 +348,7 @@ export class GameControl extends BaseSceneController {
      * 处理数据完整性失败（供GameCommonData调用）
      */
     public handleDataIntegrityFailed(reason: string): void {
-        console.error(`🚨 [GameControl] 数据完整性失败：${reason}，立即显示Loading`);
+        Logger.error(`🚨 [GameControl] 数据完整性失败：${reason}，立即显示Loading`);
         if (reason === 'player_not_found_or_unauthorized') {
             // 角色数据不存在/鉴权失效：不重连，直接清会话并回登录。
             try { WebSocketManager.getInstance().clearAll(); } catch {}
@@ -361,14 +366,14 @@ export class GameControl extends BaseSceneController {
         // 安全阀：离线/未鉴权超过阈值 => 直接重登并清理本地会话（不走“重连”）
         const wsManager = WebSocketManager.getInstance();
         if (wsManager.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [GameControl] 安全阀触发（token_idle_expired），清会话并回登录 - 场景: ${this.currentSceneName}`);
+            Logger.warn(`⚠️ [GameControl] 安全阀触发（token_idle_expired），清会话并回登录 - 场景: ${this.currentSceneName}`);
             try { wsManager.clearAll(); } catch {}
             this.stopMonitoring();
             this.jumpToLoginScene();
             return;
         }
 
-        console.log(`🚨 Token失效，显示Loading并尝试重连 - 当前场景: ${this.currentSceneName}`);
+        Logger.debug(`🚨 Token失效，显示Loading并尝试重连 - 当前场景: ${this.currentSceneName}`);
         this.showLoadingAndReconnect('token_invalid');
     }
 
@@ -376,7 +381,7 @@ export class GameControl extends BaseSceneController {
      * 处理游戏ID不完整（显示Loading并尝试重连）
      */
     private handleGameIdsIncomplete(): void {
-        console.log(`🚨 游戏ID不完整，显示Loading并尝试重连 - 当前场景: ${this.currentSceneName}`);
+        Logger.debug(`🚨 游戏ID不完整，显示Loading并尝试重连 - 当前场景: ${this.currentSceneName}`);
         this.showLoadingAndReconnect('game_ids_incomplete');
     }
 
@@ -387,14 +392,14 @@ export class GameControl extends BaseSceneController {
         // 安全阀：离线/未鉴权超过阈值 => 不再重连，直接重登并清理本地会话
         const wsManager = WebSocketManager.getInstance();
         if (wsManager.isReloginRequiredByIdle()) {
-            console.warn(`⚠️ [GameControl] 安全阀触发（connection_idle_expired），清会话并回登录 - 场景: ${this.currentSceneName}`);
+            Logger.warn(`⚠️ [GameControl] 安全阀触发（connection_idle_expired），清会话并回登录 - 场景: ${this.currentSceneName}`);
             try { wsManager.clearAll(); } catch {}
             this.stopMonitoring();
             this.jumpToLoginScene();
             return;
         }
 
-        console.log(`🔌 WebSocket连接丢失，显示Loading并尝试重连 - 场景: ${this.currentSceneName}`);
+        Logger.debug(`🔌 WebSocket连接丢失，显示Loading并尝试重连 - 场景: ${this.currentSceneName}`);
         this.showLoadingAndReconnect('connection_lost');
     }
 
@@ -405,7 +410,7 @@ export class GameControl extends BaseSceneController {
     private showLoadingAndReconnect(reason: string): void {
         // 如果已经在重连中，不重复处理
         if (this.isReconnecting) {
-            console.log('⏳ 已在重连中，跳过重复请求');
+            Logger.debug('⏳ 已在重连中，跳过重复请求');
             return;
         }
 
@@ -417,7 +422,7 @@ export class GameControl extends BaseSceneController {
         // 显示Loading面板
         if (this.loadingPanel) {
             this.loadingPanel.active = true;
-            console.log('📱 Loading面板已显示');
+            Logger.debug('📱 Loading面板已显示');
         }
 
         // 开始重连
@@ -435,7 +440,7 @@ export class GameControl extends BaseSceneController {
 
         const tryConnect = () => {
             reconnectAttempts++;
-            console.log(`🔄 重连尝试 ${reconnectAttempts}/${maxAttempts}...`);
+            Logger.debug(`🔄 重连尝试 ${reconnectAttempts}/${maxAttempts}...`);
 
             try {
                 // 尝试连接
@@ -445,7 +450,7 @@ export class GameControl extends BaseSceneController {
                 setTimeout(() => {
                     // 检查是否真正重连成功（需要 WebSocket 连接 + 完整的数据）
                     if (this.isReconnectTrulySuccess()) {
-                        console.log('✅ 重连成功（WebSocket连接 + 数据完整）');
+                        Logger.debug('✅ 重连成功（WebSocket连接 + 数据完整）');
                         this.onReconnectSuccess();
                         return;
                     }
@@ -454,12 +459,12 @@ export class GameControl extends BaseSceneController {
                     if (reconnectAttempts < maxAttempts) {
                         tryConnect();
                     } else {
-                        console.log('⏰ 重连尝试次数已达上限');
+                        Logger.debug('⏰ 重连尝试次数已达上限');
                         this.onReconnectTimeout();
                     }
                 }, attemptInterval);
             } catch (error) {
-                console.error('❌ 重连尝试失败:', error);
+                Logger.error('❌ 重连尝试失败:', error);
                 
                 if (reconnectAttempts < maxAttempts) {
                     tryConnect();
@@ -475,7 +480,7 @@ export class GameControl extends BaseSceneController {
         // 设置超时（3秒后如果还没成功，跳转到登录）
         this.reconnectTimer = setTimeout(() => {
             if (this.isReconnecting) {
-                console.log('⏰ 重连超时（3秒），跳转到登录场景');
+                Logger.debug('⏰ 重连超时（3秒），跳转到登录场景');
                 this.onReconnectTimeout();
             }
         }, this.reconnectTimeout) as any;
@@ -486,15 +491,15 @@ export class GameControl extends BaseSceneController {
      */
     private isReconnectTrulySuccess(): boolean {
         const wsManager = WebSocketManager.getInstance();
-        if (!wsManager.isConnected()) { console.log('❌ WebSocket未连接'); return false; }
+        if (!wsManager.isConnected()) { Logger.debug('❌ WebSocket未连接'); return false; }
         const token = wsManager.getToken();
-        if (!this.isTokenValid(token)) { console.log('❌ Token无效或不存在'); return false; }
+        if (!this.isTokenValid(token)) { Logger.debug('❌ Token无效或不存在'); return false; }
         const userId = wsManager.getUserId();
-        if (!userId || userId.length === 0) { console.log('❌ 用户ID缺失'); return false; }
+        if (!userId || userId.length === 0) { Logger.debug('❌ 用户ID缺失'); return false; }
         const characterId = wsManager.getCharacterId();
-        if (!characterId || characterId.length === 0) { console.log('❌ 角色ID缺失'); return false; }
+        if (!characterId || characterId.length === 0) { Logger.debug('❌ 角色ID缺失'); return false; }
         
-        console.log('✅ 重连条件满足：WebSocket连接 + Token/用户ID/角色ID均有效');
+        Logger.debug('✅ 重连条件满足：WebSocket连接 + Token/用户ID/角色ID均有效');
         return true;
     }
 
@@ -513,11 +518,11 @@ export class GameControl extends BaseSceneController {
         // 隐藏Loading面板
         if (this.loadingPanel) {
             this.loadingPanel.active = false;
-            console.log('📱 Loading面板已隐藏');
+            Logger.debug('📱 Loading面板已隐藏');
         }
 
         // 刷新数据
-        console.log('🔄 重连成功，刷新数据并重新加载场景...');
+        Logger.debug('🔄 重连成功，刷新数据并重新加载场景...');
         // 轻微延迟：给 WebSocketManager 的 auth_request/auth_response 一轮处理时间
         setTimeout(() => {
             this.refreshDataAndReloadScene();
@@ -540,7 +545,7 @@ export class GameControl extends BaseSceneController {
         // 隐藏Loading面板
         if (this.loadingPanel) {
             this.loadingPanel.active = false;
-            console.log('📱 Loading面板已隐藏');
+            Logger.debug('📱 Loading面板已隐藏');
         }
 
         // 规范性修复：连接超时但不要清 token
@@ -556,10 +561,10 @@ export class GameControl extends BaseSceneController {
     private refreshDataAndReloadScene(): void {
         if (GameCommonData.instance) {
             GameCommonData.instance.refreshPlayerInfo()
-                .then(() => { console.log('✅ 数据刷新完成'); })
-                .catch((error) => { console.error('❌ 数据刷新失败:', error); });
+                .then(() => { Logger.debug('✅ 数据刷新完成'); })
+                .catch((error) => { Logger.error('❌ 数据刷新失败:', error); });
         } else {
-            console.log('⚠️ GameCommonData未初始化');
+            Logger.debug('⚠️ GameCommonData未初始化');
         }
     }
 
@@ -568,20 +573,20 @@ export class GameControl extends BaseSceneController {
      */
     private reloadCurrentScene(): void {
         const sceneName = this.currentSceneName || 'Game';
-        console.log(`🔄 重新加载场景: ${sceneName}`);
+        Logger.debug(`🔄 重新加载场景: ${sceneName}`);
         
         try {
             director.loadScene(sceneName, (error) => {
                 if (error) {
-                    console.error(`❌ 重新加载场景失败: ${sceneName}`, error);
+                    Logger.error(`❌ 重新加载场景失败: ${sceneName}`, error);
                     // 如果重新加载失败，跳转到登录场景
                     this.jumpToLoginScene();
                 } else {
-                    console.log(`✅ 场景重新加载成功: ${sceneName}`);
+                    Logger.debug(`✅ 场景重新加载成功: ${sceneName}`);
                 }
             });
         } catch (error) {
-            console.error('❌ 场景重新加载异常:', error);
+            Logger.error('❌ 场景重新加载异常:', error);
             this.jumpToLoginScene();
         }
     }
@@ -590,7 +595,7 @@ export class GameControl extends BaseSceneController {
      * 跳转到登录场景（重写基类方法，添加日志）
      */
     protected jumpToLoginScene(): void {
-        console.log(`🔄 跳转到登录场景 - 来源场景: ${this.currentSceneName}`);
+        Logger.debug(`🔄 跳转到登录场景 - 来源场景: ${this.currentSceneName}`);
         super.jumpToLoginScene();
     }
 
@@ -603,7 +608,7 @@ export class GameControl extends BaseSceneController {
             const wsManager = WebSocketManager.getInstance();
             return wsManager.getUserId();
         } catch (error) {
-            console.error('❌ 获取用户ID失败:', error);
+            Logger.error('❌ 获取用户ID失败:', error);
             return null;
         }
     }
@@ -616,7 +621,7 @@ export class GameControl extends BaseSceneController {
             const wsManager = WebSocketManager.getInstance();
             return wsManager.getCharacterId();
         } catch (error) {
-            console.error('❌ 获取角色ID失败:', error);
+            Logger.error('❌ 获取角色ID失败:', error);
             return null;
         }
     }
@@ -633,7 +638,7 @@ export class GameControl extends BaseSceneController {
      * 手动触发状态检查（调试用）
      */
     public manualStatusCheck(): void {
-        console.log('🔍 手动触发游戏状态检查');
+        Logger.debug('🔍 手动触发游戏状态检查');
         this.checkStatus();
     }
 
@@ -656,7 +661,7 @@ export class GameControl extends BaseSceneController {
      */
     public static setServerValidation(enabled: boolean): void {
         GameControl.DISABLE_SERVER_VALIDATION = !enabled;
-        console.log(`🔧 服务器验证已${enabled ? '启用' : '禁用'}`);
+        Logger.debug(`🔧 服务器验证已${enabled ? '启用' : '禁用'}`);
     }
 
     /**
@@ -676,28 +681,28 @@ export class GameControl extends BaseSceneController {
             const userId = this.getCurrentUserId();
             const characterId = this.getCurrentCharacterId();
             
-            console.log(`📋 游戏状态详细信息 - 场景: ${this.currentSceneName}:`);
-            console.log('  - Token存在:', token !== null);
-            console.log('  - 用户ID存在:', userId !== null);
-            console.log('  - 角色ID存在:', characterId !== null);
-            console.log('  - 游戏ID完整:', this.isGameIdsComplete(userId, characterId));
-            console.log('  - WebSocket连接状态:', wsManager.isConnected());
-            console.log('  - 监控状态:', this.isMonitoring);
+            Logger.debug(`📋 游戏状态详细信息 - 场景: ${this.currentSceneName}:`);
+            Logger.debug('  - Token存在:', token !== null);
+            Logger.debug('  - 用户ID存在:', userId !== null);
+            Logger.debug('  - 角色ID存在:', characterId !== null);
+            Logger.debug('  - 游戏ID完整:', this.isGameIdsComplete(userId, characterId));
+            Logger.debug('  - WebSocket连接状态:', wsManager.isConnected());
+            Logger.debug('  - 监控状态:', this.isMonitoring);
             
             if (token) {
-                console.log('  - Token前10位:', token.substring(0, 10));
-                console.log('  - Token后10位:', token.substring(token.length - 10));
+                Logger.debug('  - Token前10位:', token.substring(0, 10));
+                Logger.debug('  - Token后10位:', token.substring(token.length - 10));
             }
             
             if (userId) {
-                console.log('  - 用户ID:', userId);
+                Logger.debug('  - 用户ID:', userId);
             }
             
             if (characterId) {
-                console.log('  - 角色ID:', characterId);
+                Logger.debug('  - 角色ID:', characterId);
             }
         } catch (error) {
-            console.error('❌ 输出详细信息失败:', error);
+            Logger.error('❌ 输出详细信息失败:', error);
         }
     }
 
@@ -713,11 +718,11 @@ export class GameControl extends BaseSceneController {
             (progress) => {
                 // 可以在这里显示加载进度（如果需要）
                 if (progress % 20 === 0) { // 每20%打印一次，避免日志过多
-                    console.log(`📦 [GameControl] 资源预加载进度: ${progress}%`);
+                    Logger.debug(`📦 [GameControl] 资源预加载进度: ${progress}%`);
                 }
             },
             (successCount, failCount) => {
-                console.log(`✅ [GameControl] 游戏核心资源预加载完成: 成功 ${successCount}, 失败 ${failCount}`);
+                Logger.debug(`✅ [GameControl] 游戏核心资源预加载完成: 成功 ${successCount}, 失败 ${failCount}`);
             }
         );
         
@@ -728,7 +733,7 @@ export class GameControl extends BaseSceneController {
         try {
             RobotShow.preloadResources();
         } catch (error) {
-            console.warn('⚠️ [GameControl] RobotShow 资源预加载失败:', error);
+            Logger.warn('⚠️ [GameControl] RobotShow 资源预加载失败:', error);
         }
     }
 
@@ -750,6 +755,6 @@ export class GameControl extends BaseSceneController {
             wsManager.off('data_changed', this.onDataChanged, this);
         }
         
-        console.log(`🎮 游戏场景控制器销毁 - 场景: ${this.currentSceneName}`);
+        Logger.debug(`🎮 游戏场景控制器销毁 - 场景: ${this.currentSceneName}`);
     }
 }

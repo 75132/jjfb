@@ -1,23 +1,30 @@
-System.register(["cc"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1"], function (_export, _context) {
   "use strict";
 
-  var _cclegacy, BagEventHub, _crd;
+  var _reporterNs, _cclegacy, Logger, BagEventHub, _crd;
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "./Logger", _context.meta, extras);
+  }
 
   _export("BagEventHub", void 0);
 
   return {
-    setters: [function (_cc) {
+    setters: [function (_unresolved_) {
+      _reporterNs = _unresolved_;
+    }, function (_cc) {
       _cclegacy = _cc.cclegacy;
+    }, function (_unresolved_2) {
+      Logger = _unresolved_2.Logger;
     }],
     execute: function () {
       _crd = true;
 
       _cclegacy._RF.push({}, "2d8707lTyFM74kmzir9augG", "BagEvent", undefined);
+
       /**
        * 背包领域事件（任务/成就等可订阅）。保持轻量，避免与具体 UI 耦合。
        */
-
-
       _export("BagEventHub", BagEventHub = class BagEventHub {
         static on(evt, fn) {
           let set = this._subs.get(evt);
@@ -48,7 +55,9 @@ System.register(["cc"], function (_export, _context) {
             try {
               fn(payload);
             } catch (e) {
-              console.warn('[BagEvent]', evt, e);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).warn('[BagEvent]', evt, e);
             }
           }
         }

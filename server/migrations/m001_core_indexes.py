@@ -80,6 +80,7 @@ def run(db: Any, dry_run: bool = False) -> List[str]:
     players_col = db["players"]
     messages_col = db["messages"]
     robotbase_col = db["RobotBase"]
+    monsterbase_col = db["MonsterBase"]
     robotpet_col = db["RobotPet"]
     inventory_col = db["inventory"]
     daletou_draws_col = db["daletou_draws"]
@@ -229,6 +230,11 @@ def run(db: Any, dry_run: bool = False) -> List[str]:
     lines.extend(
         _ensure_index(
             robotbase_col, "RobotID", dry_run, "RobotBase.RobotID", unique=True, sparse=True
+        )
+    )
+    lines.extend(
+        _ensure_index(
+            monsterbase_col, "MonsterID", dry_run, "MonsterBase.MonsterID", unique=True, sparse=True
         )
     )
     lines.extend(

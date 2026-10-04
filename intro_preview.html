@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>机甲风暴OL · 虫祸纷争 · 起源</title>
+<style>
+  :root{
+    --ink:#eaeefb; --dim:#8aa0bd; --accent:#7fd6ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#04060b;overflow:hidden;
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink)}
+  #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #stage{position:relative;width:480px;height:800px;max-width:100vw;max-height:100vh;
+    aspect-ratio:480/800;box-shadow:0 0 80px rgba(0,0,0,.9);background:#04060b;overflow:hidden}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;z-index:4}
+  #skip{position:absolute;right:14px;top:14px;font-size:12px;color:var(--dim);
+    border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:5px 12px;cursor:pointer;
+    background:rgba(0,0,0,.3);z-index:6;letter-spacing:1px}
+  #narr{position:absolute;left:0;right:0;bottom:0;padding:60px 34px 74px;
+    background:linear-gradient(0deg,rgba(2,4,9,.96),rgba(2,4,9,.0));pointer-events:none}
+  #subText{font-size:12.5px;line-height:1.6;letter-spacing:3px;
+    color:rgba(150,178,214,.55);text-shadow:0 1px 6px #000;white-space:pre-wrap;
+    margin-bottom:14px;min-height:1.6em;opacity:0;transition:opacity .7s;
+    writing-mode:horizontal-tb;text-align:center}
+  #narrText{font-size:18px;line-height:2.0;letter-spacing:2px;text-shadow:0 2px 12px #000;
+    min-height:2em;white-space:pre-wrap;text-align:center;font-weight:400}
+  #hint{position:absolute;right:18px;bottom:22px;font-size:11px;color:var(--dim);
+    pointer-events:none;letter-spacing:1px;opacity:.7}
+  #dots{position:absolute;left:0;right:0;bottom:36px;display:flex;gap:9px;justify-content:center;z-index:5}
+  .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:.3s}
+  .dot.on{background:var(--accent);width:20px;border-radius:3px}
+  #enter{position:absolute;left:50%;bottom:74px;transform:translateX(-50%);
+    padding:12px 34px;font-size:16px;letter-spacing:5px;color:#04121a;
+    background:linear-gradient(180deg,#8fe7ff,#37b6ee);border:none;border-radius:26px;
+    cursor:pointer;opacity:0;pointer-events:none;transition:.5s;z-index:6;
+    box-shadow:0 8px 26px rgba(55,182,238,.42)}
+  #enter.show{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage">
+  <canvas id="cv"></canvas>
+  <div id="fade"></div>
+  <div id="skip">跳过 ▸</div>
+  <div id="narr"><div id="subText"></div><div id="narrText"></div></div>
+  <div id="hint">点击 / 空格 继续</div>
+  <div id="dots"></div>
+  <button id="enter">进 入 游 戏</button>
+</div></div>
+<script>
+const W=480, H=800;
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+function resize(){ const dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+resize(); window.addEventListener('resize',resize);
+
+/* ---------- 资源（全部为游戏内真实素材 assets/resources/） ---------- */
+const R=p=>'assets/resources/Robot/'+p;
+const I=p=>'assets/resources/Intro/'+p;
+const N=p=>'assets/resources/Npc/'+p;
+function loadImg(src){ const im=new Image(); im.src=src; im._ok=false; im.onload=()=>im._ok=true; return im; }
+function rf(n){ return [0,1,2,3].map(i=>loadImg(R(n+'-'+i+'.png'))); }
+function bf(n,c){ return Array.from({length:c},(_,i)=>loadImg(I('intro_bug_'+n+'_'+i+'.png'))); }
+const MECH={ amc:rf('amc_L1') };
+const BUG={ queen:bf('queen',5), guard:bf('guard',5), hunter:bf('hunter',2), parasite:bf('parasite',4), elite:bf('elite',4) };
+const NPC={ s1:loadImg(N('Npc_01.png')), s3:loadImg(N('Npc_03.png')), s5:loadImg(N('Npc_05.png')) };
+const WRIST={ empty:loadImg(I('intro_wrist_empty.png')), etch:loadImg(I('intro_wrist_etch.png')) };
+
+/* ---------- 精灵 ---------- */
+class Spr{
+  constructor(frames,x,y,scale,fps){ this.f=frames; this.x=x; this.y=y; this.s=scale||1;
+    this.fps=fps||6; this.t=Math.random()*2; this.alpha=1; this.vx=0; this.vy=0;
+    this.wrap=false; this.fade=false; this.breathe=false; }
+  draw(c){
+    if(!this.f||!this.f.length) return;
+    const fr=this.f[Math.floor(this.t*this.fps)%this.f.length];
+    if(!fr||!fr._ok) return;
+    const w=fr.naturalWidth, h=fr.naturalHeight;
+    c.save(); c.globalAlpha=this.alpha; c.translate(this.x,this.y);
+    c.drawImage(fr,-w*this.s/2,-h*this.s/2,w*this.s,h*this.s); c.restore();
+  }
+}
+
+/* ---------- 高质量背景系统（星云柔光 + 流场 + 星系旋臂，非方块/折线） ---------- */
+const nebula=document.createElement('canvas'); nebula.width=W; nebula.height=H;
+(function buildNebula(){
+  const c=nebula.getContext('2d');
+  const clouds=[[W*0.26,H*0.26,320,'rgba(42,82,158,0.13)'],
+                [W*0.76,H*0.5,360,'rgba(98,44,150,0.12)'],
+                [W*0.5,H*0.9,320,'rgba(22,92,128,0.10)'],
+                [W*0.62,H*0.18,240,'rgba(70,40,120,0.08)'],
+                [W*0.18,H*0.7,260,'rgba(30,70,120,0.09)']];
+  for(const [x,y,r,col] of clouds){
+    const g=c.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,col); g.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=g; c.fillRect(0,0,W,H);
+  }
+})();
+function drawNebula(t){
+  const dx=Math.sin(t*0.05)*10, dy=Math.cos(t*0.04)*8;
+  ctx.globalAlpha=0.92; ctx.drawImage(nebula,dx,dy); ctx.globalAlpha=1;
+}
+
+const STARS=[];
+for(let i=0;i<130;i++){
+  STARS.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+0.3,
+    sp:Math.random()*1.4+0.3, ph:Math.random()*6.28, glow:Math.random()<0.16});
+}
+function drawStars(t,mul){
+  for(const s of STARS){
+    const a=(0.3+0.7*Math.abs(Math.sin(t*s.sp+s.ph)))*mul;
+    if(s.glow){
+      const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*5);
+      g.addColorStop(0,'rgba(205,228,255,'+(a*0.55).toFixed(3)+')'); g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(s.x,s.y,s.r*5,0,6.28); ctx.fill();
+    }
+    ctx.fillStyle='rgba(212,230,255,'+a.toFixed(3)+')';
+    ctx.fillRect(s.x,s.y,s.r,s.r);
+  }
+}
+
+/* 星系旋臂（对数螺旋，缓慢旋转，标题幕用，营造宇宙尺度） */
+const SPIRAL=[];
+(function(){ const arms=3, per=130;
+  for(let a=0;a<arms;a++) for(let i=0;i<per;i++){
+    const tt=i/per, ang=a*(6.283/arms)+tt*5.2, rad=tt*310;
+    SPIRAL.push({x:Math.cos(ang)*rad, y:Math.sin(ang)*rad*0.82, sp:0.2+Math.random()*0.5, ph:Math.random()*6.28});
+  }
+})();
+function drawGalaxy(t){
+  ctx.save(); ctx.translate(W/2,H*0.40); const rot=t*0.05;
+  for(const p of SPIRAL){
+    const x=p.x*Math.cos(rot)-p.y*Math.sin(rot), y=p.x*Math.sin(rot)+p.y*Math.cos(rot);
+    const a=(0.35+0.65*Math.abs(Math.sin(t*p.sp+p.ph)))*0.45;
+    ctx.fillStyle='rgba(185,212,255,'+a.toFixed(3)+')'; ctx.fillRect(x,y,1.3,1.3);
+  }
+  ctx.restore();
+}
+
+/* 暗域裂口（暗带 + 流动紫能量，非折线） */
+function drawRift(t){
+  const gx=46;
+  const g=ctx.createLinearGradient(gx-34,0,gx+34,0);
+  g.addColorStop(0,'rgba(7,2,11,0)'); g.addColorStop(0.5,'rgba(5,2,9,0.94)'); g.addColorStop(1,'rgba(7,2,11,0)');
+  ctx.fillStyle=g; ctx.fillRect(gx-34,0,68,H);
+  const pulse=0.5+0.5*Math.sin(t*2.1);
+  ctx.save(); ctx.strokeStyle='rgba(192,92,224,'+(0.22+0.4*pulse)+')';
+  ctx.lineWidth=2.2; ctx.shadowColor='#b85adf'; ctx.shadowBlur=18; ctx.beginPath();
+  for(let y=0;y<=H;y+=5){ const x=gx+Math.sin(y*0.028+t*1.4)*5; y===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }
+  ctx.stroke(); ctx.restore();
+}
+
+/* 流场虫潮（柔光粒子从裂缝涌出向右漫过，非方块横移） */
+const SWARM=[];
+function spawnSwarm(){ return {x:-Math.random()*50, y:Math.random()*H, life:Math.random(), seed:Math.random()*100}; }
+for(let i=0;i<80;i++) SWARM.push(spawnSwarm());
+function advanceSwarm(dt){
+  for(const s of SWARM){
+    s.x+=(12+30*s.life)*dt; s.y+=Math.sin(s.x*0.02+s.seed)*0.4;
+    if(s.x>W+12){ s.x=-8; s.y=Math.random()*H; }
+  }
+}
+function drawSwarm(){
+  for(const s of SWARM){
+    const a=0.12+0.32*Math.abs(Math.sin(s.life*6.28+s.seed));
+    ctx.fillStyle='rgba(168,96,196,'+a.toFixed(3)+')'; ctx.fillRect(s.x,s.y,1.6,1.6);
+  }
+}
+
+/* 城市（地平线辉光 + 窗灯，lit 控制明亮比例） */
+function drawCity(t,lit){
+  const baseY=H-72;
+  const g=ctx.createLinearGradient(0,baseY-46,0,baseY+18);
+  g.addColorStop(0,'rgba(120,150,210,0)'); g.addColorStop(1,'rgba(120,150,210,'+(0.12*lit).toFixed(3)+')');
+  ctx.fillStyle=g; ctx.fillRect(0,baseY-46,W,64);
+  for(let i=0;i<46;i++){
+    const x=(i*53)%W, y=baseY-8-(i*37%54);
+    const on=(Math.sin(i*1.7+t*0.3)+1)/2 < lit;
+    if(on){ ctx.fillStyle='rgba(255,205,128,'+(0.4+0.45*Math.abs(Math.sin(t+i))).toFixed(3)+')'; ctx.fillRect(x,y,2,3); }
+  }
+}
+
+/* 母巢（深空脉动光团 + 孢子） */
+function drawHive(t,cx,cy){
+  const pr=108+14*Math.sin(t*1.6);
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,pr);
+  g.addColorStop(0,'rgba(150,55,200,0.22)'); g.addColorStop(0.6,'rgba(110,30,160,0.10)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  for(let i=0;i<24;i++){ const a=t*0.3+i; const x=cx+Math.cos(a+i)*(48+i*4), y=cy+Math.sin(a*1.3+i)*(66+i*3);
+    ctx.fillStyle='rgba(192,132,226,'+(0.18+0.2*Math.sin(t*2+i)).toFixed(3)+')'; ctx.fillRect(x,y,2,2); }
+}
+
+/* ---------- 各幕背景 ---------- */
+function bgTitle(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#091227'); g.addColorStop(1,'#03050b');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  drawNebula(t); drawStars(t,1); drawGalaxy(t);
+  const a=Math.min(1,t/1.3);
+  ctx.save(); ctx.globalAlpha=a; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle='#eaf4ff'; ctx.shadowColor='#5fd0ff'; ctx.shadowBlur=34;
+  ctx.font='800 58px "PingFang SC","Microsoft YaHei",sans-serif'; ctx.fillText('机甲风暴OL',W/2,H*0.40);
+  ctx.shadowBlur=0; ctx.fillStyle='#7fb8d8'; ctx.font='500 24px "PingFang SC",sans-serif';
+  ctx.fillText('虫  祸  纷  争',W/2,H*0.40+56);
+  ctx.fillStyle='rgba(138,160,189,.85)'; ctx.font='400 14px "PingFang SC",sans-serif';
+  ctx.fillText('·  起  源  ·',W/2,H*0.40+92); ctx.restore();
+}
+function bgSwarm(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#180711'); g.addColorStop(.5,'#0e060f'); g.addColorStop(1,'#04030a');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); drawNebula(t*0.6); drawStars(t,0.5);
+  drawRift(t); drawSwarm();
+}
+function bgBreed(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#15091d'); g.addColorStop(.5,'#0c0512'); g.addColorStop(1,'#050208');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); drawNebula(t*0.6); drawStars(t,0.4);
+  drawHive(t, W*0.74, H*0.34);
+}
+function bgSpread(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0a0f1c'); g.addColorStop(1,'#04060c');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); drawNebula(t*0.6); drawStars(t,0.4);
+  const nodes=[[50,180],[160,250],[270,200],[370,300],[420,420],[320,560],[170,650]];
+  ctx.strokeStyle='rgba(90,150,230,0.16)'; ctx.lineWidth=1.4; ctx.beginPath();
+  nodes.forEach((n,idx)=> idx?ctx.lineTo(n[0],n[1]):ctx.moveTo(n[0],n[1])); ctx.stroke();
+  nodes.forEach((n,idx)=>{
+    const alive=idx>=3;
+    const a=alive?(0.5+0.3*Math.sin(t+idx)):0.12;
+    ctx.fillStyle=alive?('rgba(120,180,255,'+a.toFixed(3)+')'):'rgba(90,100,120,0.3)';
+    ctx.beginPath(); ctx.arc(n[0],n[1], alive?3.2:2.4, 0,6.28); ctx.fill();
+  });
+  drawHive(t, W/2, H-58);
+}
+function bgResist(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0a1622'); g.addColorStop(1,'#050a12');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); drawNebula(t*0.6); drawStars(t,0.5);
+  radialSoft(W*0.42,H*0.6,260,'rgba(80,180,230,0.12)');
+  drawCity(t,1.0);
+}
+function bgFront(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#1a0a10'); g.addColorStop(1,'#07040a');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); drawNebula(t*0.5); drawStars(t,0.3);
+  drawCity(t,0.28);
+  const sweep=(t*0.4)%1, sx=sweep*W;
+  const grd=ctx.createLinearGradient(sx-80,0,sx+80,0);
+  grd.addColorStop(0,'rgba(255,40,60,0)'); grd.addColorStop(.5,'rgba(255,40,60,0.10)'); grd.addColorStop(1,'rgba(255,40,60,0)');
+  ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
+}
+function bgCall(t){
+  let g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#070d18'); g.addColorStop(1,'#04060c');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H); drawNebula(t*0.6); drawStars(t,0.4);
+}
+function radialSoft(x,y,r,color){ const g=ctx.createRadialGradient(x,y,0,x,y,r);
+  g.addColorStop(0,color); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
+
+/* ---------- 剧本（大世界观视角，只讲"虫族入侵"主线；文本依据
+   《主线剧情短剧剧本_v2.md》序章旁白 + 《玩法总说明》1.3 世界观 + 《怪物全表》
+   真实虫族单位/城市/地图名，笔法对标 Starcraft/Halo/文明太空/群星 的史诗陈述） ---------- */
+const SCENES=[
+  {kind:'title', dur:4.5, lines:[]},
+  {kind:'swarm', dur:13,
+    sub:'星耀星系 · 银河边缘',
+    lines:['星耀星系，悬于银河的边缘。','人类曾以为，这片星海会一直安静下去。',
+           '直到暗域裂开——那道横在宇宙深处的伤口，开始向外淌出黑色的潮水。',
+           '那不是风暴，不是战争。是饥饿——是整个星系，被当成了一盘食物。']},
+  {kind:'breed', dur:14,
+    sub:'暗域 · 涌出的种族',
+    lines:['涌出来的，是一个种族。','它们没有名字，只有饥饿：甲壳覆身，复眼映着星火，肢爪比钢铁更冷。',
+           '它们在黑暗里演化得太久，只为这一刻，扑向一切会发光、会呼吸的东西。']},
+  {kind:'spread', dur:14,
+    sub:'星区 · 一座座熄灭',
+    lines:['从塔拉斯森林到尼利亚荒原，从无尽森林到雷奥斯——','虫潮所过，只剩壳与寂。',
+           '人类的城一座接一座熄灭：法西城、卡布雷萨、埃塞克、迪卡城……还亮着的，越来越少。']},
+  {kind:'resist', dur:13,
+    sub:'战线 · 不肯熄灯的人',
+    lines:['可星耀星系里，仍有人不肯熄灯。','他们以机甲为甲，以召唤师为锋，在虫潮的边缘钉下一道道战线。',
+           '每一台机甲背后，都是一个名字、一段誓约——和一座等它回去的城。']},
+  {kind:'front', dur:11,
+    sub:'战局 · 没有尽头',
+    lines:['这场仗，没有尽头。','母巢在地下深处搏动，女王未灭，新的孵化点每天都在地图上多几个。',
+           '有人说，虫族不是来占领的，是来吃光的。','今天守住的，明天就可能被撕开；而虫潮，从不回头。']},
+  {kind:'call', enter:true,
+    sub:'征召处 · 空着的腕环',
+    lines:['征召处的腕环，还空着。','星耀星系的灯能亮多久，取决于还有多少人愿意戴上它、走上前线。','现在——轮到你了。']},
+];
+
+/* ---------- 状态机 ---------- */
+let sceneIndex=0, sceneT=0, sprites=[];
+let transitioning=false, fullText='', shown=0, typing=false, sceneTypingDone=true, last=performance.now();
+
+const dotsBox=document.getElementById('dots');
+SCENES.forEach(()=>{ const d=document.createElement('div'); d.className='dot'; dotsBox.appendChild(d); });
+function updateDots(){ [...dotsBox.children].forEach((d,i)=> d.classList.toggle('on',i===sceneIndex)); }
+
+function startTyping(lines){
+  fullText=lines.join('\n'); shown=0; typing=fullText.length>0; sceneTypingDone=!typing;
+  document.getElementById('narrText').textContent='';
+}
+function enterScene(i){
+  sceneIndex=i; sceneT=0; sprites=[];
+  const st=document.getElementById('subText');
+  st.style.opacity=0; st.textContent=SCENES[i].sub||'';
+  if(SCENES[i].sub) requestAnimationFrame(()=>st.style.opacity=1);
+  const k=SCENES[i].kind;
+  if(k==='swarm'){
+    for(let j=0;j<18;j++){ const b=(j%3)?BUG.guard:BUG.hunter;
+      const sp=new Spr(b, W+Math.random()*W, 110+Math.random()*(H-260), 0.5+Math.random()*0.25, 7);
+      sp.vx=-(70+Math.random()*140); sp.wrap=true; sprites.push(sp); }
+    sprites.push(new Spr(BUG.queen, W*0.24, 150, 1.15, 5));
+  } else if(k==='breed'){
+    sprites.push(new Spr(BUG.queen, W*0.74, H*0.34, 1.25, 5));
+    sprites.push(new Spr(BUG.guard, W*0.30, H*0.56, 0.7, 7));
+    sprites.push(new Spr(BUG.hunter, W*0.46, H*0.72, 0.6, 4));
+    sprites.push(new Spr(BUG.parasite, W*0.20, H*0.78, 0.7, 7));
+    sprites.push(new Spr(BUG.elite, W*0.60, H*0.66, 0.6, 7));
+  } else if(k==='spread'){
+    for(let j=0;j<14;j++){ const b=(j%2)?BUG.parasite:BUG.guard;
+      const sp=new Spr(b, Math.random()*W, 120+Math.random()*(H-260), 0.4+Math.random()*0.2, 7);
+      sp.vx=-(40+Math.random()*70); sp.wrap=true; sprites.push(sp); }
+  } else if(k==='resist'){
+    sprites.push(new Spr([NPC.s1], W*0.38, H*0.60, 0.95, 1));
+    sprites.push(new Spr(MECH.amc, W*0.50, H*0.66, 1.0, 6));
+    for(let j=0;j<6;j++){ const b=new Spr(BUG.guard, W*0.86+Math.random()*60, 200+Math.random()*360, 0.5, 7);
+      b.vx=-(30+Math.random()*40); b.fade=true; sprites.push(b); }
+  } else if(k==='front'){
+    for(let j=0;j<10;j++){ const b=new Spr(BUG.hunter, W+Math.random()*W, 120+Math.random()*(H-260), 0.35+Math.random()*0.15, 4);
+      b.vx=-(40+Math.random()*60); b.wrap=true; b.alpha=0.55; sprites.push(b); }
+  } else if(k==='call'){
+    const w=new Spr([WRIST.empty], W*0.5, H*0.46, 1.7, 1); w.breathe=true; sprites.push(w);
+    for(let j=0;j<4;j++){ const b=new Spr(BUG.hunter, Math.random()*W, Math.random()*H, 0.22, 4);
+      b.vx=-(10+Math.random()*20); b.wrap=true; b.alpha=0.5; sprites.push(b); }
+  }
+  updateDots(); startTyping(SCENES[i].lines);
+  if(SCENES[i].enter) document.getElementById('enter').classList.remove('show');
+}
+
+function doFade(cb){ if(transitioning) return; transitioning=true;
+  const f=document.getElementById('fade'); f.style.transition='opacity .25s'; f.style.opacity='1';
+  setTimeout(()=>{ cb&&cb(); setTimeout(()=>{ f.style.opacity='0'; transitioning=false; },60); },260); }
+function next(){ if(sceneIndex>=SCENES.length-1) return; doFade(()=>enterScene(sceneIndex+1)); }
+function advance(){
+  if(typing){ typing=false; sceneTypingDone=true; shown=fullText.length; document.getElementById('narrText').textContent=fullText; return; }
+  next();
+}
+function showEnter(){ if(SCENES[sceneIndex].enter && sceneTypingDone) document.getElementById('enter').classList.add('show'); }
+function enterGame(){ document.getElementById('enter').classList.remove('show'); sceneIndex=0; doFade(()=>enterScene(0)); }
+
+function update(dt){
+  sceneT+=dt;
+  for(const sp of sprites){ sp.t+=dt;
+    if(sp.breathe) sp.alpha=0.55+0.45*Math.sin(sceneT*2.2);
+    if(sp.vx) sp.x+=sp.vx*dt; if(sp.vy) sp.y+=sp.vy*dt;
+    if(sp.wrap){ if(sp.vx<0 && sp.x<-90) sp.x=W+90; if(sp.vx>0 && sp.x>W+90) sp.x=-90; }
+    if(sp.fade) sp.alpha-=dt*0.22; }
+  sprites=sprites.filter(s=>!(s.fade&&s.alpha<=0.02));
+  advanceSwarm(dt);
+  if(SCENES[sceneIndex].enter) showEnter();
+  if(!SCENES[sceneIndex].enter && sceneTypingDone && sceneT>SCENES[sceneIndex].dur) next();
+}
+function tickTyping(dt){ if(!typing) return; shown+=dt*22;
+  const n=Math.floor(shown); document.getElementById('narrText').textContent=fullText.slice(0,n);
+  if(n>=fullText.length){ typing=false; sceneTypingDone=true; } }
+
+function frame(now){ const dt=Math.min(0.05,(now-last)/1000); last=now;
+  update(dt); tickTyping(dt);
+  ctx.clearRect(0,0,W,H);
+  const k=SCENES[sceneIndex].kind;
+  if(k==='title') bgTitle(sceneT); else if(k==='swarm') bgSwarm(sceneT);
+  else if(k==='breed') bgBreed(sceneT); else if(k==='spread') bgSpread(sceneT);
+  else if(k==='resist') bgResist(sceneT); else if(k==='front') bgFront(sceneT); else if(k==='call') bgCall(sceneT);
+  for(const sp of sprites) sp.draw(ctx);
+  requestAnimationFrame(frame);
+}
+
+document.getElementById('skip').onclick=()=>{ const ci=SCENES.length-1;
+  doFade(()=>{ enterScene(ci); typing=false; sceneTypingDone=true; document.getElementById('narrText').textContent=fullText; showEnter(); }); };
+document.getElementById('enter').onclick=enterGame;
+document.getElementById('stage').addEventListener('click',e=>{ if(e.target.id==='skip'||e.target.id==='enter') return; advance(); });
+window.addEventListener('keydown',e=>{ if(e.code==='Space'){ e.preventDefault(); advance(); } });
+
+enterScene(0); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

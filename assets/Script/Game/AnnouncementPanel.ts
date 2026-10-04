@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, Prefab, instantiate, Label, ScrollView, UITransform, Layout } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
 
 @ccclass('AnnouncementPanel')
@@ -49,7 +50,7 @@ export class AnnouncementPanel extends Component {
      * 网络连接成功回调（MMO最佳实践：连接成功后再加载数据）
      */
     private onNetworkConnect = () => {
-        console.log('🔄 [AnnouncementPanel] 网络连接成功，尝试加载聊天记录');
+        Logger.debug('🔄 [AnnouncementPanel] 网络连接成功，尝试加载聊天记录');
         this.tryLoadHistory();
     };
 
@@ -59,7 +60,7 @@ export class AnnouncementPanel extends Component {
     private onDataChanged = (data: any) => {
         // 当 token 或 characterId 被设置时，尝试加载聊天记录
         if (data && (data.token || data.characterId)) {
-            console.log('🔄 [AnnouncementPanel] 检测到登录数据变化，尝试加载聊天记录');
+            Logger.debug('🔄 [AnnouncementPanel] 检测到登录数据变化，尝试加载聊天记录');
             this.tryLoadHistory();
         }
     };
@@ -75,19 +76,19 @@ export class AnnouncementPanel extends Component {
         
         // 检查连接状态
         if (!this.wsManager || !this.wsManager.isConnected()) {
-            console.log('⏳ [AnnouncementPanel] WebSocket未连接，等待连接...');
+            Logger.debug('⏳ [AnnouncementPanel] WebSocket未连接，等待连接...');
             return;
         }
         
         // 检查是否有必要的凭证（登录后才有）
         const token = this.wsManager.getToken?.();
         if (!token) {
-            console.log('⏳ [AnnouncementPanel] 未登录，等待登录...');
+            Logger.debug('⏳ [AnnouncementPanel] 未登录，等待登录...');
             return;
         }
         
         // 连接成功且已登录，加载聊天记录
-        console.log('📥 [AnnouncementPanel] 开始加载聊天记录');
+        Logger.debug('📥 [AnnouncementPanel] 开始加载聊天记录');
         this.hasRequestedHistory = true;
         
         // 优化：使用request方法，自动生成request_id并匹配响应
@@ -140,7 +141,7 @@ export class AnnouncementPanel extends Component {
     }
 
     private onChatHistory(data: any) {
-        console.log('📥 [AnnouncementPanel] 收到chat_history响应:', data);
+        Logger.debug('📥 [AnnouncementPanel] 收到chat_history响应:', data);
         // 兼容服务器返回的格式：可能是 data.messages 或 data.list 或 data.data.messages
         let list: any[] = [];
         if (data && data.data && Array.isArray(data.data.messages)) {
@@ -152,12 +153,12 @@ export class AnnouncementPanel extends Component {
         }
         this.chatList = list;
         this.chatLoaded = true;
-        console.log(`✅ [AnnouncementPanel] 聊天历史已加载，共 ${list.length} 条`);
+        Logger.debug(`✅ [AnnouncementPanel] 聊天历史已加载，共 ${list.length} 条`);
         this.renderCombinedHistory();
     }
 
     private onAnnouncementList(data: any) {
-        console.log('📥 [AnnouncementPanel] 收到announcement_list响应:', data);
+        Logger.debug('📥 [AnnouncementPanel] 收到announcement_list响应:', data);
         // 兼容服务器返回的格式：可能是 data.announcements 或 data.list 或 data.data.announcements
         let list: any[] = [];
         if (data && data.data && Array.isArray(data.data.announcements)) {
@@ -169,7 +170,7 @@ export class AnnouncementPanel extends Component {
         }
         this.annList = list;
         this.annLoaded = true;
-        console.log(`✅ [AnnouncementPanel] 公告列表已加载，共 ${list.length} 条`);
+        Logger.debug(`✅ [AnnouncementPanel] 公告列表已加载，共 ${list.length} 条`);
         this.renderCombinedHistory();
     }
 

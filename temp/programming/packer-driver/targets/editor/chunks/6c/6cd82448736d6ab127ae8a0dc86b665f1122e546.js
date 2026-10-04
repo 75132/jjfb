@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Sprite, MechAttributeTEST, robotGameEvents, RobotGameEvent, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _crd, ccclass, property, RobotAttributePanel;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Sprite, MechAttributeTEST, MechSkillPanel, robotGameEvents, RobotGameEvent, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _class3, _crd, ccclass, property, SKILL_PANEL_NAME, RobotAttributePanel;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -13,12 +13,20 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
     _reporterNs.report("MechAttributeTEST", "./MechAttributeTEST", _context.meta, extras);
   }
 
+  function _reportPossibleCrUseOfMechSkillPanel(extras) {
+    _reporterNs.report("MechSkillPanel", "./MechSkillPanel", _context.meta, extras);
+  }
+
   function _reportPossibleCrUseOfrobotGameEvents(extras) {
     _reporterNs.report("robotGameEvents", "../global/RobotGameEvents", _context.meta, extras);
   }
 
   function _reportPossibleCrUseOfRobotGameEvent(extras) {
     _reporterNs.report("RobotGameEvent", "../global/RobotGameEvents", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -36,8 +44,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
     }, function (_unresolved_2) {
       MechAttributeTEST = _unresolved_2.MechAttributeTEST;
     }, function (_unresolved_3) {
-      robotGameEvents = _unresolved_3.robotGameEvents;
-      RobotGameEvent = _unresolved_3.RobotGameEvent;
+      MechSkillPanel = _unresolved_3.MechSkillPanel;
+    }, function (_unresolved_4) {
+      robotGameEvents = _unresolved_4.robotGameEvents;
+      RobotGameEvent = _unresolved_4.RobotGameEvent;
+    }, function (_unresolved_5) {
+      Logger = _unresolved_5.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -50,6 +62,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         ccclass,
         property
       } = _decorator);
+      /** 「技能」功能面板的节点名（functionPanels 里按名字找） */
+
+      SKILL_PANEL_NAME = 'MechSkill';
 
       _export("RobotAttributePanel", RobotAttributePanel = (_dec = ccclass('RobotAttributePanel'), _dec2 = property({
         type: [Button],
@@ -68,7 +83,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           error: Error()
         }), MechAttributeTEST) : MechAttributeTEST,
         tooltip: "机甲属性显示组件（可选，会自动查找）"
-      }), _dec(_class = (_class2 = class RobotAttributePanel extends Component {
+      }), _dec(_class = (_class2 = (_class3 = class RobotAttributePanel extends Component {
         constructor(...args) {
           super(...args);
 
@@ -90,6 +105,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           this.panelStates = {};
           this.currentOpenPanel = null;
           this._lastShownPetId = null;
+          this.initTimer = null;
 
           this.onGlobalRobotRefresh = () => {
             var _this$node;
@@ -115,7 +131,11 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
         start() {
           // 隐藏初始化日志
           // 延迟初始化，避免阻塞场景加载
-          setTimeout(() => {
+          this.initTimer = setTimeout(() => {
+            var _this$node2;
+
+            this.initTimer = null;
+            if (!((_this$node2 = this.node) != null && _this$node2.isValid)) return;
             this.initializePanels();
             this.bindButtonEvents();
             this.bindDestroyButton(); // 如果没有手动绑定MechAttributeTEST，尝试自动查找
@@ -128,7 +148,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
               if (!this.mechAttributeComponent) {
                 // 只在找不到时记录警告
-                console.warn('⚠️ [RobotAttributePanel] 未找到 MechAttributeTEST 组件');
+                (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                  error: Error()
+                }), Logger) : Logger).warn('⚠️ [RobotAttributePanel] 未找到 MechAttributeTEST 组件');
               }
             }
           }, 50); // 延迟50ms初始化
@@ -141,7 +163,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           var _this$currentOpenPane;
 
           // 简化日志输出，减少初始化时间
-          console.log(`🔧 初始化面板状态 - 按钮:${this.functionButtons.length}, 面板:${this.functionPanels.length}`); // 初始化所有面板状态
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`🔧 初始化面板状态 - 按钮:${this.functionButtons.length}, 面板:${this.functionPanels.length}`); // 初始化所有面板状态
 
           this.functionPanels.forEach((panel, index) => {
             if (panel) {
@@ -168,7 +192,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
               }
             }
           });
-          console.log(`✅ RobotAttributePanel初始化完成 - 当前面板: ${((_this$currentOpenPane = this.currentOpenPanel) == null ? void 0 : _this$currentOpenPane.name) || '无'}`);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug(`✅ RobotAttributePanel初始化完成 - 当前面板: ${((_this$currentOpenPane = this.currentOpenPanel) == null ? void 0 : _this$currentOpenPane.name) || '无'}`);
         }
         /**
          * 绑定功能按钮事件
@@ -216,6 +242,86 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (target) {
             target.active = false; // 隐藏日志
           }
+        } // ========== 技能面板（MechSkill） ==========
+
+        /**
+         * 找到「技能」面板节点（优先 functionPanels 里名叫 MechSkill 的，其次子树兜底查找）。
+         */
+
+
+        getSkillPanelNode() {
+          const byList = this.functionPanels.find(p => p && p.name === SKILL_PANEL_NAME);
+          if (byList) return byList;
+          return this.findNodeByName(this.node, SKILL_PANEL_NAME);
+        }
+
+        findNodeByName(parent, name) {
+          if (!parent) return null;
+
+          for (const c of parent.children) {
+            if (c.name === name) return c;
+          }
+
+          for (const c of parent.children) {
+            const deep = this.findNodeByName(c, name);
+            if (deep) return deep;
+          }
+
+          return null;
+        }
+        /**
+         * 拿（必要时**运行时兜底挂载**）技能面板组件。
+         *
+         * ⚠ 本组件刻意不新增 `@property` 引用 —— 场景里只要按约定搭好节点
+         *   （MechSkill/BG/Skill1/{Icon,SkillName,SkillLevel}），挂在 MechSkill 上的
+         *   `MechSkillPanel` **不需要拖任何属性**就能跑。
+         *
+         * 优先 `getComponent`（美术在编辑器里**显式挂载**的那个），取不到才 `addComponent` 兜底；
+         * 兜底时会提示一次，方便以后定位（避免"组件到底挂没挂"找不到）。
+         */
+
+
+        ensureSkillPanel() {
+          const panelNode = this.getSkillPanelNode();
+
+          if (!panelNode || !panelNode.isValid) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[RobotAttributePanel] 未找到技能面板节点 MechSkill');
+            return null;
+          }
+
+          let comp = panelNode.getComponent(_crd && MechSkillPanel === void 0 ? (_reportPossibleCrUseOfMechSkillPanel({
+            error: Error()
+          }), MechSkillPanel) : MechSkillPanel);
+
+          if (!comp) {
+            comp = panelNode.addComponent(_crd && MechSkillPanel === void 0 ? (_reportPossibleCrUseOfMechSkillPanel({
+              error: Error()
+            }), MechSkillPanel) : MechSkillPanel);
+
+            if (!RobotAttributePanel._warnedSkillPanelUnmounted) {
+              RobotAttributePanel._warnedSkillPanelUnmounted = true;
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).info('[RobotAttributePanel] MechSkill 未显式挂载 MechSkillPanel，已运行时自动补上；' + '建议在编辑器把这个组件挂到 MechSkill 上，方便以后定位');
+            }
+          }
+
+          return comp;
+        }
+        /**
+         * 把当前选中的机甲同步给技能面板（切面板 / 换机甲 / 技能升级后都该调）。
+         * @param petId 不传则沿用上次选中的机甲
+         */
+
+
+        syncSkillPanel(petId) {
+          const comp = this.ensureSkillPanel();
+          if (!comp) return;
+          const id = petId !== undefined && petId !== null && String(petId).trim() !== '' ? String(petId).trim() : this._lastShownPetId;
+          if (!id) return;
+          comp.setPetId(id);
         }
         /**
          * 切换到指定面板
@@ -226,7 +332,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           const targetPanel = this.functionPanels.find(p => p.name === panelName);
 
           if (!targetPanel) {
-            console.warn(`⚠️ 未找到面板: ${panelName}`);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn(`⚠️ 未找到面板: ${panelName}`);
             return;
           } // 如果点击的是当前已打开的面板，不做任何操作
 
@@ -261,7 +369,12 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
 
           panel.active = true;
           this.panelStates[panelName] = true;
-          this.currentOpenPanel = panel; // 控制按钮的Sprite组件显示/隐藏
+          this.currentOpenPanel = panel; // 技能面板：切进来时同步当前机甲的技能列表（数据可能在别处变过）
+
+          if (panelName === SKILL_PANEL_NAME) {
+            this.syncSkillPanel();
+          } // 控制按钮的Sprite组件显示/隐藏
+
 
           this.functionButtons.forEach((button, buttonIndex) => {
             if (button) {
@@ -356,7 +469,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           if (this.functionPanels.length > 0) {
             this.showPanel(this.functionPanels[0].name);
           } else {
-            console.warn('⚠️ [RobotAttributePanel] 没有功能面板可用');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ [RobotAttributePanel] 没有功能面板可用');
           } // 性能优化：立即调用，不延迟
           // 调用MechAttributeTEST组件显示机甲信息
 
@@ -382,12 +497,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
             if (this.mechAttributeComponent && this.mechAttributeComponent.node && this.mechAttributeComponent.node.isValid) {
               this.mechAttributeComponent.showSelectedRobot(petId);
             } else {
-              console.error('❌ [RobotAttributePanel] 找不到 MechAttributeTEST 组件');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ [RobotAttributePanel] 找不到 MechAttributeTEST 组件');
             }
+          } // 技能面板同样跟着当前机甲走（失败不影响属性面板）
+
+
+          try {
+            this.syncSkillPanel(petId);
+          } catch (err) {
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('[RobotAttributePanel] 同步技能面板失败:', err);
           }
         }
 
         onDestroy() {
+          if (this.initTimer !== null) {
+            clearTimeout(this.initTimer);
+            this.initTimer = null;
+          }
+
           (_crd && robotGameEvents === void 0 ? (_reportPossibleCrUseOfrobotGameEvents({
             error: Error()
           }), robotGameEvents) : robotGameEvents).off((_crd && RobotGameEvent === void 0 ? (_reportPossibleCrUseOfRobotGameEvent({
@@ -410,7 +541,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2"], fu
           }
         }
 
-      }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "functionButtons", [_dec2], {
+      }, _class3._warnedSkillPanelUnmounted = false, _class3), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "functionButtons", [_dec2], {
         configurable: true,
         enumerable: true,
         writable: true,

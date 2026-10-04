@@ -2,6 +2,7 @@ import { _decorator, Component, director } from 'cc';
 import { GameConfig } from '../global/GameConfig';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { MiniGame1 } from './MiniGame1';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -120,6 +121,8 @@ export class GameCommonData extends Component {
     /** 角色当前等级（1~60） */
     @property({ tooltip: '角色当前等级（1~60）' })
     private _level: number = 1;
+    private refreshPlayerInfoTimer: ReturnType<typeof setTimeout> | null = null;
+    private refreshPlayerInfoReject: ((err: Error) => void) | null = null;
 
     /** 角色当前累计总经验（不做负数校验，调用时注意） */
     @property({ tooltip: '角色当前累计总经验（由服务器数据同步）' })
@@ -134,11 +137,15 @@ export class GameCommonData extends Component {
     maxLevel: number = 60;
 
     private wsManager: WebSocketManager = null!;
+    /** 是否已成功发起过玩家信息请求（幂等保护，避免事件+轮询重复请求） */
+    private _playerInfoRequested: boolean = false;
+    /** 等待认证就绪的兜底轮询定时器 */
+    private _readyPollTimer: ReturnType<typeof setInterval> | null = null;
 
     onLoad() {
         // 简单单例：同场景只保留一个
         if (GameCommonData.instance && GameCommonData.instance !== this) {
-            console.warn('[GameCommonData] 场景内已存在实例，自动销毁多余的一个。');
+            Logger.warn('[GameCommonData] 场景内已存在实例，自动销毁多余的一个。');
             this.destroy();
             return;
         }
@@ -165,21 +172,75 @@ export class GameCommonData extends Component {
 
     start() {
         MiniGame1.mountFromSceneRoot(this.node);
-        // 延迟请求玩家信息，避免阻塞场景加载
-        // 如果WebSocket已连接，立即尝试请求；否则等待network_connect事件
-        this.scheduleOnce(() => {
-            // 如果已经连接且有完整凭证，立即请求
-            if (this.wsManager.isConnected() && this.validateDataIntegrity()) {
-                console.log('✅ [GameCommonData] WebSocket已连接且数据完整，立即请求玩家信息');
-                this.requestPlayerInfo();
-            } else {
-                console.log('⏳ [GameCommonData] 等待WebSocket连接和凭证准备完成...');
-                // 如果还没准备好，等待network_connect事件触发请求（已在onNetworkConnect中处理）
+        // 修复（时序竞态）：不再用 300ms 硬延迟赌凭证就绪。
+        // 改为「已就绪立即请求；未就绪则等认证事件」——避免预热期 Token 尚未落盘时
+        // 误判为「Token不存在」而弹出全屏 Loading 遮挡剧情交互。
+        this._tryRequestPlayerInfoWhenReady();
+    }
+
+    /** 就绪判据：连接已建立 + 会话已鉴权 + 三证齐全 */
+    private _isReadyForPlayerInfo(): boolean {
+        if (!this.wsManager.isConnected()) return false;
+        // 权威判据：auth_response(success) 后为真；断线/清凭证即失效
+        if (!this.wsManager.isSessionAuthenticated()) return false;
+        return this.validateDataIntegrity();
+    }
+
+    /**
+     * 尝试请求玩家信息；未就绪则登记等待，由 onAuthResponse / onNetworkConnect / 兜底轮询唤醒。
+     */
+    private _tryRequestPlayerInfoWhenReady(): void {
+        if (this._playerInfoRequested) return;
+
+        if (this._isReadyForPlayerInfo()) {
+            this._playerInfoRequested = true;
+            this._stopReadyPoll();
+            Logger.debug('✅ [GameCommonData] 已就绪，立即请求玩家信息');
+            this.requestPlayerInfo();
+            return;
+        }
+
+        Logger.debug('⏳ [GameCommonData] 尚未就绪，等待认证完成...');
+        this._startReadyPoll();
+    }
+
+    /** 兜底轮询：应对「事件早于本组件注册」或极端慢的握手，避免永久挂起 */
+    private _startReadyPoll(): void {
+        if (this._readyPollTimer !== null) return;
+        let elapsed = 0;
+        const STEP = 200;
+        const TIMEOUT = 8000;
+        this._readyPollTimer = setInterval(() => {
+            elapsed += STEP;
+            if (this._playerInfoRequested) { this._stopReadyPoll(); return; }
+            if (this._isReadyForPlayerInfo()) {
+                this._tryRequestPlayerInfoWhenReady();
+                return;
             }
-        }, 0.3); // 延迟300ms，确保AutoLoginUser已经应用凭证
+            if (elapsed >= TIMEOUT) {
+                this._stopReadyPoll();
+                Logger.warn('⚠️ [GameCommonData] 等待认证就绪超时，交由 GameControl 状态监控处理');
+            }
+        }, STEP);
+    }
+
+    private _stopReadyPoll(): void {
+        if (this._readyPollTimer !== null) {
+            clearInterval(this._readyPollTimer);
+            this._readyPollTimer = null;
+        }
     }
 
     onDestroy() {
+        if (this.refreshPlayerInfoTimer !== null) {
+            clearTimeout(this.refreshPlayerInfoTimer);
+            this.refreshPlayerInfoTimer = null;
+        }
+        // 清理就绪轮询（修复：避免组件销毁后定时器继续运行）
+        this._stopReadyPoll();
+        const rejectRefresh = this.refreshPlayerInfoReject;
+        this.refreshPlayerInfoReject = null;
+        if (rejectRefresh) rejectRefresh(new Error('刷新玩家信息超时'));
         // 取消 WebSocket 监听
         if (this.wsManager) {
             this.wsManager.off('player_info', this.onPlayerInfo, this);
@@ -206,15 +267,15 @@ export class GameCommonData extends Component {
      */
     private onAuthResponse = (data: any) => {
         if (data && data.success) {
-            console.log('✅ [GameCommonData] 认证成功，准备请求玩家信息');
+            Logger.debug('✅ [GameCommonData] 认证成功，准备请求玩家信息');
             // 认证成功后，延迟一小段时间确保服务器端current_user_id已设置
             this.scheduleOnce(() => {
-                if (this.validateDataIntegrity()) {
-                    this.requestPlayerInfo();
-                }
+                // 修复：改为走统一的就绪检查（含 isSessionAuthenticated 判据），
+                // 未就绪时登记等待而非直接失败弹 Loading。
+                this._tryRequestPlayerInfoWhenReady();
             }, 0.1);
         } else {
-            console.warn('⚠️ [GameCommonData] 认证失败，无法请求玩家信息');
+            Logger.warn('⚠️ [GameCommonData] 认证失败，无法请求玩家信息');
         }
     };
     
@@ -222,10 +283,10 @@ export class GameCommonData extends Component {
      * 网络连接成功回调（如果已经认证，立即请求；否则等待认证）
      */
     private onNetworkConnect = () => {
-        console.log('📡 [GameCommonData] 网络连接成功');
-        // 如果已经连接且有完整凭证，检查是否已认证
-        // 注意：auth_request是自动发送的，我们等待auth_response后再请求数据
-        // 这里只做备用检查
+        Logger.debug('📡 [GameCommonData] 网络连接成功');
+        // 修复：连接成功也触发一次就绪检查；若此时已鉴权（如不断线返回）则立即请求，
+        // 否则登记等待 auth_response。避免只依赖单一事件导致漏触发。
+        this._tryRequestPlayerInfoWhenReady();
     };
 
     // —— 数据完整性验证（安全核心）—— //
@@ -239,7 +300,7 @@ export class GameCommonData extends Component {
         
         // 检查WebSocket连接
         if (!wsManager.isConnected()) {
-            console.error('❌ [GameCommonData] WebSocket未连接');
+            Logger.error('❌ [GameCommonData] WebSocket未连接');
             this.triggerLoadingOnDataMissing('WebSocket未连接');
             return false;
         }
@@ -247,7 +308,7 @@ export class GameCommonData extends Component {
         // 检查Token
         const token = wsManager.getToken();
         if (!token || token.length === 0) {
-            console.error('❌ [GameCommonData] Token不存在');
+            Logger.error('❌ [GameCommonData] Token不存在');
             this.triggerLoadingOnDataMissing('Token不存在');
             return false;
         }
@@ -255,7 +316,7 @@ export class GameCommonData extends Component {
         // 检查用户ID
         const userId = wsManager.getUserId();
         if (!userId || userId.length === 0) {
-            console.error('❌ [GameCommonData] 用户ID不存在');
+            Logger.error('❌ [GameCommonData] 用户ID不存在');
             this.triggerLoadingOnDataMissing('用户ID不存在');
             return false;
         }
@@ -263,7 +324,7 @@ export class GameCommonData extends Component {
         // 检查角色ID
         const characterId = wsManager.getCharacterId();
         if (!characterId || characterId.length === 0) {
-            console.error('❌ [GameCommonData] 角色ID不存在');
+            Logger.error('❌ [GameCommonData] 角色ID不存在');
             this.triggerLoadingOnDataMissing('角色ID不存在');
             return false;
         }
@@ -275,7 +336,7 @@ export class GameCommonData extends Component {
      * 触发Loading面板（当检测到数据缺失时）
      */
     private triggerLoadingOnDataMissing(reason: string): void {
-        console.error(`🚨 [GameCommonData] 数据缺失：${reason}，触发Loading面板`);
+        Logger.error(`🚨 [GameCommonData] 数据缺失：${reason}，触发Loading面板`);
         
         // 通过事件通知GameControl显示Loading
         this.node.emit('data_integrity_failed', { reason });
@@ -327,8 +388,27 @@ export class GameCommonData extends Component {
      */
     public refreshPlayerInfo(callback?: (data: { level: number; totalExp: number; roleName: string }) => void): Promise<{ level: number; totalExp: number; roleName: string }> {
         return new Promise((resolve, reject) => {
+            let settled = false;
+            const settleReject = (err: Error) => {
+                if (settled) return;
+                settled = true;
+                if (this.refreshPlayerInfoReject === settleReject) {
+                    this.refreshPlayerInfoReject = null;
+                }
+                reject(err);
+            };
+            this.refreshPlayerInfoReject = settleReject;
             // 设置一次性监听器
             const onDataUpdated = (data: { level: number; totalExp: number; roleName: string }) => {
+                if (settled) return;
+                settled = true;
+                if (this.refreshPlayerInfoTimer !== null) {
+                    clearTimeout(this.refreshPlayerInfoTimer);
+                    this.refreshPlayerInfoTimer = null;
+                }
+                if (this.refreshPlayerInfoReject === settleReject) {
+                    this.refreshPlayerInfoReject = null;
+                }
                 if (this.node && this.node.isValid) {
                     this.node.off('data_updated', onDataUpdated);
                 }
@@ -342,11 +422,15 @@ export class GameCommonData extends Component {
             this.requestPlayerInfo();
             
             // 设置超时（5秒）
-            setTimeout(() => {
-                if (this.node && this.node.isValid) {
+            if (this.refreshPlayerInfoTimer !== null) {
+                clearTimeout(this.refreshPlayerInfoTimer);
+            }
+            this.refreshPlayerInfoTimer = setTimeout(() => {
+                this.refreshPlayerInfoTimer = null;
+                if (this.node?.isValid) {
                     this.node.off('data_updated', onDataUpdated);
                 }
-                reject(new Error('刷新玩家信息超时'));
+                settleReject(new Error('刷新玩家信息超时'));
             }, 5000);
         });
     }
@@ -361,17 +445,17 @@ export class GameCommonData extends Component {
             case 'player':
             case 'all':
                 this.refreshPlayerInfo(callback).catch(err => {
-                    console.error('❌ 刷新玩家信息失败:', err);
+                    Logger.error('❌ 刷新玩家信息失败:', err);
                 });
                 break;
             case 'exp':
                 // 如果只需要经验，也刷新完整玩家信息（因为服务器返回的是完整数据）
                 this.refreshPlayerInfo(callback).catch(err => {
-                    console.error('❌ 刷新经验信息失败:', err);
+                    Logger.error('❌ 刷新经验信息失败:', err);
                 });
                 break;
             default:
-                console.warn(`⚠️ 未知的数据类型: ${dataType}`);
+                Logger.warn(`⚠️ 未知的数据类型: ${dataType}`);
         }
     }
 
@@ -379,7 +463,7 @@ export class GameCommonData extends Component {
      * 强制刷新所有数据（供其他模块在需要时调用）
      */
     public forceRefresh(): void {
-        console.log('🔄 [GameCommonData] 强制刷新所有数据');
+        Logger.debug('🔄 [GameCommonData] 强制刷新所有数据');
         this.refreshData('all');
     }
 
@@ -392,13 +476,13 @@ export class GameCommonData extends Component {
     private requestPlayerInfo(): void {
         // 验证数据完整性
         if (!this.validateDataIntegrity()) {
-            console.error('❌ [GameCommonData] 数据不完整，无法请求玩家信息');
+            Logger.error('❌ [GameCommonData] 数据不完整，无法请求玩家信息');
             return;
         }
 
         const cid = this.wsManager.getCharacterId?.() || undefined;
         if (!cid) {
-            console.warn('⚠️ [GameCommonData] 未选择角色，无法请求玩家信息');
+            Logger.warn('⚠️ [GameCommonData] 未选择角色，无法请求玩家信息');
             this.triggerLoadingOnDataMissing('角色ID不存在');
             return;
         }
@@ -412,7 +496,7 @@ export class GameCommonData extends Component {
             requestData.user_id = userId;  // 测试模式：提供user_id作为备用验证
         }
         
-        console.log('📤 [GameCommonData] 发送请求玩家信息:', requestData);
+        Logger.debug('📤 [GameCommonData] 发送请求玩家信息:', requestData);
         
         // 使用request方法，自动生成request_id并匹配响应
         this.wsManager.request(
@@ -426,14 +510,14 @@ export class GameCommonData extends Component {
                 if (typeof this.onPlayerInfo === 'function') {
                     this.onPlayerInfo(response);
                 } else {
-                    console.error('❌ [GameCommonData] onPlayerInfo 回调不存在，忽略本次响应');
+                    Logger.error('❌ [GameCommonData] onPlayerInfo 回调不存在，忽略本次响应');
                 }
             },
             true, // 需要认证
             10000 // 10秒超时
         );
         
-        console.log('📤 [GameCommonData] 请求已发送（使用request方法）');
+        Logger.debug('📤 [GameCommonData] 请求已发送（使用request方法）');
     }
 
     /**
@@ -441,22 +525,22 @@ export class GameCommonData extends Component {
      * 关键修复：只处理 is_self=true 的响应，避免被好友信息污染
      */
     private onPlayerInfo = (data: any): void => {
-        console.log('📥 [GameCommonData] 收到player_info响应（原始数据）:', data);
+        Logger.debug('📥 [GameCommonData] 收到player_info响应（原始数据）:', data);
         
         // ✅ 关键修复：支持标准响应格式（数据在 data.data 中）
         let responseData: any = data;
         if (data && data.success && data.data && typeof data.data === 'object') {
             // 标准格式：合并根级别字段和 data 字段
             responseData = { ...data, ...data.data };
-            console.log('📥 [GameCommonData] 检测到标准响应格式，合并数据字段');
+            Logger.debug('📥 [GameCommonData] 检测到标准响应格式，合并数据字段');
         }
         
         if (!responseData || !responseData.success) {
-            console.warn('⚠️ [GameCommonData] 收到无效的玩家信息响应:', responseData);
+            Logger.warn('⚠️ [GameCommonData] 收到无效的玩家信息响应:', responseData);
             const code = Number(responseData?.code || 0);
             // 角色被删/会话失效时，直接强制退出到登录，避免停留在空壳 Game 场景。
             if (code === 401 || code === 404) {
-                console.error(`🚨 [GameCommonData] get_player 失败(code=${code})，强制回登录`);
+                Logger.error(`🚨 [GameCommonData] get_player 失败(code=${code})，强制回登录`);
                 try { this.wsManager.clearAll(); } catch {}
                 this.node.emit('data_integrity_failed', { reason: 'player_not_found_or_unauthorized', code });
                 this.scheduleOnce(() => {
@@ -469,7 +553,7 @@ export class GameCommonData extends Component {
         // 关键修复：只处理查看自己的响应（is_self=true），忽略查看好友的响应
         // 这样可以避免 GameCommonData 被好友信息污染
         if (responseData.is_self !== true) {
-            console.log('📥 [GameCommonData] 忽略非自己的 player_info 响应（is_self=false），避免数据污染:', {
+            Logger.debug('📥 [GameCommonData] 忽略非自己的 player_info 响应（is_self=false），避免数据污染:', {
                 is_self: responseData.is_self,
                 role_name: responseData.role_name,
                 request_id: responseData.request_id
@@ -480,7 +564,7 @@ export class GameCommonData extends Component {
         // 如果有 request_id，检查是否是自己请求的（可选，额外验证）
         // GameCommonData 的请求通常不包含 request_id，所以这里只做日志记录
         if (responseData.request_id !== undefined) {
-            console.log('📥 [GameCommonData] 收到带 request_id 的响应:', responseData.request_id);
+            Logger.debug('📥 [GameCommonData] 收到带 request_id 的响应:', responseData.request_id);
         }
         
         const level = Number(responseData.level || 1);
@@ -493,7 +577,7 @@ export class GameCommonData extends Component {
         this._totalExp = Math.max(0, totalExp);
         this._roleName = roleName;
         
-        console.log(`✅ [GameCommonData] 玩家信息已更新（确认是自己的数据） - 等级: ${this._level}, 经验: ${this._totalExp}, 名称: ${this._roleName}`);
+        Logger.debug(`✅ [GameCommonData] 玩家信息已更新（确认是自己的数据） - 等级: ${this._level}, 经验: ${this._totalExp}, 名称: ${this._roleName}`);
         
         // 触发数据更新事件，通知其他组件（如 TopRole）
         const updateData = {
@@ -510,7 +594,7 @@ export class GameCommonData extends Component {
      */
     private onAddExpResponse = (data: any): void => {
         if (!data || !data.success) { 
-            console.warn('⚠️ [GameCommonData] 收到无效的增加经验响应');
+            Logger.warn('⚠️ [GameCommonData] 收到无效的增加经验响应');
             return; 
         }
         
@@ -523,7 +607,7 @@ export class GameCommonData extends Component {
         this._level = this.clampLevel(level);
         this._totalExp = Math.max(0, totalExp);
         
-        console.log(`✅ [GameCommonData] 经验已更新 - 等级: ${this._level} (${levelUpCount > 0 ? `升级了 ${levelUpCount} 级` : '未升级'}), 经验: ${this._totalExp}`);
+        Logger.debug(`✅ [GameCommonData] 经验已更新 - 等级: ${this._level} (${levelUpCount > 0 ? `升级了 ${levelUpCount} 级` : '未升级'}), 经验: ${this._totalExp}`);
         
         // 触发数据更新事件
         this.node.emit('data_updated', {
@@ -550,7 +634,7 @@ export class GameCommonData extends Component {
      */
     private onCharacterChanged = (data: any): void => {
         if (data && data.reason === 'character_id_cleared') {
-            console.log('🗑️ [GameCommonData] 检测到角色切换，清除内部状态');
+            Logger.debug('🗑️ [GameCommonData] 检测到角色切换，清除内部状态');
             // 清除所有内部状态
             this._level = 1;
             this._totalExp = 0;

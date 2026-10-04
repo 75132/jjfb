@@ -128,7 +128,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
           _initializerDefineProperty(this, "Block", _descriptor15, this);
 
-          _initializerDefineProperty(this, "ParticleShield", _descriptor16, this);
+          _initializerDefineProperty(this, "AttackCount", _descriptor16, this);
 
           _initializerDefineProperty(this, "ArmorPenetration", _descriptor17, this);
 
@@ -169,6 +169,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // 初始化状态标记
           this.isInitialized = false;
           this.initializationPromise = null;
+          this.fetchDelayTimer = null;
+          this.fetchDelayResolve = null;
           // 是否已注册消息监听
           this.isListenerRegistered = false;
           // 关键修复：跟踪当前应该显示的机甲ID，防止显示错误的机甲
@@ -242,25 +244,28 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               }
 
               for (var _key2 in this.nodeMap) {
+                var _data$_key2;
+
                 var group = this.nodeMap[_key2];
+                if (!group || !group.left) continue;
+                var currentKey = 'Current' + _key2;
+                var baseValue = (_data$_key2 = data[_key2]) != null ? _data$_key2 : 0; // 只有存在 Current 字段（含值为 0）时才走「基础/当前」分割显示；
+                // 否则只显示基础值（右侧与斜杠自动隐藏）。
+                // 注意：某些属性节点（如 AttackCount）场景里可能没有 RightLabel/SlashSprite，
+                //       此时也只能显示单个值，不能整块跳过。
 
-                if (group.left && group.right && group.slash) {
-                  var _data$_key2;
+                var hasCurrent = Object.prototype.hasOwnProperty.call(data, currentKey);
 
-                  var currentKey = 'Current' + _key2;
-                  var baseValue = (_data$_key2 = data[_key2]) != null ? _data$_key2 : 0;
-                  var currentValue = data[currentKey]; // 如果存在 Current 字段（包括值为 0 的情况），显示基础值/当前值
+                if (hasCurrent && group.right && group.slash) {
+                  var _data$currentKey;
 
-                  if (Object.prototype.hasOwnProperty.call(data, currentKey)) {
-                    group.left.string = String(baseValue);
-                    group.right.string = String(currentValue != null ? currentValue : 0);
-                    group.slash.active = true;
-                  } else {
-                    // 如果不存在 Current 字段，只显示基础值
-                    group.left.string = String(baseValue);
-                    group.right.string = '';
-                    group.slash.active = false;
-                  }
+                  group.left.string = String(baseValue);
+                  group.right.string = String((_data$currentKey = data[currentKey]) != null ? _data$currentKey : 0);
+                  group.slash.active = true;
+                } else {
+                  group.left.string = String(baseValue);
+                  if (group.right) group.right.string = '';
+                  if (group.slash) group.slash.active = false;
                 }
               }
 
@@ -447,7 +452,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           return _asyncToGenerator(function* () {
             return new Promise(resolve => {
               // 分割型
-              var keys = ['Melee', 'Armor', 'Accuracy', 'Corrosion', 'Initiative', 'Block', 'ParticleShield', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'];
+              var keys = ['Melee', 'Armor', 'Accuracy', 'Corrosion', 'Initiative', 'Block', 'AttackCount', 'ArmorPenetration', 'Shooting', 'Evasion', 'Lethality', 'Resistance', 'Counterattack'];
 
               for (var _key4 of keys) {
                 var parent = _this3[_key4];
@@ -691,7 +696,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
                 if (_this6.initializationPromise) {
                   yield _this6.initializationPromise;
                 } else {
-                  yield new Promise(resolve => setTimeout(resolve, 1000));
+                  var _this6$node;
+
+                  yield new Promise(resolve => {
+                    _this6.fetchDelayResolve = resolve;
+                    _this6.fetchDelayTimer = setTimeout(() => {
+                      _this6.fetchDelayTimer = null;
+                      _this6.fetchDelayResolve = null;
+                      resolve();
+                    }, 1000);
+                  });
+                  if (!((_this6$node = _this6.node) != null && _this6$node.isValid)) return;
                 }
               } // 再次检查初始化状态
 
@@ -833,7 +848,15 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         onDestroy() {
-          // 清理事件监听
+          if (this.fetchDelayTimer !== null) {
+            clearTimeout(this.fetchDelayTimer);
+            this.fetchDelayTimer = null;
+          }
+
+          var resolveDelay = this.fetchDelayResolve;
+          this.fetchDelayResolve = null;
+          if (resolveDelay) resolveDelay(); // 清理事件监听
+
           if (this.wsManager && this.isListenerRegistered) {
             this.wsManager.off((_crd && GameConfig === void 0 ? (_reportPossibleCrUseOfGameConfig({
               error: Error()
@@ -950,7 +973,7 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         initializer: function initializer() {
           return null;
         }
-      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "ParticleShield", [_dec17], {
+      }), _descriptor16 = _applyDecoratedDescriptor(_class2.prototype, "AttackCount", [_dec17], {
         configurable: true,
         enumerable: true,
         writable: true,

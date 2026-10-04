@@ -4,20 +4,8 @@
       "Map\\2\\Map1-2.tmx": [
         "Map\\2\\Map1.png"
       ],
-      "Map\\1\\1-1.tmx": [
-        "Map\\1\\MAP1.png"
-      ],
-      "Map\\1\\1-3.tmx": [
-        "Map\\1\\MAP1.png"
-      ],
-      "Map\\1\\1-2.tmx": [
-        "Map\\1\\MAP1.png"
-      ],
       "Map\\2\\Map1-1.tmx": [
         "Map\\2\\Map1.png"
-      ],
-      "UI\\Skill_icon\\SkillIcon.plist": [
-        "UI\\Skill_icon\\SkillIcon.png"
       ],
       "UI\\UI\\UI.plist": [
         "UI\\UI\\UI.png"
@@ -45,6 +33,30 @@
       ],
       "resources\\IconSet2\\IconSet2.plist": [
         "resources\\IconSet2\\IconSet2.png"
+      ],
+      "Map\\map2\\2-2.tmx": [
+        "Map\\map2\\MAP4.png",
+        "Map\\map2\\ITEM01.png"
+      ],
+      "Map\\map2\\2.tmx": [
+        "Map\\map2\\MAP4.png",
+        "Map\\map2\\ITEM01.png"
+      ],
+      "Map\\map2\\2-1.tmx": [
+        "Map\\map2\\MAP4.png",
+        "Map\\map2\\ITEM01.png"
+      ],
+      "Map\\1\\1-1.tmx": [
+        "Map\\1\\MAP1.png"
+      ],
+      "Map\\1\\1-2.tmx": [
+        "Map\\1\\MAP1.png"
+      ],
+      "Map\\1\\1-3.tmx": [
+        "Map\\1\\MAP1.png"
+      ],
+      "resources\\SkillIcon\\SkillIcon.plist": [
+        "resources\\SkillIcon\\SkillIcon.png"
       ]
     },
     "uuid": {}

@@ -1,7 +1,7 @@
-System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3"], function (_export, _context) {
+System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__unresolved_3", "__unresolved_4"], function (_export, _context) {
   "use strict";
 
-  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Vec3, UITransform, WebSocketManager, GameCommonData, BattleScene, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _crd, ccclass, property, Test;
+  var _reporterNs, _cclegacy, __checkObsolete__, __checkObsoleteInNamespace__, _decorator, Component, Node, Button, Vec3, UITransform, WebSocketManager, GameCommonData, BattleScene, Logger, _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _class, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, _descriptor8, _descriptor9, _descriptor10, _crd, ccclass, property, Test;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -19,6 +19,10 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
   function _reportPossibleCrUseOfBattleScene(extras) {
     _reporterNs.report("BattleScene", "./BattleScene", _context.meta, extras);
+  }
+
+  function _reportPossibleCrUseOfLogger(extras) {
+    _reporterNs.report("Logger", "../global/Logger", _context.meta, extras);
   }
 
   return {
@@ -40,6 +44,8 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
       GameCommonData = _unresolved_3.GameCommonData;
     }, function (_unresolved_4) {
       BattleScene = _unresolved_4.BattleScene;
+    }, function (_unresolved_5) {
+      Logger = _unresolved_5.Logger;
     }],
     execute: function () {
       _crd = true;
@@ -121,7 +127,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
         }
 
         start() {
-          console.log('🧪 测试脚本启动'); // 初始化面板状态
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试脚本启动'); // 初始化面板状态
 
           if (this.gameTestPanel) {
             this.panelVisible = this.gameTestPanel.active;
@@ -241,13 +249,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
         togglePanel() {
           if (!this.gameTestPanel) {
-            console.warn('⚠️ GameTest面板未绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ GameTest面板未绑定');
             return;
           }
 
           this.panelVisible = !this.panelVisible;
           this.gameTestPanel.active = this.panelVisible;
-          console.log("\uD83E\uDDEA GameTest\u9762\u677F\u5DF2" + (this.panelVisible ? '显示' : '隐藏'));
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("\uD83E\uDDEA GameTest\u9762\u677F\u5DF2" + (this.panelVisible ? '显示' : '隐藏'));
         }
         /**
          * 设置数据监听（监听GameCommonData的数据更新）
@@ -282,49 +294,65 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           // 清除Token按钮
           if (this.clearTokenBtn) {
             this.clearTokenBtn.node.on(Button.EventType.CLICK, this.onClearTokenClick, this);
-            console.log('✅ 清除Token按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 清除Token按钮事件已绑定');
           } // 清除用户ID按钮
 
 
           if (this.clearUserIdBtn) {
             this.clearUserIdBtn.node.on(Button.EventType.CLICK, this.onClearUserIdClick, this);
-            console.log('✅ 清除用户ID按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 清除用户ID按钮事件已绑定');
           } // 清除角色ID按钮
 
 
           if (this.clearCharacterIdBtn) {
             this.clearCharacterIdBtn.node.on(Button.EventType.CLICK, this.onClearCharacterIdClick, this);
-            console.log('✅ 清除角色ID按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 清除角色ID按钮事件已绑定');
           } // 输出信息按钮
 
 
           if (this.logInfoBtn) {
             this.logInfoBtn.node.on(Button.EventType.CLICK, this.onLogInfoClick, this);
-            console.log('✅ 输出信息按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 输出信息按钮事件已绑定');
           } // 加经验按钮
 
 
           if (this.addExpBtn) {
             this.addExpBtn.node.on(Button.EventType.CLICK, this.onAddExpClick, this);
-            console.log('✅ 加经验按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 加经验按钮事件已绑定');
           } // 升级所有机甲按钮
 
 
           if (this.upgradeAllRobotsBtn) {
             this.upgradeAllRobotsBtn.node.on(Button.EventType.CLICK, this.onUpgradeAllRobotsClick, this);
-            console.log('✅ 升级所有机甲按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 升级所有机甲按钮事件已绑定');
           } // 启动战斗按钮
 
 
           if (this.startBattleBtn) {
             this.startBattleBtn.node.on(Button.EventType.CLICK, this.onStartBattleClick, this);
-            console.log('✅ 启动战斗按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 启动战斗按钮事件已绑定');
           } // 平匹配按钮
 
 
           if (this.pvpMatchBtn) {
             this.pvpMatchBtn.node.on(Button.EventType.CLICK, this.onPvpMatchClick, this);
-            console.log('✅ 平匹配按钮事件已绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 平匹配按钮事件已绑定');
           }
         }
         /**
@@ -333,10 +361,14 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onPvpMatchClick() {
-          console.log('🆚 测试：进入平匹配（PVP）');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🆚 测试：进入平匹配（PVP）');
 
           if (!this.battleScenePanel) {
-            console.error('❌ BattleScene 面板未绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ BattleScene 面板未绑定');
             return;
           }
 
@@ -345,7 +377,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           }), BattleScene) : BattleScene);
 
           if (!battleScene) {
-            console.error('❌ BattleScene 组件未找到');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ BattleScene 组件未找到');
             return;
           } // 先请求匹配，再打开面板（BattleScene 的 onEnable 会接管匹配流程）
 
@@ -359,7 +393,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onClearTokenClick() {
-          console.log('🧪 测试：清除Token');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：清除Token');
 
           try {
             var wsManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
@@ -372,11 +408,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }, false); // 清除本地Token
 
             wsManager.clearToken();
-            console.log('✅ Token已清除');
-            console.log('📋 当前状态:');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ Token已清除');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📋 当前状态:');
             this.logCurrentStatus(); // 注意：不需要手动触发，WebSocketManager.clearToken()会自动触发data_changed事件
           } catch (error) {
-            console.error('❌ 清除Token失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 清除Token失败:', error);
           }
         }
         /**
@@ -385,7 +427,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onClearUserIdClick() {
-          console.log('🧪 测试：清除用户ID');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：清除用户ID');
 
           try {
             var wsManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
@@ -393,11 +437,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance(); // 清除用户ID
 
             wsManager.clearUserId();
-            console.log('✅ 用户ID已清除');
-            console.log('📋 当前状态:');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 用户ID已清除');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📋 当前状态:');
             this.logCurrentStatus(); // 注意：不需要手动触发，WebSocketManager.clearUserId()会自动触发data_changed事件
           } catch (error) {
-            console.error('❌ 清除用户ID失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 清除用户ID失败:', error);
           }
         }
         /**
@@ -406,7 +456,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onClearCharacterIdClick() {
-          console.log('🧪 测试：清除角色ID');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：清除角色ID');
 
           try {
             var wsManager = (_crd && WebSocketManager === void 0 ? (_reportPossibleCrUseOfWebSocketManager({
@@ -414,11 +466,17 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance(); // 清除角色ID
 
             wsManager.clearCharacterId();
-            console.log('✅ 角色ID已清除');
-            console.log('📋 当前状态:');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('✅ 角色ID已清除');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📋 当前状态:');
             this.logCurrentStatus(); // 注意：不需要手动触发，WebSocketManager.clearCharacterId()会自动触发data_changed事件
           } catch (error) {
-            console.error('❌ 清除角色ID失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 清除角色ID失败:', error);
           }
         }
         /**
@@ -427,7 +485,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onLogInfoClick() {
-          console.log('🧪 测试：输出Token和ID信息');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：输出Token和ID信息');
           this.logCurrentStatus();
         }
         /**
@@ -443,35 +503,67 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var token = wsManager.getToken();
             var userId = wsManager.getUserId();
             var characterId = wsManager.getCharacterId();
-            console.log('📋 当前Token和ID状态:');
-            console.log('  - Token存在:', token !== null);
-            console.log('  - 用户ID存在:', userId !== null);
-            console.log('  - 角色ID存在:', characterId !== null);
-            console.log('  - 游戏ID完整:', wsManager.hasGameIds());
-            console.log('  - WebSocket连接状态:', wsManager.isConnected());
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📋 当前Token和ID状态:');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - Token存在:', token !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 用户ID存在:', userId !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 角色ID存在:', characterId !== null);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - 游戏ID完整:', wsManager.hasGameIds());
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('  - WebSocket连接状态:', wsManager.isConnected());
 
             if (token) {
-              console.log('  - Token:', token);
-              console.log('  - Token长度:', token.length);
-              console.log('  - Token前10位:', token.substring(0, 10));
-              console.log('  - Token后10位:', token.substring(token.length - 10));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token:', token);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token长度:', token.length);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token前10位:', token.substring(0, 10));
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token后10位:', token.substring(token.length - 10));
             } else {
-              console.log('  - Token: null');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - Token: null');
             }
 
             if (userId) {
-              console.log('  - 用户ID:', userId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 用户ID:', userId);
             } else {
-              console.log('  - 用户ID: null');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 用户ID: null');
             }
 
             if (characterId) {
-              console.log('  - 角色ID:', characterId);
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 角色ID:', characterId);
             } else {
-              console.log('  - 角色ID: null');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).debug('  - 角色ID: null');
             }
           } catch (error) {
-            console.error('❌ 输出状态失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 输出状态失败:', error);
           }
         }
         /**
@@ -480,7 +572,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         manualStatusCheck() {
-          console.log('🔍 手动触发状态检查');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🔍 手动触发状态检查');
           this.logCurrentStatus();
         }
         /**
@@ -495,7 +589,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance();
             return wsManager.getToken();
           } catch (error) {
-            console.error('❌ 获取Token失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 获取Token失败:', error);
             return null;
           }
         }
@@ -511,7 +607,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance();
             return wsManager.getUserId();
           } catch (error) {
-            console.error('❌ 获取用户ID失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 获取用户ID失败:', error);
             return null;
           }
         }
@@ -527,7 +625,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), WebSocketManager) : WebSocketManager).getInstance();
             return wsManager.getCharacterId();
           } catch (error) {
-            console.error('❌ 获取角色ID失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 获取角色ID失败:', error);
             return null;
           }
         }
@@ -537,12 +637,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onAddExpClick() {
-          console.log('🧪 测试：增加经验值 9999'); // 严格验证数据完整性（防止未授权操作）
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：增加经验值 9999'); // 严格验证数据完整性（防止未授权操作）
 
           if (!(_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
             error: Error()
           }), GameCommonData) : GameCommonData).instance) {
-            console.error('❌ GameCommonData未初始化，无法增加经验');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ GameCommonData未初始化，无法增加经验');
             return;
           } // 验证数据完整性（会触发Loading如果数据缺失）
 
@@ -550,7 +654,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!(_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
             error: Error()
           }), GameCommonData) : GameCommonData).instance.validateDataIntegrity()) {
-            console.error('❌ 数据不完整，无法增加经验');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 数据不完整，无法增加经验');
             return;
           }
 
@@ -563,7 +669,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var characterId = wsManager.getCharacterId(); // 双重验证（防止绕过）
 
             if (!token || !userId || !characterId) {
-              console.error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
               (_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
                 error: Error()
               }), GameCommonData) : GameCommonData).instance.validateDataIntegrity(); // 触发Loading
@@ -582,9 +690,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               character_id: characterId
             };
             wsManager.send(msg, true);
-            console.log('📤 已发送加经验请求：9999 经验值（已验证数据完整性）');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📤 已发送加经验请求：9999 经验值（已验证数据完整性）');
           } catch (error) {
-            console.error('❌ 增加经验失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 增加经验失败:', error);
           }
         }
         /**
@@ -593,12 +705,16 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onUpgradeAllRobotsClick() {
-          console.log('🧪 测试：给所有机甲增加经验值 9999'); // 严格验证数据完整性（防止未授权操作）
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试：给所有机甲增加经验值 9999'); // 严格验证数据完整性（防止未授权操作）
 
           if (!(_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
             error: Error()
           }), GameCommonData) : GameCommonData).instance) {
-            console.error('❌ GameCommonData未初始化，无法升级机甲');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ GameCommonData未初始化，无法升级机甲');
             return;
           } // 验证数据完整性（会触发Loading如果数据缺失）
 
@@ -606,7 +722,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!(_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
             error: Error()
           }), GameCommonData) : GameCommonData).instance.validateDataIntegrity()) {
-            console.error('❌ 数据不完整，无法升级机甲');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 数据不完整，无法升级机甲');
             return;
           }
 
@@ -619,7 +737,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             var characterId = wsManager.getCharacterId(); // 双重验证（防止绕过）
 
             if (!token || !userId || !characterId) {
-              console.error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
+              (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+                error: Error()
+              }), Logger) : Logger).error('❌ 数据验证失败：Token、用户ID或角色ID缺失');
               (_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
                 error: Error()
               }), GameCommonData) : GameCommonData).instance.validateDataIntegrity(); // 触发Loading
@@ -636,9 +756,13 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
               character_id: characterId
             };
             wsManager.send(msg, true);
-            console.log('📤 已发送升级所有机甲请求：每个机甲增加 9999 经验值（已验证数据完整性）');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug('📤 已发送升级所有机甲请求：每个机甲增加 9999 经验值（已验证数据完整性）');
           } catch (error) {
-            console.error('❌ 升级所有机甲失败:', error);
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ 升级所有机甲失败:', error);
           }
         }
         /**
@@ -647,16 +771,22 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
 
 
         onStartBattleClick() {
-          console.log('⚔️ 测试：启动战斗场景');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('⚔️ 测试：启动战斗场景');
 
           if (!this.battleScenePanel) {
-            console.error('❌ BattleScene 面板未绑定');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).error('❌ BattleScene 面板未绑定');
             return;
           } // 激活 BattleScene 面板（onEnable 会自动调用 startNewBattle）
 
 
           this.battleScenePanel.active = true;
-          console.log('✅ 战斗场景已启动');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('✅ 战斗场景已启动');
         }
         /**
          * 输出经验值相关信息
@@ -667,7 +797,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           if (!(_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
             error: Error()
           }), GameCommonData) : GameCommonData).instance) {
-            console.warn('⚠️ GameCommonData 未初始化');
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).warn('⚠️ GameCommonData 未初始化');
             return;
           }
 
@@ -683,18 +815,32 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
           var isMaxLevel = (_crd && GameCommonData === void 0 ? (_reportPossibleCrUseOfGameCommonData({
             error: Error()
           }), GameCommonData) : GameCommonData).instance.isMaxLevel;
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-          console.log('📊 角色经验信息：');
-          console.log("  - \u5F53\u524D\u7B49\u7EA7\uFF1A" + level);
-          console.log("  - \u5F53\u524D\u603B\u7ECF\u9A8C\uFF1A" + totalExp.toLocaleString());
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('📊 角色经验信息：');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("  - \u5F53\u524D\u7B49\u7EA7\uFF1A" + level);
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug("  - \u5F53\u524D\u603B\u7ECF\u9A8C\uFF1A" + totalExp.toLocaleString());
 
           if (isMaxLevel) {
-            console.log("  - \u72B6\u6001\uFF1A\u5DF2\u6EE1\u7EA7\uFF08" + level + "\u7EA7\u5C01\u9876\uFF09");
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("  - \u72B6\u6001\uFF1A\u5DF2\u6EE1\u7EA7\uFF08" + level + "\u7EA7\u5C01\u9876\uFF09");
           } else {
-            console.log("  - \u8DDD\u79BB\u4E0B\u6B21\u5347\u7EA7\u6240\u9700\u7ECF\u9A8C\uFF1A" + needExp.toLocaleString());
+            (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+              error: Error()
+            }), Logger) : Logger).debug("  - \u8DDD\u79BB\u4E0B\u6B21\u5347\u7EA7\u6240\u9700\u7ECF\u9A8C\uFF1A" + needExp.toLocaleString());
           }
 
-          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
         }
 
         onDestroy() {
@@ -741,7 +887,9 @@ System.register(["__unresolved_0", "cc", "__unresolved_1", "__unresolved_2", "__
             }), GameCommonData) : GameCommonData).instance.node.off('data_updated', this.onDataUpdated, this);
           }
 
-          console.log('🧪 测试脚本销毁');
+          (_crd && Logger === void 0 ? (_reportPossibleCrUseOfLogger({
+            error: Error()
+          }), Logger) : Logger).debug('🧪 测试脚本销毁');
         }
 
       }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, "clearTokenBtn", [_dec2], {

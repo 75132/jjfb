@@ -1,0 +1,91 @@
+{
+  "name": "zuojia5",
+  "cn": "座驾-阿瑞斯",
+  "mode": "piece_compose",
+  "rect_count": 4,
+  "piece_frames": 14,
+  "out_frames": 14,
+  "frame_sizes": [
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ],
+    [
+      92,
+      74
+    ]
+  ],
+  "compose": {
+    "mode": "piece_records",
+    "frame_count": 14,
+    "draw_order": "record_order",
+    "anchor_mode": "top_left",
+    "seam_fix": true,
+    "apply_flag_transform": true,
+    "canvas_box": [
+      -46,
+      -67,
+      46,
+      7
+    ],
+    "canvas_size": [
+      92,
+      74
+    ]
+  },
+  "parse": {
+    "frame_count": 14,
+    "tail_start": 71,
+    "tail_end": 589,
+    "remaining_bytes": 57
+  },
+  "chroma_changed": 2723
+}

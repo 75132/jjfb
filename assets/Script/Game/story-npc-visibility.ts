@@ -117,6 +117,12 @@ export function decideNpcVisibility(
         return { visible: false, colliderEnabled: false, isCurrentMainline: false };
     }
 
+    // 常驻传送点：不受主线顺序显隐限制
+    if (isAlwaysVisibleWarpNpc(row, events)) {
+        const active = state.hasActiveInteractEvent(npcUid, events);
+        return { visible: true, colliderEnabled: active, isCurrentMainline: false };
+    }
+
     if (!state.sequentialReveal) {
         const active = state.hasActiveInteractEvent(npcUid, events);
         return {
@@ -141,6 +147,16 @@ export function decideNpcVisibility(
         colliderEnabled: isCurrent,
         isCurrentMainline: isCurrent,
     };
+}
+
+/** appear.always 且仅含 teleport 事件 → 互传点，始终显示 */
+export function isAlwaysVisibleWarpNpc(
+    row: NpcVisibilityRow | undefined,
+    events: unknown[],
+): boolean {
+    if (row?.appear?.mode !== 'always') return false;
+    if (!events?.length) return false;
+    return events.every((raw) => String((raw as { eventType?: string }).eventType ?? '') === 'teleport');
 }
 
 /** appear 条件是否满足（不含 reveal_npc 与 initialHidden） */

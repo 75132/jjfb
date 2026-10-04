@@ -93,8 +93,11 @@ class FakeMongoCollection:
             for i, d in enumerate(self._docs):
                 if _match(d, filt):
                     new_d = copy.deepcopy(d)
-                    if "$set" in update:
-                        new_d.update(update["$set"])
+                    if "$set" in update or "$unset" in update:
+                        if "$set" in update:
+                            new_d.update(update["$set"])
+                        for k in (update.get("$unset") or {}):
+                            new_d.pop(k, None)
                     else:
                         new_d.update(update)
                     self._check_unique(new_d, exclude_id=new_d.get("_id"))
@@ -108,8 +111,11 @@ class FakeMongoCollection:
                     return R()
             if upsert:
                 base = dict(filt)
-                if "$set" in update:
-                    base.update(update["$set"])
+                if "$set" in update or "$unset" in update:
+                    if "$set" in update:
+                        base.update(update["$set"])
+                    for k in (update.get("$unset") or {}):
+                        base.pop(k, None)
                 else:
                     base.update(update)
                 self._seq += 1

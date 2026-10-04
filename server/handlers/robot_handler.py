@@ -31,6 +31,11 @@ STARTER_MECH_GRANT_LEVEL = 15
 LAST_ROBOT_GUARD_MSG = '至少保留一台机甲，无法放生或分解'
 
 
+def _invalidate_robot_pets_cache(user_id, character_id=None) -> None:
+    """写路径使机甲列表短缓存失效。character_id 为空则清该用户全部页。"""
+    utils.invalidate_robot_pets_cache(user_id, character_id)
+
+
 async def resolve_starter_mech_chosen(user_id, character_id: str, total_count: int, player) -> bool:
     """
     是否已完成初始机甲选择（服务端权威）。
@@ -166,7 +171,7 @@ _ROBOT_PET_LIST_PROJECTION = {
     'Corrosion': 1,
     'Initiative': 1,
     'Block': 1,
-    'ParticleShield': 1,
+    'AttackCount': 1,
     'ArmorPenetration': 1,
     'Shooting': 1,
     'Evasion': 1,
@@ -175,6 +180,27 @@ _ROBOT_PET_LIST_PROJECTION = {
     'Counterattack': 1,
     'robot_base_id': 1,
     'slot_index': 1,
+}
+
+# get_robot_pet_info：列表字段 + 当前属性 + 装备
+_ROBOT_PET_DETAIL_PROJECTION = {
+    **_ROBOT_PET_LIST_PROJECTION,
+    'character_id': 1,
+    'user_id': 1,
+    'equipment': 1,
+    'CurrentMelee': 1,
+    'CurrentArmor': 1,
+    'CurrentAccuracy': 1,
+    'CurrentCorrosion': 1,
+    'CurrentInitiative': 1,
+    'CurrentBlock': 1,
+    'CurrentAttackCount': 1,
+    'CurrentArmorPenetration': 1,
+    'CurrentShooting': 1,
+    'CurrentEvasion': 1,
+    'CurrentLethality': 1,
+    'CurrentResistance': 1,
+    'CurrentCounterattack': 1,
 }
 
 
@@ -222,7 +248,10 @@ async def handle_get_battle_team(websocket, data, current_character_id):
     try:
         # 从 players 集合按 user_id + character_id 查询，battle_team 存在于此文档并持久化到数据库
         player = await utils.async_mongo_operation(
-            lambda: utils.players_col.find_one({'user_id': user['_id'], 'character_id': cid}),
+            lambda: utils.players_col.find_one(
+                {'user_id': user['_id'], 'character_id': cid},
+                {'battle_team': 1, 'battle_team_version': 1},
+            ),
             timeout=2.0
         )
         battle_team = []
@@ -469,6 +498,7 @@ async def handle_set_battle_team(websocket, data, current_character_id):
             data={'character_id': str(cid), 'battle_team': normalized, 'team_version': new_version},
             request_data=data
         )
+        _invalidate_robot_pets_cache(user['_id'], cid)
 
         # 推送更新（Pomelo风格：状态变更主动推送，避免客户端用本地缓存）
         if _broadcast_to_user_async:
@@ -620,7 +650,10 @@ async def handle_robot_release_pet(websocket, data, current_character_id):
 
         # 归属校验：必须属于当前用户与角色
         pet = await utils.async_mongo_operation(
-            lambda: utils.robotpet_col.find_one({'_id': pet_object_id, 'user_id': user['_id'], 'character_id': cid}),
+            lambda: utils.robotpet_col.find_one(
+                {'_id': pet_object_id, 'user_id': user['_id'], 'character_id': cid},
+                {'_id': 1},
+            ),
             timeout=3.0,
         )
         if not pet:
@@ -664,6 +697,7 @@ async def handle_robot_release_pet(websocket, data, current_character_id):
             request_data=data,
         )
 
+        _invalidate_robot_pets_cache(user['_id'], cid)
         await broadcast_robot_pets_after_change(user['_id'], cid, battle_team, team_changed)
         try:
             await bag_handler._push_bag_refresh(user['_id'], cid, 'robot_release_strip')
@@ -676,7 +710,7 @@ async def handle_robot_release_pet(websocket, data, current_character_id):
 async def handle_get_random_robot(websocket, data):
     """获取随机机甲信息"""
     try:
-        sample = utils.safe_mongo_operation(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
+        sample = await utils.async_mongo_operation_read(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
         doc = sample[0] if sample else None
         if not doc:
             await websocket.send(json.dumps({'type': 'robot_info', 'success': False}))
@@ -717,7 +751,7 @@ async def handle_get_random_robot(websocket, data):
                 'Corrosion': doc.get('Corrosion', 60),
                 'Initiative': doc.get('Initiative', 80),
                 'Block': doc.get('Block', 40),
-                'ParticleShield': doc.get('ParticleShield', 35),
+                'AttackCount': doc.get('AttackCount', 1),
                 'ArmorPenetration': doc.get('ArmorPenetration', 55),
                 'Shooting': doc.get('Shooting', 0),
                 'Evasion': doc.get('Evasion', 45),
@@ -730,7 +764,7 @@ async def handle_get_random_robot(websocket, data):
                 'CurrentCorrosion': doc.get('CurrentCorrosion'),
                 'CurrentInitiative': doc.get('CurrentInitiative'),
                 'CurrentBlock': doc.get('CurrentBlock'),
-                'CurrentParticleShield': doc.get('CurrentParticleShield'),
+                'CurrentAttackCount': doc.get('CurrentAttackCount'),
                 'CurrentArmorPenetration': doc.get('CurrentArmorPenetration'),
                 'CurrentShooting': doc.get('CurrentShooting'),
                 'CurrentEvasion': doc.get('CurrentEvasion'),
@@ -747,7 +781,7 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
     """获取机甲宠物列表（支持分页）"""
     # 关键修复：移除节流限制，允许频繁请求，确保用户体验
     # 原因：机甲列表是查询操作，应该允许用户频繁打开查看，不应该被拒绝
-    # 为了确保数据实时性，不缓存查询结果，总是查询数据库获取最新数据
+    # 读路径短缓存（QUERY_CACHE_TTL）；写路径 _invalidate_robot_pets_cache 保证正确性
     token = data.get('token')
     user_id = data.get('user_id')  # 测试模式：支持通过user_id获取用户
     
@@ -769,7 +803,12 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
     page = int(data.get('page', 0))  # 页码，从0开始
     page_size = int(data.get('page_size', 50))  # 每页数量，默认50
     skip = page * page_size
-    
+    cache_key = f"robot_pets:{user['_id']}:{cid}:{page}:{page_size}"
+    cached = utils.get_cached_query(cache_key)
+    if isinstance(cached, dict):
+        await utils.send_direct_response(websocket, dict(cached), request_data=data)
+        return
+
     try:
         # 并行：players（出战队伍） + robotpet 聚合（一页数据 + total），由 3 次串行 Mongo 降为 2 路并行且 pets 侧仅 1 次往返
         player, (pets, total_count) = await asyncio.gather(
@@ -868,7 +907,7 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
                 'Corrosion': pet.get('Corrosion', 60),
                 'Initiative': pet.get('Initiative', 80),
                 'Block': pet.get('Block', 40),
-                'ParticleShield': pet.get('ParticleShield', 35),
+                'AttackCount': pet.get('AttackCount', 1),
                 'ArmorPenetration': pet.get('ArmorPenetration', 55),
                 'Shooting': pet.get('Shooting', 0),
                 'Evasion': pet.get('Evasion', 0),
@@ -897,10 +936,8 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
             }
         }
         
-        # 关键修复：移除缓存机制，确保总是返回最新数据
-        # 原因：机甲数据可能频繁更新（升级、装备、创建、删除等），缓存会导致数据不一致
-        # 如果未来需要缓存，应该在更新操作时调用 invalidate_cached_query 使缓存失效
-        # 暂时不缓存，确保数据实时性
+        # 写路径会按前缀失效；连点打开列表走内存命中
+        utils.set_cached_query(cache_key, dict(response_data))
         
         # 使用直接发送格式（自动添加request_id）
         await utils.send_direct_response(websocket, response_data, request_data=data)
@@ -928,6 +965,8 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
                             pet_data = fix_info['pet_data'].copy()
                             pet_data['Level'] = new_level  # 更新等级以便计算属性
                             updated_attrs = upgrade_manager.calculate_attributes(pet_data, robot_id=robot_id)
+                            # 等级修正本质也是一次「升级」→ 同口径补满血蓝
+                            updated_attrs = upgrade_manager.apply_level_up_full_restore(updated_attrs)
                             if updated_attrs:
                                 update_data.update(updated_attrs)
                         
@@ -939,6 +978,7 @@ async def handle_get_robot_pets(websocket, data, current_character_id):
                             ),
                             timeout=2.0
                         )
+                        _invalidate_robot_pets_cache(user['_id'], cid)
                     except Exception as e:
                         print(f'[等级修正失败] 机甲 {fix_info.get("pet_name", "未知")}: {e}')
             
@@ -1000,10 +1040,10 @@ async def handle_get_robot_pet_info(websocket, data):
         
         # 查找机甲宠物（验证是否属于该用户）
         print(f'🔍 查找机甲: _id={pet_object_id}, user_id={user["_id"]}')
-        pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({
+        pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
             '_id': pet_object_id,
             'user_id': user['_id']
-        }))
+        }, _ROBOT_PET_DETAIL_PROJECTION))
         
         if not pet:
             print(f'❌ 机甲不存在或不属于该用户: pet_id={pet_id}')
@@ -1021,10 +1061,10 @@ async def handle_get_robot_pet_info(websocket, data):
                     user['_id'], str(cid_on_pet).strip(), str(pet['_id']), bag_handler._add_item_to_inventory
                 )
                 if inv.get('stripped_slots'):
-                    pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({
+                    pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
                         '_id': pet_object_id,
                         'user_id': user['_id'],
-                    }))
+                    }, _ROBOT_PET_DETAIL_PROJECTION))
                     if not pet:
                         await utils.send_error_response(websocket, 'robot_pet_info', '机甲不存在或不属于该用户', code=404, request_data=data)
                         return
@@ -1076,7 +1116,7 @@ async def handle_get_robot_pet_info(websocket, data):
             'Corrosion': pet.get('Corrosion', 60),
             'Initiative': pet.get('Initiative', 80),
             'Block': pet.get('Block', 40),
-            'ParticleShield': pet.get('ParticleShield', 35),
+            'AttackCount': pet.get('AttackCount', 1),
             'ArmorPenetration': pet.get('ArmorPenetration', 55),
             'Shooting': pet.get('Shooting', 0),
             'Evasion': pet.get('Evasion', 0),
@@ -1089,7 +1129,7 @@ async def handle_get_robot_pet_info(websocket, data):
             'CurrentCorrosion': pet.get('CurrentCorrosion') if pet.get('CurrentCorrosion') is not None else pet.get('Corrosion', 0),
             'CurrentInitiative': pet.get('CurrentInitiative') if pet.get('CurrentInitiative') is not None else pet.get('Initiative', 0),
             'CurrentBlock': pet.get('CurrentBlock') if pet.get('CurrentBlock') is not None else pet.get('Block', 0),
-            'CurrentParticleShield': pet.get('CurrentParticleShield') if pet.get('CurrentParticleShield') is not None else pet.get('ParticleShield', 0),
+            'CurrentAttackCount': pet.get('CurrentAttackCount') if pet.get('CurrentAttackCount') is not None else pet.get('AttackCount', 1),
             'CurrentArmorPenetration': pet.get('CurrentArmorPenetration') if pet.get('CurrentArmorPenetration') is not None else pet.get('ArmorPenetration', 0),
             'CurrentShooting': pet.get('CurrentShooting') if pet.get('CurrentShooting') is not None else pet.get('Shooting', 0),
             'CurrentEvasion': pet.get('CurrentEvasion') if pet.get('CurrentEvasion') is not None else pet.get('Evasion', 45),
@@ -1122,7 +1162,7 @@ async def handle_get_robot_pet_info(websocket, data):
                     if updated_attrs:
                         update_data.update(updated_attrs)
                 
-                utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+                await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                     {'_id': pet['_id']},
                     {'$set': update_data}
                 ))
@@ -1285,6 +1325,7 @@ async def handle_choose_starter_mech(websocket, data, current_character_id):
             },
             request_data=data,
         )
+        _invalidate_robot_pets_cache(user['_id'], cid)
         print(f'✅ [choose_starter_mech] cid={cid} robot_id={robot_id} pet={pet_id} Lv{STARTER_MECH_GRANT_LEVEL}')
     except Exception as e:
         import traceback
@@ -1306,7 +1347,7 @@ async def handle_create_initial_pet(websocket, data):
         return
     
     # 检查用户是否已有宠物
-    existing_pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({
+    existing_pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
         'user_id': user['_id'],
         'character_id': None
     }))
@@ -1320,7 +1361,7 @@ async def handle_create_initial_pet(websocket, data):
     
     # 从RobotBase随机选择一个机甲作为基础
     try:
-        sample = utils.safe_mongo_operation(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
+        sample = await utils.async_mongo_operation_read(lambda: list(utils.robotbase_col.aggregate([{ '$sample': { 'size': 1 } }])))
         if not sample:
             await websocket.send(json.dumps({
                 'type': 'create_initial_pet_response',
@@ -1341,6 +1382,7 @@ async def handle_create_initial_pet(websocket, data):
             return
         
         robot_pet = _create_robot_pet(user['_id'], None, base_robot)
+        _invalidate_robot_pets_cache(user['_id'], None)
         await websocket.send(json.dumps({
             'type': 'create_initial_pet_response',
             'success': True,
@@ -1377,7 +1419,7 @@ async def handle_fix_robot_pet_form(websocket, data):
         error_count = 0
         
         # 查找所有RobotPet记录
-        pets = utils.safe_mongo_operation(lambda: list(utils.robotpet_col.find({})))
+        pets = await utils.async_mongo_operation_read(lambda: list(utils.robotpet_col.find({})))
         for pet in pets:
             robot_base_id = pet.get('robot_base_id')
             if not robot_base_id:
@@ -1386,14 +1428,14 @@ async def handle_fix_robot_pet_form(websocket, data):
             
             # 从RobotBase获取正确的Form值
             try:
-                base_robot = utils.safe_mongo_operation(lambda: utils.robotbase_col.find_one({'_id': ObjectId(robot_base_id)}))
+                base_robot = await utils.async_mongo_operation_read(lambda: utils.robotbase_col.find_one({'_id': ObjectId(robot_base_id)}))
                 if base_robot:
                     correct_form = base_robot.get('Form', 1)
                     current_form = pet.get('Form', 1)
                     
                     # 如果Form值不正确，则更新
                     if current_form != correct_form:
-                        utils.safe_mongo_operation(lambda: utils.robotpet_col.update_one(
+                        await utils.async_mongo_operation(lambda: utils.robotpet_col.update_one(
                             {'_id': pet['_id']},
                             {'$set': {'Form': correct_form}}
                         ))
@@ -1411,6 +1453,8 @@ async def handle_fix_robot_pet_form(websocket, data):
             'success': True,
             'message': f'修复完成: {fixed_count} 个机甲已修复, {error_count} 个失败'
         }))
+        if fixed_count:
+            _invalidate_robot_pets_cache(user['_id'] if user else None, data.get('character_id'))
         print(f'Form字段修复完成: {fixed_count} 个已修复, {error_count} 个失败')
     except Exception as e:
         print(f'修复Form字段失败: {e}')
@@ -1496,8 +1540,11 @@ async def handle_upgrade_robot(websocket, data):
         async with upgrade_lock:
             # 使用原子更新操作避免并发问题
             upgrade_manager = get_upgrade_manager()
+            # 技能自动升级记录（机甲升级时逐技能判定）—— 附带在响应里供客户端提示
+            skill_ups: list = []
             result = upgrade_manager.add_exp_to_robot_atomic(
-                utils.robotpet_col, pet_object_id, user['_id'], exp_amount
+                utils.robotpet_col, pet_object_id, user['_id'], exp_amount,
+                skill_ups_out=skill_ups,
             )
         
             if result[0] is None:  # 更新失败
@@ -1511,7 +1558,7 @@ async def handle_upgrade_robot(websocket, data):
             new_level, new_exp, level_up_count, updated_attrs = result
             
             # 关键修复：重新读取更新后的机甲数据，返回完整的机甲信息给客户端
-            pet = utils.safe_mongo_operation(lambda: utils.robotpet_col.find_one({
+            pet = await utils.async_mongo_operation_read(lambda: utils.robotpet_col.find_one({
                 '_id': pet_object_id,
                 'user_id': user['_id']
             }))
@@ -1531,9 +1578,11 @@ async def handle_upgrade_robot(websocket, data):
                     'CurrentEXP': current_level_exp,
                     'MaxEXP': next_level_total_exp,
                     'level_up_count': level_up_count,
+                    'skill_level_ups': skill_ups,
                     'updated_attrs': updated_attrs
                 }))
                 print(f'⚠️ 升级成功但读取机甲数据失败: pet_id: {pet_id}')
+                _invalidate_robot_pets_cache(user['_id'], data.get('character_id'))
                 return
             
             # 计算机甲经验条数据（使用原子操作返回的新等级和新经验）
@@ -1575,7 +1624,7 @@ async def handle_upgrade_robot(websocket, data):
                 'Corrosion': pet.get('Corrosion', 60),
                 'Initiative': pet.get('Initiative', 80),
                 'Block': pet.get('Block', 40),
-                'ParticleShield': pet.get('ParticleShield', 35),
+                'AttackCount': pet.get('AttackCount', 1),
                 'ArmorPenetration': pet.get('ArmorPenetration', 55),
                 'Shooting': pet.get('Shooting', 0),
                 'Evasion': pet.get('Evasion', 0),
@@ -1588,7 +1637,7 @@ async def handle_upgrade_robot(websocket, data):
                 'CurrentCorrosion': pet.get('CurrentCorrosion') if pet.get('CurrentCorrosion') is not None else pet.get('Corrosion', 0),
                 'CurrentInitiative': pet.get('CurrentInitiative') if pet.get('CurrentInitiative') is not None else pet.get('Initiative', 0),
                 'CurrentBlock': pet.get('CurrentBlock') if pet.get('CurrentBlock') is not None else pet.get('Block', 0),
-                'CurrentParticleShield': pet.get('CurrentParticleShield') if pet.get('CurrentParticleShield') is not None else pet.get('ParticleShield', 0),
+                'CurrentAttackCount': pet.get('CurrentAttackCount') if pet.get('CurrentAttackCount') is not None else pet.get('AttackCount', 1),
                 'CurrentArmorPenetration': pet.get('CurrentArmorPenetration') if pet.get('CurrentArmorPenetration') is not None else pet.get('ArmorPenetration', 0),
                 'CurrentShooting': pet.get('CurrentShooting') if pet.get('CurrentShooting') is not None else pet.get('Shooting', 0),
                 'CurrentEvasion': pet.get('CurrentEvasion') if pet.get('CurrentEvasion') is not None else pet.get('Evasion', 45),
@@ -1596,6 +1645,9 @@ async def handle_upgrade_robot(websocket, data):
                 'CurrentResistance': pet.get('CurrentResistance') if pet.get('CurrentResistance') is not None else pet.get('Resistance', 70),
                 'CurrentCounterattack': pet.get('CurrentCounterattack') if pet.get('CurrentCounterattack') is not None else pet.get('Counterattack', 30),
                 'level_up_count': level_up_count,
+                # 技能等级：本次自动升级记录（可能为空）+ 升级后的完整等级表
+                'skill_level_ups': skill_ups,
+                'SkillLevels': pet.get('SkillLevels', {}),
                 'updated_attrs': updated_attrs
             }
             
@@ -1605,6 +1657,7 @@ async def handle_upgrade_robot(websocket, data):
                     upgrade_response[key] = value
             
             await websocket.send(json.dumps(upgrade_response))
+            _invalidate_robot_pets_cache(user['_id'], pet.get('character_id'))
             
             print(f'✅ 机甲升级成功: pet_id: {pet_id}, level: {new_level}, exp: {new_exp}, level_up: {level_up_count}')
     except Exception as e:
@@ -1662,7 +1715,7 @@ async def handle_upgrade_all_robots(websocket, data, current_character_id):
         return
     
     # 验证角色是否属于该用户
-    player = utils.safe_mongo_operation(lambda: utils.players_col.find_one({'user_id': user['_id'], 'character_id': target_character_id}))
+    player = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'user_id': user['_id'], 'character_id': target_character_id}))
     if not player:
         await websocket.send(json.dumps({
             'type': 'upgrade_all_robots_response',
@@ -1673,7 +1726,7 @@ async def handle_upgrade_all_robots(websocket, data, current_character_id):
     
     try:
         # 网游级优化：使用字段投影，只查询需要的字段
-        pets = utils.safe_mongo_operation(lambda: list(utils.robotpet_col.find(
+        pets = await utils.async_mongo_operation_read(lambda: list(utils.robotpet_col.find(
             {
                 'user_id': user['_id'],
                 'character_id': target_character_id
@@ -1683,7 +1736,7 @@ async def handle_upgrade_all_robots(websocket, data, current_character_id):
                 'Growth': 1, 'Comprehension': 1, 'StarLevel': 1, 'Form': 1, 'Class': 1,
                 'HP': 1, 'MaxHP': 1, 'MP': 1, 'MaxMP': 1,
                 'Melee': 1, 'Accuracy': 1, 'Armor': 1, 'Corrosion': 1, 'Initiative': 1,
-                'Block': 1, 'ParticleShield': 1, 'ArmorPenetration': 1, 'Shooting': 1,
+                'Block': 1, 'AttackCount': 1, 'ArmorPenetration': 1, 'Shooting': 1,
                 'Evasion': 1, 'Lethality': 1, 'Resistance': 1, 'Counterattack': 1
             }
         )))
@@ -1770,6 +1823,9 @@ async def handle_upgrade_all_robots(websocket, data, current_character_id):
                 
                 # 应用独特成长值
                 updated_attrs = upgrade_manager.apply_unique_growth(pet_data, updated_attrs)
+
+                # 升级即满血满蓝（用户口径）：批量升级与单只升级同口径
+                updated_attrs = upgrade_manager.apply_level_up_full_restore(updated_attrs)
             
             # 收集批量更新
             update_data = {
@@ -1812,13 +1868,15 @@ async def handle_upgrade_all_robots(websocket, data, current_character_id):
         }
         
         # 立即返回响应，不等待数据库更新
+        _invalidate_robot_pets_cache(user['_id'], target_character_id)
         await websocket.send(json.dumps(response_data))
         
         # 后台批量更新数据库（异步执行，不阻塞）
         if bulk_updates:
             async def update_database_async():
                 try:
-                    utils.safe_mongo_operation(lambda: utils.robotpet_col.bulk_write(bulk_updates, ordered=False))
+                    await utils.async_mongo_operation(lambda: utils.robotpet_col.bulk_write(bulk_updates, ordered=False))
+                    _invalidate_robot_pets_cache(user['_id'], target_character_id)
                     print(f'✅ 批量更新 {len(bulk_updates)} 个机甲属性（后台完成）')
                 except Exception as e:
                     print(f'⚠️ 批量更新部分失败: {e}')

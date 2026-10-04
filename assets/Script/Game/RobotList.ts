@@ -18,6 +18,8 @@ import { DataCacheManager } from '../global/DataCacheManager';
 import { UILockManager } from '../global/UILockManager';
 import { emitBattleTeamUpdated, emitRobotDataUpdated, robotGameEvents, RobotGameEvent } from '../global/RobotGameEvents';
 import { TipWindows } from '../global/TipWindows';
+import { PerformanceMonitor } from '../global/PerformanceMonitor';
+import { Logger } from '../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -81,6 +83,16 @@ export class RobotList extends Component {
     mechaIconSheji: SpriteFrame | null = null;
     @property({ type: SpriteFrame })
     mechaIconQuanneng: SpriteFrame | null = null;
+
+    /** 行常规状态底图（未选中） */
+    @property({ type: SpriteFrame })
+    rowNormalSprite: SpriteFrame | null = null;
+    /** 行选中状态底图 */
+    @property({ type: SpriteFrame })
+    rowSelectedSprite: SpriteFrame | null = null;
+    /** 包内「共有 X 台机甲可出战」的 Count 节点（Label 显示可出战机甲数） */
+    @property(Node)
+    countLabel: Node | null = null;
 
     private itemClickHandlers: Map<Node, () => void> = new Map();
     /** 修复点：确认/出战/放生防抖，避免高频点击重复请求 */
@@ -210,7 +222,7 @@ export class RobotList extends Component {
      */
     private onCharacterChanged = (data: any): void => {
         if (data && data.reason === 'character_id_cleared') {
-            console.log('🗑️ [RobotList] 检测到角色切换，清除内部状态');
+            Logger.debug('🗑️ [RobotList] 检测到角色切换，清除内部状态');
             // 清除所有内部状态
             this.currentPets = [];
             this.battleTeam = [];
@@ -234,10 +246,48 @@ export class RobotList extends Component {
 
     private onBattleTeamUpdate(data: any) {
         if (!data?.success) return;
+        const prevTeam = this.battleTeam;
         const raw = data.battle_team ?? data.data?.battle_team ?? [];
         this.battleTeam = (Array.isArray(raw) ? raw : []).map((x: any) => String(x).trim().toLowerCase()).filter(Boolean);
         this.applyServerTeamVersion(data);
-        if (this.node?.active && this.currentPets.length > 0) this.refreshListUI();
+        if (!(this.node?.active && this.currentPets.length > 0)) return;
+        if (this.battleTeamMembershipChanged(prevTeam, this.battleTeam)) {
+            this.refreshListUI();
+            return;
+        }
+        this.patchBattleTeamRowStyles();
+    }
+
+    /** 只看出战成员集合，忽略顺序。顺序变化不整表重建。 */
+    private battleTeamMembershipChanged(prev: string[], next: string[]): boolean {
+        const a = new Set(prev.map((id) => this.normPetId(id)).filter(Boolean));
+        const b = new Set(next.map((id) => this.normPetId(id)).filter(Boolean));
+        if (a.size !== b.size) return true;
+        for (const id of a) {
+            if (!b.has(id)) return true;
+        }
+        return false;
+    }
+
+    /** 成员没变时只改已有行的出战标记和底色，不重排、不重建、不重触发选中。 */
+    private patchBattleTeamRowStyles() {
+        const visit = (node: Node | null) => {
+            if (!node?.isValid || !node.active) return;
+            const pet = (node as any)._pet;
+            if (!pet) return;
+            const tagN = this.findChild(node, 'TeamTag');
+            if (tagN) {
+                const tl = tagN.getComponent(Label);
+                if (tl) {
+                    const pid = String(pet.pet_id ?? pet._id ?? pet.id ?? '');
+                    const inTeam = !!pid && this.battleTeam.some((bid) => this.normPetId(bid) === this.normPetId(pid));
+                    tl.string = inTeam ? '出战' : '';
+                }
+            }
+            this.updateRowBattleFilter(node, pet);
+        };
+        visit(this.robotListDataTemplate);
+        for (const n of this.listItems) visit(n);
     }
 
     /** 唯一入口：打开并加载（优化：先显示缓存，再后台更新） */
@@ -404,7 +454,7 @@ export class RobotList extends Component {
                 try {
                     cb(resp);
                 } catch (e) {
-                    console.error('[RobotList] onPetsResponse fan-out', e);
+                    Logger.error('[RobotList] onPetsResponse fan-out', e);
                 }
             }
         };
@@ -416,6 +466,7 @@ export class RobotList extends Component {
             }
             RobotList._petsSfCid = cid;
             RobotList._petsSfCallbacks = [(resp: any) => this.onPetsResponse(resp)];
+            PerformanceMonitor.getInstance().startTimer('get_robot_pets');
             this.ws.request(
                 GameConfig.MESSAGE_TYPES.GET_ROBOT_PETS,
                 req,
@@ -426,6 +477,7 @@ export class RobotList extends Component {
             return;
         }
 
+        PerformanceMonitor.getInstance().startTimer('get_robot_pets');
         this.ws.request(
             GameConfig.MESSAGE_TYPES.GET_ROBOT_PETS,
             req,
@@ -436,6 +488,7 @@ export class RobotList extends Component {
     }
 
     private onPetsResponse(data: any) {
+        PerformanceMonitor.getInstance().endTimer('get_robot_pets');
         const isUpdate = data?.type === GameConfig.MESSAGE_TYPES.ROBOT_PETS_UPDATE;
         if (isUpdate) {
             UILockManager.instance.unlock('robot_list');
@@ -592,7 +645,7 @@ export class RobotList extends Component {
             ...rest
         ];
         
-        console.log(`[RobotList] 排序完成: 出战${inTeam.length}个, 其他${rest.length}个, 出战队伍:`, this.battleTeam);
+        Logger.debug(`[RobotList] 排序完成: 出战${inTeam.length}个, 其他${rest.length}个, 出战队伍:`, this.battleTeam);
     }
 
     private refreshListUI() {
@@ -650,9 +703,9 @@ export class RobotList extends Component {
             this.setRowLayout(node, i, firstY);
             this.bindRowClick(node, i);
             this.bindSetAndActions(node, pet, i);
-            // 关键修复：先更新滤镜，再设置未选中状态（确保红色滤镜不被覆盖）
-            this.updateRowBattleFilter(node, pet); // 先应用红色滤镜
-            this.setRowSelection(node, false); // 再设置未选中状态（不会覆盖已应用的滤镜）
+            // 出战标记（AttackState 显隐）→ 再铺常规底图
+            this.updateRowBattleFilter(node, pet);
+            this.setRowSelection(node, false);
             this.updateSetVisibility(node);
             if (node.parent !== this.content) this.content.addChild(node);
         }
@@ -669,6 +722,34 @@ export class RobotList extends Component {
 
         this.updateContentHeight(pets.length, firstY);
         this.updateConfirmVisibility();
+        this.updateBattleCount();
+    }
+
+    /**
+     * 刷新「共有 X 台机甲可出战」的 Count。
+     * 目前口径 = 当前机甲列表总数（后续可改为仅统计满足出战条件的机甲）。
+     */
+    private updateBattleCount() {
+        const n = this.currentPets.length;
+        this.updateBattleCountLabel(n);
+    }
+
+    private updateBattleCountLabel(n: number) {
+        const node = this.countLabel ?? this.findChild(this.node, 'Count');
+        if (!node) return;
+        const label = node.getComponent(Label);
+        if (label) {
+            label.string = String(n);
+            return;
+        }
+        // Count 节点无 Label 时，向下找第一个 Label
+        for (const c of node.children) {
+            const l = c.getComponent(Label);
+            if (l) {
+                l.string = String(n);
+                return;
+            }
+        }
     }
 
     /** P1 性能：首行 template + listItems 复用，避免每次打开都全量 instantiate。 */
@@ -738,17 +819,17 @@ export class RobotList extends Component {
                     s.spriteFrame = sf;
                     appliedFromAtlas = true;
                     if (shouldDebug) {
-                        console.log(
+                        Logger.debug(
                             `[RobotList][Icon] index=${_index} pet.Class=${pet.Class} cls=${cls} iconKey=${iconKey} matched=${matchedName ?? 'unknown'}`
                         );
                     }
                 } else {
-                    console.warn(
+                    Logger.warn(
                         `[RobotList] MechaClass 图标帧未找到，cls=${cls}, candidates=${iconCandidates.join(',')}`,
                         { atlasFramesNotEnumerated: true }
                     );
                     if (shouldDebug) {
-                        console.log(
+                        Logger.debug(
                             `[RobotList][Icon] index=${_index} pet.Class=${pet.Class} cls=${cls} iconKey=${iconKey} iconCandidates=${iconCandidates.join(',')}`
                         );
                     }
@@ -763,7 +844,7 @@ export class RobotList extends Component {
                 if (fallback) {
                     s.spriteFrame = fallback;
                 } else if (shouldDebug) {
-                    console.warn(
+                    Logger.warn(
                         `[RobotList][Icon] fallback SpriteFrame 为空：cls=${cls}, mechaIconGedou=${!!this.mechaIconGedou}, mechaIconSheji=${!!this.mechaIconSheji}, mechaIconQuanneng=${!!this.mechaIconQuanneng}`
                     );
                 }
@@ -803,47 +884,51 @@ export class RobotList extends Component {
         this.updateConfirmVisibility();
     }
 
-    private setRowSelection(node: Node, selected: boolean) {
-        const bg = this.findChild(node, 'BG1') || this.findChild(node, 'BG2') || this.findChild(node, 'BG') || this.findChild(node, 'Background');
+    /**
+     * 行底图：选中 / 常规 两态换 UI 图（不再用颜色滤镜）。
+     * 未选中时若有出战状态，仍用常规底图区分由 AttackState 节点承担。
+     */
+    private applyRowBgSprite(node: Node, selected: boolean) {
+        const bg = this.findRowBg(node);
         const sprite = bg?.getComponent(Sprite) ?? node.getComponent(Sprite);
         if (!sprite) return;
-        
-                if (selected) {
-            // 选中时：保存当前颜色（可能是红色滤镜或白色），然后应用黄色
-            if (!this.bgColorMap.has(sprite.node)) {
-                this.bgColorMap.set(sprite.node, sprite.color.clone());
-            }
-            sprite.color = new Color(255, 255, 100, 255); // 黄色选中效果
-                } else {
-            // 未选中时：恢复原始颜色（如果有保存），否则根据出战状态设置
-            const orig = this.bgColorMap.get(sprite.node);
-            if (orig) {
-                sprite.color = orig;
-                this.bgColorMap.delete(sprite.node);
-                    } else {
-                // 关键修复：恢复时根据出战状态设置红色滤镜或白色
-                const petId = (node as any)._petId as string | undefined;
-                const inTeam = !!petId && this.battleTeam.some(bid => this.normPetId(bid) === this.normPetId(petId));
-                sprite.color = inTeam ? new Color(255, 100, 100, 255) : new Color(255, 255, 255, 255);
-            }
+        const target = selected ? this.rowSelectedSprite : this.rowNormalSprite;
+        if (target) {
+            sprite.spriteFrame = target;
+            sprite.color = new Color(255, 255, 255, 255);
+        } else {
+            // 未配置 row 图时兜底：保持原有颜色区分（不破坏旧表现）
+            sprite.color = selected
+                ? new Color(255, 255, 100, 255)
+                : new Color(255, 255, 255, 255);
         }
     }
 
+    private findRowBg(node: Node): Node | null {
+        return (
+            this.findChild(node, 'BG1') ||
+            this.findChild(node, 'BG2') ||
+            this.findChild(node, 'BG') ||
+            this.findChild(node, 'Background')
+        );
+    }
+
+    private setRowSelection(node: Node, selected: boolean) {
+        this.applyRowBgSprite(node, selected);
+    }
+
+    /**
+     * 出战标记：直接控制 AttackState 节点显隐。
+     * 出战 → active=true；未出战 → active=false。
+     */
     private updateRowBattleFilter(node: Node, pet: any) {
-        // 关键修复：如果当前行被选中，不覆盖选中效果（黄色优先）
-        if (this.selectedNode === node) return;
-        
-        const id = this.normPetId(String(pet.pet_id ?? pet._id ?? pet.id ?? ''));
-        const inTeam = this.battleTeam.some(bid => this.normPetId(bid) === id);
-        const bg = this.findChild(node, 'BG1') || this.findChild(node, 'BG2') || this.findChild(node, 'BG') || this.findChild(node, 'Background');
-        const sprite = bg?.getComponent(Sprite) ?? node.getComponent(Sprite);
-        if (!sprite) return;
-        
-        // 关键修复：强制应用红色滤镜（如果不在选中状态且没有保存选中颜色）
-        // 只有在没有保存选中颜色时才更新（避免覆盖选中效果）
-        if (!this.bgColorMap.has(sprite.node)) {
-            const targetColor = inTeam ? new Color(255, 100, 100, 255) : new Color(255, 255, 255, 255);
-            sprite.color = targetColor;
+        const id = this.normPetId(String(pet?.pet_id ?? pet?._id ?? pet?.id ?? ''));
+        const inTeam = !!id && this.battleTeam.some((bid) => this.normPetId(bid) === id);
+        const flagN = this.findChild(node, 'AttackState');
+        if (flagN) flagN.active = inTeam;
+        // 底图只在未选中行上刷新（选中态由 row_selected 承担）
+        if (this.selectedNode !== node) {
+            this.applyRowBgSprite(node, false);
         }
     }
 
@@ -1039,15 +1124,15 @@ export class RobotList extends Component {
             const correctId = String(nodePet.pet_id ?? nodePet._id ?? nodePet.id ?? '');
             if (correctId && correctId.length === 24) {
                 finalPetId = correctId;
-                console.log(`[RobotList] 使用 petId: ${finalPetId} (来自节点数据)`);
+                Logger.debug(`[RobotList] 使用 petId: ${finalPetId} (来自节点数据)`);
             } else {
-                console.warn(`[RobotList] petId 格式异常: ${correctId}, 使用传入的: ${petId}`);
+                Logger.warn(`[RobotList] petId 格式异常: ${correctId}, 使用传入的: ${petId}`);
             }
         }
         
         // 验证 petId 格式
         if (!finalPetId || finalPetId.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(finalPetId)) {
-            console.error(`[RobotList] 无效的 petId 格式: ${finalPetId}`);
+            Logger.error(`[RobotList] 无效的 petId 格式: ${finalPetId}`);
             return;
         }
         
@@ -1060,7 +1145,7 @@ export class RobotList extends Component {
         }
         
         const next = this.nextBattleTeam(finalPetId);
-        console.log(`[RobotList] 准备设置出战队伍，petId: ${finalPetId}, 当前队伍: ${this.battleTeam}, 新队伍: ${next}`);
+        Logger.debug(`[RobotList] 准备设置出战队伍，petId: ${finalPetId}, 当前队伍: ${this.battleTeam}, 新队伍: ${next}`);
         this.submitBattleTeam(next);
     }
 
@@ -1104,7 +1189,7 @@ export class RobotList extends Component {
                         this.refreshListUI();
                         emitBattleTeamUpdated({ character_id: cid });
                     } else {
-                        console.error('[RobotList] 设置出战队伍（空）失败:', r?.message ?? '未知错误', r);
+                        Logger.error('[RobotList] 设置出战队伍（空）失败:', r?.message ?? '未知错误', r);
                         this.refreshListUI();
                     }
                 },
@@ -1119,7 +1204,7 @@ export class RobotList extends Component {
         for (const id of team) {
             const str = String(id).trim();
             if (!str || str.length !== 24 || !/^[0-9a-fA-F]{24}$/.test(str)) {
-                console.warn(`[RobotList] 跳过无效的 petId 格式: ${str}`);
+                Logger.warn(`[RobotList] 跳过无效的 petId 格式: ${str}`);
                 continue;
             }
             
@@ -1130,7 +1215,7 @@ export class RobotList extends Component {
             });
             
             if (!pet) {
-                console.warn(`[RobotList] petId ${str} 不在当前机甲列表中，跳过`);
+                Logger.warn(`[RobotList] petId ${str} 不在当前机甲列表中，跳过`);
                 continue;
             }
             
@@ -1138,7 +1223,7 @@ export class RobotList extends Component {
         }
         
         if (normalizedTeam.length === 0) {
-            console.error('[RobotList] 没有有效的 petId 可以设置出战队伍');
+            Logger.error('[RobotList] 没有有效的 petId 可以设置出战队伍');
             this._submittingBattleTeam = false;
             this.setDeployReleaseButtonsInteractable(true);
             UILockManager.instance.unlock('battle_team');
@@ -1150,19 +1235,19 @@ export class RobotList extends Component {
             const pn = this.normPetId(pid);
             const pet = this.currentPets.find(p => this.normPetId(String(p.pet_id ?? p._id ?? p.id ?? '')) === pn);
             if (!pet) {
-                console.warn(`[RobotList] petId ${pid} 不在当前机甲列表中`);
+                Logger.warn(`[RobotList] petId ${pid} 不在当前机甲列表中`);
                 return false;
             }
             // 验证机甲是否属于当前角色（如果数据中有 character_id 字段）
             if (pet.character_id && pet.character_id !== cid) {
-                console.warn(`[RobotList] petId ${pid} 不属于当前角色 ${cid}，属于 ${pet.character_id}`);
+                Logger.warn(`[RobotList] petId ${pid} 不属于当前角色 ${cid}，属于 ${pet.character_id}`);
                 return false;
             }
             return true;
         });
         
         if (validPets.length === 0) {
-            console.error('[RobotList] 没有有效的机甲可以设置出战队伍');
+            Logger.error('[RobotList] 没有有效的机甲可以设置出战队伍');
             this._submittingBattleTeam = false;
             this.setDeployReleaseButtonsInteractable(true);
             UILockManager.instance.unlock('battle_team');
@@ -1170,11 +1255,11 @@ export class RobotList extends Component {
         }
         
         if (validPets.length !== normalizedTeam.length) {
-            console.warn(`[RobotList] 过滤后有效机甲数量: ${validPets.length}/${normalizedTeam.length}`);
+            Logger.warn(`[RobotList] 过滤后有效机甲数量: ${validPets.length}/${normalizedTeam.length}`);
         }
         
-        console.log('[RobotList] 设置出战队伍:', validPets, '当前角色ID:', cid);
-        console.log('[RobotList] 当前机甲列表 petIds:', this.currentPets.map(p => String(p.pet_id ?? p._id ?? p.id ?? '')));
+        Logger.debug('[RobotList] 设置出战队伍:', validPets, '当前角色ID:', cid);
+        Logger.debug('[RobotList] 当前机甲列表 petIds:', this.currentPets.map(p => String(p.pet_id ?? p._id ?? p.id ?? '')));
 
         const setReq: any = { character_id: cid, battle_team: validPets };
         if (this._battleTeamVersionSeeded) setReq.team_version = this.battleTeamVersion;
@@ -1219,7 +1304,7 @@ export class RobotList extends Component {
                             this._setBattleTeamVersionRetryPending = false;
                             if (resp?.success === false) {
                                 this._didRetrySetBattleTeamAfterVersionMismatch = false;
-                                console.error('[RobotList] 同步队伍版本失败:', resp?.message ?? resp, resp);
+                                Logger.error('[RobotList] 同步队伍版本失败:', resp?.message ?? resp, resp);
                                 this.refreshListUI();
                                 return;
                             }
@@ -1241,7 +1326,7 @@ export class RobotList extends Component {
                 this._submittingBattleTeam = false;
                 this.setDeployReleaseButtonsInteractable(true);
                 UILockManager.instance.unlock('battle_team');
-                console.error('[RobotList] 设置出战队伍失败:', r?.message ?? '未知错误', r);
+                Logger.error('[RobotList] 设置出战队伍失败:', r?.message ?? '未知错误', r);
                 this.refreshListUI();
             },
             true,
@@ -1308,7 +1393,7 @@ export class RobotList extends Component {
                     this.forceRefresh();
                 } else {
                     const msg = r?.message ?? '放生失败';
-                    console.error('[RobotList] 放生失败:', msg);
+                    Logger.error('[RobotList] 放生失败:', msg);
                     TipWindows.getInstance()?.showAlert(msg, undefined, { autoCloseMs: 2500 });
                 }
             },

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8">
+<title>e2e proj 48/48</title>
+<style>
+  body { background:#111; color:#ddd; font:12px/1.55 Consolas,"Microsoft YaHei",monospace; margin:0; padding:10px; }
+  #log { white-space:pre-wrap; }
+  #fr { width:1600px; height:900px; border:1px solid #333; position:absolute; left:-4000px; }
+  .h { color:#7ec8ff; font-weight:700; } .ok { color:#6ecb8f; } .bad { color:#ff7a72; }
+</style>
+</head>
+<body>
+<div id="log">  <span class="ok">[OK]  </span>素材 map1_7x6.png（7×6）
+<span class="h">[1] 造内容：标注 + 整块贴 + 变换</span>
+  <span class="ok">[OK]  </span>整块贴进 B 后有格子  B 有 4 格
+  <span class="ok">[OK]  </span>C 槽也有格子
+  <span class="ok">[OK]  </span>B 里有被镜像过的格子（tf≠none）
+  <span class="ok">[OK]  </span>B 里有块信息 blk
+<span class="h">[2] 存工程包（源图也打进去）</span>
+  <span class="ok">[OK]  </span>saveProject 成功  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_e2e_proj_test\_e2e_proj_test.tsproj
+  <span class="ok">[OK]  </span>文件名以 .tsproj 结尾
+  <span class="ok">[OK]  </span>包里有源图字节（srcBytes == 素材文件大小）  包内 17134 / 原文件 17134
+  <span class="ok">[OK]  </span>顶栏显示当前工程名  工程：_e2e_proj_test.tsproj
+  <span class="ok">[OK]  </span>S.proj 记下了路径
+  <span class="ok">[OK]  </span>列表接口能列到这个包
+  <span class="ok">[OK]  </span>列表带源图名 + 格数  map1_7x6.png / B:4
+  <span class="ok">[OK]  </span>列表标记有缩略图
+  <span class="ok">[OK]  </span>缩略图能取出来（image/png）  200 image/png
+  <span class="ok">[OK]  </span>包内 flags.txt = 8192 项通行表  实际 8192 行
+  <span class="ok">[OK]  </span>包内 manifest.json 有 B 槽条目
+  <span class="ok">[OK]  </span>包内 README.txt 写明源图名 + 导入方法
+  <span class="ok">[OK]  </span>project.json 有 meta + state
+  <span class="ok">[OK]  </span>project.json 记了源图格数
+  <span class="ok">[OK]  </span>包内 source.png 大小 == 原素材  17134 / 17134
+<span class="h">[4] 清空一切 → 导入 → 逐像素比对</span>
+  <span class="ok">[OK]  </span>已清空（B/C 都空、源图已卸）
+  <span class="ok">[OK]  </span>导入成功
+  <span class="ok">[OK]  </span>源图回来了（7×6）  map1_7x6.png 336×288
+  <span class="ok">[OK]  </span>源图来自工程包（proj:// 虚拟路径）  proj://D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_e2e_proj_test\_e2e_proj_test.tsproj
+  <span class="ok">[OK]  </span>B 槽格数还原  4 / 4
+  <span class="ok">[OK]  </span>C 槽格数还原  4 / 4
+  <span class="ok">[OK]  </span>★ B 槽每格的 src/tf/tag/块号 逐格一致  共 4 格
+  <span class="ok">[OK]  </span>★ C 槽每格一致
+  <span class="ok">[OK]  </span>语义标注（tagOf）还原  8 项标注
+  <span class="ok">[OK]  </span>★★ B 槽画布逐像素 == 存之前  不符像素 0/589824
+<span class="h">[5] 源图来自工程包时，再存一次（fromProj 继承 source.png）</span>
+  <span class="ok">[OK]  </span>二次保存成功  _e2e_proj_test_2.tsproj
+  <span class="ok">[OK]  </span>二次保存源图字节数不变  17134 / 17134
+  <span class="ok">[OK]  </span>二次保存的 meta 记了 proj: 来源  proj://D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_e2e_proj_test\_e2e_proj_test.tsproj
+<span class="h">[5b] 拖入 .tsproj（走字节上传，不依赖磁盘路径）</span>
+  <span class="ok">[OK]  </span>能取到整个包的字节  23549 / 23549
+  <span class="ok">[OK]  </span>拖入 → 导入成功  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_drop\dropped_test.tsproj
+  <span class="ok">[OK]  </span>落到了 out/_drop/ 下  D:\jjfbol-cocos\jjfbol-cocos\jjfb\tools\tileset_studio\out\_drop\dropped_test.tsproj
+  <span class="ok">[OK]  </span>拖入后源图仍是 7×6
+  <span class="ok">[OK]  </span>拖入后 B 槽格数不变  4 / 4
+  <span class="ok">[OK]  </span>假 zip → 被拒绝（不崩）
+<span class="h">[6] 越界 / 脏数据容错</span>
+  <span class="ok">[OK]  </span>越界格被跳过、其它照常还原  还原 7 格（原本 7），跳过 1
+  <span class="ok">[OK]  </span>越界格没有变成 undefined 崩掉
+<span class="h">[7] UI</span>
+  <span class="ok">[OK]  </span>导入弹层存在且能开
+  <span class="ok">[OK]  </span>弹层打开后列出了卡片  6 张卡
+  <span class="ok">[OK]  </span>卡片带名字（.tsproj）  dropped_test.tsproj
+  <span class="ok">[OK]  </span>卡片带缩略图 <img class="thumb">  6 个
+  <span class="ok">[OK]  </span>卡片副信息含源图名
+  <span class="ok">[OK]  </span>弹层可关闭
+  <span class="ok">[OK]  </span>顶栏有存/开工程两个按钮
+<span class="h">==== 通过 48　失败 0 ====</span></div>
+<iframe id="fr" src="/"></iframe>
+<script>
+/* =============================================================
+   第五轮端到端自测 —— 「工程包 .tsproj」
+   用户要求：保存该地图（类似压缩包），可以导入识别。
+     [1] 存：源图 + 布局 + 语义 + 通行表 + 缩略图 全进一个 zip
+     [2] 包结构对（project.json / source.png / preview.png / flags.txt / manifest.json）
+     [3] 列表接口能列出来、带缩略图
+     [4] 导入还原：源图、每格 src/tf/tag/blk、画布逐像素一致
+     [5] 从「工程包来的源图」还能再存（fromProj 继承 source.png）
+     [6] 越界 src.index 不会把还原搞崩
+   ============================================================= */
+const OUT=[]; let PASS=0, FAIL=0;
+function head(s){OUT.push('<span class="h">'+s+'</span>');}
+function ck(n,c,e){ if(c){PASS++;OUT.push('  <span class="ok">[OK]  </span>'+n+(e?'  '+e:''));}
+                   else {FAIL++;OUT.push('  <span class="bad">[FAIL]</span> '+n+(e?'  '+e:''));} }
+function flush(){document.getElementById('log').innerHTML=OUT.join('\n')+
+  '\n<span class="h">==== 通过 '+PASS+'　失败 '+FAIL+' ====</span>';
+  document.title='e2e proj '+PASS+'/'+(PASS+FAIL);}
+
+setTimeout(()=>{ run().catch(e=>{ck('run 抛异常',false,e.message+'\n'+e.stack); flush();}); },4500);
+
+function diff(a,b){
+  let n=0; const L=Math.min(a.length,b.length);
+  for(let k=0;k<L;k+=4){
+    if(a[k+3]!==b[k+3]) n++;
+    else if(a[k+3]!==0 && (a[k]!==b[k]||a[k+1]!==b[k+1]||a[k+2]!==b[k+2])) n++;
+  }
+  return n + Math.abs(a.length-b.length);
+}
+
+async function run(){
+  const fr=document.getElementById('fr'), W=fr.contentWindow, D=fr.contentDocument;
+  const T=W.TS, S=T.S;
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const roots=await (await fetch('/api/roots')).json();
+  const OUTDIR=roots.toolOut;                       // 不碰桌面：全部落在 tools/tileset_studio/out
+  const NAME='_e2e_proj_test';
+
+  const list=await (await fetch('/api/list?dir='+encodeURIComponent(roots.mapSrc)+'&sizes=1')).json();
+  const map1=list.items.find(x=>x.name==='map1_7x6.png');
+  await T.openSheetByPath(map1.path,map1.name);
+  await wait(60);
+  ck('素材 map1_7x6.png（7×6）', S.sheet&&S.sheet.cols===7&&S.sheet.rows===6);
+
+  /* ---------- 造一份「有内容」的地图 ---------- */
+  head('[1] 造内容：标注 + 整块贴 + 变换');
+  S.curSlot='B';
+  [26,27,33,34].forEach(i=>S.tagOf[i]='ground');
+  [0,1].forEach(i=>S.tagOf[i]='wall');
+  [2,3].forEach(i=>S.tagOf[i]='plant_np');
+  S.sel.clear(); [26,27,33,34].forEach(i=>S.sel.add(i));
+  T.doPlace('none');                                 // 整块贴进 B
+  await wait(30);
+  let nB=T.S.out.B.filter(Boolean).length;
+  ck('整块贴进 B 后有格子', nB>=4, 'B 有 '+nB+' 格');
+
+  S.curSlot='C'; S.sel.clear(); [0,1,2,3].forEach(i=>S.sel.add(i));
+  T.doPlace('none');
+  await wait(30);
+  ck('C 槽也有格子', T.S.out.C.filter(Boolean).length>=4);
+
+  // 对 B 的前 2×2 做一次整块镜像，让 tf/blk 里有内容可验
+  S.curSlot='B';
+  S.outSel.clear(); [0,1,16,17].forEach(i=>S.outSel.add(i));
+  S.outSelRect={c0:0,r0:0,w:2,h:2};
+  T.transformOut('h');
+  await wait(30);
+  const hasTf=T.S.out.B.slice(0,18).some(c=>c&&c.tf&&c.tf!=='none');
+  ck('B 里有被镜像过的格子（tf≠none）', hasTf);
+  ck('B 里有块信息 blk', T.S.out.B.some(c=>c&&c.blk&&c.blk.w>=2));
+
+  const before={
+    B:T.S.out.B.map(c=>c?{i:c.src.index,tf:c.tf,tag:c.tag,b:c.blk?c.blk.id:-1}:null),
+    C:T.S.out.C.map(c=>c?{i:c.src.index,tf:c.tf,tag:c.tag,b:c.blk?c.blk.id:-1}:null),
+    tagOf:{...T.S.tagOf},
+    nB:T.S.out.B.filter(Boolean).length,
+    nC:T.S.out.C.filter(Boolean).length
+  };
+  const pxB=()=>T.slotToCanvas('B').getContext('2d').getImageData(0,0,768,768).data;
+  const snapB=pxB();
+
+  /* ---------- [2] 存工程包 ---------- */
+  head('[2] 存工程包（源图也打进去）');
+  const r=await T.saveProject(NAME, OUTDIR);
+  ck('saveProject 成功', r&&r.ok, r?r.path:'(null)');
+  ck('文件名以 .tsproj 结尾', !!r&&/\.tsproj$/i.test(r.path));
+  ck('包里有源图字节（srcBytes == 素材文件大小）', !!r&&r.srcBytes===map1.bytes,
+     r?('包内 '+r.srcBytes+' / 原文件 '+map1.bytes):'');
+  ck('顶栏显示当前工程名', D.querySelector('#projName').textContent.indexOf(NAME)>=0,
+     D.querySelector('#projName').textContent.trim());
+  ck('S.proj 记下了路径', !!S.proj.path);
+
+  const jlist=await (await fetch('/api/proj/list?dir='+encodeURIComponent(OUTDIR))).json();
+  const it=jlist.items.find(x=>x.name===NAME+'.tsproj');
+  ck('列表接口能列到这个包', !!it);
+  ck('列表带源图名 + 格数', !!it&&it.sheet==='map1_7x6.png'&&(it.cells.B>=4),
+     it?(it.sheet+' / B:'+it.cells.B):'');
+  ck('列表标记有缩略图', !!it&&it.hasPreview===true);
+  const th=await fetch('/api/proj/file?path='+encodeURIComponent(r.path)+'&entry=preview.png');
+  ck('缩略图能取出来（image/png）', th.ok&&/image\/png/.test(th.headers.get('content-type')||''),
+     th.status+' '+(th.headers.get('content-type')||''));
+
+  const fl=await (await fetch('/api/proj/file?path='+encodeURIComponent(r.path)+'&entry=flags.txt')).text();
+  const lines=fl.trim().split('\n');
+  ck('包内 flags.txt = 8192 项通行表', lines.length===8192, '实际 '+lines.length+' 行');
+  const man=await (await fetch('/api/proj/file?path='+encodeURIComponent(r.path)+'&entry=manifest.json')).json();
+  ck('包内 manifest.json 有 B 槽条目', !!(man&&man.slots&&man.slots.B));
+  const rd=await (await fetch('/api/proj/file?path='+encodeURIComponent(r.path)+'&entry=README.txt')).text();
+  ck('包内 README.txt 写明源图名 + 导入方法',
+     rd.indexOf('map1_7x6.png')>=0&&rd.indexOf('开工程')>=0&&rd.indexOf('.tsproj')>=0);
+  const pj=await (await fetch('/api/proj/file?path='+encodeURIComponent(r.path)+'&entry=project.json')).json();
+  ck('project.json 有 meta + state', !!(pj.meta&&pj.state&&pj.state.out));
+  ck('project.json 记了源图格数', pj.meta.sheet.cols===7&&pj.meta.sheet.rows===6);
+  // 源图逐字节 == 原文件（独立验证：包内 source.png 与原素材一致）
+  const srcBlob=await (await fetch('/api/proj/file?path='+encodeURIComponent(r.path)+'&entry=source.png')).arrayBuffer();
+  ck('包内 source.png 大小 == 原素材', srcBlob.byteLength===map1.bytes,
+     srcBlob.byteLength+' / '+map1.bytes);
+
+  /* ---------- [4] 清干净，再导入还原 ---------- */
+  head('[4] 清空一切 → 导入 → 逐像素比对');
+  T.SLOTS.forEach(s=>{ S.out[s.id]=new Array(s.cols*s.rows).fill(null); });
+  S.tagOf={}; S.blkSeq=0; S.lastBlk=null; S.sheet=null; S.cellCache=null; S.proj={path:'',name:''};
+  ck('已清空（B/C 都空、源图已卸）',
+     S.out.B.filter(Boolean).length===0&&S.out.C.filter(Boolean).length===0&&!S.sheet);
+
+  const lr=await T.loadProject(r.path);
+  await wait(80);
+  ck('导入成功', !!lr&&lr.ok);
+  ck('源图回来了（7×6）', !!S.sheet&&S.sheet.cols===7&&S.sheet.rows===6,
+     S.sheet?S.sheet.name+' '+S.sheet.w+'×'+S.sheet.h:'无');
+  ck('源图来自工程包（proj:// 虚拟路径）', !!S.sheet&&S.sheet.path.indexOf('proj://')===0,
+     S.sheet?S.sheet.path:'');
+  ck('B 槽格数还原', S.out.B.filter(Boolean).length===before.nB,
+     S.out.B.filter(Boolean).length+' / '+before.nB);
+  ck('C 槽格数还原', S.out.C.filter(Boolean).length===before.nC,
+     S.out.C.filter(Boolean).length+' / '+before.nC);
+
+  let bad=0, why='';
+  S.out.B.forEach((c,i)=>{
+    const b=before.B[i];
+    if(!b&&!c) return;
+    if(!b||!c){bad++;why=why||('第'+i+'格 有无不一致');return;}
+    if(c.src.index!==b.i||c.tf!==b.tf||c.tag!==b.tag||(c.blk?c.blk.id:-1)!==b.b){
+      bad++; why=why||('第'+i+'格 src/tf/tag/blk 不一致 '+
+        JSON.stringify({got:[c.src.index,c.tf,c.tag,c.blk&&c.blk.id],want:[b.i,b.tf,b.tag,b.b]}));
+    }
+  });
+  ck('★ B 槽每格的 src/tf/tag/块号 逐格一致', bad===0, why||('共 '+before.nB+' 格'));
+
+  let badC=0;
+  S.out.C.forEach((c,i)=>{ const b=before.C[i];
+    if(!b&&!c) return;
+    if(!b||!c||c.src.index!==b.i||c.tf!==b.tf||c.tag!==b.tag) badC++; });
+  ck('★ C 槽每格一致', badC===0, badC?('不符 '+badC):'');
+
+  let badT=0, nT=0;
+  for(const k in before.tagOf){ nT++; if(S.tagOf[k]!==before.tagOf[k]) badT++; }
+  ck('语义标注（tagOf）还原', badT===0, nT+' 项标注');
+
+  const snapAfter=pxB();
+  const d=diff(snapB,snapAfter);
+  ck('★★ B 槽画布逐像素 == 存之前', d===0, '不符像素 '+d+'/589824');
+
+  /* ---------- [5] 从「工程包来的源图」还能再存 ---------- */
+  head('[5] 源图来自工程包时，再存一次（fromProj 继承 source.png）');
+  const r2=await T.saveProject(NAME+'_2', OUTDIR);
+  ck('二次保存成功', !!r2&&r2.ok, r2?r2.name:'(null)');
+  ck('二次保存源图字节数不变', !!r2&&r2.srcBytes===map1.bytes,
+     r2?(r2.srcBytes+' / '+map1.bytes):'');
+  const pj2=await (await fetch('/api/proj/file?path='+encodeURIComponent(r2.path)+'&entry=project.json')).json();
+  ck('二次保存的 meta 记了 proj: 来源', (pj2.meta.sheet.origin||'').indexOf('proj:')===0,
+     pj2.meta.sheet.origin);
+
+  /* ---------- [5b] 拖入 .tsproj（浏览器给不到磁盘路径 → 收字节落 out/_drop/） ---------- */
+  head('[5b] 拖入 .tsproj（走字节上传，不依赖磁盘路径）');
+  {
+    const zb = await (await fetch('/api/img?path='+encodeURIComponent(r.path))).blob();
+    ck('能取到整个包的字节', zb.size===r.bytes, zb.size+' / '+r.bytes);
+    const f = new W.File([zb], 'dropped_test.tsproj', { type: 'application/zip' });
+    const lr2 = await T.dropProjectFile(f);
+    await wait(120);
+    ck('拖入 → 导入成功', !!(lr2 && lr2.ok), lr2 ? lr2.path : '(null)');
+    ck('落到了 out/_drop/ 下', !!(lr2 && lr2.path.indexOf('_drop')>=0), lr2 ? lr2.path : '');
+    ck('拖入后源图仍是 7×6', !!S.sheet && S.sheet.cols===7 && S.sheet.rows===6);
+    ck('拖入后 B 槽格数不变', S.out.B.filter(Boolean).length===before.nB,
+       S.out.B.filter(Boolean).length+' / '+before.nB);
+    // 非工程包（塞个假 zip）必须被挡住
+    const fake = new W.File([new Uint8Array([80,75,3,4,0,0])], 'bad.tsproj');
+    const lr3 = await T.dropProjectFile(fake);
+    ck('假 zip → 被拒绝（不崩）', !lr3);
+  }
+
+  /* ---------- [6] 越界 src.index 不崩 ---------- */
+  head('[6] 越界 / 脏数据容错');
+  const st=T.projState();
+  st.out.B[0]={src:{sheet:'x',sheetName:'x',index:99999},tf:'h',tag:'wall',blk:null};
+  const totalBefore=before.nB+before.nC;
+  const res=T.applyProjState(st);
+  ck('越界格被跳过、其它照常还原', res.lost===1&&res.cells===totalBefore-1,
+     '还原 '+res.cells+' 格（原本 '+(totalBefore-1)+'），跳过 '+res.lost);
+  ck('越界格没有变成 undefined 崩掉', !!S.out.B[0]===false||S.out.B[0]===null);
+
+  /* ---------- 收尾 ---------- */
+  head('[7] UI');
+  ck('导入弹层存在且能开', !!D.querySelector('#projMask'));
+  T.setOutDir(OUTDIR);                    // 让弹层列的是我们刚存包的目录（默认是桌面）
+  T.openProjDialog(); await wait(200);
+  const cards=D.querySelectorAll('#projList .projcard');
+  ck('弹层打开后列出了卡片', cards.length>=2, cards.length+' 张卡');
+  ck('卡片带名字（.tsproj）',
+     /\.tsproj$/i.test(((D.querySelector('#projList .nm')||{}).textContent||'').trim()),
+     (D.querySelector('#projList .nm')||{}).textContent||'');
+  ck('卡片带缩略图 <img class=thumb>', D.querySelectorAll('#projList .thumb').length>=1,
+     D.querySelectorAll('#projList .thumb').length+' 个');
+  ck('卡片副信息含源图名',
+     ((D.querySelector('#projList .sub')||{}).textContent||'').indexOf('map1_7x6.png')>=0);
+  D.querySelector('#projClose').click();
+  ck('弹层可关闭', !D.querySelector('#projMask').classList.contains('show'));
+  ck('顶栏有存/开工程两个按钮',
+     !!D.querySelector('#btnProjSave')&&!!D.querySelector('#btnProjOpen'));
+
+  flush();
+}
+</script>
+
+
+</body></html>

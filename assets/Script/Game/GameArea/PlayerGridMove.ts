@@ -15,9 +15,12 @@ import {
     TiledLayer,
     UIOpacity,
     Sprite,
+    js,
 } from 'cc';
 import { PlayerAnimRuntime } from './PlayerAnimRuntime';
-import { PlayerStateSync } from './PlayerStateSync';
+import { MountController } from './MountController';
+import { SpriteLayerMap } from './SpriteLayerMap';
+import { Logger } from '../../global/Logger';
 
 const { ccclass, property } = _decorator;
 
@@ -63,6 +66,14 @@ export class PlayerGridMove extends Component {
     @property({ tooltip: '严格按 animPrefix 播放。开启后不会回退到 walk_right/idle_right 这类通用名，避免串到别的角色动画。' })
     strictAnimPrefix = true;
 
+    @property({ tooltip: '座驾资源 id：car4 / zuojia4~9（对应 resources/ZuoJia/ani）' })
+    mountId = 'zuojia7';
+
+    @property({
+        tooltip: '调试：进场景直接开启座驾（正式座驾 UI 做好后请关掉；运行时也可调 setMountEnabled）',
+    })
+    debugEnableMount = true;
+
     @property({ tooltip: '地图锚点作为格子坐标原点(0,0)。左上锚点(0,1)时，首格中心位于锚点右下半格。' })
     useAnchorAsGridOrigin = true;
 
@@ -90,8 +101,11 @@ export class PlayerGridMove extends Component {
     @property({ tooltip: '服务器坐标恢复超时后的兜底出生点 Y（像素）' })
     fallbackSpawnY = -24.0;
 
-    @property({ tooltip: '不可通行图层名（逗号分隔，默认 Wall,items）' })
-    blockedLayerNames = 'Wall,items';
+    @property({
+        tooltip:
+            '不可通行图层名（逗号分隔）。TiledMap 用层名（默认 Wall,items）；Sprite 分层地图（M1）用 M1_B,M1_E，实际阻挡以 SpriteLayerMap walk flags 为准',
+    })
+    blockedLayerNames = 'M1_B,M1_E';
 
     @property({ tooltip: '可通行但可触发效果图层名（逗号分隔，默认 plant）' })
     passableEffectLayerNames = 'plant';
@@ -115,6 +129,7 @@ export class PlayerGridMove extends Component {
     private _anim: Animation | null = null;
     private _uiOpacity: UIOpacity | null = null;
     private _animRt: PlayerAnimRuntime | null = null;
+    private _mount: MountController | null = null;
     private _serverRestored = false;
     private _restoreTimeoutScheduled = false;
 
@@ -181,14 +196,61 @@ export class PlayerGridMove extends Component {
         }
         this._playIdleAnim(this._facing);
         this._bindClickNavigate();
+        this._initMount();
+    }
+
+    /** 开启/关闭座驾（UI 做好后由此调用；无 UI 时可在 Inspector 勾选 debugEnableMount） */
+    public setMountEnabled(on: boolean): void {
+        const m = this._ensureMount();
+        if (!m) return;
+        m.setEnabled(on);
+        if (on) m.syncMoveState(this._facing, this._moving);
+    }
+
+    public setMountId(id: string): void {
+        const m = this._ensureMount();
+        if (!m) return;
+        m.setMountId(id);
+        this.mountId = id;
+    }
+
+    public isMountEnabled(): boolean {
+        return !!this._mount?.enabledMount;
+    }
+
+    private _initMount(): void {
+        const m = this._ensureMount();
+        if (!m) return;
+        if (this.mountId) m.setMountId(this.mountId);
+        m.startEnabled = false;
+        if (this.debugEnableMount) {
+            m.setEnabled(true);
+            m.syncMoveState(this._facing, this._moving);
+        } else {
+            m.setEnabled(false);
+        }
+    }
+
+    private _ensureMount(): MountController | null {
+        if (this._mount?.isValid) return this._mount;
+        this._mount = MountController.ensureOnPlayer(this.node);
+        return this._mount;
+    }
+
+    private _syncMountAnim(moving: boolean): void {
+        const m = this._mount;
+        if (!m?.enabledMount) return;
+        m.syncMoveState(this._facing, moving);
     }
 
     /** PlayerStateSync 可能挂在 GameArea 等父节点，而非 Player 自身。 */
     private _hasDeferredServerRestore(): boolean {
         if (!this.deferInitialPlaceToServerRestore) return false;
+        const Cls = js.getClassByName('PlayerStateSync');
+        if (!Cls) return false;
         let n: Node | null = this.node;
         while (n) {
-            if (n.getComponent(PlayerStateSync)) return true;
+            if (n.getComponent(Cls as typeof Component)) return true;
             n = n.parent;
         }
         return false;
@@ -453,8 +515,12 @@ export class PlayerGridMove extends Component {
             this._targetX = this._destCx;
             this._targetY = cur.y;
         } else {
-            // y 轴方向与 row 递增方向无关，按目标点相对当前位置决定朝向
-            this._facing = this._destCy > cur.y ? 'up' : 'down';
+            // 与按键/格子步进一致：上=减小 row（左上锚点），勿仅靠像素 Y 以免与人物动画错位
+            if (this.useAnchorAsGridOrigin) {
+                this._facing = deltaRow < 0 ? 'up' : 'down';
+            } else {
+                this._facing = deltaRow > 0 ? 'up' : 'down';
+            }
             this._axis = 'y';
             this._targetY = this._destCy;
             this._targetX = cur.x;
@@ -692,6 +758,7 @@ export class PlayerGridMove extends Component {
         const stack: Node[] = [map];
         while (stack.length > 0) {
             const n = stack.pop()!;
+            if (n !== map && !n.activeInHierarchy) continue;
             updateByNode(n);
             for (let i = 0; i < n.children.length; i++) {
                 stack.push(n.children[i]);
@@ -974,6 +1041,19 @@ export class PlayerGridMove extends Component {
     private _queryTileFlagsAtPoint(targetX: number, targetY: number): { blocked: boolean; effect: boolean } {
         const map = this.mapRoot;
         if (!map) return { blocked: false, effect: false };
+
+        // 优先：分层 Sprite 地图（M1 等，B/E 不可通行）
+        const spriteMap = SpriteLayerMap.findActiveUnder(map);
+        if (spriteMap) {
+            // flags 异步加载完成前 fail-closed，避免开局穿墙
+            if (!spriteMap.isReady) {
+                void spriteMap.ensureReady();
+                return { blocked: true, effect: false };
+            }
+            const blocked = spriteMap.isBlockedAtMapLocal(targetX, targetY);
+            return { blocked, effect: false };
+        }
+
         const layers = this._collectTiledLayers(map);
         if (layers.length === 0) return { blocked: false, effect: false };
 
@@ -998,6 +1078,8 @@ export class PlayerGridMove extends Component {
         const stack: Node[] = [root];
         while (stack.length > 0) {
             const n = stack.pop()!;
+            // 未激活的拼接块（如 map2 在 map1 时）仍挂在树下，必须跳过，否则 Wall 误挡
+            if (n !== root && !n.activeInHierarchy) continue;
             const layer = n.getComponent(TiledLayer);
             if (layer) out.push(layer);
             for (let i = 0; i < n.children.length; i++) {
@@ -1058,11 +1140,13 @@ export class PlayerGridMove extends Component {
     private _playMoveAnim(dir: MoveDir) {
         if (!this._animRt) return;
         this._animRt.playMove(dir);
+        this._syncMountAnim(true);
     }
 
     private _playIdleAnim(dir: MoveDir) {
         if (!this._animRt) return;
         this._animRt.playIdle(dir, true);
+        this._syncMountAnim(false);
     }
 
     private _getMoveAnimName(dir: MoveDir): string {
@@ -1131,6 +1215,6 @@ export class PlayerGridMove extends Component {
         const anim = this._anim;
         if (!anim) return;
         const names = (anim.clips || []).map((c) => c && c.name).filter((n) => !!n);
-        console.warn(`[PlayerGridMove] strictAnimPrefix=ON，但缺少 ${prefix}_* 的完整8个clip。当前已挂载:`, names);
+        Logger.warn(`[PlayerGridMove] strictAnimPrefix=ON，但缺少 ${prefix}_* 的完整8个clip。当前已挂载:`, names);
     }
 }

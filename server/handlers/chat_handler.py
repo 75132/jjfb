@@ -19,7 +19,9 @@ def init_chat_handler(broadcast_func):
 async def handle_get_announcements_history(websocket, data):
     """处理获取公告历史请求"""
     limit = int(data.get('limit', 8))
-    cur = utils.messages_col.find({'type': 'announcement'}).sort('created_at', -1).limit(limit)
+    cur = await utils.async_mongo_operation_read(
+        lambda: list(utils.messages_col.find({'type': 'announcement'}).sort('created_at', -1).limit(limit))
+    )
     lst = []
     for m in cur:
         lst.append({
@@ -49,7 +51,7 @@ async def handle_post_announcement(websocket, data):
         'text': text,
         'created_at': datetime.datetime.utcnow()
     }
-    utils.messages_col.insert_one(doc)
+    await utils.async_mongo_operation(lambda: utils.messages_col.insert_one(doc))
     payload = {'type': 'announcement', 'text': text}
     
     # MMO级优化：异步广播，不阻塞
@@ -66,7 +68,9 @@ async def handle_post_announcement(websocket, data):
 async def handle_get_chat_history(websocket, data):
     """处理获取聊天历史请求"""
     limit = int(data.get('limit', 8))
-    cur = utils.messages_col.find({'type': 'chat'}).sort('created_at', -1).limit(limit)
+    cur = await utils.async_mongo_operation_read(
+        lambda: list(utils.messages_col.find({'type': 'chat'}).sort('created_at', -1).limit(limit))
+    )
     lst = []
     for m in cur:
         lst.append({
@@ -107,7 +111,7 @@ async def handle_post_chat(websocket, data, current_character_id):
     cid = data.get('character_id') or current_character_id
     sender = ''
     if cid:
-        p = utils.players_col.find_one({'user_id': user['_id'], 'character_id': cid})
+        p = await utils.async_mongo_operation_read(lambda: utils.players_col.find_one({'user_id': user['_id'], 'character_id': cid}))
         if p:
             sender = p.get('role_name', '')
     
@@ -119,7 +123,7 @@ async def handle_post_chat(websocket, data, current_character_id):
         'sender': sender,
         'created_at': datetime.datetime.utcnow()
     }
-    utils.messages_col.insert_one(doc)
+    await utils.async_mongo_operation(lambda: utils.messages_col.insert_one(doc))
     payload = {
         'text': text,
         'sender': sender,

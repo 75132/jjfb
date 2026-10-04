@@ -1,6 +1,7 @@
 import { _decorator, Component, Button, Label, director } from 'cc';
 import { WebSocketManager } from '../global/WebSocketManager';
 import { GameConfig } from '../global/GameConfig';
+import { Logger } from '../global/Logger';
 const { ccclass, property } = _decorator;
 
 @ccclass('Back')
@@ -34,7 +35,7 @@ export class Back extends Component {
         } catch {}
         director.loadScene(GameConfig.SCENE_NAMES.LOGIN, (error) => {
             if (error) {
-                console.error('❌ 返回登录场景失败:', error);
+                Logger.error('❌ 返回登录场景失败:', error);
                 // 修复点：加载失败时允许再次点击返回
                 this._backClicked = false;
                 if (this.backBtn) this.backBtn.interactable = true;

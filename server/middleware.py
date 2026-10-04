@@ -84,7 +84,7 @@ async def admin_auth_middleware(context: MiddlewareContext, next_func: Callable)
 
     token = context.data.get('token')
     if token:
-        user = utils.safe_mongo_operation(lambda: utils.users_col.find_one({'token': token}))
+        user = await utils.async_mongo_operation_read(lambda: utils.users_col.find_one({'token': token}))
         if user and user.get('is_admin'):
             context.current_user_id = user['_id']
             return await next_func()
